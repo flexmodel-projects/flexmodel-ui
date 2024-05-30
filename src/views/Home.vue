@@ -10,7 +10,6 @@
 <script setup lang="ts"></script>
 <style>
 #app {
-  text-align: center;
   color: var(--ep-text-color-primary);
 }
 

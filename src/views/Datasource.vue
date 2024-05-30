@@ -1,5 +1,8 @@
 <template>
   <div style="width: 100%">
+    <div style="margin-top: 20px">
+      <el-button type="primary" @click="toggleSelection()">新增数据源</el-button>
+    </div>
     <el-table :data="resourceList" style="width: 100%">
       <el-table-column prop="id" label="ID"/>
       <el-table-column prop="name" label="名称"/>

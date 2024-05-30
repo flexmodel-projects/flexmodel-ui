@@ -17,7 +17,7 @@ const value1 = ref(true);
 </script>
 
 <template>
-  <div w="full" py="4">
+  <div w="full" py="4" style="text-align: center;">
     <h1 color="$ep-color-primary">{{ msg }}</h1>
 
     <p>
@@ -94,7 +94,7 @@ const value1 = ref(true);
   </div>
 </template>
 
-<style>
+<style scoped>
 .ep-button {
   margin: 4px;
 }
