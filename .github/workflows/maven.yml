@@ -30,4 +30,4 @@ jobs:
       - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw -B -T 8 clean deploy
+          ./mvnw -B clean deploy

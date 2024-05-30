@@ -1,58 +1,95 @@
 <template>
   <el-menu
-    default-active="2"
-    class="el-menu-vertical-demo"
     :collapse="isCollapse"
+    :default-active="onRoutes"
     @open="handleOpen"
     @close="handleClose"
+    router
   >
-    <el-sub-menu index="1">
-      <template #title>
-        <el-icon><location /></el-icon>
-        <span>Navigator One</span>
+    <template v-for="item in items">
+      <template v-if="item.subs">
+        <el-sub-menu :index="item.index" :key="item.index">
+          <template #title>
+            <el-icon>
+              <component :is="item.icon"></component>
+            </el-icon>
+            <span>{{ item.title }}</span>
+          </template>
+          <template v-for="subItem in item.subs">
+            <el-sub-menu
+              v-if="subItem.subs"
+              :index="subItem.index"
+              :key="subItem.index"
+            >
+              <template #title>
+                <el-icon>
+                  <component :is="subItem.icon"></component>
+                </el-icon>
+                {{ subItem.title }}
+              </template>
+              <el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.index">
+                <el-icon>
+                  <component :is="threeItem.icon"></component>
+                </el-icon>
+                {{ threeItem.title }}
+              </el-menu-item>
+            </el-sub-menu>
+            <el-menu-item v-else :index="subItem.index">
+              <el-icon>
+                <component :is="subItem.icon"></component>
+              </el-icon>
+              {{ subItem.title }}
+            </el-menu-item>
+          </template>
+        </el-sub-menu>
       </template>
-      <el-menu-item-group>
-        <template #title><span>Group One</span></template>
-        <el-menu-item index="1-1">item one</el-menu-item>
-        <el-menu-item index="1-2">item two</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="Group Two">
-        <el-menu-item index="1-3">item three</el-menu-item>
-      </el-menu-item-group>
-      <el-sub-menu index="1-4">
-        <template #title><span>item four</span></template>
-        <el-menu-item index="1-4-1">item one</el-menu-item>
-      </el-sub-menu>
-    </el-sub-menu>
-    <el-menu-item index="2">
-      <el-icon><icon-menu /></el-icon>
-      <template #title>Navigator Two</template>
-    </el-menu-item>
-    <el-menu-item index="3" disabled>
-      <el-icon><document /></el-icon>
-      <template #title>Navigator Three</template>
-    </el-menu-item>
-    <el-menu-item index="4">
-      <el-icon><setting /></el-icon>
-      <template #title>Navigator Four</template>
-    </el-menu-item>
+      <template v-else>
+        <el-menu-item :index="item.index" :key="item.index">
+          <el-icon>
+            <component :is="item.icon"></component>
+          </el-icon>
+          <template #title>{{ item?.title }}</template>
+        </el-menu-item>
+      </template>
+    </template>
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import {
-  Location,
-  Document,
-  Menu as IconMenu,
-  Setting,
-} from "@element-plus/icons-vue";
+import {computed, ref} from "vue";
+import {Document,} from "@element-plus/icons-vue";
+import {useRoute} from "vue-router";
 
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
+export type MenuItem = {
+  icon?: any
+  size?: number
+  title: string
+  index: string
+  subs?: MenuItem[]
+}
+
+const items: MenuItem[] = [
+  {
+    icon: Document,
+    title: '数据源管理',
+    index: '/datasource',
+  },
+  {
+    icon: Document,
+    title: '测试页面',
+    index: '/helloworld',
+  }
+]
+
+const route = useRoute();
+const onRoutes = computed(() => {
+  return route.path;
+});
 </script>
