@@ -57,10 +57,10 @@
 
 <script lang="ts" setup>
 import {computed, ref} from "vue";
-import {Document,} from "@element-plus/icons-vue";
+import {Document, Files, Refrigerator, DataAnalysis} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 
-const isCollapse = ref(false);
+const isCollapse = ref(true);
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
@@ -77,9 +77,19 @@ export type MenuItem = {
 
 const items: MenuItem[] = [
   {
-    icon: Document,
-    title: '数据源管理',
+    icon: Refrigerator,
+    title: '数据源',
     index: '/datasource',
+  },
+  {
+    icon: Files,
+    title: '模型设计',
+    index: '/modeling',
+  },
+  {
+    icon: DataAnalysis,
+    title: '日志',
+    index: '/logs',
   },
   {
     icon: Document,

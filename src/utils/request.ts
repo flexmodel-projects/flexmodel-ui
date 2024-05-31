@@ -31,15 +31,15 @@ const request = axios.create({
 //   '/api/userinfo': 1,
 // }
 
-request.interceptors.request.use(
-  async (config: AxiosRequestConfig & { cType?: boolean }) => {
-    // 如果设置了cType 说明是自定义 添加 Content-Type类型 为自定义post 做铺垫
-    if (config.cType) {
-      config.headers!['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
-    }
-    return config
-  },
-)
+// request.interceptors.request.use(
+//   async (config: AxiosRequestConfig & { cType?: boolean }) => {
+//     // 如果设置了cType 说明是自定义 添加 Content-Type类型 为自定义post 做铺垫
+//     if (config.cType) {
+//       config.headers!['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
+//     }
+//     return config
+//   },
+// )
 
 request.interceptors.response.use(
   async (response: AxiosResponse) => {

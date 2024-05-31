@@ -20,10 +20,24 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: '/modeling',
+        component: HelloWorld,
+        meta: {
+          title: '建模'
+        },
+      },
+      {
+        path: '/logs',
+        component: HelloWorld,
+        meta: {
+          title: '日志'
+        },
+      },
+      {
         path: '/datasource',
         component: Datasource,
         meta: {
-          title: '数据源管理'
+          title: '数据源'
         },
       }
     ]
