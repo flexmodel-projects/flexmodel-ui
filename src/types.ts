@@ -1,12 +1,10 @@
 interface Datasource {
-  id?: string;
   name: string;
   type: string;
   createTime: string;
   config: {
-    dbName?: string;
-    port?: number;
-    host?: string;
+    dbKind: string,
+    url?: string;
     username?: string;
     password?: string;
   }

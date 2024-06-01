@@ -83,7 +83,7 @@ const items: MenuItem[] = [
   },
   {
     icon: Files,
-    title: '模型设计',
+    title: '建模',
     index: '/modeling',
   },
   {

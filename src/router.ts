@@ -3,6 +3,7 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import Home from "~/views/Home.vue";
 import HelloWorld from "~/components/HelloWorld.vue";
 import Datasource from "~/views/Datasource.vue";
+import Modeling from "~/views/Modeling.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,7 +22,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/modeling',
-        component: HelloWorld,
+        component: Modeling,
         meta: {
           title: '建模'
         },
