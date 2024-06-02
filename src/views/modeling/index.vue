@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="12">
             数据源
-            <el-select v-model="selectedDs" placeholder="数据源" style="width: 150px">
+            <el-select v-model="activeDs" placeholder="数据源" style="width: 150px">
               <el-option
                 v-for="item in dsList"
                 :key="item.name"
@@ -58,56 +58,8 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <el-row v-if="activeView==='struct'">
-        <el-col>
-          <el-card>
-            <el-row>
-              <el-col :span="12">{{ activeModel?.name }}
-                {{ activeModel?.comment }}
-              </el-col>
-              <el-col :span="12" style="text-align: right">
-                <el-button type="info">编辑</el-button>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-        <el-col>
-          <el-card shadow="never">
-            <el-table :data="activeModel?.fields" style="width: 100%">
-              <el-table-column label="名称" prop="name"/>
-              <el-table-column label="类型" prop="type"/>
-              <el-table-column label="是否唯一" prop="unique"/>
-              <el-table-column label="可为空" prop="nullable"/>
-              <el-table-column label="备注" prop="comment"/>
-            </el-table>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row v-if="activeView==='data'">
-        <el-col>
-          <el-card>
-            <el-row>
-              <el-col :span="12">{{ activeModel?.name }}
-                {{ activeModel?.comment }}
-              </el-col>
-              <el-col :span="12" style="text-align: right">
-                <el-button type="info">新增</el-button>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
-        <el-col>
-          <el-card shadow="never">
-            <el-table :data="recordList" style="width: 100%">
-              <el-table-column v-for="item in activeModel?.fields" :label="item.name" :prop="item.name">
-                <template #default="{ row }">
-                  {{ row[item.name] }}
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-card>
-        </el-col>
-      </el-row>
+      <Model v-if="activeView==='model'" :datasource="activeDs" :model="activeModel"/>
+      <Record v-if="activeView==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
 </template>
@@ -115,53 +67,46 @@
 import {getModelList} from "~/api/model";
 import {computed, ref, watchEffect} from "vue";
 import {getDatasourceList} from "~/api/datasource";
-import {getRecordList} from "~/api/record";
 import {Edit, Refresh,} from "@element-plus/icons-vue";
 import {useRoute, useRouter} from "vue-router";
+import Record from "~/views/modeling/Record.vue";
+import Model from "~/views/modeling/Model.vue";
 
 const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
 const options = [
   {
     label: '结构',
-    value: 'struct',
+    value: 'model',
   },
   {
     label: '数据',
-    value: 'data',
+    value: 'record',
   }
 ]
-
-const activeView = ref<string>('struct');
-const dsList = ref<Datasource[]>([]);
-const selectedDs = ref<string>(datasource);
-const modelList = ref<any[]>([]);
-const recordList = ref<any[]>([]);
+const activeView = ref<string>('model');
+const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const searchQuery = ref<string>();
+
+const dsList = ref<Datasource[]>([]);
+const modelList = ref<any[]>([]);
 
 const reqDatasourceList = async () => {
   const res = await getDatasourceList();
   dsList.value = res;
-  selectedDs.value = datasource || res[0].name;
+  activeDs.value = datasource || res[0].name;
 };
 const reqModelList = async () => {
-  const res: any = await getModelList(selectedDs.value);
+  const res: any = await getModelList(activeDs.value);
   modelList.value = res;
   activeModel.value = res[0];
 };
-const reqRecordList = async () => {
-  recordList.value = await getRecordList(selectedDs.value, activeModel.value?.name);
-};
 reqDatasourceList();
 watchEffect(() => {
-  if (selectedDs.value) {
+  if (activeDs.value) {
     reqModelList();
-  }
-});
-watchEffect(() => {
-  if (activeModel.value?.name) {
-    reqRecordList();
+    router.push({path: '/modeling', query: {datasource: activeDs.value}});
   }
 });
 

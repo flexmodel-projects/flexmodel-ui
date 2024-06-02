@@ -2,8 +2,8 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 
 import Home from "~/views/Home.vue";
 import HelloWorld from "~/components/HelloWorld.vue";
-import Datasource from "~/views/Datasource.vue";
-import Modeling from "~/views/Modeling.vue";
+import Datasource from "~/views/datasource/index.vue";
+import Modeling from "~/views/modeling/index.vue";
 
 const routes: RouteRecordRaw[] = [
   {
