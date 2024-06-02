@@ -17,7 +17,8 @@ export interface ResponseData {
 const errorHandler = async (error: any) => {
   const {response, message} = error
   // request用catch捕获报错
-  return Promise.reject(`失败: ${message}`)
+  ElMessage.error(`失败: ${message}`);
+  return Promise.reject(response)
 }
 
 const request = axios.create({

@@ -13,7 +13,7 @@
             {{ item.name }}
           </div>
         </div>
-        <el-divider />
+        <el-divider/>
         <div>
           <el-button type="primary" @click="toggleSelection()" style="width: 100%">连接数据源</el-button>
         </div>
@@ -26,8 +26,8 @@
             <el-row>
               <el-col :span="12">{{ activeDs.name }}</el-col>
               <el-col :span="12" style="text-align: right">
-                <el-button>建模</el-button>
-                <el-button type="info">同步</el-button>
+                <el-button @click="router.push(`/modeling?datasource=${activeDs.name}`)">建模</el-button>
+                <el-button type="info">刷新</el-button>
                 <el-button type="info">测试</el-button>
                 <el-button type="info">编辑</el-button>
               </el-col>
@@ -42,7 +42,9 @@
               <el-descriptions-item label="数据库类型">{{ activeDs.config?.dbKind }}</el-descriptions-item>
               <el-descriptions-item label="连接地址">{{ activeDs.config?.url }}</el-descriptions-item>
               <el-descriptions-item label="用户名">{{ activeDs.config?.username }}</el-descriptions-item>
-              <el-descriptions-item label="密码">{{ activeDs.config?.password }}</el-descriptions-item>
+              <el-descriptions-item label="密码">
+                <PasswordHide :text="activeDs.config?.password"/>
+              </el-descriptions-item>
               <el-descriptions-item label="创建时间">{{ activeDs.createTime }}</el-descriptions-item>
             </el-descriptions>
           </el-card>
@@ -56,8 +58,10 @@
 import {ElMessage} from "element-plus";
 import {getDatasourceList} from "~/api/datasource";
 import {ref} from "vue";
-import {Setting,} from "@element-plus/icons-vue";
+import {useRouter} from "vue-router";
+import PasswordHide from "~/components/PasswordHide.vue";
 
+const router = useRouter();
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
 

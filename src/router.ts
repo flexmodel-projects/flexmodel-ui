@@ -8,6 +8,10 @@ import Modeling from "~/views/Modeling.vue";
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    redirect: '/modeling',
+  },
+  {
+    path: '/',
     component: Home,
     meta: {
       title: '首页'

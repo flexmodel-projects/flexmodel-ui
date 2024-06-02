@@ -57,10 +57,10 @@
 
 <script lang="ts" setup>
 import {computed, ref} from "vue";
-import {Document, Files, Refrigerator, DataAnalysis} from "@element-plus/icons-vue";
+import {DataAnalysis, Document, Files, Refrigerator, Setting} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 
-const isCollapse = ref(true);
+const isCollapse = ref(false);
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
 };
@@ -77,23 +77,47 @@ export type MenuItem = {
 
 const items: MenuItem[] = [
   {
-    icon: Refrigerator,
-    title: '数据源',
-    index: '/datasource',
-  },
-  {
-    icon: Files,
-    title: '建模',
-    index: '/modeling',
-  },
-  {
-    icon: DataAnalysis,
-    title: '日志',
-    index: '/logs',
-  },
-  {
+    title: '接口',
     icon: Document,
-    title: '测试页面',
+    index: '1',
+    subs: [
+      {
+        icon: Refrigerator,
+        title: '接口设计',
+        index: '/helloworld',
+      },
+      {
+        icon: Document,
+        title: '接口文档',
+        index: '/helloworld',
+      },
+      {
+        icon: DataAnalysis,
+        title: '接口日志',
+        index: '/logs',
+      }
+    ]
+  },
+  {
+    title: '数据',
+    icon: Document,
+    index: '2',
+    subs: [
+      {
+        icon: Refrigerator,
+        title: '数据源',
+        index: '/datasource',
+      },
+      {
+        icon: Files,
+        title: '建模',
+        index: '/modeling',
+      },
+    ]
+  },
+  {
+    icon: Setting,
+    title: '设置',
     index: '/helloworld',
   }
 ]
