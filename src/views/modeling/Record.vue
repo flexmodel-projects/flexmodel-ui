@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="info">新增</el-button>
+            <el-button type="info">New record</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -20,13 +20,13 @@
               {{ row[item.name] }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200" fixed="right">
+          <el-table-column label="Operation" width="200" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.$index, scope.row)">
-                编辑
+                Edit
               </el-button>
               <el-button type="primary" link @click="handleDelete(scope.row)">
-                删除
+                Delete
               </el-button>
             </template>
           </el-table-column>

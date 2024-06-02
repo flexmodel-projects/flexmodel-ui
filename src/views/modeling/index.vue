@@ -4,8 +4,8 @@
       <el-card shadow="never">
         <el-row>
           <el-col :span="12">
-            数据源
-            <el-select v-model="activeDs" placeholder="数据源" style="width: 150px">
+            Data source
+            <el-select v-model="activeDs" placeholder="Data source" style="width: 150px">
               <el-option
                 v-for="item in dsList"
                 :key="item.name"
@@ -14,11 +14,11 @@
               />
               <template #footer>
                 <el-button @click="router.push('/datasource')" type="primary" :icon="Edit" style="width: 100%" link>
-                  管理
+                  Management
                 </el-button>
               </template>
             </el-select>
-            <el-button type="info" :icon="Refresh">刷新</el-button>
+            <el-button type="info" :icon="Refresh">Refresh</el-button>
           </el-col>
           <el-col :span="12" style="text-align: right">
             <el-segmented v-model="activeView" :options="options"/>
@@ -33,7 +33,7 @@
         <div>
           <el-input
             style="width: 100%"
-            placeholder="搜索"
+            placeholder="Search"
             v-model="searchQuery"
             clearable
           >
@@ -53,7 +53,7 @@
         </div>
         <el-divider/>
         <div>
-          <el-button type="primary" @click="toggleSelection()" style="width: 100%">新建模型</el-button>
+          <el-button type="primary" :icon="Plus" @click="toggleSelection()" style="width: 100%" plain>Create model</el-button>
         </div>
       </el-card>
     </el-col>
@@ -67,7 +67,7 @@
 import {getModelList} from "~/api/model";
 import {computed, ref, watchEffect} from "vue";
 import {getDatasourceList} from "~/api/datasource";
-import {Edit, Refresh,} from "@element-plus/icons-vue";
+import {Edit, Refresh, Plus} from "@element-plus/icons-vue";
 import {useRoute, useRouter} from "vue-router";
 import Record from "~/views/modeling/Record.vue";
 import Model from "~/views/modeling/Model.vue";
@@ -76,11 +76,11 @@ const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
 const options = [
   {
-    label: '结构',
+    label: 'Model',
     value: 'model',
   },
   {
-    label: '数据',
+    label: 'Record',
     value: 'record',
   }
 ]
@@ -118,7 +118,6 @@ const filteredItems = computed(() => {
     item.name.toLowerCase().includes(searchQuery.value?.toLowerCase())
   );
 });
-
 
 const handleItemChange = (item: any) => {
   activeModel.value = item;

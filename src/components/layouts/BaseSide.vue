@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import {computed, ref} from "vue";
-import {DataAnalysis, Document, Files, Refrigerator, Setting} from "@element-plus/icons-vue";
+import {DataLine, Coin, Monitor, MagicStick, Document, Files, Refrigerator, Setting} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 
 const isCollapse = ref(false);
@@ -77,47 +77,47 @@ export type MenuItem = {
 
 const items: MenuItem[] = [
   {
-    title: '接口',
-    icon: Document,
+    title: 'API',
+    icon: Monitor,
     index: '1',
     subs: [
       {
-        icon: Refrigerator,
-        title: '接口设计',
+        icon: MagicStick,
+        title: 'API design',
         index: '/helloworld',
       },
       {
         icon: Document,
-        title: '接口文档',
+        title: 'API document',
         index: '/helloworld',
       },
       {
-        icon: DataAnalysis,
-        title: '接口日志',
+        icon: DataLine,
+        title: 'API logs',
         index: '/logs',
       }
     ]
   },
   {
-    title: '数据',
-    icon: Document,
+    title: 'Data',
+    icon: Coin,
     index: '2',
     subs: [
       {
         icon: Refrigerator,
-        title: '数据源',
+        title: 'Data source',
         index: '/datasource',
       },
       {
         icon: Files,
-        title: '建模',
+        title: 'Data modeling',
         index: '/modeling',
       },
     ]
   },
   {
     icon: Setting,
-    title: '设置',
+    title: 'Settings',
     index: '/helloworld',
   }
 ]

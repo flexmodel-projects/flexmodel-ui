@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="info">编辑</el-button>
+            <el-button type="info">Edit</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -15,11 +15,11 @@
     <el-col>
       <el-card shadow="never">
         <el-table :data="model?.fields" style="width: 100%">
-          <el-table-column label="名称" prop="name"/>
-          <el-table-column label="类型" prop="type"/>
-          <el-table-column label="是否唯一" prop="unique"/>
-          <el-table-column label="可为空" prop="nullable"/>
-          <el-table-column label="备注" prop="comment"/>
+          <el-table-column label="Name" prop="name"/>
+          <el-table-column label="Type" prop="type"/>
+          <el-table-column label="Unique" prop="unique"/>
+          <el-table-column label="Nullable" prop="nullable"/>
+          <el-table-column label="Comment" prop="comment"/>
         </el-table>
       </el-card>
     </el-col>

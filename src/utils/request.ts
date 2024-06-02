@@ -17,7 +17,7 @@ export interface ResponseData {
 const errorHandler = async (error: any) => {
   const {response, message} = error
   // request用catch捕获报错
-  ElMessage.error(`失败: ${message}`);
+  ElMessage.error(`Fail: ${message}`);
   return Promise.reject(response)
 }
 

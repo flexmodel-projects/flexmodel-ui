@@ -14,35 +14,35 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: Home,
     meta: {
-      title: '首页'
+      title: 'Index Page'
     },
     children: [
       {
         path: '/helloworld',
         component: HelloWorld,
         meta: {
-          title: '你好世界'
+          title: 'Hello world'
         },
       },
       {
         path: '/modeling',
         component: Modeling,
         meta: {
-          title: '建模'
+          title: 'Modeling'
         },
       },
       {
         path: '/logs',
         component: HelloWorld,
         meta: {
-          title: '日志'
+          title: 'Logs'
         },
       },
       {
         path: '/datasource',
         component: Datasource,
         meta: {
-          title: '数据源'
+          title: 'Data source'
         },
       }
     ]
@@ -55,7 +55,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  document.title = `${to.meta.title} | 一站式 API 设计平台`;
+  document.title = `${to.meta.title} | All-in-one API design platform`;
   next();
 });
 

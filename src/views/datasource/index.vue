@@ -15,7 +15,7 @@
         </div>
         <el-divider/>
         <div>
-          <el-button type="primary" @click="toggleSelection()" style="width: 100%">连接数据源</el-button>
+          <el-button type="primary" :icon="Connection" @click="toggleSelection()" style="width: 100%" plain>Connect database</el-button>
         </div>
       </el-card>
     </el-col>
@@ -26,10 +26,10 @@
             <el-row>
               <el-col :span="12">{{ activeDs.name }}</el-col>
               <el-col :span="12" style="text-align: right">
-                <el-button @click="router.push(`/modeling?datasource=${activeDs.name}`)">建模</el-button>
-                <el-button type="info">刷新</el-button>
-                <el-button type="info">测试</el-button>
-                <el-button type="info">编辑</el-button>
+                <el-button @click="router.push(`/modeling?datasource=${activeDs.name}`)">Modeling</el-button>
+                <el-button type="info">Refresh</el-button>
+                <el-button type="info">Test</el-button>
+                <el-button type="info">Edit</el-button>
               </el-col>
             </el-row>
           </el-card>
@@ -37,15 +37,15 @@
         <el-col>
           <el-card shadow="never">
             <el-descriptions border column="1">
-              <el-descriptions-item label="连接名称">{{ activeDs.name }}</el-descriptions-item>
-              <el-descriptions-item label="连接类型">{{ activeDs.type }}</el-descriptions-item>
-              <el-descriptions-item label="数据库类型">{{ activeDs.config?.dbKind }}</el-descriptions-item>
-              <el-descriptions-item label="连接地址">{{ activeDs.config?.url }}</el-descriptions-item>
-              <el-descriptions-item label="用户名">{{ activeDs.config?.username }}</el-descriptions-item>
-              <el-descriptions-item label="密码">
+              <el-descriptions-item label="Connection name">{{ activeDs.name }}</el-descriptions-item>
+              <el-descriptions-item label="Connection type">{{ activeDs.type }}</el-descriptions-item>
+              <el-descriptions-item label="Database type">{{ activeDs.config?.dbKind }}</el-descriptions-item>
+              <el-descriptions-item label="URL">{{ activeDs.config?.url }}</el-descriptions-item>
+              <el-descriptions-item label="Username">{{ activeDs.config?.username }}</el-descriptions-item>
+              <el-descriptions-item label="Password">
                 <PasswordHide :text="activeDs.config?.password"/>
               </el-descriptions-item>
-              <el-descriptions-item label="创建时间">{{ activeDs.createTime }}</el-descriptions-item>
+              <el-descriptions-item label="Create time">{{ activeDs.createTime }}</el-descriptions-item>
             </el-descriptions>
           </el-card>
         </el-col>
@@ -55,12 +55,13 @@
   </el-row>
 </template>
 <script setup lang="ts">
+
 import {ElMessage} from "element-plus";
 import {getDatasourceList} from "~/api/datasource";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import PasswordHide from "~/components/PasswordHide.vue";
-
+import {Connection} from "@element-plus/icons-vue";
 const router = useRouter();
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
