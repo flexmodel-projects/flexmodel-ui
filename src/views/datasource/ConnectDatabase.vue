@@ -38,7 +38,7 @@
       <div v-if="active==1">
         <el-form-item required label="Connection name">
           <el-input v-model="data.name"/>
-        </el-form-item>
+        </el-form-item>`
         <el-form-item required label="Database URL">
           <el-input v-model="data.url" placeholder="e.g. jdbc:mysql://xxxx"/>
         </el-form-item>
