@@ -15,8 +15,8 @@
         </div>
         <el-divider/>
         <div>
-          <el-button type="primary" :icon="Connection" @click="toggleSelection()" style="width: 100%" plain>Connect
-            database
+          <el-button type="primary" :icon="Connection" @click="drawerVisible = true" style="width: 100%" plain>
+            Connect Database
           </el-button>
         </div>
       </el-card>
@@ -29,9 +29,9 @@
               <el-col :span="12">{{ activeDs.name }}</el-col>
               <el-col :span="12" style="text-align: right">
                 <el-button @click="router.push(`/modeling?datasource=${activeDs.name}`)">Modeling</el-button>
-                <el-button type="primary">Refresh</el-button>
-                <el-button type="primary">Test</el-button>
-                <el-button type="primary">Edit</el-button>
+                <el-button>Refresh</el-button>
+                <el-button>Test</el-button>
+                <el-button type="primary" :disabled="activeDs.type==='system'">Edit</el-button>
               </el-col>
             </el-row>
           </el-card>
@@ -52,9 +52,9 @@
           </el-card>
         </el-col>
       </el-row>
-
     </el-col>
   </el-row>
+  <ConnectDatabase :visible="drawerVisible" @close="drawerVisible = false"/>
 </template>
 <script setup lang="ts">
 
@@ -64,7 +64,9 @@ import {ref} from "vue";
 import {useRouter} from "vue-router";
 import PasswordHide from "~/components/PasswordHide.vue";
 import {Connection} from "@element-plus/icons-vue";
+import ConnectDatabase from "~/views/datasource/ConnectDatabase.vue";
 
+const drawerVisible = ref<boolean>(false);
 const router = useRouter();
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
