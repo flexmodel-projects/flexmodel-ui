@@ -14,7 +14,7 @@
     </el-col>
     <el-col>
       <el-card shadow="never">
-        <el-table :data="recordList" style="width: 100%">
+        <el-table :data="records.list" style="width: 100%">
           <el-table-column v-for="item in model?.fields" :label="item.name" :prop="item.name">
             <template #default="{ row }">
               {{ row[item.name] }}
@@ -35,16 +35,27 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="pagination">
+          <el-pagination
+            class="flex justify-end mr-10px mt-12px"
+            v-model:current-page="query.currentPage"
+            v-model:page-size="query.pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="records.total"
+          />
+        </div>
       </el-card>
     </el-col>
   </el-row>
-  <el-dialog @close="resetForm(formRef)" v-model="dialogFormVisible" title="New record" width="500">
+  <el-dialog @close="resetForm(formRef)" v-model="dialogFormVisible"
+             :title="editMode?`Edit ${model.name} record`:`New ${model.name} record`" width="500">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" status-icon>
       <el-form-item v-for="field in model.fields"
                     :label="field.name"
                     :prop="field.name"
                     :required="!field.nullable">
-        <el-input v-if="field.type=='id'" v-model="form[field.name]"/>
+        <el-input v-if="field.type=='id'" :disabled="editMode" v-model="form[field.name]"/>
         <el-input v-else-if="field.type=='string'" :placeholder="field.comment" v-model="form[field.name]"/>
         <el-input v-else-if="field.type=='text'" :placeholder="field.comment" type="textarea"
                   v-model="form[field.name]"/>
@@ -74,16 +85,25 @@
 </template>
 <script setup lang="ts">
 import {reactive, ref, watchEffect} from "vue";
-import {createRecord, deleteRecord, getRecordList} from "~/api/record";
+import {createRecord, deleteRecord, getRecordList, updateRecord} from "~/api/record";
 import type {FormInstance, FormRules} from 'element-plus'
 
 const dialogFormVisible = ref(false);
 const editMode = ref<boolean>(false);
 const props = defineProps(['datasource', 'model']);
 const model = ref<any>();
-const recordList = ref<any[]>([]);
+const query = reactive({
+  currentPage: 1,
+  pageSize: 10,
+  filter: '',
+  sort: '',
+});
+const records = ref<any[]>([]);
 const reqRecordList = async () => {
-  recordList.value = await getRecordList(props.datasource, props.model?.name);
+  records.value = await getRecordList(props.datasource, props.model?.name, {
+    currentPage: query.currentPage,
+    pageSize: query.pageSize
+  });
 };
 const reqDeleteRecord = async (record: any) => {
   if (!model.value?.idField) {
@@ -99,7 +119,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {
     if (valid) {
-      await createRecord(props.datasource, model.value.name, form);
+      if (editMode.value) {
+        await updateRecord(props.datasource, model.value.name, form[model.value?.idField?.name], form);
+      } else {
+        await createRecord(props.datasource, model.value.name, form);
+      }
       await reqRecordList();
       dialogFormVisible.value = false;
     }
@@ -116,10 +140,11 @@ const handleEdit = (record: any) => {
   dialogFormVisible.value = true;
   editMode.value = true;
   Object.keys(record).forEach((key: string) => {
-      const value = record[key];
-      form[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
-    });
+    const value = record[key];
+    form[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
+  });
 };
+
 watchEffect(() => {
   if (props.model) {
     reqRecordList();
@@ -136,5 +161,4 @@ watchEffect(() => {
 });
 </script>
 <style scoped>
-
 </style>

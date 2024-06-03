@@ -1,10 +1,15 @@
 import request from '../utils/request'
 import {BASE_URI} from './base'
 
-export function getRecordList(datasourceName: string, modelName: string) {
+export function getRecordList(datasourceName: string, modelName: string,
+                              query?: {
+                                currentPage: number,
+                                pageSize: number
+                              }) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records`,
-    method: 'get'
+    method: 'get',
+    params: query
   });
 }
 
