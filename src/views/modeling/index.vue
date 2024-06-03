@@ -18,10 +18,10 @@
                 </el-button>
               </template>
             </el-select>
-            <el-button type="info" :icon="Refresh">Refresh</el-button>
+            <el-button type="primary" :icon="Refresh">Refresh</el-button>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-segmented v-model="activeView" :options="options"/>
+            <el-segmented v-model="viewMode" :options="options"/>
           </el-col>
         </el-row>
       </el-card>
@@ -58,8 +58,8 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <Model v-if="activeView==='model'" :datasource="activeDs" :model="activeModel"/>
-      <Record v-if="activeView==='record'" :datasource="activeDs" :model="activeModel"/>
+      <Model v-if="viewMode==='model'" :datasource="activeDs" :model="activeModel"/>
+      <Record v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
 </template>
@@ -84,7 +84,7 @@ const options = [
     value: 'record',
   }
 ]
-const activeView = ref<string>('model');
+const viewMode = ref<string>('model');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const searchQuery = ref<string>();

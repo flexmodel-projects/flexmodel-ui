@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="info">Edit</el-button>
+            <el-button type="primary">Edit</el-button>
           </el-col>
         </el-row>
       </el-card>

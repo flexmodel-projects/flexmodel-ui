@@ -15,7 +15,9 @@
         </div>
         <el-divider/>
         <div>
-          <el-button type="primary" :icon="Connection" @click="toggleSelection()" style="width: 100%" plain>Connect database</el-button>
+          <el-button type="primary" :icon="Connection" @click="toggleSelection()" style="width: 100%" plain>Connect
+            database
+          </el-button>
         </div>
       </el-card>
     </el-col>
@@ -27,9 +29,9 @@
               <el-col :span="12">{{ activeDs.name }}</el-col>
               <el-col :span="12" style="text-align: right">
                 <el-button @click="router.push(`/modeling?datasource=${activeDs.name}`)">Modeling</el-button>
-                <el-button type="info">Refresh</el-button>
-                <el-button type="info">Test</el-button>
-                <el-button type="info">Edit</el-button>
+                <el-button type="primary">Refresh</el-button>
+                <el-button type="primary">Test</el-button>
+                <el-button type="primary">Edit</el-button>
               </el-col>
             </el-row>
           </el-card>
@@ -62,10 +64,10 @@ import {ref} from "vue";
 import {useRouter} from "vue-router";
 import PasswordHide from "~/components/PasswordHide.vue";
 import {Connection} from "@element-plus/icons-vue";
+
 const router = useRouter();
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
-
 const reqDatasourceList = async () => {
   try {
     dsList.value = await getDatasourceList();
@@ -74,10 +76,10 @@ const reqDatasourceList = async () => {
     ElMessage.error(error as Error);
   }
 };
+reqDatasourceList();
 const handleItemChange = (item: Datasource) => {
   activeDs.value = item;
 }
-reqDatasourceList();
 </script>
 <style scoped lang="scss">
 .datasource-wrap {
