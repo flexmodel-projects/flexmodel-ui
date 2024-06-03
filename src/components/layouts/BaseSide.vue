@@ -84,17 +84,17 @@ const items: MenuItem[] = [
       {
         icon: MagicStick,
         title: 'API design',
-        index: '/helloworld',
+        index: '/api-design',
       },
       {
         icon: Document,
         title: 'API document',
-        index: '/helloworld',
+        index: '/api-document',
       },
       {
         icon: DataLine,
         title: 'API logs',
-        index: '/logs',
+        index: '/api-logs',
       }
     ]
   },

@@ -39,25 +39,29 @@
         <el-form-item required label="Connection name">
           <el-input v-model="data.name"/>
         </el-form-item>
-        <el-form-item required label="Database URL">
-          <el-input v-model="data.url" placeholder="e.g. jdbc:mysql://xxxx"/>
-        </el-form-item>
-        <el-form-item required label="Username">
-          <el-input v-model="data.username"/>
-        </el-form-item>
-        <el-form-item label="Password">
-          <el-input v-model="data.password"/>
-        </el-form-item>
       </div>
     </el-form>
-
+    <div v-if="active==1">
+      <MySQLConfig v-if="data.config.dbKind === 'mysql'" v-model="data.config"/>
+      <SQLiteConfig v-else-if="data.config.dbKind === 'sqlite'" v-model="data.config"/>
+      <CommonConfig v-else v-model="data.config"/>
+    </div>
+    <div v-if="active==2">
+      {{ data }}
+    </div>
     <template #footer>
-      <el-button type="primary" style="margin-top: 12px" @click="next">Connect Database</el-button>
+      <el-button style="margin-top: 12px" @click="prev" v-if="active!=0">Go back</el-button>
+      <el-button type="primary" style="margin-top: 12px" @click="next" v-if="active==0">Select Database</el-button>
+      <el-button type="primary" style="margin-top: 12px" @click="next" v-else-if="active==1">Connect Database
+      </el-button>
     </template>
   </el-drawer>
 </template>
 <script setup lang="ts">
 import {reactive, ref, watchEffect} from "vue";
+import MySQLConfig from "~/views/datasource/MySQLConfig.vue";
+import CommonConfig from "~/views/datasource/CommonConfig.vue";
+import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
 
 const props = defineProps(['visible']);
 const emits = defineEmits(['confirm', 'cancel']);
@@ -70,7 +74,9 @@ watchEffect(() => {
 const data = reactive<any>({config: {dbKind: 'mysql'}});
 
 const active = ref(0);
-
+const prev = () => {
+  if (active.value-- < 0) active.value = 0
+}
 const next = () => {
   if (active.value++ > 2) active.value = 0
 }

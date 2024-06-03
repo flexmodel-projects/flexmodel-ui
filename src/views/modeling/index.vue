@@ -40,20 +40,23 @@
           </el-input>
         </div>
         <el-divider/>
-        <div class="datasource-wrap" style="height: 360px;overflow-y: scroll">
-          <div
-            class="ds-item"
-            :class="{ 'ds-item-active': item.name === activeModel?.name }"
-            v-for="(item, index) in filteredItems"
-            :key="index"
-            @click="handleItemChange(item)"
-          >
-            {{ item.name }}
+        <el-scrollbar style="height: 360px;">
+          <div class="datasource-wrap">
+            <div
+              class="ds-item"
+              :class="{ 'ds-item-active': item.name === activeModel?.name }"
+              v-for="(item, index) in filteredItems"
+              :key="index"
+              @click="handleItemChange(item)"
+            >
+              {{ item.name }}
+            </div>
           </div>
-        </div>
+        </el-scrollbar>
         <el-divider/>
         <div>
-          <el-button type="primary" :icon="Plus" @click="toggleSelection()" style="width: 100%" plain>Create model</el-button>
+          <el-button type="primary" :icon="Plus" @click="toggleSelection()" style="width: 100%" plain>Create model
+          </el-button>
         </div>
       </el-card>
     </el-col>
@@ -67,7 +70,7 @@
 import {getModelList} from "~/api/model";
 import {computed, ref, watchEffect} from "vue";
 import {getDatasourceList} from "~/api/datasource";
-import {Edit, Refresh, Plus} from "@element-plus/icons-vue";
+import {Edit, Plus, Refresh} from "@element-plus/icons-vue";
 import {useRoute, useRouter} from "vue-router";
 import Record from "~/views/modeling/Record.vue";
 import Model from "~/views/modeling/Model.vue";
