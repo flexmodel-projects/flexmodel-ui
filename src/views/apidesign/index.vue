@@ -75,7 +75,7 @@
                 type="warning"
                 effect="plain"
                 size="small"
-                class="dev-tag">
+                class="dev-tag" round>
                 Coming soon...
               </el-tag>
             </div>
@@ -95,7 +95,7 @@ import RestAPI from "~/views/apidesign/RestAPI.vue";
 import DefaultPage from "~/views/apidesign/DefaultPage.vue";
 
 const treeRef = ref<InstanceType<any>>()
-const viewType = ref<'REST_API' | 'XXX'>('REST_API');
+const viewType = ref<'REST_API' | 'XXX'>('');
 const filterText = ref<string>();
 watch(filterText, (val) => {
   treeRef.value!.filter(val)

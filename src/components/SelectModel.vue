@@ -33,6 +33,7 @@
   <el-divider/>
   <el-scrollbar :style="{height: props.height||'300px'}">
     <div class="datasource-wrap">
+      <el-empty v-if="filteredItems.length===0"/>
       <div
         class="ds-item"
         :class="{ 'ds-item-active': item.name === activeModel?.name }"
@@ -114,11 +115,11 @@ const handleItemChange = (item: any) => {
     padding: 0 4px;
 
     &:hover {
-      background-color: #f5f7fa;
+      background-color: var(--ep-fill-color-light);
     }
 
     &-active {
-      background-color: #ecf5ff;
+      background-color: var(--ep-fill-color-light);
     }
   }
 }

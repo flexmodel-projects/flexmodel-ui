@@ -104,11 +104,11 @@ const handleItemChange = (item: Datasource) => {
     padding: 0 4px;
 
     &:hover {
-      background-color: #f5f7fa;
+      background-color: var(--ep-fill-color-light);
     }
 
     &-active {
-      background-color: #ecf5ff;
+      background-color: var(--ep-fill-color-light);
     }
   }
 }
