@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    Please select the option on the right!
+    Please select the option on the left!
   </div>
 </template>
 <script setup lang="ts">
