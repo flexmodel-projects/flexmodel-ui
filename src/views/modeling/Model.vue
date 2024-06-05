@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col>
-      <el-card>
+      <el-card shadow="never">
         <el-row>
           <el-col :span="12">{{ model?.name }}
             {{ model?.comment }}

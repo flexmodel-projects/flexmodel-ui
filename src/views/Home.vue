@@ -36,5 +36,9 @@
     box-shadow: 5px 5px 10px 0 rgb(102 102 102 / 10%);
     background-color: var(--ep-bg-color);
   }
+  .ep-card {
+    border-radius: unset;
+  }
 }
+
 </style>

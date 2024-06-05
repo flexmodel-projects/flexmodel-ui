@@ -2,6 +2,8 @@
   <el-row>
     <el-col :span="4">
       <el-card shadow="never">
+        <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">DS management</div>
+        <el-divider/>
         <div class="datasource-wrap">
           <div
             class="ds-item"
@@ -10,6 +12,9 @@
             :key="index"
             @click="handleItemChange(item)"
           >
+            <el-icon class="p-2" size="15">
+              <component :is="DbsMap[item.config?.dbKind]"/>
+            </el-icon>
             {{ item.name }}
           </div>
         </div>
@@ -24,7 +29,7 @@
     <el-col :span="20">
       <el-row>
         <el-col>
-          <el-card>
+          <el-card shadow="never">
             <el-row>
               <el-col :span="12">{{ activeDs.name }}</el-col>
               <el-col :span="12" style="text-align: right">
@@ -45,7 +50,7 @@
               <el-descriptions-item label="URL">{{ activeDs.config?.url }}</el-descriptions-item>
               <el-descriptions-item label="Username">{{ activeDs.config?.username }}</el-descriptions-item>
               <el-descriptions-item label="Password">
-                <PasswordHide :text="activeDs.config?.password"/>
+                <HidePassword :text="activeDs.config?.password"/>
               </el-descriptions-item>
               <el-descriptions-item label="Create time">{{ activeDs.createTime }}</el-descriptions-item>
             </el-descriptions>
@@ -57,14 +62,14 @@
   <ConnectDatabase :visible="drawerVisible" @close="drawerVisible = false"/>
 </template>
 <script setup lang="ts">
-
 import {ElMessage} from "element-plus";
 import {getDatasourceList} from "~/api/datasource";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import PasswordHide from "~/components/PasswordHide.vue";
 import {Connection} from "@element-plus/icons-vue";
 import ConnectDatabase from "~/views/datasource/ConnectDatabase.vue";
+import {DbsMap} from "~/types";
+import HidePassword from "~/components/HidePassword.vue";
 
 const drawerVisible = ref<boolean>(false);
 const router = useRouter();
