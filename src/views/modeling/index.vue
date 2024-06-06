@@ -64,7 +64,6 @@ const handleItemChange = (ds: string, item: any) => {
   padding: 5px;
 
   .ds-item {
-    font-size: 14px;
     height: 32px;
     line-height: 32px;
     cursor: pointer;

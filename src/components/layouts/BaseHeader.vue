@@ -17,7 +17,7 @@ import {toggleDark} from "~/composables";
         />
       </el-col>
       <el-col :span="12">
-        <div style="padding-top: 20px; font-size: 18px;">
+        <div style="padding-top: 20px; font-size: 16px;">
           Flexmodel
         </div>
       </el-col>

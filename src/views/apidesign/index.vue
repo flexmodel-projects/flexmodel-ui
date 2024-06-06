@@ -17,15 +17,18 @@
         <el-scrollbar height="520">
           <el-tree
             ref="treeRef"
+            node-key="id"
             :data="data"
+            :current-node-key="selectedNode?.id"
             :props="defaultProps"
             @node-click="handleNodeClick"
             :filter-node-method="filterNode"
           >
             <template #default="{ node, data }">
-              <div class="flex items-center justify-between" @mouseover="node.settingVisible = true" @mouseleave="node.settingVisible = false">
+              <div class="flex items-center justify-between" @mouseover="node.settingVisible = true"
+                   @mouseleave="node.settingVisible = false">
                 <div v-if="data.type=='FOLDER'" flex>
-                  <div class="tree-item-icon" style="font-size: 16px;">
+                  <div class="tree-item-icon">
                     <el-icon>
                       <Folder/>
                     </el-icon>
@@ -40,16 +43,17 @@
                     <span>{{ node.label }}</span>
                   </div>
                 </div>
-                <div class="absolute right-6px">
+                <div class="absolute right-12px">
                   <el-dropdown trigger="hover" size="small">
-                    <el-icon :class="[!!node.settingVisible ? '' : 'invisible']" @click.stop><More /></el-icon>
+                    <el-icon :class="[!!node.settingVisible ? '' : 'invisible']" @click.stop>
+                      <More/>
+                    </el-icon>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item @click.stop="showCateAdd(data)">Rename</el-dropdown-item>
-                        <el-dropdown-item @click.stop="del(data.id)">
+                        <el-dropdown-item @click.stop="deleteDialogVisible=true;selectedNode=data">
                           <span class="text-#f56c6c">Delete</span>
                         </el-dropdown-item>
-
                       </el-dropdown-menu>
                     </template>
                   </el-dropdown>
@@ -93,11 +97,26 @@
       </el-col>
     </el-row>
   </el-dialog>
+  <el-dialog
+    v-model="deleteDialogVisible"
+    :title="`Delete '${selectedNode?.name}?'`"
+    width="500"
+  >
+    <span>Are you sure you want to delete <span class="font-bold">{{ selectedNode?.name }}</span>?</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="deleteDialogVisible = false">Cancel</el-button>
+        <el-button type="danger" @click="handleDelete">
+          Delete
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {Folder, Plus, More} from "@element-plus/icons-vue";
-import {getApiTree} from "~/api/api-info";
+import {Folder, More, Plus} from "@element-plus/icons-vue";
+import {deleteApi, getApis} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
 import RestAPI from "~/views/apidesign/RestAPI.vue";
 import DefaultPage from "~/views/apidesign/DefaultPage.vue";
@@ -120,19 +139,17 @@ const handleNodeClick = (data: Tree) => {
 }
 const data = ref<Tree[]>([]);
 const reqApiList = async () => {
-  data.value = await getApiTree();
+  data.value = await getApis();
 }
 reqApiList();
+const deleteDialogVisible = ref<boolean>(false);
 const dialogVisible = ref<boolean>(false);
-
+const selectedNode = ref<Record<string, any> | null>()
 const filterNode = (value: string, data: Tree) => {
   if (!value) return true
   return data.name.includes(value)
 }
-const defaultProps = {
-  children: 'children',
-  label: 'name',
-}
+
 const toApiDesign = (item: Endpoint) => {
   if (!item.enable) {
     ElMessage.warning("Not available");
@@ -146,10 +163,18 @@ const toDefault = () => {
   dialogVisible.value = false;
   reqApiList();
 }
+const handleDelete = async () => {
+  deleteDialogVisible.value = false;
+  await deleteApi(selectedNode.value?.id);
+  await reqApiList();
+}
+const defaultProps = {
+  children: 'children',
+  label: 'name',
+}
 </script>
 <style scoped lang="scss">
 .tree-item-icon {
-  font-size: 10px;
 }
 
 .tree-item-content {
@@ -157,8 +182,7 @@ const toDefault = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 190px;
-  font-size: 12px;
+  width: 195px;
 }
 
 .dev-tag {

@@ -105,7 +105,7 @@ const handleItemChange = (item: any) => {
   padding: 5px;
 
   .ds-item {
-    font-size: 14px;
+    font-size: var(--ep-font-size-base);
     height: 32px;
     line-height: 32px;
     cursor: pointer;

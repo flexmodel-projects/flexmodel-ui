@@ -50,7 +50,7 @@
                     </template>
                     <template #prefix>
                       <div>
-                        {{ form.apis[item].method }} {{ BASE_URI }}/v1
+                        {{ BASE_URI }}/v1
                       </div>
                     </template>
                   </el-input>

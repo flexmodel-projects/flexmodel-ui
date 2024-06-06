@@ -1,9 +1,9 @@
 import request from '../utils/request'
 import {BASE_URI} from './base'
 
-export function getApiTree() {
+export function getApis() {
   return request({
-    url: `${BASE_URI}/apis/tree`,
+    url: `${BASE_URI}/apis`,
     method: 'get'
   });
 }
