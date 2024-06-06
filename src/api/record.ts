@@ -3,7 +3,7 @@ import {BASE_URI} from './base'
 
 export function getRecordList(datasourceName: string, modelName: string,
                               query?: {
-                                currentPage: number,
+                                current: number,
                                 pageSize: number
                               }) {
   return request({

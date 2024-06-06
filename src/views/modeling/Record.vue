@@ -14,13 +14,13 @@
     </el-col>
     <el-col>
       <el-card shadow="never">
-        <el-table :data="records.list" style="width: 100%">
+        <el-table :data="records.list" height="428" style="width: 100%">
           <el-table-column v-for="item in model?.fields" :label="item.name" :prop="item.name">
             <template #default="{ row }">
               {{ row[item.name] }}
             </template>
           </el-table-column>
-          <el-table-column label="Operation" width="200" fixed="right">
+          <el-table-column label="Operations" width="200" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
                 Edit
@@ -38,7 +38,7 @@
         <div class="pagination">
           <el-pagination
             class="flex justify-end mr-10px mt-12px"
-            v-model:current-page="query.currentPage"
+            v-model:current-page="query.current"
             v-model:page-size="query.pageSize"
             :page-sizes="[10, 20, 50, 100]"
             layout="total, sizes, prev, pager, next, jumper"
@@ -93,7 +93,7 @@ const editMode = ref<boolean>(false);
 const props = defineProps(['datasource', 'model']);
 const model = ref<any>();
 const query = reactive({
-  currentPage: 1,
+  current: 1,
   pageSize: 10,
   filter: '',
   sort: '',
@@ -101,7 +101,7 @@ const query = reactive({
 const records = ref<any[]>([]);
 const reqRecordList = async () => {
   records.value = await getRecordList(props.datasource, props.model?.name, {
-    currentPage: query.currentPage,
+    current: query.current,
     pageSize: query.pageSize
   });
 };

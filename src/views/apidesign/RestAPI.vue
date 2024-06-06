@@ -35,7 +35,7 @@
                          :name="item"
                          :label="apiCheckOptions.filter(option=> option.value===item)[0]?.label">
               <el-form label-position="right" :model="form.apis[item]" label-width="150px">
-                <el-form-item label="name" prop="name" required>
+                <el-form-item label="Name" prop="name" required>
                   <el-input v-model="form.apis[item].name"/>
                 </el-form-item>
                 <el-form-item label="URI" prop="path" required>
@@ -144,7 +144,7 @@ watchEffect(() => {
         view: {
           type: "view",
           name: `Fetch a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/:id`,
+          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
           method: 'GET',
           auth: true,
           enable: false,
@@ -160,7 +160,7 @@ watchEffect(() => {
         update: {
           type: "update",
           name: `Update a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/:id`,
+          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
           method: 'PUT',
           auth: true,
           enable: false,
@@ -168,7 +168,7 @@ watchEffect(() => {
         delete: {
           type: "delete",
           name: `Delete a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/:id`,
+          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
           method: 'DELETE',
           auth: true,
           enable: false,
@@ -209,7 +209,13 @@ const submitForm = async () => {
         method: api.method,
         path: api.path,
         type: 'REST_API',
-        meta: {...api},
+        meta: {
+          auth: api.auth,
+          enable: api.enable,
+          type: api.type,
+          datasource: activeDs.value,
+          model: activeModel.value
+        },
       });
     }
   }
