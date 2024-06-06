@@ -9,7 +9,7 @@
     <el-form
       label-position="top"
       label-width="auto"
-      v-model="data"
+      :model="data"
     >
       <div v-if="active==0">
         <el-form-item class="mb-2 flex items-center text-sm"

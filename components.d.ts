@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    APIMethodTag: typeof import('./src/components/APIMethodTag.vue')['default']
     BaseHeader: typeof import('./src/components/layouts/BaseHeader.vue')['default']
     BaseSide: typeof import('./src/components/layouts/BaseSide.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
@@ -22,6 +23,9 @@ declare module 'vue' {
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
+    ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
+    ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElEmpty: typeof import('element-plus/es')['ElEmpty']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
@@ -53,6 +57,8 @@ declare module 'vue' {
     HidePassword: typeof import('./src/components/HidePassword.vue')['default']
     Logos: typeof import('./src/components/Logos.vue')['default']
     PasswordHide: typeof import('./src/components/PasswordHide.vue')['default']
+    RequestMethod: typeof import('./src/components/RequestMethod.vue')['default']
+    RequestMethodTag: typeof import('./src/components/RequestMethodTag.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectModel: typeof import('./src/components/SelectModel.vue')['default']

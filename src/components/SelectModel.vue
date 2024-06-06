@@ -60,7 +60,7 @@ import {getModelList} from "~/api/model";
 
 
 const props = defineProps(['datasource', 'height']);
-const emits = defineEmits(['onChange']);
+const emits = defineEmits(['change']);
 
 const router = useRouter()
 const activeDs = ref<string>(props.datasource);

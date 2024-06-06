@@ -1,6 +1,6 @@
 <template>
   <el-form label-position="top"
-           :modelValue="config">
+           :model="config">
     <el-form-item label="Database URL" prop="url">
       <el-input placeholder="e.g. jdbc:mysql://xxxx" v-model="config.url"/>
     </el-form-item>

@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="4">
+    <el-col :span="6">
       <el-card shadow="never">
         <div flex>
           <el-input
@@ -14,16 +14,16 @@
           <el-button type="primary" :icon="Plus" @click="dialogVisible = true" plain/>
         </div>
         <el-divider/>
-        <el-scrollbar style="height: 360px;">
-          <div>
-            <el-tree
-              ref="treeRef"
-              :data="data"
-              :props="defaultProps"
-              @node-click="handleNodeClick"
-              :filter-node-method="filterNode"
-            >
-              <template #default="{ node, data }">
+        <el-scrollbar height="520">
+          <el-tree
+            ref="treeRef"
+            :data="data"
+            :props="defaultProps"
+            @node-click="handleNodeClick"
+            :filter-node-method="filterNode"
+          >
+            <template #default="{ node, data }">
+              <div class="flex items-center justify-between" @mouseover="node.settingVisible = true" @mouseleave="node.settingVisible = false">
                 <div v-if="data.type=='FOLDER'" flex>
                   <div class="tree-item-icon" style="font-size: 16px;">
                     <el-icon>
@@ -34,27 +34,35 @@
                     <span>{{ node.label }}</span>
                   </div>
                 </div>
-                <div v-if="data.type=='REST_API'" flex>
-                  <div class="tree-item-icon">
-                    <span v-if="data.method=='GET'" style="color: green;">&nbsp;&nbsp;GET</span>
-                    <span v-else-if="data.method=='POST'" style="color: goldenrod;">POST</span>
-                    <span v-else-if="data.method=='PUT'" style="color: blue;">&nbsp;&nbsp;PUT</span>
-                    <span v-else-if="data.method=='DELETE'" style="color: red;">&nbsp;&nbsp;DEL</span>
-                    <span v-else>{{ data.method }}</span>
-                  </div>
+                <div v-if="data.type=='REST_API'" :title="node.label" class="flex">
+                  <RequestMethodTag class="tree-item-icon" :method="data.method"/>
                   <div class="tree-item-content">
                     <span>{{ node.label }}</span>
                   </div>
                 </div>
-              </template>
-            </el-tree>
-          </div>
+                <div class="absolute right-6px">
+                  <el-dropdown trigger="hover" size="small">
+                    <el-icon :class="[!!node.settingVisible ? '' : 'invisible']" @click.stop><More /></el-icon>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item @click.stop="showCateAdd(data)">Rename</el-dropdown-item>
+                        <el-dropdown-item @click.stop="del(data.id)">
+                          <span class="text-#f56c6c">Delete</span>
+                        </el-dropdown-item>
+
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </div>
+              </div>
+            </template>
+          </el-tree>
         </el-scrollbar>
       </el-card>
     </el-col>
-    <el-col :span="20">
-      <RestAPI v-if="viewType==='REST_API'"/>
-      <DefaultPage v-else />
+    <el-col :span="18">
+      <RestAPI @submit="toDefault" @cancel="viewType = 'DEFAULT_PAGE';" v-if="viewType==='REST_API'"/>
+      <DefaultPage v-if="viewType==='DEFAULT_PAGE'"/>
     </el-col>
   </el-row>
   <el-dialog
@@ -88,14 +96,15 @@
 </template>
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {Folder, Plus} from "@element-plus/icons-vue";
+import {Folder, Plus, More} from "@element-plus/icons-vue";
 import {getApiTree} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
 import RestAPI from "~/views/apidesign/RestAPI.vue";
 import DefaultPage from "~/views/apidesign/DefaultPage.vue";
+import RequestMethodTag from "~/components/RequestMethodTag.vue";
 
 const treeRef = ref<InstanceType<any>>()
-const viewType = ref<'REST_API' | 'XXX'>('');
+const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
 const filterText = ref<string>();
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
@@ -129,20 +138,27 @@ const toApiDesign = (item: Endpoint) => {
     ElMessage.warning("Not available");
     return;
   }
-  console.log(item);
   viewType.value = item.type;
   dialogVisible.value = false;
+}
+const toDefault = () => {
+  viewType.value = 'DEFAULT_PAGE';
+  dialogVisible.value = false;
+  reqApiList();
 }
 </script>
 <style scoped lang="scss">
 .tree-item-icon {
-  text-align: right;
-  font-weight: bold;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .tree-item-content {
-  padding-left: 10px;
+  padding-left: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 190px;
+  font-size: 12px;
 }
 
 .dev-tag {
