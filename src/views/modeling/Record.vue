@@ -15,12 +15,15 @@
     <el-col>
       <el-card shadow="never">
         <el-table :data="records.list" height="428" style="width: 100%">
-          <el-table-column v-for="item in model?.fields" :label="item.name" :prop="item.name">
+          <el-table-column v-for="item in model?.fields"
+                           :label="item.name"
+                           :prop="item.name"
+                           :show-overflow-tooltip="item.type==='text'||item.type==='json'">
             <template #default="{ row }">
               {{ row[item.name] }}
             </template>
           </el-table-column>
-          <el-table-column label="Operations" width="200" fixed="right">
+          <el-table-column label="Operations" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
                 Edit
