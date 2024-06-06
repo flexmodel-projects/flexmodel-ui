@@ -4,9 +4,9 @@
 // :root {
 //   --ep-color-primary: red;
 // }
-:root {
-  --ep-font-size-base: 12px; /* Element Plus的基础字体大小 */
-}
+//:root {
+//  --ep-font-size-base: 14px; /* Element Plus的基础字体大小 */
+//}
 
 body {
   font-family: Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
@@ -27,6 +27,6 @@ code {
   color: var(--ep-color-primary);
 }
 
-table {
-  font-size: 14px;
-}
+//table {
+//  font-size: 14px;
+//}

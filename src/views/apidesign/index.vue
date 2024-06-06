@@ -28,7 +28,7 @@
               <div class="flex items-center justify-between" @mouseover="node.settingVisible = true"
                    @mouseleave="node.settingVisible = false">
                 <div v-if="data.type=='FOLDER'" flex>
-                  <div class="tree-item-icon">
+                  <div>
                     <el-icon>
                       <Folder/>
                     </el-icon>
@@ -38,13 +38,13 @@
                   </div>
                 </div>
                 <div v-if="data.type=='REST_API'" :title="node.label" class="flex">
-                  <RequestMethodTag class="tree-item-icon" :method="data.method"/>
+                  <RequestMethodTag class="text-12px" :method="data.method"/>
                   <div class="tree-item-content">
                     <span>{{ node.label }}</span>
                   </div>
                 </div>
                 <div class="absolute right-12px">
-                  <el-dropdown trigger="hover" size="small">
+                  <el-dropdown trigger="hover">
                     <el-icon :class="[!!node.settingVisible ? '' : 'invisible']" @click.stop>
                       <More/>
                     </el-icon>
@@ -182,7 +182,7 @@ const defaultProps = {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 195px;
+  width: 190px;
 }
 
 .dev-tag {
