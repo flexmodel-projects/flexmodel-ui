@@ -203,19 +203,23 @@ const submitForm = async () => {
   for (const key of keys) {
     const api = form.apis[key];
     if (api.enable) {
+      const meta: any = {
+        auth: api.auth,
+        enable: api.enable,
+        type: api.type,
+        datasource: activeDs.value,
+        model: activeModel.value
+      };
+      if (key === 'list') {
+        meta.paging = form.apis[key].paging;
+      }
       await createApi({
         parentId: parentId,
         name: api.name,
         method: api.method,
         path: api.path,
         type: 'REST_API',
-        meta: {
-          auth: api.auth,
-          enable: api.enable,
-          type: api.type,
-          datasource: activeDs.value,
-          model: activeModel.value
-        },
+        meta: meta
       });
     }
   }
