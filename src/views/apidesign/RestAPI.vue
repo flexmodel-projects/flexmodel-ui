@@ -89,7 +89,7 @@ const emits = defineEmits(['submit', 'cancel']);
 const activeDs = ref<string>();
 const activeModel = ref<any>({});
 const activeTab = ref<string>('list');
-const apiCheckOptions: { label: string, value: string } = [
+const apiCheckOptions: { label: string, value: string }[] = [
   {
     value: 'list',
     label: 'List/Search'
