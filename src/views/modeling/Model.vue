@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary">Edit</el-button>
+            <el-button type="primary">New field</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -20,6 +20,20 @@
           <el-table-column label="unique" prop="unique"/>
           <el-table-column label="nullable" prop="nullable"/>
           <el-table-column label="comment" prop="comment"/>
+          <el-table-column label="Operations" width="150" fixed="right">
+            <template #default="scope">
+              <el-button type="primary" link @click="handleEdit(scope.row)">
+                Edit
+              </el-button>
+              <el-popconfirm title="Are you sure to delete this?" @confirm="reqDeleteRecord(scope.row)">
+                <template #reference>
+                  <el-button type="primary" link>
+                    Delete
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </el-col>
