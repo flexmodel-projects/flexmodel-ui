@@ -19,7 +19,7 @@
         />
       </el-col>
       <el-col>
-        <el-table :data="tableData" style="width: 99%">
+        <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 99%">
           <el-table-column prop="level" label="level" width="100">
             <template #default="{ row }">
               <el-tag type="primary" v-if="row.level==='DEBUG'">DEBUG</el-tag>
@@ -52,18 +52,6 @@
             </template>
           </el-table-column>
           <el-table-column prop="createdAt" label="createdAt" width="200"/>
-          <el-table-column fixed="right" label="Operations" width="150">
-            <template #default="scope">
-              <el-button
-                link
-                type="primary"
-                size="small"
-                @click.prevent="showDetail(scope.$index)"
-              >
-                Detail
-              </el-button>
-            </template>
-          </el-table-column>
         </el-table>
       </el-col>
       <el-col style="text-align: center">
@@ -73,16 +61,35 @@
       </el-col>
     </el-row>
   </el-card>
+  <el-drawer v-model="drawer" title="Request log" size="45%">
+    <el-descriptions border column="1">
+      <el-descriptions-item label="id">{{ log.id }}</el-descriptions-item>
+      <el-descriptions-item label="level">{{ log.level }}</el-descriptions-item>
+      <el-descriptions-item label="createdAt">{{ log.createdAt }}</el-descriptions-item>
+      <el-descriptions-item label="data.execTime">{{ log.data?.execTime }}ms</el-descriptions-item>
+      <el-descriptions-item label="data.status">{{ log.data?.status }}</el-descriptions-item>
+      <el-descriptions-item label="data.message">{{ log.data?.message }}</el-descriptions-item>
+      <el-descriptions-item label="data.errors">{{ log.data?.errors }}</el-descriptions-item>
+      <el-descriptions-item label="data.method">{{ log.data?.method }}</el-descriptions-item>
+      <el-descriptions-item label="data.path">{{ log.data?.path }}</el-descriptions-item>
+      <el-descriptions-item label="data.userAgent">{{ log.data?.userAgent }}</el-descriptions-item>
+      <el-descriptions-item label="data.remoteIp">{{ log.data?.remoteIp }}</el-descriptions-item>
+      <el-descriptions-item label="data.referer">{{ log.data?.referer }}</el-descriptions-item>
+    </el-descriptions>
+  </el-drawer>
 </template>
 <script setup lang="ts">
 import {reactive, ref} from "vue";
 import {getApiLogs} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
+import HidePassword from "~/components/HidePassword.vue";
 
 const isOver = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const tableData = ref<any[]>([])
-const index = reactive({count: 1})
+const index = reactive({count: 1});
+const log = ref<any>({});
+const drawer = ref(false);
 const reqApiLogs = async () => {
   const res: any[] = await getApiLogs(index.count++);
   if (res.length == 0) {
@@ -91,8 +98,9 @@ const reqApiLogs = async () => {
   tableData.value = res;
 }
 reqApiLogs();
-const showDetail = (index: number) => {
-  // tableData.value.splice(index, 1)
+const showDetail = (row: any) => {
+  log.value = row;
+  drawer.value = true;
 }
 const onAddItem = async () => {
   isLoading.value = true;
