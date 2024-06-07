@@ -2,11 +2,11 @@
   <el-row>
     <el-col :span="6">
       <el-card shadow="never">
-        <div flex>
+        <div class="flex">
           <el-input
             class="mr-1"
             style="width: 100%"
-            placeholder="Filter keyword"
+            placeholder="Search apis"
             v-model="filterText"
             clearable
           >
@@ -14,7 +14,7 @@
           <el-button type="primary" :icon="Plus" @click="dialogVisible = true" plain/>
         </div>
         <el-divider/>
-        <el-scrollbar height="520">
+        <el-scrollbar height="538">
           <el-tree
             ref="treeRef"
             node-key="id"
@@ -27,7 +27,7 @@
             <template #default="{ node, data }">
               <div class="flex items-center justify-between" @mouseover="node.settingVisible = true"
                    @mouseleave="node.settingVisible = false">
-                <div v-if="data.type=='FOLDER'" flex>
+                <div v-if="data.type=='FOLDER'" class="flex">
                   <div>
                     <el-icon>
                       <Folder/>

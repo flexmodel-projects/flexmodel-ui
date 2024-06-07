@@ -15,11 +15,11 @@
     <el-col>
       <el-card shadow="never">
         <el-table :data="model?.fields" style="width: 100%">
-          <el-table-column label="Name" prop="name"/>
-          <el-table-column label="Type" prop="type"/>
-          <el-table-column label="Unique" prop="unique"/>
-          <el-table-column label="Nullable" prop="nullable"/>
-          <el-table-column label="Comment" prop="comment"/>
+          <el-table-column label="name" prop="name"/>
+          <el-table-column label="type" prop="type"/>
+          <el-table-column label="unique" prop="unique"/>
+          <el-table-column label="nullable" prop="nullable"/>
+          <el-table-column label="comment" prop="comment"/>
         </el-table>
       </el-card>
     </el-col>

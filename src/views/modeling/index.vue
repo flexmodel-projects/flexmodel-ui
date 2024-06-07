@@ -4,6 +4,7 @@
       <el-card shadow="never">
         <el-row>
           <el-col :span="12">
+            Data modeling
           </el-col>
           <el-col :span="12" style="text-align: right">
             <el-segmented v-model="viewMode" :options="options"/>

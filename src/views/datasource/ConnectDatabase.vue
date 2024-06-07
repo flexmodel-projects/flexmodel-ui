@@ -92,6 +92,7 @@ const next = () => {
 }
 
 .segment-title {
+  font-size: 14px;
   width: 100%;
   font-weight: 600;
   padding-bottom: 10px;

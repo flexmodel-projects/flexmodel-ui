@@ -11,7 +11,8 @@
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 <style>
 #app {
   color: var(--ep-text-color-primary);

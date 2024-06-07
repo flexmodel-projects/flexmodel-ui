@@ -1,14 +1,12 @@
 <template>
-  <el-card shadow="never">
+  <el-card shadow="never" style="height: 660px;">
     <template #header>
-      <div class="card-header">
-        <span>Rest API generator</span>
-      </div>
+      <span>Rest API generator</span>
     </template>
     <el-row>
       <el-col :span="6">
         <el-card shadow="never">
-          <SelectModel datasource="system" @change="handleItemChange"/>
+          <SelectModel datasource="system" height="280px" @change="handleItemChange"/>
         </el-card>
       </el-col>
       <el-col :span="18">
@@ -72,7 +70,7 @@
       <div class="text-center">
         <el-button @click="handleCancel">Cancel</el-button>
         <el-button type="primary" @click="submitForm">
-          Submit
+          Create
         </el-button>
       </div>
     </template>

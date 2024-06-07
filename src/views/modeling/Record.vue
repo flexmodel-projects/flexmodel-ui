@@ -52,7 +52,7 @@
     </el-col>
   </el-row>
   <el-dialog @close="resetForm(formRef)" v-model="dialogFormVisible"
-             :title="editMode?`Edit ${model.name} record`:`New ${model.name} record`" width="500">
+             :title="editMode?`Edit ${model.name} record`:`New ${model.name} record`" width="600">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" status-icon>
       <el-form-item v-for="field in model.fields"
                     :label="field.name"
@@ -80,7 +80,7 @@
       <div class="dialog-footer">
         <el-button @click="resetForm(formRef)">Cancel</el-button>
         <el-button type="primary" @click="submitForm(formRef)">
-          Create
+          {{ editMode ? 'Save changes' : 'Create'}}
         </el-button>
       </div>
     </template>
