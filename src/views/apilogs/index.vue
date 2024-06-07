@@ -51,7 +51,7 @@
 
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="createdAt" width="200"/>
+          <el-table-column prop="createdAt" label="created at" width="200"/>
         </el-table>
       </el-col>
       <el-col style="text-align: center">

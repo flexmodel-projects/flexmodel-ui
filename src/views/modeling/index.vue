@@ -24,6 +24,7 @@
     </el-col>
     <el-col :span="20">
       <Model v-if="viewMode==='model'" :datasource="activeDs" :model="activeModel"/>
+      <ModelIndex v-if="viewMode==='index'" :datasource="activeDs" :model="activeModel"/>
       <Record v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
@@ -35,6 +36,7 @@ import Record from "~/views/modeling/Record.vue";
 import Model from "~/views/modeling/Model.vue";
 import SelectModel from "~/components/SelectModel.vue";
 import {Plus} from "@element-plus/icons-vue";
+import ModelIndex from "~/views/modeling/ModelIndex.vue";
 
 const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
@@ -42,6 +44,10 @@ const options = [
   {
     label: 'Model',
     value: 'model',
+  },
+  {
+    label: 'Index',
+    value: 'index',
   },
   {
     label: 'Record',
