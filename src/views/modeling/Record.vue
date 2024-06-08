@@ -23,7 +23,7 @@
               {{ row[item.name] }}
             </template>
           </el-table-column>
-          <el-table-column label="Operations" width="150" fixed="right">
+          <el-table-column label="operations" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
                 Edit

@@ -26,8 +26,8 @@
             </template>
           </el-table-column>
           <el-table-column label="unique" prop="unique" width="100"/>
-          <el-table-column label="valid message" prop="validMessage" width="200"/>
-          <el-table-column label="Operations" width="150" fixed="right">
+          <el-table-column label="validMessage" prop="validMessage" width="200"/>
+          <el-table-column label="operations" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
                 Edit

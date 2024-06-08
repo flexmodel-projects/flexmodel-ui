@@ -20,7 +20,7 @@
           <el-table-column label="unique" prop="unique"/>
           <el-table-column label="nullable" prop="nullable"/>
           <el-table-column label="comment" prop="comment"/>
-          <el-table-column label="Operations" width="150" fixed="right">
+          <el-table-column label="operations" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
                 Edit

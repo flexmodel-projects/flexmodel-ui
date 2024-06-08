@@ -18,7 +18,7 @@
       <el-card shadow="never">
         <SelectModel :datasource="activeDs" @change="handleItemChange"/>
         <el-divider/>
-        <el-button type="primary" :icon="Plus" @click="toggleSelection()" style="width: 100%" plain>Create model
+        <el-button type="primary" :icon="Plus" @click="drawerVisible = true" style="width: 100%" plain>Create model
         </el-button>
       </el-card>
     </el-col>
@@ -28,6 +28,7 @@
       <Record v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
+  <CreateModel :drawer="drawerVisible" @close="drawerVisible=false"/>
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
@@ -37,6 +38,7 @@ import Model from "~/views/modeling/Model.vue";
 import SelectModel from "~/components/SelectModel.vue";
 import {Plus} from "@element-plus/icons-vue";
 import ModelIndex from "~/views/modeling/ModelIndex.vue";
+import CreateModel from "~/views/modeling/CreateModel.vue";
 
 const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
@@ -57,6 +59,7 @@ const options = [
 const viewMode = ref<string>('model');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
+const drawerVisible = ref(false);
 if (activeDs.value) {
   router.push({path: '/modeling', query: {datasource: activeDs.value}});
 }
