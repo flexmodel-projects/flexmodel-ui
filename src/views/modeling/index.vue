@@ -28,7 +28,7 @@
       <Record v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
-  <CreateModel :drawer="drawerVisible" @close="drawerVisible=false"/>
+  <CreateModel v-model="drawerVisible" @close="drawerVisible=false"/>
 </template>
 <script setup lang="ts">
 import {ref} from "vue";

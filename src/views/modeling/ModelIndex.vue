@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary">New index</el-button>
+            <el-button type="primary" @click="changeDialogVisible = true">New index</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -20,13 +20,12 @@
             <template #default="{ row }">
               <div class="flex gap-1">
                 <el-tag type="info" v-for="item in row.fields">
-                  {{ item?.fieldName}} {{item.direction}}
+                  {{ item?.fieldName }} {{ item.direction }}
                 </el-tag>
               </div>
             </template>
           </el-table-column>
           <el-table-column label="unique" prop="unique" width="100"/>
-          <el-table-column label="validMessage" prop="validMessage" width="200"/>
           <el-table-column label="operations" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" link @click="handleEdit(scope.row)">
@@ -45,17 +44,21 @@
       </el-card>
     </el-col>
   </el-row>
+  <ChangeField v-model="changeDialogVisible" :datasource="datasourceName" :model="model"/>
 </template>
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";
+import ChangeField from "~/views/modeling/ChangeField.vue";
 
 const props = defineProps(['datasource', 'model']);
 const model = ref<any>({});
+
 watchEffect(() => {
   if (props.model) {
     model.value = props.model;
   }
 });
+const changeDialogVisible = ref<boolean>(false);
 </script>
 <style scoped>
 

@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary">New field</el-button>
+            <el-button type="primary" @click="changeDialogVisible=true">New field</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -38,17 +38,22 @@
       </el-card>
     </el-col>
   </el-row>
+  <ChangeField v-model="changeDialogVisible" :datasource="datasourceName" :model="model"/>
 </template>
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";
+import ChangeField from "~/views/modeling/ChangeField.vue";
 
 const props = defineProps(['datasource', 'model']);
+const datasourceName = ref<string>(props.datasource);
 const model = ref<any>({});
 watchEffect(() => {
   if (props.model) {
+    datasourceName.value = props.datasource;
     model.value = props.model;
   }
 });
+const changeDialogVisible = ref<boolean>(false);
 </script>
 <style scoped>
 
