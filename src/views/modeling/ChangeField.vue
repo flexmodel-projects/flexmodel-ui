@@ -1,13 +1,180 @@
 <template>
-  <el-dialog v-model="visible">
+  <el-dialog @close="cancelForm(formRef)" v-model="visible">
     <template #header>
       New field
     </template>
-    322323
+    <el-form label-position="right"
+             label-width="150px" :model="form" ref="formRef">
+      <el-form-item label="Name" prop="name" required>
+        <el-input v-model="form.name"/>
+      </el-form-item>
+      <el-form-item label="Comment" prop="comment">
+        <el-input v-model="form.comment"/>
+      </el-form-item>
+      <el-form-item label="Type" prop="type" required>
+        <el-select v-model="form.type" style="width: 100%;" filterable>
+          <el-option-group label="ID">
+            <el-option key="id" label="ID" value="id"/>
+          </el-option-group>
+          <el-option-group label="Basic field">
+            <el-option v-for="item in BasicFieldTypes"
+                       :key="item.name"
+                       :label="item.label"
+                       :value="item.name"/>
+          </el-option-group>
+          <el-option-group label="Relation">
+            <el-option v-for="item in modelList"
+                       :key="item.name"
+                       :label="item.name"
+                       :value="`relation:${item.name}`"/>
+          </el-option-group>
+        </el-select>
+      </el-form-item>
+      <!-- field extend item start-->
+      <div v-if="form.type==='id'">
+        <el-form-item label="Generated value" prop="comment">
+          <el-select v-model="form.generatedValue" style="width: 100%;">
+            <el-option v-for="item in IDGeneratedValues"
+                       :key="item.name"
+                       :label="item.label"
+                       :value="item.name"/>
+          </el-select>
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='string'">
+        <el-form-item label="Length" prop="length">
+          <el-input type="number" v-model="form.length"/>
+        </el-form-item>
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+
+      </div>
+      <div v-if="form.type==='text'">
+      </div>
+      <div v-if="form.type==='int'">
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='bigint'">
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='decimal'">
+        <el-form-item label="Precision" prop="precision">
+          <el-input type="number" v-model="form.precision"/>
+        </el-form-item>
+        <el-form-item label="Scale" prop="scale">
+          <el-input type="number" v-model="form.scale"/>
+        </el-form-item>
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='boolean'">
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='datetime'">
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='date'">
+        <el-form-item label="Default value" prop="defaultValue">
+          <FieldValue
+            v-model="form.defaultValue"
+            :datasource="datasource"
+            :model="model"
+            :field="form"
+          />
+        </el-form-item>
+      </div>
+      <div v-if="form.type==='json'">
+      </div>
+      <div v-if="form.type?.startsWith('relation')">
+        <el-form-item label="Target field" prop="targetField" required>
+          <el-select v-model="form.targetField">
+            <el-option v-for="item in relationModel?.fields"
+                       :key="item.name"
+                       :label="item.name"
+                       :value="item.name"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Cardinality" prop="cardinality">
+          <el-radio-group class="ml-4" v-model="form.cardinality">
+            <el-radio value="ONE_TO_ONE">One to one</el-radio>
+            <el-radio value="ONE_TO_MANY">One to many</el-radio>
+            <el-radio value="MANY_TO_MANY">Many to many</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="Cascade delete" prop="cascadeDelete">
+          <el-switch v-model="form.cascadeDelete"/>
+        </el-form-item>
+      </div>
+      <!-- field extend item end-->
+      <el-form-item v-if="GeneratorTypes[form.type]?.length > 0" label="Value generators">
+        <ValueGeneratorList
+          v-model="form.generators"
+          :datasource="datasourceName"
+          :model="model"
+          :field="form"
+        />
+      </el-form-item>
+      <el-form-item v-if="ValidatorTypes[form.type]?.length > 0" label="Value validators">
+        <ConstraintValidatorList
+          v-model="form.validators"
+          :datasource="datasourceName"
+          :model="model"
+          :field="form"
+        />
+      </el-form-item>
+      <div v-if="!(form.type==='id' || form.type?.startsWith('relation'))">
+        <el-form-item label="Nullable" prop="nullable">
+          <el-switch v-model="form.nullable"/>
+        </el-form-item>
+        <el-form-item label="Unique" prop="unique">
+          <el-switch v-model="form.unique"/>
+        </el-form-item>
+      </div>
+    </el-form>
     <template #footer>
       <div class="text-center">
-        <el-button @click="visible = false">Cancel</el-button>
-        <el-button type="primary" @click="submitForm">
+        <el-button @click="cancelForm(formRef)">Cancel</el-button>
+        <el-button type="primary" @click="submitForm(formRef)">
           Conform
         </el-button>
       </div>
@@ -15,27 +182,66 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {computed, reactive, ref, watchEffect} from "vue";
+import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "~/types";
+import {getModelList} from "~/api/model";
+import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
+import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vue";
+import FieldValue from "~/views/modeling/FieldValue.vue";
+import type {FormInstance} from "element-plus";
 
-const visible = ref<boolean>(false);
-const datasourceName = ref<string>("");
-const model = ref<any>({});
 const props = defineProps(['modelValue', 'datasource', 'model']);
-const emits = defineEmits(['update:modelValue']);
-
-watchEffect(() => {
-  if (props.modelValue) {
-    visible.value = props.modelValue;
-    datasourceName.value = props.datasource;
-    model.value = props.model;
-  }
-})
+const emits = defineEmits(['update:modelValue', 'conform']);
+const visible = ref<boolean>(false);
+const modelList = ref<any[]>([]);
 watchEffect(() => {
   if (visible) {
     emits('update:modelValue', visible);
   }
+});
+watchEffect(() => {
+  if (props.modelValue) {
+    reqModelList();
+  }
 })
-
+const form = reactive<any>({
+  name: '',
+  comment: '',
+  unique: false,
+  nullable: true,
+});
+const formRef = ref<FormInstance>({});
+const reqModelList = async () => {
+  modelList.value = await getModelList(props.datasource);
+};
+const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
+  modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
+watchEffect(() => {
+  if (form.type) {
+    let realType: string = form.type;
+    if (realType.startsWith('relation')) {
+      realType = 'relation';
+    }
+    Object.assign(form, FieldInitialValues[realType]);
+  }
+});
+const cancelForm = (formEl: FormInstance | undefined) => {
+  visible.value = false;
+  if (!formEl) return;
+  formEl.resetFields();
+}
+const submitForm = (formEl: FormInstance | undefined) => {
+  visible.value = false;
+  let realType: string = form.type;
+  let targetEntity = undefined;
+  if (realType.startsWith('relation')) {
+    targetEntity = realType.replace('relation:', '');
+    realType = 'relation';
+  }
+  emits('conform', {...form, type: realType, targetEntity: targetEntity});
+  if (!formEl) return;
+  formEl.resetFields();
+}
 </script>
 <style scoped>
 

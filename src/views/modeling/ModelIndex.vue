@@ -51,13 +51,7 @@ import {ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 
 const props = defineProps(['datasource', 'model']);
-const model = ref<any>({});
 
-watchEffect(() => {
-  if (props.model) {
-    model.value = props.model;
-  }
-});
 const changeDialogVisible = ref<boolean>(false);
 </script>
 <style scoped>

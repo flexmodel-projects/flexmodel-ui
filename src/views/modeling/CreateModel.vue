@@ -10,7 +10,11 @@
       <el-form-item label="Fields">
         <el-table :data="form.fields" style="width: 100%">
           <el-table-column label="name" prop="name"/>
-          <el-table-column label="type" prop="type"/>
+          <el-table-column label="type" prop="type">
+            <template #default="{row}">
+              {{ displayFieldType(row)}}
+            </template>
+          </el-table-column>
           <el-table-column label="unique" prop="unique"/>
           <el-table-column label="nullable" prop="nullable"/>
           <el-table-column label="comment" prop="comment"/>
@@ -29,7 +33,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button class="mt-4" style="width: 100%" @click="changeIndexDialogVisible = true">
+        <el-button class="mt-4" style="width: 100%" @click="changeFieldDialogVisible = true">
           Add field
         </el-button>
       </el-form-item>
@@ -71,13 +75,19 @@
       <el-button type="primary">Create</el-button>
     </template>
   </el-drawer>
-  <ChangeField v-model="changeFieldDialogVisible"/>
-  <ChangeIndex v-model="changeIndexDialogVisible"/>
+  <ChangeField v-model="changeFieldDialogVisible"
+               :datasource="datasource"
+               :model="form"
+               @conform="handleChangeField"
+  />
+  <ChangeIndex v-model="changeIndexDialogVisible" :datasource="datasource"/>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {computed, reactive, ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
+import Model from "~/views/modeling/Model.vue";
+import {displayFieldType} from "~/utils/models";
 
 const props = defineProps(['modelValue', 'datasource']);
 const emits = defineEmits(['update:modelValue']);
@@ -85,6 +95,23 @@ const emits = defineEmits(['update:modelValue']);
 const drawer = ref(false);
 const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
+const datasource = computed(() => props.datasource);
+const form = reactive<Model>({
+  name: '',
+  comment: '',
+  fields: [
+    {
+      name: 'id',
+      type: 'id',
+      unique: true,
+      nullable: false,
+      generatedValue: 'AUTO_INCREMENT',
+      comment: 'ID'
+    }
+  ],
+  indexes: []
+});
+
 watchEffect(() => {
   if (props.modelValue) {
     drawer.value = props.modelValue;
@@ -95,8 +122,10 @@ watchEffect(() => {
     emits('update:modelValue', drawer);
   }
 });
-const form = ref<any>({});
-
+const handleChangeField = (item: any) => {
+  console.log(item);
+  form.fields.push(item);
+}
 </script>
 <style scoped>
 

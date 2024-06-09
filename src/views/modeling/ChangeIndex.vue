@@ -17,17 +17,12 @@
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";
 
-const visible = ref<boolean>(false);
-const datasourceName = ref<string>("");
-const model = ref<any>({});
 const props = defineProps(['modelValue', 'datasource', 'model']);
 const emits = defineEmits(['update:modelValue']);
-
+const visible = ref<boolean>(props.modelValue);
 watchEffect(() => {
   if (props.modelValue) {
     visible.value = props.modelValue;
-    datasourceName.value = props.datasource;
-    model.value = props.model;
   }
 });
 watchEffect(() => {

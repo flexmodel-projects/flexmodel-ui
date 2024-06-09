@@ -7,7 +7,7 @@
             {{ model?.comment }}
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary" @click="changeDialogVisible=true">New field</el-button>
+            <el-button type="primary" @click="changeDialogVisible = true">New field</el-button>
           </el-col>
         </el-row>
       </el-card>
@@ -16,7 +16,11 @@
       <el-card shadow="never">
         <el-table :data="model?.fields" style="width: 100%">
           <el-table-column label="name" prop="name"/>
-          <el-table-column label="type" prop="type"/>
+          <el-table-column label="type" prop="type">
+            <template #default="{row}">
+              {{ displayFieldType(row)}}
+            </template>
+          </el-table-column>
           <el-table-column label="unique" prop="unique"/>
           <el-table-column label="nullable" prop="nullable"/>
           <el-table-column label="comment" prop="comment"/>
@@ -38,11 +42,13 @@
       </el-card>
     </el-col>
   </el-row>
-  <ChangeField v-model="changeDialogVisible" :datasource="datasourceName" :model="model"/>
+  <ChangeField v-model="changeDialogVisible" :datasource="datasourceName" @conform="(item)=>console.log(item)"
+               :model="model"/>
 </template>
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
+import {displayFieldType} from "~/utils/models";
 
 const props = defineProps(['datasource', 'model']);
 const datasourceName = ref<string>(props.datasource);

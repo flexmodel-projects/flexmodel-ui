@@ -108,7 +108,6 @@ const onAddItem = async () => {
   isLoading.value = false;
   isOver.value = res.length < 50;
   if (res.length != 0) {
-    debugger
     tableData.value.push(...res);
   }
 }
