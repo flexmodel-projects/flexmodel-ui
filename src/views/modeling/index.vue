@@ -7,7 +7,7 @@
             Data modeling
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-segmented v-model="viewMode" :options="options"/>
+            <el-segmented v-model="selectedItem" :options="options"/>
           </el-col>
         </el-row>
       </el-card>
@@ -23,9 +23,9 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <FieldList v-if="viewMode==='field'" :datasource="activeDs" :model="activeModel"/>
-      <IndexList v-if="viewMode==='index'" :datasource="activeDs" :model="activeModel"/>
-      <RecordList v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
+      <FieldList v-if="selectedItem==='field'" :datasource="activeDs" :model="activeModel"/>
+      <IndexList v-if="selectedItem==='index'" :datasource="activeDs" :model="activeModel"/>
+      <RecordList v-if="selectedItem==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
   <CreateModel v-model="drawerVisible" :datasource="activeDs" @close="drawerVisible=false"/>
@@ -57,7 +57,7 @@ const options = [
     value: 'record',
   }
 ]
-const viewMode = ref<string>('field');
+const selectedItem = ref<string>('field');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const drawerVisible = ref(false);

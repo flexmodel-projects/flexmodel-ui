@@ -44,15 +44,28 @@
       </el-card>
     </el-col>
   </el-row>
-  <ChangeField v-model="changeDialogVisible" :datasource="datasource" :model="model"/>
+  <ChangeIndex v-model="changeDialogVisible"
+               :datasource="datasource"
+               :model="model"
+               @conform="addOrEditIndex"
+               @cancel="delIndex"
+
+  />
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
-import ChangeField from "~/views/modeling/ChangeField.vue";
+import {ref} from "vue";
+import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 
 const props = defineProps(['datasource', 'model']);
-
 const changeDialogVisible = ref<boolean>(false);
+const addOrEditIndex = (item: any) => {
+  changeDialogVisible.value = false;
+  console.log(item);
+}
+const delIndex = () => {
+  changeDialogVisible.value = false;
+}
+
 </script>
 <style scoped>
 
