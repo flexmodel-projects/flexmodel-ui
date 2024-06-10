@@ -16,7 +16,7 @@ import DM8 from "~/assets/icons/svg/dm.svg";
 import TiDB from "~/assets/icons/svg/tidb.svg";
 import MongoDB from "~/assets/icons/svg/mongodb.svg";
 
-interface Datasource {
+export interface Datasource {
   name: string;
   type: string;
   createTime: string;
@@ -28,11 +28,11 @@ interface Datasource {
   }
 }
 
-interface Model {
+export interface Model {
   name: string,
   comment: string,
-  fields: [],
-  indexes: []
+  fields: any[],
+  indexes: any[]
 }
 
 

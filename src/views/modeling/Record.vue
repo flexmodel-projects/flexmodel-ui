@@ -80,21 +80,23 @@
       <div class="dialog-footer">
         <el-button @click="resetForm(formRef)">Cancel</el-button>
         <el-button type="primary" @click="submitForm(formRef)">
-          {{ editMode ? 'Save changes' : 'Create'}}
+          {{ editMode ? 'Save changes' : 'Create' }}
         </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {reactive, ref, watchEffect} from "vue";
+import {computed, reactive, ref, watchEffect} from "vue";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "~/api/record";
-import type {FormInstance, FormRules} from 'element-plus'
+import type {ElMessage, FormInstance, FormRules} from 'element-plus'
 
+const props = defineProps(['datasource', 'model']);
+
+const datasource = computed(() => props.datasource);
+const model = computed(() => props.model);
 const dialogFormVisible = ref(false);
 const editMode = ref<boolean>(false);
-const props = defineProps(['datasource', 'model']);
-const model = ref<any>();
 const query = reactive({
   current: 1,
   pageSize: 10,
@@ -151,7 +153,6 @@ const handleEdit = (record: any) => {
 watchEffect(() => {
   if (props.model) {
     reqRecordList();
-    model.value = props.model;
     props.model.fields.forEach((field: any) => {
       rules[field.name] = [
         {

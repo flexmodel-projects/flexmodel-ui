@@ -18,7 +18,7 @@
       <el-card shadow="never">
         <SelectModel :datasource="activeDs" @change="handleItemChange"/>
         <el-divider/>
-        <el-button type="primary" :icon="Plus" @click="drawerVisible = true" style="width: 100%" plain>Create model
+        <el-button type="primary" :icon="Plus" @click="drawerVisible = true" style="width: 100%" plain>New model
         </el-button>
       </el-card>
     </el-col>

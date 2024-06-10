@@ -44,7 +44,7 @@
       </el-card>
     </el-col>
   </el-row>
-  <ChangeField v-model="changeDialogVisible" :datasource="datasourceName" :model="model"/>
+  <ChangeField v-model="changeDialogVisible" :datasource="datasource" :model="model"/>
 </template>
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";

@@ -4,14 +4,6 @@
       {{ form }}
     </template>
     <el-form ref="formRef" label-width="130px" :model="form">
-      <el-form-item label="Generation time" prop="generationTime">
-        <el-select v-model="form.generationTime">
-          <el-option v-for="item in GenerationTimes"
-                     :key="item.name"
-                     :label="item.label"
-                     :value="item.name"/>
-        </el-select>
-      </el-form-item>
       <el-form-item v-if="form.type==='FixedValueGenerator'"
                     label="Fixed value" prop="value" required>
         <FieldValue
@@ -20,6 +12,14 @@
           :model="model"
           :field="field"
         />
+      </el-form-item>
+      <el-form-item label="Generation time" prop="generationTime">
+        <el-select v-model="form.generationTime">
+          <el-option v-for="item in GenerationTimes"
+                     :key="item.name"
+                     :label="item.label"
+                     :value="item.name"/>
+        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>

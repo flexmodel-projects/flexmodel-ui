@@ -93,7 +93,7 @@
       <el-form-item v-if="GeneratorTypes[form.type]?.length > 0" label="Default value">
         <ValueGeneratorList
           v-model="form.generator"
-          :datasource="datasourceName"
+          :datasource="datasource"
           :model="model"
           :field="form"
         />
@@ -101,7 +101,7 @@
       <el-form-item v-if="ValidatorTypes[form.type]?.length > 0" label="Value validators">
         <ConstraintValidatorList
           v-model="form.validators"
-          :datasource="datasourceName"
+          :datasource="datasource"
           :model="model"
           :field="form"
         />
@@ -133,20 +133,10 @@ import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vu
 import type {FormInstance} from "element-plus";
 import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
 
-const props = defineProps(['modelValue', 'datasource', 'model']);
-const emits = defineEmits(['update:modelValue', 'conform']);
+const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
+const emits = defineEmits(['conform', 'cancel']);
 const visible = ref<boolean>(false);
 const modelList = ref<any[]>([]);
-watchEffect(() => {
-  if (visible) {
-    emits('update:modelValue', visible);
-  }
-});
-watchEffect(() => {
-  if (props.modelValue) {
-    reqModelList();
-  }
-})
 const form = reactive<any>({
   name: '',
   comment: '',
@@ -159,22 +149,14 @@ const reqModelList = async () => {
 };
 const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
   modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
-watchEffect(() => {
-  if (form.type) {
-    let realType: string = form.type;
-    if (realType.startsWith('relation')) {
-      realType = 'relation';
-    }
-    Object.assign(form, FieldInitialValues[realType]);
-  }
-});
+
 const cancelForm = (formEl: FormInstance | undefined) => {
+  emits('cancel');
   visible.value = false;
   if (!formEl) return;
   formEl.resetFields();
 }
 const submitForm = (formEl: FormInstance | undefined) => {
-  visible.value = false;
   let realType: string = form.type;
   let targetEntity = undefined;
   if (realType.startsWith('relation')) {
@@ -185,6 +167,25 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 }
+watchEffect(() => {
+  if (form?.value?.type) {
+    let realType: string = form.type;
+    if (realType.startsWith('relation')) {
+      realType = 'relation';
+    }
+    Object.assign(form, FieldInitialValues[realType]);
+  }
+});
+watchEffect(() => {
+  if (props.visible) {
+    reqModelList();
+  }
+})
+watchEffect(() => {
+  if (props.currentValue) {
+    Object.assign(form, props.currentValue)
+  }
+})
 </script>
 <style scoped>
 
