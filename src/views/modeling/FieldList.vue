@@ -44,6 +44,7 @@
       </el-col>
     </el-row>
     <ChangeField v-model="changeDialogVisible"
+                 :visible="changeDialogVisible"
                  @conform="(item)=>{
                  changeDialogVisible = false
                  console.log(item)

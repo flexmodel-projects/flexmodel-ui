@@ -77,7 +77,7 @@
       </template>
     </el-drawer>
     <ChangeField v-model="changeFieldDialogVisible"
-                 :visible="changeIndexDialogVisible"
+                 :visible="changeFieldDialogVisible"
                  :datasource="datasource"
                  :model="form"
                  :current-value="fieldForm"

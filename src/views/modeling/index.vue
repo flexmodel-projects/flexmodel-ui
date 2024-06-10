@@ -23,9 +23,9 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <Model v-if="viewMode==='model'" :datasource="activeDs" :model="activeModel"/>
-      <ModelIndex v-if="viewMode==='index'" :datasource="activeDs" :model="activeModel"/>
-      <Record v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
+      <FieldList v-if="viewMode==='field'" :datasource="activeDs" :model="activeModel"/>
+      <IndexList v-if="viewMode==='index'" :datasource="activeDs" :model="activeModel"/>
+      <RecordList v-if="viewMode==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
   <CreateModel v-model="drawerVisible" :datasource="activeDs" @close="drawerVisible=false"/>
@@ -34,18 +34,19 @@
 import {ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import Record from "~/views/modeling/Record.vue";
-import Model from "~/views/modeling/Model.vue";
 import SelectModel from "~/components/SelectModel.vue";
 import {Plus} from "@element-plus/icons-vue";
-import ModelIndex from "~/views/modeling/ModelIndex.vue";
 import CreateModel from "~/views/modeling/CreateModel.vue";
+import FieldList from "~/views/modeling/FieldList.vue";
+import IndexList from "~/views/modeling/IndexList.vue";
+import RecordList from "~/views/modeling/RecordList.vue";
 
 const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
 const options = [
   {
-    label: 'Model',
-    value: 'model',
+    label: 'Field',
+    value: 'field',
   },
   {
     label: 'Index',
@@ -56,7 +57,7 @@ const options = [
     value: 'record',
   }
 ]
-const viewMode = ref<string>('model');
+const viewMode = ref<string>('field');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const drawerVisible = ref(false);
