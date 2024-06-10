@@ -45,37 +45,13 @@
         <el-form-item label="Length" prop="length">
           <el-input type="number" v-model="form.length"/>
         </el-form-item>
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
 
       </div>
       <div v-if="form.type==='text'">
       </div>
       <div v-if="form.type==='int'">
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='bigint'">
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='decimal'">
         <el-form-item label="Precision" prop="precision">
@@ -84,44 +60,12 @@
         <el-form-item label="Scale" prop="scale">
           <el-input type="number" v-model="form.scale"/>
         </el-form-item>
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='boolean'">
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='datetime'">
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='date'">
-        <el-form-item label="Default value" prop="defaultValue">
-          <FieldValue
-            v-model="form.defaultValue"
-            :datasource="datasource"
-            :model="model"
-            :field="form"
-          />
-        </el-form-item>
       </div>
       <div v-if="form.type==='json'">
       </div>
@@ -146,9 +90,9 @@
         </el-form-item>
       </div>
       <!-- field extend item end-->
-      <el-form-item v-if="GeneratorTypes[form.type]?.length > 0" label="Value generators">
+      <el-form-item v-if="GeneratorTypes[form.type]?.length > 0" label="Default value">
         <ValueGeneratorList
-          v-model="form.generators"
+          v-model="form.generator"
           :datasource="datasourceName"
           :model="model"
           :field="form"
@@ -185,10 +129,9 @@
 import {computed, reactive, ref, watchEffect} from "vue";
 import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "~/types";
 import {getModelList} from "~/api/model";
-import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
 import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vue";
-import FieldValue from "~/views/modeling/FieldValue.vue";
 import type {FormInstance} from "element-plus";
+import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
 
 const props = defineProps(['modelValue', 'datasource', 'model']);
 const emits = defineEmits(['update:modelValue', 'conform']);
@@ -210,7 +153,7 @@ const form = reactive<any>({
   unique: false,
   nullable: true,
 });
-const formRef = ref<FormInstance>({});
+const formRef = ref<FormInstance>();
 const reqModelList = async () => {
   modelList.value = await getModelList(props.datasource);
 };

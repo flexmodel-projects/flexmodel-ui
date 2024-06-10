@@ -4,13 +4,13 @@
     :key="index"
     class="mb-12px"
     readonly
-    :model-value="displayGeneratorValue(item)"
+    :model-value="displayValue(item)"
   >
     <template #suffix>
-      <el-icon class="mr-6px cursor-pointer hover:text-[el-color-primary]" @click="delGeneratorItem(index)">
+      <el-icon class="mr-6px cursor-pointer hover:text-[el-color-primary]" @click="delItem(index)">
         <Close/>
       </el-icon>
-      <el-icon class="cursor-pointer hover:text-[el-color-primary]" @click="editGeneratorItem( item)">
+      <el-icon class="cursor-pointer hover:text-[el-color-primary]" @click="editItem(index)">
         <Edit/>
       </el-icon>
     </template>
@@ -27,16 +27,16 @@
           v-for="(item, index) in filteredValidatorTypes"
           :key="index"
           :command="item.name"
-          @click="validatorDialogVisible = true"
+          @click="addItem"
         >
           {{ item.label }}
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ConstraintValidator v-model="validatorForm"
+  <ConstraintValidator :current-value="validatorForm"
                        @close="validatorDialogVisible = false"
-                       @add="(item:any)=>list.push(item)"
+                       @change="handleChange"
                        :visible="validatorDialogVisible"
                        :field="field"/>
 </template>
@@ -51,6 +51,7 @@ const emits = defineEmits(['update:modelValue']);
 const filteredValidatorTypes = computed(() => ValidatorTypes[props.field?.type]);
 const validatorDialogVisible = ref<boolean>(false);
 const validatorForm = ref<any>({});
+const selectedIndex = ref<number>(-1);
 const handleCommand = (command: string) => {
   validatorForm.value.type = command;
   validatorDialogVisible.value = true;
@@ -66,15 +67,28 @@ watchEffect(() => {
     emits('update:modelValue', list);
   }
 });
-const displayGeneratorValue = (item: any) => {
-  return `${item.type}: ${item.value}`;
+const displayValue = (item: any) => {
+  return `${item.type}: ${JSON.stringify(item)}`;
 }
-const delGeneratorItem = (index: number) => {
+const addItem = () => {
+  selectedIndex.value = -1;
+  validatorForm.value = {};
+  validatorDialogVisible.value = true;
+}
+const delItem = (index: number) => {
   list.value.splice(index, 1);
 }
-const editGeneratorItem = (item: any) => {
+const editItem = (index: number) => {
   validatorDialogVisible.value = true;
-  validatorForm.value = item;
+  selectedIndex.value = index;
+  validatorForm.value = list.value[index];
+}
+const handleChange = (item: any) => {
+  if (selectedIndex.value == -1) {
+    list.value.push(item);
+  } else {
+    list.value[selectedIndex.value] = item;
+  }
 }
 </script>
 <style scoped>

@@ -1,21 +1,20 @@
 <template>
   <el-input
     v-for="(item, index) in list"
-    :key="index"
     class="mb-12px"
     readonly
-    :model-value="displayGeneratorValue(item)"
+    :model-value="displayValue(item)"
   >
     <template #suffix>
-      <el-icon class="mr-6px cursor-pointer hover:text-[el-color-primary]" @click="delGeneratorItem(index)">
+      <el-icon class="mr-6px cursor-pointer hover:text-[el-color-primary]" @click="delItem(index)">
         <Close/>
       </el-icon>
-      <el-icon class="cursor-pointer hover:text-[el-color-primary]" @click="editGeneratorItem( item)">
+      <el-icon class="cursor-pointer hover:text-[el-color-primary]" @click="editItem(item)">
         <Edit/>
       </el-icon>
     </template>
   </el-input>
-  <el-dropdown trigger="click" @command="handleCommand">
+  <el-dropdown v-if="list.length < 1" trigger="click" @command="handleCommand">
     <el-button :icon="Plus">
       <el-icon class="hover:text-[el-color-primary]">
         <ArrowDown/>
@@ -27,16 +26,16 @@
           v-for="(item, index) in filteredGeneratorTypes"
           :key="index"
           :command="item.name"
-          @click="generatorDialogVisible = true"
+          @click="addItem"
         >
           {{ item.label }}
         </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ValueGenerator v-model="generatorForm"
+  <ValueGenerator :current-value="generatorForm"
                   @close="generatorDialogVisible = false"
-                  @add="(item:any)=>list.push(item)"
+                  @change="item => list = [item]"
                   :visible="generatorDialogVisible"
                   :field="field"/>
 </template>
@@ -61,21 +60,25 @@ watchEffect(() => {
     list.value = [];
   }
 })
-const displayGeneratorValue = (item: any) => {
-  return `${item.type}: ${item.value}`;
+const displayValue = (item: any) => {
+  return `${item.type}: ${JSON.stringify(item)}`;
 }
-watchEffect(() => {
-  if (list.value) {
-    emits('update:modelValue', list);
-  }
-});
-const delGeneratorItem = (index: number) => {
-  list.value.splice(index, 1);
+const addItem = () => {
+  generatorForm.value = {};
+  generatorDialogVisible.value = true;
 }
-const editGeneratorItem = (item: any) => {
+const delItem = (index: number) => {
+  list.value = [];
+}
+const editItem = (item: any) => {
   generatorDialogVisible.value = true;
   generatorForm.value = item;
 }
+watchEffect(() => {
+  if (list.value) {
+    emits('update:modelValue', generatorForm.value);
+  }
+});
 </script>
 <style scoped>
 

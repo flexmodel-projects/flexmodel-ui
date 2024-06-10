@@ -30,7 +30,7 @@ interface Datasource {
 
 interface Model {
   name: string,
-  comment: stirng,
+  comment: string,
   fields: [],
   indexes: []
 }
@@ -165,6 +165,10 @@ export const IDGeneratedValues: any[] = [
 export const GeneratorTypes: any = {
   string: [
     {
+      name: 'FixedValueGenerator',
+      label: 'Fixed value'
+    },
+    {
       name: 'UUIDValueGenerator',
       label: 'UUID'
     },
@@ -174,11 +178,27 @@ export const GeneratorTypes: any = {
     }
   ],
   text: [],
-  int: [],
-  bigint: [],
-  decimal: [],
-  boolean: [],
+  int: [{
+    name: 'FixedValueGenerator',
+    label: 'Fixed value'
+  }],
+  bigint: [{
+    name: 'FixedValueGenerator',
+    label: 'Fixed value'
+  }],
+  decimal: [{
+    name: 'FixedValueGenerator',
+    label: 'Fixed value'
+  }],
+  boolean: [{
+    name: 'FixedValueGenerator',
+    label: 'Fixed value'
+  }],
   datetime: [
+    {
+      name: 'FixedValueGenerator',
+      label: 'Fixed value'
+    },
     {
       name: 'DatetimeNowValueGenerator',
       label: 'Now value'
@@ -186,12 +206,31 @@ export const GeneratorTypes: any = {
   ],
   date: [
     {
+      name: 'FixedValueGenerator',
+      label: 'Fixed value'
+    },
+    {
       name: 'DateNowValueGenerator',
       label: 'Now value'
     },
   ],
   json: []
 };
+
+export const GenerationTimes: { name: string, label: string }[] = [
+  {
+    name: 'INSERT',
+    label: 'Insert'
+  },
+  {
+    name: 'UPDATE',
+    label: 'Update'
+  },
+  {
+    name: 'ALWAYS',
+    label: 'Always'
+  },
+]
 
 export const ValidatorTypes: any = {
   string: [

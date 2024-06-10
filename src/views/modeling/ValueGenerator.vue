@@ -4,22 +4,27 @@
       {{ form }}
     </template>
     <el-form ref="formRef" label-width="130px" :model="form">
-      <el-form-item label="Skip if non null" prop="skipIfNonNull">
-        <el-switch v-model="form.skipIfNonNull"/>
+      <el-form-item label="Generation time" prop="generationTime">
+        <el-select v-model="form.generationTime">
+          <el-option v-for="item in GenerationTimes"
+                     :key="item.name"
+                     :label="item.label"
+                     :value="item.name"/>
+        </el-select>
       </el-form-item>
-      <div v-if="field.type==='string'"></div>
-      <div v-if="field.type==='text'"></div>
-      <div v-if="field.type==='int'"></div>
-      <div v-if="field.type==='bigint'"></div>
-      <div v-if="field.type==='decimal'"></div>
-      <div v-if="field.type==='boolean'"></div>
-      <div v-if="field.type==='datetime'"></div>
-      <div v-if="field.type==='date'"></div>
-      <div v-if="field.type==='json'"></div>
+      <el-form-item v-if="form.type==='FixedValueGenerator'"
+                    label="Fixed value" prop="value" required>
+        <FieldValue
+          v-model="form.value"
+          :datasource="datasource"
+          :model="model"
+          :field="field"
+        />
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="text-center">
-        <el-button @click="visible = false">Cancel</el-button>
+        <el-button @click="cancelForm(formRef)">Cancel</el-button>
         <el-button type="primary" @click="submitForm(formRef)">
           Conform
         </el-button>
@@ -30,24 +35,37 @@
 <script setup lang="ts">
 import {reactive, ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
+import {GenerationTimes} from "~/types";
+import FieldValue from "~/views/modeling/FieldValue.vue";
 
-const props = defineProps(['visible', 'modelValue', 'datasource', 'model', 'field']);
-const emits = defineEmits(['update:modelValue', 'add']);
+const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
+const emits = defineEmits(['change']);
 const visible = ref<boolean>(props.visible);
-watchEffect(() => {
-  if (props.visible) {
-    visible.value = props.visible;
-  }
-});
-const form = reactive<any>(props.modelValue);
-const formRef = ref<FormInstance>({});
+const form = reactive<any>({generationTime: 'INSERT'});
+const formRef = ref<FormInstance>();
+
 const submitForm = (formEl: FormInstance | undefined) => {
   visible.value = false;
-  emits('update:modelValue', form);
-  emits('add', {...form});
+  emits('change', {...form});
   if (!formEl) return;
   formEl.resetFields();
 }
+const cancelForm = (formEl: FormInstance | undefined) => {
+  visible.value = false;
+  if (!formEl) return;
+  formEl.resetFields();
+}
+watchEffect(() => {
+  if (props.visible) {
+    Object.assign(form, {})
+    visible.value = props.visible;
+  }
+});
+watchEffect(() => {
+  if (props.currentValue) {
+    Object.assign(form, props.currentValue)
+  }
+});
 </script>
 
 <style scoped>

@@ -117,7 +117,7 @@ const reqDeleteRecord = async (record: any) => {
 };
 const form = reactive<any>({});
 const rules = reactive<FormRules<any>>({});
-const formRef = ref<FormInstance>({});
+const formRef = ref<FormInstance>();
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {

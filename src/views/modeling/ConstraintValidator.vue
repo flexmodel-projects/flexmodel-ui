@@ -5,13 +5,8 @@
     </template>
     <el-form ref="formRef" label-width="130px" :model="form">
       <div v-if="field.type==='string'">
-        <el-form-item v-if="form.type==='RegexpValidator'" label="Regexp" prop="regexp">
-          <FieldValue
-            v-model="form.regexp"
-            :datasource="datasource"
-            :model="model"
-            :field="field"
-          />
+        <el-form-item v-if="form.type==='RegexpValidator'" label="Regexp" prop="regexp" required>
+          <el-input v-model="form.regexp"/>
         </el-form-item>
       </div>
       <div v-if="field.type==='text'"></div>
@@ -91,7 +86,7 @@
     </el-form>
     <template #footer>
       <div class="text-center">
-        <el-button @click="visible = false">Cancel</el-button>
+        <el-button @click="cancelForm(formRef)">Cancel</el-button>
         <el-button type="primary" @click="submitForm(formRef)">
           Conform
         </el-button>
@@ -104,23 +99,32 @@ import FieldValue from "~/views/modeling/FieldValue.vue";
 import {reactive, ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
 
-const props = defineProps(['visible', 'modelValue', 'datasource', 'model', 'field']);
-const emits = defineEmits(['update:modelValue', 'add']);
+const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
+const emits = defineEmits(['change']);
 const visible = ref<boolean>(props.visible);
+const form = reactive<any>({});
+const formRef = ref<FormInstance>();
+const submitForm = (formEl: FormInstance | undefined) => {
+  visible.value = false;
+  emits('change', {...form});
+  if (!formEl) return;
+  formEl.resetFields();
+}
+const cancelForm = (formEl: FormInstance | undefined) => {
+  visible.value = false;
+  if (!formEl) return;
+  formEl.resetFields();
+}
 watchEffect(() => {
   if (props.visible) {
     visible.value = props.visible;
   }
 });
-const form = reactive<any>(props.modelValue);
-const formRef = ref<FormInstance>({});
-const submitForm = (formEl: FormInstance | undefined) => {
-  visible.value = false;
-  emits('update:modelValue', form);
-  emits('add', {...form});
-  if (!formEl) return;
-  formEl.resetFields();
-}
+watchEffect(() => {
+  if (props.currentValue) {
+    Object.assign(form, props.currentValue)
+  }
+});
 </script>
 
 <style scoped>
