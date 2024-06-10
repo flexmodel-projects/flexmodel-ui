@@ -28,7 +28,12 @@
       <RecordList v-if="selectedItem==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
-  <CreateModel v-model="drawerVisible" :datasource="activeDs" @close="drawerVisible=false"/>
+  <CreateModel
+    v-model="drawerVisible"
+    :datasource="activeDs"
+    @conform="createModel"
+    @cancel="drawerVisible=false"
+  />
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
@@ -40,6 +45,7 @@ import CreateModel from "~/views/modeling/CreateModel.vue";
 import FieldList from "~/views/modeling/FieldList.vue";
 import IndexList from "~/views/modeling/IndexList.vue";
 import RecordList from "~/views/modeling/RecordList.vue";
+import {createModel as reqCreateModel} from "~/api/model";
 
 const route = useRoute(), router = useRouter()
 const {datasource} = route.query as Record<string, string>;
@@ -68,6 +74,11 @@ const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds;
   activeModel.value = item;
 }
+const createModel = async (item: any) => {
+  await reqCreateModel(activeDs.value, item);
+  drawerVisible.value = false;
+}
+
 </script>
 <style scoped lang="scss">
 .datasource-wrap {

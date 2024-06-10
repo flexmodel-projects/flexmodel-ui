@@ -56,7 +56,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {ref} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import {displayFieldType} from "~/utils/models";
 

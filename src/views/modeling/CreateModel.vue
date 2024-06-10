@@ -71,20 +71,20 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="drawer = false">Cancel</el-button>
-      <el-button type="primary" @click="createModel">Create</el-button>
+      <el-button @click="cancelForm">Cancel</el-button>
+      <el-button type="primary" @click="submitForm">Create</el-button>
     </template>
   </el-drawer>
   <ChangeField v-model="changeFieldDialogVisible"
                :visible="changeFieldDialogVisible"
-               :datasource="datasource"
+               :datasource="datasourceName"
                :model="form"
                :current-value="fieldForm"
                @conform="addOrEditField"
                @cancel="changeFieldDialogVisible = false"
   />
   <ChangeIndex v-model="changeIndexDialogVisible"
-               :datasource="datasource"
+               :datasource="datasourceName"
                :model="form"
                :current-value="indexForm"
                @conform="addOrEditIndex"
@@ -100,12 +100,12 @@ import {displayFieldType} from "~/utils/models";
 import {Model} from "~/types";
 
 const props = defineProps(['modelValue', 'datasource']);
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'conform', 'cancel']);
 
 const drawer = ref(false);
 const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
-const datasource = computed(() => props.datasource);
+const datasourceName = computed(() => props.datasource);
 
 const form = reactive<Model>({
   name: '',
@@ -175,12 +175,16 @@ watchEffect(() => {
   }
 });
 watchEffect(() => {
-  if (drawer) {
+  if (drawer.value) {
     emits('update:modelValue', drawer);
   }
 });
-const createModel = () => {
-  console.log(form);
+const cancelForm = () => {
+  emits('cancel');
+  drawer.value = false;
+}
+const submitForm = async () => {
+  await emits('conform', form);
   drawer.value = false;
 }
 </script>
