@@ -149,12 +149,8 @@ const reqModelList = async () => {
 };
 const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
   modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
-
 const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
-  visible.value = false;
-  if (!formEl) return;
-  formEl.resetFields();
 }
 const submitForm = (formEl: FormInstance | undefined) => {
   let realType: string = form.type;
@@ -163,9 +159,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
     targetEntity = realType.replace('relation:', '');
     realType = 'relation';
   }
-  emits('conform', {...form, type: realType, targetEntity: targetEntity});
-  if (!formEl) return;
-  formEl.resetFields();
+  emits('conform', {
+    ...form,
+    generator: Object.keys(form.generator).length === 0 ? null : form.generator,
+    type: realType,
+    targetEntity: targetEntity
+  });
 }
 watchEffect(() => {
   if (form?.value?.type) {

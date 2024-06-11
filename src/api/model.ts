@@ -31,7 +31,7 @@ export function createField(datasourceName: string, modelName: string, data: {})
   });
 }
 
-export function dropField(datasourceName: string, modelName: string) {
+export function dropField(datasourceName: string, modelName: string, fieldName: string) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
     method: 'delete'

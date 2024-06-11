@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import {ElMessage} from "element-plus";
+import {ref} from "vue"
+import {ElMessage} from "element-plus"
 
-defineProps<{ msg: string }>();
+defineProps<{ msg: string }>()
 
-const count = ref(0);
-const input = ref("element-plus");
+const count = ref(0)
+const input = ref("element-plus")
 
-const curDate = ref("");
+const curDate = ref("")
 
 const toast = () => {
-  ElMessage.success("Hello");
-};
+  ElMessage.success("Hello")
+}
 
 const value1 = ref(true);
 </script>

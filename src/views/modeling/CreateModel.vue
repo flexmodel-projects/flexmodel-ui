@@ -158,7 +158,6 @@ const handleEditIndex = (index: number) => {
   changeIndexDialogVisible.value = true;
 }
 const addOrEditIndex = (val: any) => {
-  debugger
   if (selectedIndexKey.value === -1) {
     form.indexes.push(val);
   } else {
@@ -168,6 +167,12 @@ const addOrEditIndex = (val: any) => {
 }
 const delIndex = (index: number) => {
   form.indexes.splice(index, 1);
+}
+const cancelForm = () => {
+  emits('cancel');
+}
+const submitForm = async () => {
+  emits('conform', form);
 }
 watchEffect(() => {
   if (props.modelValue) {
@@ -179,14 +184,6 @@ watchEffect(() => {
     emits('update:modelValue', drawer);
   }
 });
-const cancelForm = () => {
-  emits('cancel');
-  drawer.value = false;
-}
-const submitForm = async () => {
-  await emits('conform', form);
-  drawer.value = false;
-}
 </script>
 <style scoped>
 

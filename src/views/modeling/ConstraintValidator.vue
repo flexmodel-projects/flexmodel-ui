@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="visible" width="500px">
     <template #header>
-      {{ form }}
+      {{ form.type }}
     </template>
     <el-form ref="formRef" label-width="130px" :model="form">
       <div v-if="field.type==='string'">
@@ -98,6 +98,7 @@
 import FieldValue from "~/views/modeling/FieldValue.vue";
 import {reactive, ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
+import {ValidatorTypes} from "../../types";
 
 const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);

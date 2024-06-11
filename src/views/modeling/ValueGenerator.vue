@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="visible" width="500px">
     <template #header>
-      {{ form }}
+      {{ form.type }}
     </template>
     <el-form ref="formRef" label-width="130px" :model="form">
       <el-form-item v-if="form.type==='FixedValueGenerator'"

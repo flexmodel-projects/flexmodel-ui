@@ -23,16 +23,22 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <FieldList v-if="selectedItem==='field'" :datasource="activeDs" :model="activeModel"/>
-      <IndexList v-if="selectedItem==='index'" :datasource="activeDs" :model="activeModel"/>
+      <FieldList v-if="selectedItem==='field'"
+                 :datasource="activeDs"
+                 :model="activeModel"
+                 v-model="activeModel.fields"/>
+      <IndexList v-if="selectedItem==='index'"
+                 :datasource="activeDs"
+                 :model="activeModel"
+                 v-model="activeModel.indexes"/>
       <RecordList v-if="selectedItem==='record'" :datasource="activeDs" :model="activeModel"/>
     </el-col>
   </el-row>
   <CreateModel
     v-model="drawerVisible"
     :datasource="activeDs"
-    @conform="createModel"
-    @cancel="drawerVisible=false"
+    @conform="addModel"
+    @cancel="drawerVisible = false"
   />
 </template>
 <script setup lang="ts">
@@ -71,11 +77,12 @@ if (activeDs.value) {
   router.push({path: '/modeling', query: {datasource: activeDs.value}});
 }
 const handleItemChange = (ds: string, item: any) => {
-  activeDs.value = ds;
-  activeModel.value = item;
+  activeDs.value = ds
+  activeModel.value = item
 }
-const createModel = async (item: any) => {
+const addModel = async (item: any) => {
   await reqCreateModel(activeDs.value, item);
+  debugger
   drawerVisible.value = false;
 }
 

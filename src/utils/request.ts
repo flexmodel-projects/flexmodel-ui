@@ -14,10 +14,14 @@ export interface ResponseData {
  * 2. 后续程序不需要catch处理错误，只需要接收结果，如果报错后面的程序将不会执行
  *    这样可以减少后续处理结果时判断status的样板代码
  */
-const errorHandler = async (error: any) => {
+const errorHandler = async (error: { response: any, message: string }) => {
   const {response, message} = error
   // request用catch捕获报错
-  ElMessage.error(`Fail: ${message}`);
+  if (response.status >= 400 && response.status < 500) {
+    ElMessage.warning(response?.data.message || message);
+  } else if (response.status >= 500) {
+    ElMessage.error(response?.data.message || message);
+  }
   return Promise.reject(response)
 }
 

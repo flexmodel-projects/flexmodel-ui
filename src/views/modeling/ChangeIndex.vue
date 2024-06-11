@@ -78,13 +78,9 @@ const submitForm = () => {
     }),
     unique: form.unique
   });
-  if (!formRef.value) return;
-  formRef.value.resetFields();
 }
 const cancelForm = () => {
   emits('cancel');
-  if (!formRef.value) return;
-  formRef.value.resetFields();
 }
 watchEffect(() => {
   if (props.currentValue) {

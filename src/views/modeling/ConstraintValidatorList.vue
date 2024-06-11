@@ -57,16 +57,6 @@ const handleCommand = (command: string) => {
   validatorDialogVisible.value = true;
 }
 const list = ref<any[]>([]);
-watchEffect(() => {
-  if (props?.field.type) {
-    list.value = [];
-  }
-});
-watchEffect(() => {
-  if (list.value) {
-    emits('update:modelValue', list);
-  }
-});
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
@@ -90,6 +80,16 @@ const handleChange = (item: any) => {
     list.value[selectedIndex.value] = item;
   }
 }
+watchEffect(() => {
+  if (props?.field.type) {
+    list.value = [];
+  }
+});
+watchEffect(() => {
+  if (list.value) {
+    emits('update:modelValue', list);
+  }
+});
 </script>
 <style scoped>
 
