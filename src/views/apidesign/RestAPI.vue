@@ -133,7 +133,7 @@ watchEffect(() => {
         list: {
           type: "list",
           name: `Fetch a paginated ${activeModel.value.name} records list`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records`,
+          path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'GET',
           auth: true,
           paging: true,
@@ -142,7 +142,7 @@ watchEffect(() => {
         view: {
           type: "view",
           name: `Fetch a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
+          path: `/${activeDs.value}_${activeModel.value.name}/{id}`,
           method: 'GET',
           auth: true,
           enable: false,
@@ -150,7 +150,7 @@ watchEffect(() => {
         create: {
           type: "create",
           name: `Create a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records`,
+          path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'POST',
           auth: true,
           enable: false,
@@ -158,7 +158,7 @@ watchEffect(() => {
         update: {
           type: "update",
           name: `Update a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
+          path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'PUT',
           auth: true,
           enable: false,
@@ -166,7 +166,7 @@ watchEffect(() => {
         delete: {
           type: "delete",
           name: `Delete a single ${activeModel.value.name} record`,
-          path: `/ds/${activeDs.value}/models/${activeModel.value.name}/records/{id}`,
+          path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'DELETE',
           auth: true,
           enable: false,

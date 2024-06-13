@@ -18,7 +18,7 @@
         </el-button>
       </template>
     </el-select>
-    <el-button class="ml-1" :icon="Refresh"/>
+    <el-button class="ml-1" :icon="Refresh" @click="refreshDatasource" :loading="loading"/>
   </div>
   <el-divider/>
   <div>
@@ -51,10 +51,10 @@
 </template>
 <script setup lang="ts">
 
-import {DbsMap} from "~/types";
+import {Datasource, DbsMap} from "~/types";
 import {Document, Edit, Refresh} from "@element-plus/icons-vue";
 import {computed, ref, watchEffect} from "vue";
-import {getDatasourceList} from "~/api/datasource";
+import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from "~/api/datasource";
 import {useRouter} from "vue-router";
 import {getModelList} from "~/api/model";
 
@@ -67,6 +67,7 @@ const activeDs = ref<string>(props.datasource);
 const activeModel = ref<any>({});
 const dsList = ref<Datasource[]>([]);
 const modelList = ref<any[]>([]);
+const loading = ref<boolean>(false);
 
 const reqDatasourceList = async () => {
   const res = await getDatasourceList();
@@ -98,6 +99,13 @@ const handleItemChange = (item: any) => {
   activeModel.value = item;
   emits('change', activeDs.value, item);
 }
+
+const refreshDatasource = async () => {
+  loading.value = true;
+  modelList.value = await reqRefreshDatasource(activeDs.value);
+  loading.value = false;
+}
+
 </script>
 <style scoped lang="scss">
 .datasource-wrap {

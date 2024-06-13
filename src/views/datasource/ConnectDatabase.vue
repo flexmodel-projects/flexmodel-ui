@@ -47,12 +47,23 @@
       <CommonConfig v-else v-model="data.config"/>
     </div>
     <div v-if="active==2">
-      {{ data }}
+      <el-row>
+        <el-col class="pb5">
+          <span class="text-center">Connected successfully</span>
+        </el-col>
+        <el-col>
+          <DatabaseInfo :datasource="data"/>
+        </el-col>
+        <el-col class="text-center">
+          <el-button style="margin-top: 12px" @click="drawer = false">Close</el-button>
+        </el-col>
+      </el-row>
     </div>
     <template #footer>
-      <el-button style="margin-top: 12px" @click="prev" v-if="active!=0">Go back</el-button>
+      <el-button style="margin-top: 12px" @click="prev" v-if="active!=0 && active!=2">Go back</el-button>
       <el-button type="primary" style="margin-top: 12px" @click="next" v-if="active==0">Select Database</el-button>
-      <el-button type="primary" style="margin-top: 12px" @click="next" v-else-if="active==1">Connect Database
+      <el-button style="margin-top: 12px" @click="tesConnection" v-if="active==1">Test Connection</el-button>
+      <el-button type="primary" style="margin-top: 12px" @click="connectDatabase" v-if="active==1">Connect Database
       </el-button>
     </template>
   </el-drawer>
@@ -62,9 +73,11 @@ import {reactive, ref, watchEffect} from "vue";
 import MySQLConfig from "~/views/datasource/MySQLConfig.vue";
 import CommonConfig from "~/views/datasource/CommonConfig.vue";
 import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
+import {createDatasource, validateDatasource} from "~/api/datasource";
+import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 
 const props = defineProps(['visible']);
-const emits = defineEmits(['confirm', 'cancel']);
+const emits = defineEmits(['change']);
 const drawer = ref(false);
 watchEffect(() => {
   if (props.visible) {
@@ -79,6 +92,24 @@ const prev = () => {
 }
 const next = () => {
   if (active.value++ > 2) active.value = 0
+}
+const tesConnection = async () => {
+  const result = await validateDatasource(data);
+  if (result.success) {
+    ElMessage.success(`Succeed, ping: ${result.time}ms`);
+  } else {
+    ElMessage.error(`Failed, error message: ${result.errorMsg}`);
+  }
+}
+const connectDatabase = async () => {
+  const result = await validateDatasource(data);
+  if (result.success) {
+    const res = await createDatasource(data);
+    next();
+    emits('change', res);
+  } else {
+    ElMessage.error(`Failed, error message: ${result.errorMsg}`);
+  }
 }
 </script>
 <style scoped>

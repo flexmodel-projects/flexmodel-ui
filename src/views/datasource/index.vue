@@ -43,17 +43,7 @@
         </el-col>
         <el-col>
           <el-card shadow="never">
-            <el-descriptions border column="1">
-              <el-descriptions-item label="Connection name">{{ activeDs.name }}</el-descriptions-item>
-              <el-descriptions-item label="Connection type">{{ activeDs.type }}</el-descriptions-item>
-              <el-descriptions-item label="Database type">{{ activeDs.config?.dbKind }}</el-descriptions-item>
-              <el-descriptions-item label="URL">{{ activeDs.config?.url }}</el-descriptions-item>
-              <el-descriptions-item label="Username">{{ activeDs.config?.username }}</el-descriptions-item>
-              <el-descriptions-item label="Password">
-                <HidePassword :text="activeDs.config?.password"/>
-              </el-descriptions-item>
-              <el-descriptions-item label="Create time">{{ activeDs.createTime }}</el-descriptions-item>
-            </el-descriptions>
+            <DatabaseInfo :datasource="activeDs"/>
           </el-card>
         </el-col>
       </el-row>
@@ -69,7 +59,7 @@ import {useRouter} from "vue-router";
 import {Connection} from "@element-plus/icons-vue";
 import ConnectDatabase from "~/views/datasource/ConnectDatabase.vue";
 import {DbsMap} from "~/types";
-import HidePassword from "~/components/HidePassword.vue";
+import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 
 const drawerVisible = ref<boolean>(false);
 const router = useRouter();

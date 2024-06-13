@@ -1,10 +1,10 @@
 <template>
   <el-form label-position="top"
            :model="config">
-    <el-form-item label="Database URL" prop="url">
+    <el-form-item required label="Database URL" prop="url">
       <el-input placeholder="jdbc:mysql://localhost:3306/db_name" v-model="config.url"/>
     </el-form-item>
-    <el-form-item required label="Username" prop="username">
+    <el-form-item label="Username" prop="username">
       <el-input v-model="config.username"/>
     </el-form-item>
     <el-form-item label="Password" prop="password">
