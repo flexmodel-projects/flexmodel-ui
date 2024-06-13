@@ -40,6 +40,7 @@
         v-for="(item, index) in filteredItems"
         :key="index"
         @click="handleItemChange(item)"
+        :title="item.name"
       >
         <el-icon class="p-2">
           <Document/>

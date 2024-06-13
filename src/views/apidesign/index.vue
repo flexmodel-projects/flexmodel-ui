@@ -6,7 +6,7 @@
           <el-input
             class="mr-1"
             style="width: 100%"
-            placeholder="Search apis"
+            placeholder="Search APIs"
             v-model="filterText"
             clearable
           >

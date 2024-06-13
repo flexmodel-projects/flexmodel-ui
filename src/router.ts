@@ -8,6 +8,7 @@ import ApiLogs from "~/views/apilogs/index.vue";
 
 import Datasource from "~/views/datasource/index.vue";
 import Modeling from "~/views/modeling/index.vue";
+import Settings from "~/views/settings/index.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -61,6 +62,13 @@ const routes: RouteRecordRaw[] = [
         component: Datasource,
         meta: {
           title: 'Data source'
+        },
+      },
+      {
+        path: '/settings',
+        component: Settings,
+        meta: {
+          title: 'Settings'
         },
       }
     ]

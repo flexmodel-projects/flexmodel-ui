@@ -8,13 +8,13 @@
         <el-input :model-value="datasource.name" readonly disabled/>
       </el-form-item>
       <el-form-item required label="Database URL" prop="url">
-        <el-input v-model="form.url"/>
+        <InputVariables v-model="form.url"/>
       </el-form-item>
       <el-form-item label="Username" prop="username">
-        <el-input v-model="form.username"/>
+        <InputVariables v-model="form.username"/>
       </el-form-item>
       <el-form-item label="Password" prop="password">
-        <el-input type="password" v-model="form.password"/>
+        <InputVariables type="password" v-model="form.password"/>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -25,6 +25,7 @@
 </template>
 <script setup lang="ts">
 import {reactive, ref, watchEffect} from "vue";
+import InputVariables from "~/components/InputVariables.vue";
 
 const visible = ref<boolean>(false);
 const props = defineProps(['visible', 'datasource', 'modelValue']);

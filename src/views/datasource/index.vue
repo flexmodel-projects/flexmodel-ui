@@ -132,7 +132,7 @@ const tesConnection = async () => {
   if (result.success) {
     ElMessage.success(`Succeed, ping: ${result.time}ms`);
   } else {
-    ElMessage.error(`Failed, error message: ${result.errorMsg}`);
+    ElMessage.error(`Failed, error msg: ${result.errorMsg}`);
   }
 }
 const onChangeDatasource = () => {

@@ -14,7 +14,7 @@
       <el-form-item label="Type" prop="type" required>
         <el-select v-model="form.type" style="width: 100%;" filterable>
           <el-option-group label="ID">
-            <el-option key="id" label="ID" value="id"/>
+            <el-option key="id" label="ID" value="id" :disabled="hasId"/>
           </el-option-group>
           <el-option-group label="Basic field">
             <el-option v-for="item in BasicFieldTypes"
@@ -145,10 +145,13 @@ const form = reactive<any>({
 });
 const formRef = ref<FormInstance>();
 const reqModelList = async () => {
+  debugger
   modelList.value = await getModelList(props.datasource);
 };
 const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
   modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
+// 只能有一个ID字段
+const hasId = computed<boolean>(() => props.model.fields?.filter(f => f.type === 'id').length > 0);
 const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
 }

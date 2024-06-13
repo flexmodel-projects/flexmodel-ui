@@ -5,7 +5,7 @@
         <el-col :span="4"><span>Logs</span></el-col>
         <el-col style="text-align: right" :span="20">
           <el-button :icon="Setting"></el-button>
-          <el-button :icon="Refresh"></el-button>
+          <el-button :icon="Refresh" @click="refreshLog" :loading="isLoading"></el-button>
         </el-col>
       </el-row>
     </template>
@@ -38,7 +38,10 @@
                   <div class="flex gap-2">
                     <el-tag type="info" size="small">status: {{ row?.data?.status }}</el-tag>
                     <el-tag type="info" size="small">execTime: {{ row?.data?.execTime }}ms</el-tag>
-                    <el-tag type="info" size="small" v-if="row?.data?.remoteIp">remoteIp: {{ row?.data?.remoteIp }}</el-tag>
+                    <el-tag type="info" size="small" v-if="row?.data?.remoteIp">remoteIp: {{
+                        row?.data?.remoteIp
+                      }}
+                    </el-tag>
                     <el-tag type="danger" v-if="row?.data?.status>=500" size="small">
                       message: {{ row?.data?.message }}
                     </el-tag>
@@ -82,7 +85,6 @@
 import {reactive, ref} from "vue";
 import {getApiLogs} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
-import HidePassword from "~/components/HidePassword.vue";
 
 const isOver = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
@@ -110,6 +112,15 @@ const onAddItem = async () => {
   if (res.length != 0) {
     tableData.value.push(...res);
   }
+}
+const refreshLog = async () => {
+  isLoading.value = true;
+  const res: any[] = await getApiLogs(1);
+  isLoading.value = false;
+  if (res.length == 0) {
+    isOver.value = true;
+  }
+  tableData.value = res;
 }
 </script>
 <style scoped>

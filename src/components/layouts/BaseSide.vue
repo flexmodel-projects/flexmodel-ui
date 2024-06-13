@@ -118,7 +118,7 @@ const items: MenuItem[] = [
   {
     icon: Setting,
     title: 'Settings',
-    index: '/helloworld',
+    index: '/settings',
   }
 ]
 

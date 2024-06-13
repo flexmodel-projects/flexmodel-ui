@@ -2,18 +2,19 @@
   <el-form label-position="top"
            :model="config">
     <el-form-item required label="Database URL" prop="url">
-      <el-input placeholder="e.g. jdbc:mysql://xxxx" v-model="config.url"/>
+      <InputVariables placeholder="e.g. jdbc:mysql://xxxx" v-model="config.url"/>
     </el-form-item>
     <el-form-item label="Username" prop="username">
-      <el-input v-model="config.username"/>
+      <InputVariables v-model="config.username"/>
     </el-form-item>
     <el-form-item label="Password" prop="password">
-      <el-input v-model="config.password"/>
+      <InputVariables v-model="config.password"/>
     </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
 import {reactive, watchEffect} from "vue";
+import InputVariables from "~/components/InputVariables.vue";
 
 const props = defineProps(['modelValue']);
 const emits = defineEmits(['update:modelValue']);
