@@ -38,7 +38,7 @@
                   <div class="flex gap-2">
                     <el-tag type="info" size="small">status: {{ row?.data?.status }}</el-tag>
                     <el-tag type="info" size="small">execTime: {{ row?.data?.execTime }}ms</el-tag>
-                    <el-tag type="info" size="small">remoteIp: {{ row?.data?.remoteIp }}</el-tag>
+                    <el-tag type="info" size="small" v-if="row?.data?.remoteIp">remoteIp: {{ row?.data?.remoteIp }}</el-tag>
                     <el-tag type="danger" v-if="row?.data?.status>=500" size="small">
                       message: {{ row?.data?.message }}
                     </el-tag>

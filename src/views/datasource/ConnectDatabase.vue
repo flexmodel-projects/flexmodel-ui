@@ -79,11 +79,6 @@ import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 const props = defineProps(['visible']);
 const emits = defineEmits(['change']);
 const drawer = ref(false);
-watchEffect(() => {
-  if (props.visible) {
-    drawer.value = props.visible;
-  }
-});
 const data = reactive<any>({config: {dbKind: 'mysql'}});
 
 const active = ref(0);
@@ -111,6 +106,11 @@ const connectDatabase = async () => {
     ElMessage.error(`Failed, error message: ${result.errorMsg}`);
   }
 }
+watchEffect(() => {
+  if (props.visible) {
+    drawer.value = props.visible;
+  }
+});
 </script>
 <style scoped>
 .ep-radio {

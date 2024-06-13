@@ -8,7 +8,7 @@
     <el-descriptions-item label="Password">
       <HidePassword :text="datasource.config?.password"/>
     </el-descriptions-item>
-    <el-descriptions-item label="Create time">{{ datasource.createTime }}</el-descriptions-item>
+    <el-descriptions-item label="Create time">{{ datasource.createdAt }}</el-descriptions-item>
   </el-descriptions>
 </template>
 <script setup lang="ts">
