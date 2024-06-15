@@ -27,7 +27,7 @@
             <el-table-column label="comment" prop="comment"/>
             <el-table-column label="operations" width="150" fixed="right">
               <template #default="scope">
-                <el-button type="primary" link @click="handleEdit(scope.row)">
+                <el-button type="primary" link @click="handleEdit(scope.$index)">
                   Edit
                 </el-button>
                 <el-popconfirm title="Are you sure to delete this?" @confirm="delField(scope.$index)">
@@ -70,7 +70,7 @@ const selectedFieldForm = ref<any>();
 const handleNewField = () => {
   changeDialogVisible.value = true;
   selectedFieldIndex.value = -1;
-  selectedFieldForm.value = {};
+  selectedFieldForm.value = {type: 'string'};
 }
 const handleEdit = (index: number) => {
   selectedFieldIndex.value = index;

@@ -126,7 +126,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {computed, ref, watch, watchEffect} from "vue";
 import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "~/types";
 import {getModelList} from "~/api/model";
 import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vue";
@@ -167,31 +167,36 @@ const submitForm = (formEl: FormInstance | undefined) => {
   }
   emits('conform', {
     ...form.value,
-    generator: Object.keys(form.value.generator).length === 0 ? null : form.value.generator,
+    generator: form.value.generator,
     type: realType,
     targetEntity: targetEntity
   });
 }
 
-watchEffect(() => {
-  if (form?.value?.type) {
+watch(() => form?.value?.type, () => {
+  if (form.value?.type) {
     let realType: string = form.value.type;
     if (realType.startsWith('relation')) {
       realType = 'relation';
     }
-    form.value = FieldInitialValues[realType];
+    form.value = {
+      name: form.value.name,
+      comment: form.value.comment,
+      type: form.value.type,
+      targetField: null, ...FieldInitialValues[realType]
+    };
   }
-});
+})
 watchEffect(() => {
   if (props.visible) {
     reqModelList();
   }
-})
+});
 watchEffect(() => {
   if (props.currentValue) {
     form.value = props.currentValue;
   }
-})
+});
 </script>
 <style scoped>
 

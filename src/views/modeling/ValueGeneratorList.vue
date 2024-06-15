@@ -49,20 +49,19 @@ const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['update:modelValue']);
 
 const generatorDialogVisible = ref<boolean>(false);
-const generatorForm = ref<any>({});
+const generatorForm = ref<any>();
 const list = ref<any[]>([]);
 
 const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
 
 const handleCommand = (command: string) => {
-  generatorForm.value.type = command;
+  generatorForm.value = {type: command, generationTime: 'INSERT'};
   generatorDialogVisible.value = true;
 }
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
 const addItem = () => {
-  generatorForm.value = {};
   generatorDialogVisible.value = true;
 }
 const delItem = (index: number) => {
@@ -80,7 +79,7 @@ watchEffect(() => {
 })
 watchEffect(() => {
   if (generatorForm.value) {
-    emits('update:modelValue', generatorForm);
+    emits('update:modelValue', generatorForm.value);
   }
 });
 </script>

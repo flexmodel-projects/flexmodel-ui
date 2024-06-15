@@ -3,7 +3,7 @@
     <div style="justify-self: center" class="logo">
       <img style="width: 80px" src="/logo.svg"/>
     </div>
-    <h3 class="description">All-in-one API design platform</h3>
+    <h3 class="description">Flexmodel | All-in-one API design platform</h3>
     <div style="margin-top: 10px">
       <div w="full" py="4" style="text-align: center;">
         <p>

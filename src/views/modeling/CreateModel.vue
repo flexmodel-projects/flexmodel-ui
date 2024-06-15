@@ -120,7 +120,7 @@ const form = ref<Model>({
   ],
   indexes: []
 });
-const fieldForm = ref<any>({});
+const fieldForm = ref<any>({type: 'string'});
 const selectedFieldKey = ref<number>(-1);
 const indexForm = ref<any>({});
 const selectedIndexKey = ref<number>(-1);
@@ -129,7 +129,7 @@ const datasourceName = computed(() => props.datasource);
 
 
 const handleAddField = () => {
-  fieldForm.value = {};
+  fieldForm.value = {type: 'string'};
   selectedFieldKey.value = -1;
   changeFieldDialogVisible.value = true;
 }
@@ -139,7 +139,7 @@ const handleEditField = (index: number) => {
   changeFieldDialogVisible.value = true;
 }
 const handleCancelFieldForm = () => {
-  fieldForm.value = {};
+  fieldForm.value = {type: 'string'};
   changeFieldDialogVisible.value = false
 }
 const addOrEditField = (val: any) => {
@@ -178,7 +178,7 @@ const cancelForm = () => {
   emits('cancel');
 }
 const submitForm = async () => {
-  emits('conform', form);
+  emits('conform', form.value);
 }
 
 watchEffect(() => {

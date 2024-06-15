@@ -42,7 +42,7 @@ const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'fi
 const emits = defineEmits(['change']);
 
 const visible = ref<boolean>(props.visible);
-const form = ref<any>({generationTime: 'INSERT'});
+const form = ref<any>();
 const formRef = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
@@ -59,7 +59,6 @@ const cancelForm = (formEl: FormInstance | undefined) => {
 
 watchEffect(() => {
   if (props.visible) {
-    form.value = {};
     visible.value = props.visible;
   }
 });

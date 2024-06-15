@@ -11,12 +11,12 @@
       </el-row>
     </template>
 
-    <el-scrollbar height="560px">
+    <el-scrollbar height="540px">
       <el-row>
         <el-col>
           <div class="font-bold pt7 pb7">Environment variables</div>
           <el-table :data="environmentVariables" stripe style="width: 100%">
-            <el-table-column prop="key" label="Variable Name" width="300px"/>
+            <el-table-column prop="key" label="Variable Name" width="500px"/>
             <el-table-column prop="value" label="Variable value">
               <template #default="{row}">
                 <HidePassword :text="row.value"/>
@@ -27,7 +27,7 @@
         <el-col>
           <div class="font-bold pt7 pb7">System variables</div>
           <el-table :data="systemVariables" stripe style="width: 100%">
-            <el-table-column prop="key" label="Variable Name" width="300px"/>
+            <el-table-column prop="key" label="Variable Name" width="500px"/>
             <el-table-column prop="value" label="Variable value">
               <template #default="{row}">
                 <HidePassword :text="row.value"/>

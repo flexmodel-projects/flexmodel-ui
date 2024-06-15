@@ -1,5 +1,5 @@
 <template>
-  <el-tabs tab-position="left" style="height: 100%">
+  <el-tabs tab-position="left">
 <!--    <el-tab-pane label="Application">Application</el-tab-pane>-->
     <el-tab-pane label="Variables">
       <Variables/>
