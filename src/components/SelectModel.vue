@@ -46,21 +46,50 @@
           <Document/>
         </el-icon>
         {{ item.name }}
+        <div class="absolute right-12px">
+          <el-dropdown trigger="hover">
+            <el-icon class="icon-hover invisible" @click.stop>
+              <More/>
+            </el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click.stop="deleteDialogVisible=true; activeModel=item;">
+                  <span class="text-#f56c6c">Delete</span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
     </div>
   </el-scrollbar>
+  <el-dialog
+    v-model="deleteDialogVisible"
+    :title="`Delete '${activeModel?.name}?'`"
+    width="500"
+  >
+    <span>Are you sure you want to delete <span class="font-bold">{{ activeModel?.name }}</span>?</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="deleteDialogVisible = false">Cancel</el-button>
+        <el-button type="danger" @click="handleDelete">
+          Delete
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <script setup lang="ts">
 
 import {Datasource, DbsMap} from "~/types";
-import {Document, Edit, Refresh} from "@element-plus/icons-vue";
-import {computed, ref, watchEffect} from "vue";
+import {Document, Edit, More, Refresh} from "@element-plus/icons-vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from "~/api/datasource";
 import {useRouter} from "vue-router";
-import {getModelList} from "~/api/model";
+import {dropModel, getModelList} from "~/api/model";
 
 
-const props = defineProps(['datasource', 'height']);
+const props = defineProps(['datasource', 'height', 'editable']);
 const emits = defineEmits(['change']);
 
 const router = useRouter()
@@ -69,7 +98,7 @@ const activeModel = ref<any>({});
 const dsList = ref<Datasource[]>([]);
 const modelList = ref<any[]>([]);
 const loading = ref<boolean>(false);
-
+const deleteDialogVisible = ref<boolean>(false);
 const reqDatasourceList = async () => {
   const res = await getDatasourceList();
   dsList.value = res;
@@ -81,12 +110,7 @@ const reqModelList = async () => {
   activeModel.value = res[0];
   emits('change', activeDs.value, res[0]);
 };
-watchEffect(() => {
-  if (activeDs.value) {
-    reqModelList();
-  }
-});
-reqDatasourceList();
+
 const searchQuery = ref<string>();
 const filteredItems = computed(() => {
   if (!searchQuery.value) {
@@ -106,7 +130,24 @@ const refreshDatasource = async () => {
   modelList.value = await reqRefreshDatasource(activeDs.value);
   loading.value = false;
 }
-
+const handleDelete = async () => {
+  await dropModel(activeDs.value, activeModel.value.name);
+  await reqModelList();
+  deleteDialogVisible.value = false;
+}
+defineExpose({
+  reload: () => {
+    reqModelList();
+  }
+});
+onMounted(() => {
+  reqDatasourceList();
+});
+watchEffect(() => {
+  if (activeDs.value) {
+    reqModelList();
+  }
+});
 </script>
 <style scoped lang="scss">
 .datasource-wrap {
@@ -125,6 +166,12 @@ const refreshDatasource = async () => {
 
     &:hover {
       background-color: var(--ep-fill-color-light);
+
+      .icon-hover {
+        visibility: visible;
+        top: 10px;
+      }
+
     }
 
     &-active {

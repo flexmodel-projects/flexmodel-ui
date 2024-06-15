@@ -23,7 +23,7 @@
                 </el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :disabled="activeDs.type==='system'" @click.stop="deleteVisible=true; activeDs=item;">
+                    <el-dropdown-item :disabled="item.type==='system'" @click.stop="deleteVisible=true; activeDs=item;">
                       <span class="text-#f56c6c">Delete</span>
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -94,7 +94,7 @@ import {
   updateDatasource,
   validateDatasource
 } from "~/api/datasource";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import {Connection, More} from "@element-plus/icons-vue";
 import ConnectDatabase from "~/views/datasource/ConnectDatabase.vue";
@@ -118,7 +118,6 @@ const reqDatasourceList = async () => {
     ElMessage.error(error as Error);
   }
 };
-reqDatasourceList();
 const refreshDatasource = async () => {
   refreshLoading.value = true;
   await reqRefreshDatasource(activeDs.value.name);
@@ -145,12 +144,16 @@ const editDatabase = async () => {
 }
 const handleItemChange = (item: Datasource) => {
   activeDs.value = item;
+  console.log(activeDs.value);
 }
 const handleDelete = async () => {
   await deleteDatasource(activeDs.value?.name);
   await reqDatasourceList();
   deleteVisible.value = false;
 }
+onMounted(() => {
+  reqDatasourceList();
+});
 </script>
 <style scoped lang="scss">
 .datasource-wrap {

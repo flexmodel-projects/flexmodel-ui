@@ -125,6 +125,44 @@ interface RestAPIForm {
 }
 
 const form = reactive<RestAPIForm[]>({});
+const handleItemChange = (ds: string, item: any) => {
+  activeDs.value = ds;
+  activeModel.value = item;
+}
+const submitForm = async () => {
+  const {id: parentId} = await createApi({
+    name: form.apiFolder,
+    type: 'FOLDER',
+  });
+  const keys = Object.keys(form.apis);
+  for (const key of keys) {
+    const api = form.apis[key];
+    if (api.enable) {
+      const meta: any = {
+        auth: api.auth,
+        enable: api.enable,
+        type: api.type,
+        datasource: activeDs.value,
+        model: activeModel.value
+      };
+      if (key === 'list') {
+        meta.paging = form.apis[key].paging;
+      }
+      await createApi({
+        parentId: parentId,
+        name: api.name,
+        method: api.method,
+        path: api.path,
+        type: 'REST_API',
+        meta: meta
+      });
+    }
+  }
+  emits('submit', form);
+}
+const handleCancel = () => {
+  emits('cancel');
+}
 watchEffect(() => {
   if (activeModel.value) {
     Object.assign(form, {
@@ -188,44 +226,6 @@ watch(
     })
   }
 )
-const handleItemChange = (ds: string, item: any) => {
-  activeDs.value = ds;
-  activeModel.value = item;
-}
-const submitForm = async () => {
-  const {id: parentId} = await createApi({
-    name: form.apiFolder,
-    type: 'FOLDER',
-  });
-  const keys = Object.keys(form.apis);
-  for (const key of keys) {
-    const api = form.apis[key];
-    if (api.enable) {
-      const meta: any = {
-        auth: api.auth,
-        enable: api.enable,
-        type: api.type,
-        datasource: activeDs.value,
-        model: activeModel.value
-      };
-      if (key === 'list') {
-        meta.paging = form.apis[key].paging;
-      }
-      await createApi({
-        parentId: parentId,
-        name: api.name,
-        method: api.method,
-        path: api.path,
-        type: 'REST_API',
-        meta: meta
-      });
-    }
-  }
-  emits('submit', form);
-}
-const handleCancel = () => {
-  emits('cancel');
-}
 </script>
 <style scoped>
 

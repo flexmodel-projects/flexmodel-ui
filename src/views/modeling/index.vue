@@ -16,7 +16,7 @@
   <el-row>
     <el-col :span="4">
       <el-card shadow="never">
-        <SelectModel :datasource="activeDs" @change="handleItemChange"/>
+        <SelectModel ref="selectModelRef" :datasource="activeDs" @change="handleItemChange" :editable="true"/>
         <el-divider/>
         <el-button type="primary" :icon="Plus" @click="drawerVisible = true" style="width: 100%" plain>New model
         </el-button>
@@ -42,7 +42,7 @@
   />
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import Record from "~/views/modeling/Record.vue";
 import SelectModel from "~/components/SelectModel.vue";
@@ -73,19 +73,21 @@ const selectedItem = ref<string>('field');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const drawerVisible = ref(false);
-if (activeDs.value) {
-  router.push({path: '/modeling', query: {datasource: activeDs.value}});
-}
+const selectModelRef = ref<any>();
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds
   activeModel.value = item
 }
 const addModel = async (item: any) => {
   await reqCreateModel(activeDs.value, item);
-  debugger
   drawerVisible.value = false;
+  selectModelRef.value.reload();
 }
-
+onMounted(() => {
+  if (activeDs.value) {
+    router.push({path: '/modeling', query: {datasource: activeDs.value}});
+  }
+});
 </script>
 <style scoped lang="scss">
 .datasource-wrap {

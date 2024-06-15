@@ -82,7 +82,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {getApiLogs} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
 
@@ -99,7 +99,6 @@ const reqApiLogs = async () => {
   }
   tableData.value = res;
 }
-reqApiLogs();
 const showDetail = (row: any) => {
   log.value = row;
   drawer.value = true;
@@ -122,6 +121,9 @@ const refreshLog = async () => {
   }
   tableData.value = res;
 }
+onMounted(() => {
+  reqApiLogs();
+});
 </script>
 <style scoped>
 

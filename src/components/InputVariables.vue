@@ -1,11 +1,11 @@
 <template>
-  <el-input v-model="input" :placeholder="placeholder" clearable>
+  <el-input v-model="input" :placeholder="placeholder">
     <template #suffix>
-      <el-dropdown trigger="click">
+      <el-dropdown trigger="click" @command="handleCommand">
         <el-button title="Add variables" @click.stop size="small" link>{...}</el-button>
         <template #dropdown>
           <el-dropdown-menu style="height: 300px">
-            <el-dropdown-item :key="item" v-for="item in variableKeys" @click.stop="selectVariable(item)">
+            <el-dropdown-item :command="item" v-for="item in variableKeys">
               {{ item }}
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -34,6 +34,9 @@ const variableKeys = computed(() => {
 });
 const selectVariable = (item: string) => {
   input.value += `{{${item}}}`;
+}
+const handleCommand = (command: string) => {
+  input.value += `{{${command}}}`;
 }
 watchEffect(() => {
   if (input.value) {

@@ -114,7 +114,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {Folder, More, Plus} from "@element-plus/icons-vue";
 import {deleteApi, getApis} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
@@ -125,10 +125,6 @@ import RequestMethodTag from "~/components/RequestMethodTag.vue";
 const treeRef = ref<InstanceType<any>>()
 const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
 const filterText = ref<string>();
-watch(filterText, (val) => {
-  treeRef.value!.filter(val)
-})
-
 interface Tree {
   name: string
   children?: Tree[]
@@ -141,7 +137,6 @@ const data = ref<Tree[]>([]);
 const reqApiList = async () => {
   data.value = await getApis();
 }
-reqApiList();
 const deleteDialogVisible = ref<boolean>(false);
 const dialogVisible = ref<boolean>(false);
 const selectedNode = ref<Record<string, any> | null>()
@@ -172,6 +167,12 @@ const defaultProps = {
   children: 'children',
   label: 'name',
 }
+watch(filterText, (val) => {
+  treeRef.value!.filter(val)
+});
+onMounted(() => {
+  reqApiList();
+});
 </script>
 <style scoped lang="scss">
 .tree-item-icon {

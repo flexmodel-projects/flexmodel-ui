@@ -39,6 +39,7 @@ const cancelForm = () => {
 const submitForm = () => {
   emits('conform', form);
   visible.value = false;
+  emits('update:modelValue', form);
 }
 watchEffect(() => {
   if (props.visible) {
@@ -50,11 +51,6 @@ watchEffect(() => {
     Object.assign(form, props.modelValue);
   }
 });
-watchEffect(() => {
-  if (form) {
-    emits('update:modelValue', form);
-  }
-})
 </script>
 <style scoped>
 
