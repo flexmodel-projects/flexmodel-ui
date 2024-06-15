@@ -125,6 +125,7 @@ import RequestMethodTag from "~/components/RequestMethodTag.vue";
 const treeRef = ref<InstanceType<any>>();
 const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
 const filterText = ref<string>();
+
 interface Tree {
   name: string
   children?: Tree[]

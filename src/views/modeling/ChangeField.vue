@@ -126,7 +126,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, reactive, ref, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "~/types";
 import {getModelList} from "~/api/model";
 import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vue";
@@ -137,7 +137,7 @@ const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
 const emits = defineEmits(['conform', 'cancel']);
 const visible = ref<boolean>(false);
 const modelList = ref<any[]>([]);
-const form = reactive<any>({
+const form = ref<any>({
   name: '',
   comment: '',
   unique: false,
@@ -145,18 +145,17 @@ const form = reactive<any>({
 });
 const formRef = ref<FormInstance>();
 const reqModelList = async () => {
-  debugger
   modelList.value = await getModelList(props.datasource);
 };
-const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
-  modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
+const relationModel = computed<any>(() => form.value.type?.startsWith('relation') ?
+  modelList.value.filter(m => form.value.type?.endsWith(m.name))[0] : []);
 // 只能有一个ID字段
 const hasId = computed<boolean>(() => props.model.fields?.filter(f => f.type === 'id').length > 0);
 const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
 }
 const submitForm = (formEl: FormInstance | undefined) => {
-  let realType: string = form.type;
+  let realType: string = form.value.type;
   let targetEntity = undefined;
   if (realType.startsWith('relation')) {
     targetEntity = realType.replace('relation:', '');
@@ -164,18 +163,18 @@ const submitForm = (formEl: FormInstance | undefined) => {
   }
   emits('conform', {
     ...form,
-    generator: Object.keys(form.generator).length === 0 ? null : form.generator,
+    generator: Object.keys(form.value.generator).length === 0 ? null : form.value.generator,
     type: realType,
     targetEntity: targetEntity
   });
 }
 watchEffect(() => {
   if (form?.value?.type) {
-    let realType: string = form.type;
+    let realType: string = form.value.type;
     if (realType.startsWith('relation')) {
       realType = 'relation';
     }
-    Object.assign(form, FieldInitialValues[realType]);
+    form.value = FieldInitialValues[realType];
   }
 });
 watchEffect(() => {
@@ -185,7 +184,7 @@ watchEffect(() => {
 })
 watchEffect(() => {
   if (props.currentValue) {
-    Object.assign(form, props.currentValue)
+    form.value = props.currentValue;
   }
 })
 </script>

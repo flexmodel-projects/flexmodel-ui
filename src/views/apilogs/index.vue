@@ -82,18 +82,18 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {getApiLogs} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
 
 const isOver = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const tableData = ref<any[]>([])
-const index = reactive({count: 1});
+const index = ref({count: 1});
 const log = ref<any>({});
 const drawer = ref(false);
 const reqApiLogs = async () => {
-  const res: any[] = await getApiLogs(index.count++);
+  const res: any[] = await getApiLogs(index.value.count++);
   if (res.length == 0) {
     isOver.value = true;
   }
@@ -105,7 +105,7 @@ const showDetail = (row: any) => {
 }
 const onAddItem = async () => {
   isLoading.value = true;
-  const res: any[] = await getApiLogs(index.count++);
+  const res: any[] = await getApiLogs(index.value.count++);
   isLoading.value = false;
   isOver.value = res.length < 50;
   if (res.length != 0) {

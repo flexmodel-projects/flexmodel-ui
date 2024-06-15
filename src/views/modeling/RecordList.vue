@@ -87,7 +87,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, reactive, ref, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "~/api/record";
 import type {ElMessage, FormInstance, FormRules} from 'element-plus'
 
@@ -97,7 +97,7 @@ const datasource = computed(() => props.datasource);
 const model = computed(() => props.model);
 const dialogFormVisible = ref(false);
 const editMode = ref<boolean>(false);
-const query = reactive({
+const query = ref({
   current: 1,
   pageSize: 10,
   filter: '',
@@ -106,8 +106,8 @@ const query = reactive({
 const records = ref<any[]>([]);
 const reqRecordList = async () => {
   records.value = await getRecordList(props.datasource, props.model?.name, {
-    current: query.current,
-    pageSize: query.pageSize
+    current: query.value.current,
+    pageSize: query.value.pageSize
   });
 };
 const reqDeleteRecord = async (record: any) => {
@@ -117,17 +117,17 @@ const reqDeleteRecord = async (record: any) => {
   await deleteRecord(props.datasource, model.value.name, record[model.value?.idField?.name]);
   await reqRecordList();
 };
-const form = reactive<any>({});
-const rules = reactive<FormRules<any>>({});
+const form = ref<any>({});
+const rules = ref<FormRules<any>>({});
 const formRef = ref<FormInstance>();
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {
     if (valid) {
       if (editMode.value) {
-        await updateRecord(props.datasource, model.value.name, form[model.value?.idField?.name], form);
+        await updateRecord(props.datasource, model.value.name, form.value[model.value?.idField?.name], form.value);
       } else {
-        await createRecord(props.datasource, model.value.name, form);
+        await createRecord(props.datasource, model.value.name, form.value);
       }
       await reqRecordList();
       dialogFormVisible.value = false;
@@ -138,7 +138,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   dialogFormVisible.value = false;
   if (!formEl) return;
   formEl.resetFields();
-  Object.keys(form).forEach(key => form[key] = '');
+  Object.keys(form.value).forEach(key => form.value[key] = '');
   editMode.value = false;
 }
 const handleEdit = (record: any) => {
@@ -146,7 +146,7 @@ const handleEdit = (record: any) => {
   editMode.value = true;
   Object.keys(record).forEach((key: string) => {
     const value = record[key];
-    form[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
+    form.value[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
   });
 };
 
@@ -154,7 +154,7 @@ watchEffect(() => {
   if (props.model) {
     reqRecordList();
     props.model.fields.forEach((field: any) => {
-      rules[field.name] = [
+      rules.value[field.name] = [
         {
           required: !field.nullable,
           message: `Please input ${field.name}`

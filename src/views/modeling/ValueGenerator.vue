@@ -33,7 +33,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {reactive, ref, watchEffect} from "vue";
+import {ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
 import {GenerationTimes} from "~/types";
 import FieldValue from "~/views/modeling/FieldValue.vue";
@@ -41,12 +41,12 @@ import FieldValue from "~/views/modeling/FieldValue.vue";
 const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
 const visible = ref<boolean>(props.visible);
-const form = reactive<any>({generationTime: 'INSERT'});
+const form = ref<any>({generationTime: 'INSERT'});
 const formRef = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
   visible.value = false;
-  emits('change', {...form});
+  emits('change', {...form.value});
   if (!formEl) return;
   formEl.resetFields();
 }
@@ -57,13 +57,13 @@ const cancelForm = (formEl: FormInstance | undefined) => {
 }
 watchEffect(() => {
   if (props.visible) {
-    Object.assign(form, {})
+    form.value = {};
     visible.value = props.visible;
   }
 });
 watchEffect(() => {
   if (props.currentValue) {
-    Object.assign(form, props.currentValue)
+    form.value = props.currentValue;
   }
 });
 </script>

@@ -78,7 +78,7 @@
 </template>
 <script setup lang="ts">
 import SelectModel from "~/components/SelectModel.vue";
-import {reactive, ref, watch, watchEffect} from "vue";
+import {ref, watch, watchEffect} from "vue";
 import {BASE_URI} from "~/api/base";
 import {createApi} from "~/api/api-info";
 
@@ -114,29 +114,22 @@ const apiCheckList = ref<string[]>(['list']);
 
 interface RestAPIForm {
   apiFolder: string,
-  apis: {
-    type: 'list' | 'view' | 'create' | 'update' | 'delete',
-    name: string,
-    path: string,
-    method: string,
-    auth: true,
-    paging?: false,
-  }[]
+  apis: object,
 }
 
-const form = reactive<RestAPIForm[]>({});
+const form = ref<RestAPIForm>({});
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds;
   activeModel.value = item;
 }
 const submitForm = async () => {
   const {id: parentId} = await createApi({
-    name: form.apiFolder,
+    name: form.value.apiFolder,
     type: 'FOLDER',
   });
-  const keys = Object.keys(form.apis);
+  const keys = Object.keys(form.value.apis);
   for (const key of keys) {
-    const api = form.apis[key];
+    const api = form.value.apis[key];
     if (api.enable) {
       const meta: any = {
         auth: api.auth,
@@ -146,7 +139,7 @@ const submitForm = async () => {
         model: activeModel.value
       };
       if (key === 'list') {
-        meta.paging = form.apis[key].paging;
+        meta.paging = form.value.apis[key].paging;
       }
       await createApi({
         parentId: parentId,
@@ -165,7 +158,7 @@ const handleCancel = () => {
 }
 watchEffect(() => {
   if (activeModel.value) {
-    Object.assign(form, {
+    form.value = {
       apiFolder: `${activeModel.value.name}'s folder`,
       apis: {
         list: {
@@ -210,7 +203,7 @@ watchEffect(() => {
           enable: false,
         },
       },
-    });
+    }
   }
 })
 watchEffect(() => {
@@ -222,7 +215,7 @@ watch(
   () => apiCheckList.value,
   () => {
     apiCheckOptions.forEach(option => {
-      form.apis[option.value].enable = apiCheckList.value.includes(option.value)
+      form.value.apis[option.value].enable = apiCheckList.value.includes(option.value)
     })
   }
 )

@@ -7,17 +7,17 @@
   </el-form>
 </template>
 <script setup lang="ts">
-import {reactive, watchEffect} from "vue";
+import {ref, watchEffect} from "vue";
 
 const props = defineProps(['modelValue']);
 const emits = defineEmits(['update:modelValue']);
-const config = reactive<any>({
+const config = ref<any>({
   dbKind: 'sqlite',
   file: ''
 });
 watchEffect(() => {
   if (props.modelValue) {
-    config.dbKind = props.modelValue.dbKind;
+    config.value.dbKind = props.modelValue.dbKind;
   }
 })
 watchEffect(() => {

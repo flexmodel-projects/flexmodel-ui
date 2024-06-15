@@ -69,7 +69,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {reactive, ref, watchEffect} from "vue";
+import {ref, watchEffect} from "vue";
 import MySQLConfig from "~/views/datasource/MySQLConfig.vue";
 import CommonConfig from "~/views/datasource/CommonConfig.vue";
 import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
@@ -79,7 +79,7 @@ import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 const props = defineProps(['visible']);
 const emits = defineEmits(['change']);
 const drawer = ref(false);
-const data = reactive<any>({config: {dbKind: 'mysql'}});
+const data = ref<any>({config: {dbKind: 'mysql'}});
 
 const active = ref(0);
 const prev = () => {
@@ -89,7 +89,7 @@ const next = () => {
   if (active.value++ > 2) active.value = 0
 }
 const tesConnection = async () => {
-  const result = await validateDatasource(data);
+  const result = await validateDatasource(data.value);
   if (result.success) {
     ElMessage.success(`Succeed, ping: ${result.time}ms`);
   } else {
@@ -97,9 +97,9 @@ const tesConnection = async () => {
   }
 }
 const connectDatabase = async () => {
-  const result = await validateDatasource(data);
+  const result = await validateDatasource(data.value);
   if (result.success) {
-    const res = await createDatasource(data);
+    const res = await createDatasource(data.value);
     next();
     emits('change', res);
   } else {

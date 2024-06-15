@@ -53,7 +53,7 @@
             <span>{{ node.label }}</span>
           </div>
         </div>
-        <div class="absolute right-12px">
+        <div v-if="editable" class="absolute right-12px">
           <el-dropdown trigger="hover">
             <el-icon class="tree-item-more invisible" @click.stop>
               <More/>
@@ -94,6 +94,7 @@ import {onMounted, ref, watchEffect} from "vue";
 import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from "~/api/datasource";
 import {useRouter} from "vue-router";
 import {dropModel, getModelList} from "~/api/model";
+import {TreeNode} from "element-plus";
 
 
 const props = defineProps(['datasource', 'height', 'editable']);

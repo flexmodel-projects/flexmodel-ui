@@ -40,7 +40,7 @@
                   :field="field"/>
 </template>
 <script setup lang="ts">
-import {computed, reactive, ref, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import {GeneratorTypes} from "~/types";
 import {ArrowDown, Close, Edit, Plus} from "@element-plus/icons-vue";
 import ValueGenerator from "~/views/modeling/ValueGenerator.vue";
@@ -49,9 +49,9 @@ const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['update:modelValue']);
 const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
 const generatorDialogVisible = ref<boolean>(false);
-const generatorForm = reactive<any>({});
+const generatorForm = ref<any>({});
 const handleCommand = (command: string) => {
-  generatorForm.type = command;
+  generatorForm.value.type = command;
   generatorDialogVisible.value = true;
 }
 const list = ref<any[]>([]);
@@ -59,7 +59,7 @@ const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
 const addItem = () => {
-  Object.assign(generatorForm, {});
+  generatorForm.value = {};
   generatorDialogVisible.value = true;
 }
 const delItem = (index: number) => {
@@ -67,7 +67,7 @@ const delItem = (index: number) => {
 }
 const editItem = (item: any) => {
   generatorDialogVisible.value = true;
-  Object.assign(generatorForm, item);
+  generatorForm.value = item;
 }
 watchEffect(() => {
   if (props?.field.type) {
@@ -75,7 +75,7 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
-  if (generatorForm) {
+  if (generatorForm.value) {
     emits('update:modelValue', generatorForm);
   }
 });

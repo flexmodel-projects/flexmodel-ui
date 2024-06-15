@@ -81,7 +81,7 @@
                :model="form"
                :current-value="fieldForm"
                @conform="addOrEditField"
-               @cancel="changeFieldDialogVisible = false"
+               @cancel="handleCancelFieldForm"
   />
   <ChangeIndex v-model="changeIndexDialogVisible"
                :datasource="datasourceName"
@@ -93,7 +93,7 @@
   />
 </template>
 <script setup lang="ts">
-import {computed, reactive, ref, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {displayFieldType} from "~/utils/models";
@@ -107,7 +107,7 @@ const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
 const datasourceName = computed(() => props.datasource);
 
-const form = reactive<Model>({
+const form = ref<Model>({
   name: '',
   comment: '',
   fields: [
@@ -134,17 +134,23 @@ const handleEditField = (index: number) => {
   selectedFieldKey.value = index;
   changeFieldDialogVisible.value = true;
 }
+const handleCancelFieldForm = () => {
+  fieldForm.value = {};
+  changeFieldDialogVisible.value = false
+}
 const addOrEditField = (val: any) => {
   if (selectedFieldKey.value === -1) {
-    form.fields.push(val);
+    form.value.fields.push(val);
   } else {
-    form.fields[selectedFieldKey.value] = val;
+    form.value.fields[selectedFieldKey.value] = val;
   }
   changeFieldDialogVisible.value = false;
 }
 const delField = (index: number) => {
-  form.fields.splice(index, 1);
+  form.value.fields.splice(index, 1);
 }
+
+
 const indexForm = ref<any>({});
 const selectedIndexKey = ref<number>(-1);
 const handleAddIndex = () => {
@@ -153,27 +159,31 @@ const handleAddIndex = () => {
   changeIndexDialogVisible.value = true;
 }
 const handleEditIndex = (index: number) => {
-  indexForm.value = form.indexes[index];
+  indexForm.value = form.value.indexes[index];
   selectedIndexKey.value = index;
   changeIndexDialogVisible.value = true;
 }
+
+
 const addOrEditIndex = (val: any) => {
   if (selectedIndexKey.value === -1) {
-    form.indexes.push(val);
+    form.value.indexes.push(val);
   } else {
-    form.indexes[selectedIndexKey] = val;
+    form.value.indexes[selectedIndexKey] = val;
   }
   changeIndexDialogVisible.value = false;
 }
 const delIndex = (index: number) => {
-  form.indexes.splice(index, 1);
+  form.value.indexes.splice(index, 1);
 }
+
 const cancelForm = () => {
   emits('cancel');
 }
 const submitForm = async () => {
   emits('conform', form);
 }
+
 watchEffect(() => {
   if (props.modelValue) {
     drawer.value = props.modelValue;

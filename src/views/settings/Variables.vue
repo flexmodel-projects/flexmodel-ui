@@ -42,7 +42,7 @@
 <script setup lang="ts">
 
 import HidePassword from "~/components/HidePassword.vue";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {getVariables} from "~/api/environment";
 
 const variables = ref<any>({});
@@ -50,7 +50,6 @@ const reqVariables = async () => {
   variables.value = await getVariables()
 }
 const filterKeyword = ref<string>('');
-reqVariables();
 const environmentVariables = computed(() => {
   const list = [];
   const keys = Object.keys(variables.value['environment'] || {});
@@ -68,6 +67,9 @@ const systemVariables = computed(() => {
     value: variables.value['system'][key]
   }));
   return list;
+});
+onMounted(() => {
+  reqVariables();
 });
 </script>
 
