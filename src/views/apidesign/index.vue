@@ -11,7 +11,7 @@
             clearable
           >
           </el-input>
-          <el-button type="primary" :icon="Plus" @click="dialogVisible = true" plain/>
+          <el-button type="primary" :icon="Plus" @click="apiDialogVisible = true" plain/>
         </div>
         <el-divider/>
         <el-scrollbar height="538">
@@ -70,9 +70,8 @@
     </el-col>
   </el-row>
   <el-dialog
-    v-model="dialogVisible"
+    v-model="apiDialogVisible"
     width="600"
-    :before-close="handleClose"
   >
     <el-row :gutter="10" class="p-20px">
       <el-col v-for="(item, index) in Endpoints" :key="index" :span="6" class="mb-10px">
@@ -122,18 +121,22 @@ import RestAPI from "~/views/apidesign/RestAPI.vue";
 import DefaultPage from "~/views/apidesign/DefaultPage.vue";
 import RequestMethodTag from "~/components/RequestMethodTag.vue";
 
+const defaultProps = {
+  children: 'children',
+  label: 'name',
+}
+interface Tree {
+  name: string
+  children?: Tree[]
+}
+
 const treeRef = ref<InstanceType<any>>();
 const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
 const filterText = ref<string>();
 const data = ref<Tree[]>([]);
 const deleteDialogVisible = ref<boolean>(false);
-const dialogVisible = ref<boolean>(false);
+const apiDialogVisible = ref<boolean>(false);
 const selectedNode = ref<Record<string, any> | null>();
-
-interface Tree {
-  name: string
-  children?: Tree[]
-}
 
 const handleNodeClick = (data: Tree) => {
   console.log(data)
@@ -141,23 +144,21 @@ const handleNodeClick = (data: Tree) => {
 const reqApiList = async () => {
   data.value = await getApis();
 }
-
 const filterNode = (value: string, data: Tree) => {
   if (!value) return true
   return data.name.includes(value)
 }
-
 const toApiDesign = (item: Endpoint) => {
   if (!item.enable) {
     ElMessage.warning("Not available");
     return;
   }
   viewType.value = item.type;
-  dialogVisible.value = false;
+  apiDialogVisible.value = false;
 }
 const toDefault = () => {
   viewType.value = 'DEFAULT_PAGE';
-  dialogVisible.value = false;
+  apiDialogVisible.value = false;
   reqApiList();
 }
 const handleDelete = async () => {
@@ -165,10 +166,7 @@ const handleDelete = async () => {
   await deleteApi(selectedNode.value?.id);
   await reqApiList();
 }
-const defaultProps = {
-  children: 'children',
-  label: 'name',
-}
+
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
 });
