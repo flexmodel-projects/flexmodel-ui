@@ -25,35 +25,42 @@
     <el-input
       style="width: 100%"
       placeholder="Search models"
-      v-model="searchQuery"
+      v-model="filterText"
+      @input="onQueryChanged"
       clearable
     >
     </el-input>
   </div>
   <el-divider/>
-  <el-scrollbar :style="{height: props.height||'300px'}">
-    <div class="datasource-wrap">
-      <el-empty v-if="filteredItems.length===0"/>
-      <div
-        class="ds-item"
-        :class="{ 'ds-item-active': item.name === activeModel?.name }"
-        v-for="(item, index) in filteredItems"
-        :key="index"
-        @click="handleItemChange(item)"
-        :title="item.name"
-      >
-        <el-icon class="p-2">
-          <Document/>
-        </el-icon>
-        {{ item.name }}
+  <el-tree-v2
+    ref="treeRef"
+    :height="300"
+    node-key="name"
+    :current-node-key="activeModel?.name"
+    :data="modelList"
+    :props="treeProps"
+    @node-click="handleItemChange"
+    :filter-method="filterMethod">
+    <template #default="{ node, data }">
+      <div class="flex items-center justify-between">
+        <div class="flex">
+          <div>
+            <el-icon>
+              <Document/>
+            </el-icon>
+          </div>
+          <div class="tree-item-content">
+            <span>{{ node.label }}</span>
+          </div>
+        </div>
         <div class="absolute right-12px">
           <el-dropdown trigger="hover">
-            <el-icon class="icon-hover invisible" @click.stop>
+            <el-icon class="tree-item-more invisible" @click.stop>
               <More/>
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click.stop="deleteDialogVisible=true; activeModel=item;">
+                <el-dropdown-item @click.stop="deleteDialogVisible = true; activeModel = data">
                   <span class="text-#f56c6c">Delete</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -61,8 +68,8 @@
           </el-dropdown>
         </div>
       </div>
-    </div>
-  </el-scrollbar>
+    </template>
+  </el-tree-v2>
   <el-dialog
     v-model="deleteDialogVisible"
     :title="`Delete '${activeModel?.name}?'`"
@@ -83,7 +90,7 @@
 
 import {Datasource, DbsMap} from "~/types";
 import {Document, Edit, More, Refresh} from "@element-plus/icons-vue";
-import {computed, onMounted, ref, watchEffect} from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from "~/api/datasource";
 import {useRouter} from "vue-router";
 import {dropModel, getModelList} from "~/api/model";
@@ -110,16 +117,14 @@ const reqModelList = async () => {
   activeModel.value = res[0];
   emits('change', activeDs.value, res[0]);
 };
-
-const searchQuery = ref<string>();
-const filteredItems = computed(() => {
-  if (!searchQuery.value) {
-    return modelList.value;
-  }
-  return modelList.value.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.value?.toLowerCase())
-  );
-});
+const treeRef = ref<InstanceType<any>>()
+const filterText = ref<string>();
+const filterMethod = (query: string, node: TreeNode) => {
+  return node.name!.includes(query)
+}
+const onQueryChanged = (query: string) => {
+  treeRef.value!.filter(query);
+}
 const handleItemChange = (item: any) => {
   activeModel.value = item;
   emits('change', activeDs.value, item);
@@ -134,6 +139,11 @@ const handleDelete = async () => {
   await dropModel(activeDs.value, activeModel.value.name);
   await reqModelList();
   deleteDialogVisible.value = false;
+}
+const treeProps = {
+  value: 'name',
+  children: 'children',
+  label: 'name',
 }
 defineExpose({
   reload: () => {
@@ -150,33 +160,19 @@ watchEffect(() => {
 });
 </script>
 <style scoped lang="scss">
-.datasource-wrap {
-  position: relative;
-  padding: 5px;
+.tree-item-icon {
+}
 
-  .ds-item {
-    font-size: var(--ep-font-size-base);
-    height: 32px;
-    line-height: 32px;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    padding: 0 4px;
+.tree-item-content {
+  padding-left: 5px;
+}
 
-    &:hover {
-      background-color: var(--ep-fill-color-light);
-
-      .icon-hover {
-        visibility: visible;
-        top: 10px;
-      }
-
-    }
-
-    &-active {
-      background-color: var(--ep-fill-color-light);
+.ep-tree-node {
+  &:hover {
+    .tree-item-more {
+      visibility: visible;
     }
   }
+
 }
 </style>
