@@ -46,6 +46,7 @@
   </el-row>
   <ChangeIndex v-model="changeDialogVisible"
                :datasource="datasource"
+               :current-value="selectedIndexForm"
                :model="model"
                @conform="addOrEditIndex"
                @cancel="changeDialogVisible = false"

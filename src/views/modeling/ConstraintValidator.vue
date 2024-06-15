@@ -99,7 +99,7 @@ import FieldValue from "~/views/modeling/FieldValue.vue";
 import {ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
 
-const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
+const props = defineProps(['visible', 'modelValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
 
 const visible = ref<boolean>(props.visible);
@@ -108,7 +108,7 @@ const formRef = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
   visible.value = false;
-  emits('change', {...form.value});
+  emits('change', form.value);
   if (!formEl) return;
   formEl.resetFields();
 }
@@ -124,8 +124,9 @@ watchEffect(() => {
   }
 });
 watchEffect(() => {
-  if (props.currentValue) {
-    form.value = props.currentValue;
+  console.log('ConstraintValidator', props.modelValue);
+  if (props.modelValue) {
+    form.value = props.modelValue;
   }
 });
 </script>

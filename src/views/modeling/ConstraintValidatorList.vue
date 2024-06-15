@@ -34,7 +34,7 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ConstraintValidator :current-value="validatorForm"
+  <ConstraintValidator v-model="validatorForm"
                        @close="validatorDialogVisible = false"
                        @change="handleChange"
                        :visible="validatorDialogVisible"
@@ -82,6 +82,7 @@ const handleChange = (item: any) => {
   } else {
     list.value[selectedIndex.value] = item;
   }
+  emits('update:modelValue', list);
 }
 
 watchEffect(() => {
@@ -90,10 +91,12 @@ watchEffect(() => {
   }
 });
 watchEffect(() => {
-  if (list.value) {
-    emits('update:modelValue', list);
+  console.log('constraintValidatorList', props.modelValue);
+  if (props.modelValue) {
+    validatorForm.value = props.modelValue;
+    list.value = props.modelValue;
   }
-});
+})
 </script>
 <style scoped>
 

@@ -167,7 +167,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   }
   emits('conform', {
     ...form.value,
-    generator: form.value.generator,
     type: realType,
     targetEntity: targetEntity
   });
@@ -180,9 +179,7 @@ watch(() => form?.value?.type, () => {
       realType = 'relation';
     }
     form.value = {
-      name: form.value.name,
-      comment: form.value.comment,
-      type: form.value.type,
+      ...form.value,
       targetField: null, ...FieldInitialValues[realType]
     };
   }

@@ -33,9 +33,9 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ValueGenerator :current-value="generatorForm"
+  <ValueGenerator v-model="generatorForm"
                   @close="generatorDialogVisible = false"
-                  @change="item => list = [item]"
+                  @change="handleChange"
                   :visible="generatorDialogVisible"
                   :field="field"/>
 </template>
@@ -50,7 +50,7 @@ const emits = defineEmits(['update:modelValue']);
 
 const generatorDialogVisible = ref<boolean>(false);
 const generatorForm = ref<any>();
-const list = ref<any[]>([]);
+const list = ref<any>();
 
 const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
 
@@ -58,28 +58,39 @@ const handleCommand = (command: string) => {
   generatorForm.value = {type: command, generationTime: 'INSERT'};
   generatorDialogVisible.value = true;
 }
+const handleChange = (item: any) => {
+  list.value = [item];
+}
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
 const addItem = () => {
   generatorDialogVisible.value = true;
+  // emits('update:modelValue', generatorForm.value);
 }
 const delItem = (index: number) => {
   list.value = [];
+  // emits('update:modelValue', null);
 }
 const editItem = (item: any) => {
   generatorDialogVisible.value = true;
   generatorForm.value = item;
+  // emits('update:modelValue', generatorForm.value);
 }
 
 watchEffect(() => {
   if (props?.field.type) {
     list.value = [];
   }
-})
+});
 watchEffect(() => {
   if (generatorForm.value) {
-    emits('update:modelValue', generatorForm.value);
+    list.value = [generatorForm.value];
+  }
+})
+watchEffect(() => {
+  if (props.modelValue) {
+    generatorForm.value = props.modelValue;
   }
 });
 </script>
