@@ -102,14 +102,16 @@ import {Datasource, DbsMap} from "~/types";
 import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 import EditDSConfig from "~/views/datasource/EditDSConfig.vue";
 
+const router = useRouter();
+
 const drawerVisible = ref<boolean>(false);
 const editVisible = ref<boolean>(false);
 const deleteVisible = ref<boolean>(false);
-const router = useRouter();
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
 const refreshLoading = ref<boolean>(false);
 const testLoading = ref<boolean>(false);
+
 const reqDatasourceList = async () => {
   try {
     dsList.value = await getDatasourceList();
@@ -151,6 +153,7 @@ const handleDelete = async () => {
   await reqDatasourceList();
   deleteVisible.value = false;
 }
+
 onMounted(() => {
   reqDatasourceList();
 });

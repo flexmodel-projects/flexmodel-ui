@@ -15,29 +15,28 @@
   </el-input>
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import {getVariables} from "~/api/environment";
 
 const props = defineProps(['modelValue', 'placeholder']);
 const emits = defineEmits(['update:modelValue']);
+
 const input = ref<string>('');
 const variables = ref<any[]>([]);
+
 const reqVariables = async () => {
   variables.value = await getVariables()
 }
-reqVariables();
 const variableKeys = computed(() => {
   const list = [];
   list.push(...Object.keys(variables.value['environment'] || {}));
   list.push(...Object.keys(variables.value['system'] || {}));
   return list;
 });
-const selectVariable = (item: string) => {
-  input.value += `{{${item}}}`;
-}
 const handleCommand = (command: string) => {
   input.value += `{{${command}}}`;
 }
+
 watchEffect(() => {
   if (input.value) {
     emits('update:modelValue', input.value);
@@ -47,6 +46,9 @@ watchEffect(() => {
   if (props.modelValue) {
     input.value = props.modelValue;
   }
+});
+onMounted(() => {
+  reqVariables();
 });
 </script>
 <style scoped>

@@ -78,10 +78,11 @@ import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 
 const props = defineProps(['visible']);
 const emits = defineEmits(['change']);
+
 const drawer = ref(false);
 const data = ref<any>({config: {dbKind: 'mysql'}});
-
 const active = ref(0);
+
 const prev = () => {
   if (active.value-- < 0) active.value = 0
 }
@@ -106,6 +107,7 @@ const connectDatabase = async () => {
     ElMessage.error(`Failed, error msg: ${result.errorMsg}`);
   }
 }
+
 watchEffect(() => {
   if (props.visible) {
     drawer.value = props.visible;

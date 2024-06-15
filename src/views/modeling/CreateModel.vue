@@ -105,8 +105,6 @@ const emits = defineEmits(['update:modelValue', 'conform', 'cancel']);
 const drawer = ref(false);
 const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
-const datasourceName = computed(() => props.datasource);
-
 const form = ref<Model>({
   name: '',
   comment: '',
@@ -124,13 +122,19 @@ const form = ref<Model>({
 });
 const fieldForm = ref<any>({});
 const selectedFieldKey = ref<number>(-1);
+const indexForm = ref<any>({});
+const selectedIndexKey = ref<number>(-1);
+
+const datasourceName = computed(() => props.datasource);
+
+
 const handleAddField = () => {
   fieldForm.value = {};
   selectedFieldKey.value = -1;
   changeFieldDialogVisible.value = true;
 }
 const handleEditField = (index: number) => {
-  fieldForm.value = form.fields[index];
+  fieldForm.value = form.value.fields[index];
   selectedFieldKey.value = index;
   changeFieldDialogVisible.value = true;
 }
@@ -149,10 +153,6 @@ const addOrEditField = (val: any) => {
 const delField = (index: number) => {
   form.value.fields.splice(index, 1);
 }
-
-
-const indexForm = ref<any>({});
-const selectedIndexKey = ref<number>(-1);
 const handleAddIndex = () => {
   indexForm.value = {};
   selectedIndexKey.value = -1;
@@ -163,20 +163,17 @@ const handleEditIndex = (index: number) => {
   selectedIndexKey.value = index;
   changeIndexDialogVisible.value = true;
 }
-
-
 const addOrEditIndex = (val: any) => {
   if (selectedIndexKey.value === -1) {
     form.value.indexes.push(val);
   } else {
-    form.value.indexes[selectedIndexKey] = val;
+    form.value.indexes[selectedIndexKey.value] = val;
   }
   changeIndexDialogVisible.value = false;
 }
 const delIndex = (index: number) => {
   form.value.indexes.splice(index, 1);
 }
-
 const cancelForm = () => {
   emits('cancel');
 }

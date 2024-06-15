@@ -18,12 +18,14 @@ import InputVariables from "~/components/InputVariables.vue";
 
 const props = defineProps(['modelValue']);
 const emits = defineEmits(['update:modelValue']);
+
 const config = ref<any>({
   dbKind: 'mysql',
   url: '',
   username: '',
   password: '',
 });
+
 watchEffect(() => {
   if (props.modelValue) {
     config.value.dbKind = props.modelValue.dbKind;

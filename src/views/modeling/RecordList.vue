@@ -89,12 +89,10 @@
 <script setup lang="ts">
 import {computed, ref, watchEffect} from "vue";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "~/api/record";
-import type {ElMessage, FormInstance, FormRules} from 'element-plus'
+import type {FormInstance, FormRules} from 'element-plus'
 
 const props = defineProps(['datasource', 'model']);
 
-const datasource = computed(() => props.datasource);
-const model = computed(() => props.model);
 const dialogFormVisible = ref(false);
 const editMode = ref<boolean>(false);
 const query = ref({
@@ -104,6 +102,13 @@ const query = ref({
   sort: '',
 });
 const records = ref<any[]>([]);
+const form = ref<any>({});
+const rules = ref<FormRules<any>>({});
+const formRef = ref<FormInstance>();
+
+const datasource = computed(() => props.datasource);
+const model = computed(() => props.model);
+
 const reqRecordList = async () => {
   records.value = await getRecordList(props.datasource, props.model?.name, {
     current: query.value.current,
@@ -117,9 +122,6 @@ const reqDeleteRecord = async (record: any) => {
   await deleteRecord(props.datasource, model.value.name, record[model.value?.idField?.name]);
   await reqRecordList();
 };
-const form = ref<any>({});
-const rules = ref<FormRules<any>>({});
-const formRef = ref<FormInstance>();
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {

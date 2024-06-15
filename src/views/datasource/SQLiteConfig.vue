@@ -11,10 +11,12 @@ import {ref, watchEffect} from "vue";
 
 const props = defineProps(['modelValue']);
 const emits = defineEmits(['update:modelValue']);
+
 const config = ref<any>({
   dbKind: 'sqlite',
   file: ''
 });
+
 watchEffect(() => {
   if (props.modelValue) {
     config.value.dbKind = props.modelValue.dbKind;

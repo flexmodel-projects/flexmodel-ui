@@ -48,15 +48,18 @@ import ConstraintValidator from "~/views/modeling/ConstraintValidator.vue";
 
 const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['update:modelValue']);
-const filteredValidatorTypes = computed(() => ValidatorTypes[props.field?.type]);
+
 const validatorDialogVisible = ref<boolean>(false);
 const validatorForm = ref<any>({});
 const selectedIndex = ref<number>(-1);
+const list = ref<any[]>([]);
+
+const filteredValidatorTypes = computed(() => ValidatorTypes[props.field?.type]);
+
 const handleCommand = (command: string) => {
   validatorForm.value.type = command;
   validatorDialogVisible.value = true;
 }
-const list = ref<any[]>([]);
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
@@ -80,6 +83,7 @@ const handleChange = (item: any) => {
     list.value[selectedIndex.value] = item;
   }
 }
+
 watchEffect(() => {
   if (props?.field.type) {
     list.value = [];

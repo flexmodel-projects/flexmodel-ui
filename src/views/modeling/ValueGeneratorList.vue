@@ -47,14 +47,17 @@ import ValueGenerator from "~/views/modeling/ValueGenerator.vue";
 
 const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['update:modelValue']);
-const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
+
 const generatorDialogVisible = ref<boolean>(false);
 const generatorForm = ref<any>({});
+const list = ref<any[]>([]);
+
+const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
+
 const handleCommand = (command: string) => {
   generatorForm.value.type = command;
   generatorDialogVisible.value = true;
 }
-const list = ref<any[]>([]);
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
@@ -69,6 +72,7 @@ const editItem = (item: any) => {
   generatorDialogVisible.value = true;
   generatorForm.value = item;
 }
+
 watchEffect(() => {
   if (props?.field.type) {
     list.value = [];

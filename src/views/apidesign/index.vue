@@ -125,6 +125,10 @@ import RequestMethodTag from "~/components/RequestMethodTag.vue";
 const treeRef = ref<InstanceType<any>>();
 const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
 const filterText = ref<string>();
+const data = ref<Tree[]>([]);
+const deleteDialogVisible = ref<boolean>(false);
+const dialogVisible = ref<boolean>(false);
+const selectedNode = ref<Record<string, any> | null>();
 
 interface Tree {
   name: string
@@ -134,13 +138,10 @@ interface Tree {
 const handleNodeClick = (data: Tree) => {
   console.log(data)
 }
-const data = ref<Tree[]>([]);
 const reqApiList = async () => {
   data.value = await getApis();
 }
-const deleteDialogVisible = ref<boolean>(false);
-const dialogVisible = ref<boolean>(false);
-const selectedNode = ref<Record<string, any> | null>()
+
 const filterNode = (value: string, data: Tree) => {
   if (!value) return true
   return data.name.includes(value)

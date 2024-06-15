@@ -92,6 +92,7 @@ const tableData = ref<any[]>([])
 const index = ref({count: 1});
 const log = ref<any>({});
 const drawer = ref(false);
+
 const reqApiLogs = async () => {
   const res: any[] = await getApiLogs(index.value.count++);
   if (res.length == 0) {

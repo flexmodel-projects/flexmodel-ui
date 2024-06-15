@@ -101,12 +101,16 @@ const props = defineProps(['datasource', 'height', 'editable']);
 const emits = defineEmits(['change']);
 
 const router = useRouter()
+
 const activeDs = ref<string>(props.datasource);
 const activeModel = ref<any>({});
 const dsList = ref<Datasource[]>([]);
 const modelList = ref<any[]>([]);
 const loading = ref<boolean>(false);
 const deleteDialogVisible = ref<boolean>(false);
+const treeRef = ref<InstanceType<any>>()
+const filterText = ref<string>();
+
 const reqDatasourceList = async () => {
   const res = await getDatasourceList();
   dsList.value = res;
@@ -118,8 +122,6 @@ const reqModelList = async () => {
   activeModel.value = res[0];
   emits('change', activeDs.value, res[0]);
 };
-const treeRef = ref<InstanceType<any>>()
-const filterText = ref<string>();
 const filterMethod = (query: string, node: TreeNode) => {
   return node.name!.includes(query)
 }
@@ -130,7 +132,6 @@ const handleItemChange = (item: any) => {
   activeModel.value = item;
   emits('change', activeDs.value, item);
 }
-
 const refreshDatasource = async () => {
   loading.value = true;
   modelList.value = await reqRefreshDatasource(activeDs.value);
@@ -141,11 +142,18 @@ const handleDelete = async () => {
   await reqModelList();
   deleteDialogVisible.value = false;
 }
+
 const treeProps = {
   value: 'name',
   children: 'children',
   label: 'name',
 }
+
+watchEffect(() => {
+  if (activeDs.value) {
+    reqModelList();
+  }
+});
 defineExpose({
   reload: () => {
     reqModelList();
@@ -153,11 +161,6 @@ defineExpose({
 });
 onMounted(() => {
   reqDatasourceList();
-});
-watchEffect(() => {
-  if (activeDs.value) {
-    reqModelList();
-  }
 });
 </script>
 <style scoped lang="scss">

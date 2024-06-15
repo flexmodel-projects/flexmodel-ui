@@ -101,9 +101,11 @@ import type {FormInstance} from "element-plus";
 
 const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
+
 const visible = ref<boolean>(props.visible);
 const form = ref<any>({});
 const formRef = ref<FormInstance>();
+
 const submitForm = (formEl: FormInstance | undefined) => {
   visible.value = false;
   emits('change', {...form.value});
@@ -115,6 +117,7 @@ const cancelForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 }
+
 watchEffect(() => {
   if (props.visible) {
     visible.value = props.visible;

@@ -135,15 +135,19 @@ import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
 
 const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
 const emits = defineEmits(['conform', 'cancel']);
+
 const visible = ref<boolean>(false);
 const modelList = ref<any[]>([]);
 const form = ref<any>({
+  type: '',
   name: '',
   comment: '',
   unique: false,
   nullable: true,
 });
 const formRef = ref<FormInstance>();
+
+
 const reqModelList = async () => {
   modelList.value = await getModelList(props.datasource);
 };
@@ -162,12 +166,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
     realType = 'relation';
   }
   emits('conform', {
-    ...form,
+    ...form.value,
     generator: Object.keys(form.value.generator).length === 0 ? null : form.value.generator,
     type: realType,
     targetEntity: targetEntity
   });
 }
+
 watchEffect(() => {
   if (form?.value?.type) {
     let realType: string = form.value.type;

@@ -60,11 +60,13 @@ import {displayFieldType} from "~/utils/models";
 import {createField, dropField} from "~/api/model";
 
 const props = defineProps(['modelValue', 'datasource', 'model']);
-const fieldList = ref<any[]>([]);
 const emits = defineEmits(['update:modelValue']);
+
+const fieldList = ref<any[]>([]);
 const changeDialogVisible = ref<boolean>(false);
 const selectedFieldIndex = ref<number>(-1);
 const selectedFieldForm = ref<any>();
+
 const handleNewField = () => {
   changeDialogVisible.value = true;
   selectedFieldIndex.value = -1;
@@ -90,6 +92,7 @@ const delField = async (index: number) => {
   await dropField(props.datasource, props.model?.name, field.name);
   fieldList.value.splice(index, 1);
 }
+
 watchEffect(() => {
   if (props.modelValue) {
     fieldList.value = props.modelValue;

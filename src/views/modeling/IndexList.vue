@@ -59,10 +59,12 @@ import {createIndex, dropIndex} from "~/api/model";
 
 const props = defineProps(['modelValue', 'datasource', 'model']);
 const emits = defineEmits(['update:modelValue']);
+
 const indexList = ref<any[]>([]);
 const changeDialogVisible = ref<boolean>(false);
 const selectedIndexKey = ref<number>(-1);
 const selectedIndexForm = ref<string>();
+
 const handleAdd = () => {
   changeDialogVisible.value = true;
   selectedIndexKey.value = -1;
@@ -90,6 +92,7 @@ const delIndex = async (key: number) => {
   changeDialogVisible.value = false;
 
 }
+
 watchEffect(() => {
   if (props.modelValue) {
     indexList.value = props.modelValue;

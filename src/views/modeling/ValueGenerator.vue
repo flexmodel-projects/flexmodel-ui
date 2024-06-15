@@ -40,6 +40,7 @@ import FieldValue from "~/views/modeling/FieldValue.vue";
 
 const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
+
 const visible = ref<boolean>(props.visible);
 const form = ref<any>({generationTime: 'INSERT'});
 const formRef = ref<FormInstance>();
@@ -55,6 +56,7 @@ const cancelForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 }
+
 watchEffect(() => {
   if (props.visible) {
     form.value = {};

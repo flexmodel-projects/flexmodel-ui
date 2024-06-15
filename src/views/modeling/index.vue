@@ -53,7 +53,8 @@ import IndexList from "~/views/modeling/IndexList.vue";
 import RecordList from "~/views/modeling/RecordList.vue";
 import {createModel as reqCreateModel} from "~/api/model";
 
-const route = useRoute(), router = useRouter()
+const route = useRoute(), router = useRouter();
+
 const {datasource} = route.query as Record<string, string>;
 const options = [
   {
@@ -69,11 +70,13 @@ const options = [
     value: 'record',
   }
 ]
+
 const selectedItem = ref<string>('field');
 const activeDs = ref<string>(datasource);
 const activeModel = ref<any>({});
 const drawerVisible = ref(false);
 const selectModelRef = ref<any>();
+
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds
   activeModel.value = item
@@ -83,6 +86,7 @@ const addModel = async (item: any) => {
   drawerVisible.value = false;
   selectModelRef.value.reload();
 }
+
 onMounted(() => {
   if (activeDs.value) {
     router.push({path: '/modeling', query: {datasource: activeDs.value}});

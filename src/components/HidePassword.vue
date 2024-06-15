@@ -9,8 +9,10 @@ import {ref, watchEffect} from "vue";
 import {Hide, View,} from "@element-plus/icons-vue";
 
 const props = defineProps(['text']);
+
 const isHide = ref<boolean>(true);
 const text = ref<string>();
+
 watchEffect(() => {
   text.value = props.text;
   isHide.value = true;

@@ -27,9 +27,10 @@
 import {ref, watchEffect} from "vue";
 import InputVariables from "~/components/InputVariables.vue";
 
-const visible = ref<boolean>(false);
 const props = defineProps(['visible', 'datasource', 'modelValue']);
 const emits = defineEmits(['conform', 'cancel', 'update:modelValue']);
+
+const visible = ref<boolean>(false);
 const form = ref<any>({});
 
 const cancelForm = () => {

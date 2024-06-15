@@ -55,9 +55,12 @@ import type {FormInstance} from "element-plus";
 
 const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
 const emits = defineEmits(['conform', 'cancel']);
-const visible = computed(() => props.visible);
+
 const form = ref<any>({});
 const formRef = ref<FormInstance>();
+
+const visible = computed(() => props.visible);
+
 const submitForm = () => {
   emits('conform', {
     name: form.value.name,
@@ -82,6 +85,7 @@ const submitForm = () => {
 const cancelForm = () => {
   emits('cancel');
 }
+
 watchEffect(() => {
   if (props.currentValue) {
     form.value = {

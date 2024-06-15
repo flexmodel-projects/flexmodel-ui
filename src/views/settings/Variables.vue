@@ -46,10 +46,11 @@ import {computed, onMounted, ref} from "vue";
 import {getVariables} from "~/api/environment";
 
 const variables = ref<any>({});
+const filterKeyword = ref<string>('');
+
 const reqVariables = async () => {
   variables.value = await getVariables()
 }
-const filterKeyword = ref<string>('');
 const environmentVariables = computed(() => {
   const list = [];
   const keys = Object.keys(variables.value['environment'] || {});
@@ -68,6 +69,7 @@ const systemVariables = computed(() => {
   }));
   return list;
 });
+
 onMounted(() => {
   reqVariables();
 });

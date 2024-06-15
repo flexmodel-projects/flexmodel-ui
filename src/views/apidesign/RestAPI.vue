@@ -82,11 +82,19 @@ import {ref, watch, watchEffect} from "vue";
 import {BASE_URI} from "~/api/base";
 import {createApi} from "~/api/api-info";
 
+interface RestAPIForm {
+  apiFolder: string,
+  apis: object,
+}
+
 const emits = defineEmits(['submit', 'cancel']);
 
 const activeDs = ref<string>();
 const activeModel = ref<any>({});
 const activeTab = ref<string>('list');
+const form = ref<RestAPIForm>({});
+const apiCheckList = ref<string[]>(['list']);
+
 const apiCheckOptions: { label: string, value: string }[] = [
   {
     value: 'list',
@@ -108,16 +116,8 @@ const apiCheckOptions: { label: string, value: string }[] = [
     value: 'delete',
     label: 'Delete'
   },
-
 ];
-const apiCheckList = ref<string[]>(['list']);
 
-interface RestAPIForm {
-  apiFolder: string,
-  apis: object,
-}
-
-const form = ref<RestAPIForm>({});
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds;
   activeModel.value = item;
