@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import {ref, watchEffect} from "vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
-import {createIndex, dropIndex} from "~/api/model";
+import {createIndex, dropIndex, modifyIndex} from "~/api/model";
 
 const props = defineProps(['modelValue', 'datasource', 'model']);
 const emits = defineEmits(['update:modelValue']);
@@ -64,7 +64,7 @@ const emits = defineEmits(['update:modelValue']);
 const indexList = ref<any[]>([]);
 const changeDialogVisible = ref<boolean>(false);
 const selectedIndexKey = ref<number>(-1);
-const selectedIndexForm = ref<string>();
+const selectedIndexForm = ref<any>();
 
 const handleAdd = () => {
   changeDialogVisible.value = true;
@@ -81,8 +81,8 @@ const addOrEditIndex = async (item: any) => {
     await createIndex(props.datasource, props.model?.name, item);
     indexList.value.push(item);
   } else {
-    // todo req update index
-    indexList.value[selectedIndexKey] = item;
+    await modifyIndex(props.datasource, props.model?.name, item.name, item);
+    indexList.value[selectedIndexKey.value] = item;
   }
   changeDialogVisible.value = false;
 }

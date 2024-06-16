@@ -31,6 +31,14 @@ export function createField(datasourceName: string, modelName: string, data: {})
   });
 }
 
+export function modifyField(datasourceName: string, modelName: string, fieldName: string, data: {}) {
+  return request({
+    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
+    method: 'put',
+    data: data
+  });
+}
+
 export function dropField(datasourceName: string, modelName: string, fieldName: string) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
@@ -42,6 +50,14 @@ export function createIndex(datasourceName: string, modelName: string, data: {})
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes`,
     method: 'post',
+    data: data
+  });
+}
+
+export function modifyIndex(datasourceName: string, modelName: string, indexName: string, data: {}) {
+  return request({
+    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`,
+    method: 'put',
     data: data
   });
 }

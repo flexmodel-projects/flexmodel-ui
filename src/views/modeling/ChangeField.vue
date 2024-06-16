@@ -148,13 +148,15 @@ const form = ref<any>({
 const formRef = ref<FormInstance>();
 
 
-const reqModelList = async () => {
-  modelList.value = await getModelList(props.datasource);
-};
+
 const relationModel = computed<any>(() => form.value.type?.startsWith('relation') ?
   modelList.value.filter(m => form.value.type?.endsWith(m.name))[0] : []);
 // 只能有一个ID字段
 const hasId = computed<boolean>(() => props.model.fields?.filter(f => f.type === 'id').length > 0);
+
+const reqModelList = async () => {
+  modelList.value = await getModelList(props.datasource);
+};
 const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
 }

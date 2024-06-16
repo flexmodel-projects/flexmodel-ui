@@ -324,23 +324,59 @@ export const ValidatorTypes: any = {
 
 export const FieldInitialValues: any = {
   string: {
+    type: 'string',
     length: 255,
+    unique: false,
+    nullable: true,
   },
-  text: {},
-  int: {},
-  bigint: {},
+  text: {
+    type: 'text',
+    unique: false,
+    nullable: true,
+  },
+  int: {
+    type: 'int',
+    unique: false,
+    nullable: true,
+  },
+  bigint: {
+    type: 'bigint',
+    unique: false,
+    nullable: true,
+  },
   decimal: {
+    type: 'decimal',
     precision: 20,
-    scale: 2
+    scale: 2,
+    unique: false,
+    nullable: true,
   },
-  boolean: {},
-  date: {},
-  json: {},
+  boolean: {
+    type: 'boolean',
+    unique: false,
+    nullable: true,
+  },
+  date: {
+    type: 'date',
+    unique: false,
+    nullable: true,
+  },
+  json: {
+    type: 'json',
+    unique: false,
+    nullable: true,
+  },
   id: {
+    type: 'id',
     generatedValue: 'AUTO_INCREMENT',
+    unique: true,
+    nullable: true,
   },
   relation: {
+    type: 'relation',
     cardinality: 'ONE_TO_ONE',
     targetField: null,
+    unique: false,
+    nullable: true,
   },
 }

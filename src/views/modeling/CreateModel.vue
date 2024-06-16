@@ -97,7 +97,7 @@ import {computed, ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {displayFieldType} from "~/utils/models";
-import {Model} from "~/types";
+import {FieldInitialValues, Model} from "~/types";
 
 const props = defineProps(['modelValue', 'datasource']);
 const emits = defineEmits(['update:modelValue', 'conform', 'cancel']);
@@ -120,7 +120,7 @@ const form = ref<Model>({
   ],
   indexes: []
 });
-const fieldForm = ref<any>({type: 'string'});
+const fieldForm = ref<any>(FieldInitialValues['string']);
 const selectedFieldKey = ref<number>(-1);
 const indexForm = ref<any>({});
 const selectedIndexKey = ref<number>(-1);
@@ -129,7 +129,7 @@ const datasourceName = computed(() => props.datasource);
 
 
 const handleAddField = () => {
-  fieldForm.value = {type: 'string'};
+  fieldForm.value = FieldInitialValues['string'];
   selectedFieldKey.value = -1;
   changeFieldDialogVisible.value = true;
 }
@@ -176,9 +176,11 @@ const delIndex = (index: number) => {
 }
 const cancelForm = () => {
   emits('cancel');
+  drawer.value = false;
 }
 const submitForm = async () => {
   emits('conform', form.value);
+  drawer.value = false;
 }
 
 watchEffect(() => {

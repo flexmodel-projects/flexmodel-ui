@@ -57,7 +57,8 @@
 import {ref, watchEffect} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import {displayFieldType} from "~/utils/models";
-import {createField, dropField} from "~/api/model";
+import {createField, dropField, modifyField} from "~/api/model";
+import {FieldInitialValues} from "~/types";
 
 const props = defineProps(['modelValue', 'datasource', 'model']);
 const emits = defineEmits(['update:modelValue']);
@@ -70,7 +71,7 @@ const selectedFieldForm = ref<any>();
 const handleNewField = () => {
   changeDialogVisible.value = true;
   selectedFieldIndex.value = -1;
-  selectedFieldForm.value = {type: 'string'};
+  selectedFieldForm.value = FieldInitialValues['string'];
 }
 const handleEdit = (index: number) => {
   selectedFieldIndex.value = index;
@@ -82,8 +83,8 @@ const addOrEditField = async (item: any) => {
     await createField(props.datasource, props.model?.name, item);
     fieldList.value.push(item);
   } else {
-    // todo req update field
-    fieldList.value[selectedFieldIndex] = item;
+    await modifyField(props.datasource, props.model?.name, item.name, item);
+    fieldList.value[selectedFieldIndex.value] = item;
   }
   changeDialogVisible.value = false;
 }
