@@ -34,7 +34,7 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ConstraintValidator v-model="validatorForm"
+  <ConstraintValidator :current-value="validatorForm"
                        @close="validatorDialogVisible = false"
                        @change="handleChange"
                        :visible="validatorDialogVisible"
@@ -46,11 +46,10 @@ import {ValidatorTypes} from "~/types";
 import {ArrowDown, Close, Edit, Plus} from "@element-plus/icons-vue";
 import ConstraintValidator from "~/views/modeling/ConstraintValidator.vue";
 
-const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['datasource', 'model', 'field']);
 
 const validatorDialogVisible = ref<boolean>(false);
-const validatorForm = ref<any>({});
+const validatorForm = defineModel<any>({required: true});
 const selectedIndex = ref<number>(-1);
 const list = ref<any[]>([]);
 
@@ -82,7 +81,6 @@ const handleChange = (item: any) => {
   } else {
     list.value[selectedIndex.value] = item;
   }
-  emits('update:modelValue', list);
 }
 
 watchEffect(() => {
@@ -91,12 +89,10 @@ watchEffect(() => {
   }
 });
 watchEffect(() => {
-  console.log('constraintValidatorList', props.modelValue);
-  if (props.modelValue) {
-    validatorForm.value = props.modelValue;
-    list.value = props.modelValue;
+  if (validatorForm.value) {
+    list.value = validatorForm.value;
   }
-})
+});
 </script>
 <style scoped>
 

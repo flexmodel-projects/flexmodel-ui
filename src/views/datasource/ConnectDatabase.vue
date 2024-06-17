@@ -75,6 +75,7 @@ import CommonConfig from "~/views/datasource/CommonConfig.vue";
 import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
 import {createDatasource, validateDatasource} from "~/api/datasource";
 import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
+import {ElMessage} from "element-plus";
 
 const props = defineProps(['visible']);
 const emits = defineEmits(['change']);

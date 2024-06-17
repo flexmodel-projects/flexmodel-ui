@@ -28,10 +28,10 @@ import {ref, watchEffect} from "vue";
 import InputVariables from "~/components/InputVariables.vue";
 
 const props = defineProps(['visible', 'datasource', 'modelValue']);
-const emits = defineEmits(['conform', 'cancel', 'update:modelValue']);
+const emits = defineEmits(['conform', 'cancel']);
 
 const visible = ref<boolean>(false);
-const form = ref<any>({});
+const form = defineModel<any>({required: true});
 
 const cancelForm = () => {
   emits('cancel');
@@ -40,16 +40,10 @@ const cancelForm = () => {
 const submitForm = () => {
   emits('conform', form.value);
   visible.value = false;
-  emits('update:modelValue', form.value);
 }
 watchEffect(() => {
   if (props.visible) {
     visible.value = props.visible;
-  }
-});
-watchEffect(() => {
-  if (props.modelValue) {
-    form.value = props.modelValue;
   }
 });
 </script>

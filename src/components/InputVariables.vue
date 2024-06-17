@@ -18,10 +18,9 @@
 import {computed, onMounted, ref, watchEffect} from "vue";
 import {getVariables} from "~/api/environment";
 
-const props = defineProps(['modelValue', 'placeholder']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['placeholder']);
 
-const input = ref<string>('');
+const input = defineModel<string>({required: true});
 const variables = ref<any[]>([]);
 
 const reqVariables = async () => {
@@ -37,16 +36,6 @@ const handleCommand = (command: string) => {
   input.value += `{{${command}}}`;
 }
 
-watchEffect(() => {
-  if (input.value) {
-    emits('update:modelValue', input.value);
-  }
-});
-watchEffect(() => {
-  if (props.modelValue) {
-    input.value = props.modelValue;
-  }
-});
 onMounted(() => {
   reqVariables();
 });

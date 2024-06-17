@@ -146,9 +146,6 @@ const form = ref<any>({
   nullable: true,
 });
 const formRef = ref<FormInstance>();
-
-
-
 const relationModel = computed<any>(() => form.value.type?.startsWith('relation') ?
   modelList.value.filter(m => form.value.type?.endsWith(m.name))[0] : []);
 // 只能有一个ID字段

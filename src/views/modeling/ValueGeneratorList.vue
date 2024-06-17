@@ -33,7 +33,7 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ValueGenerator v-model="generatorForm"
+  <ValueGenerator :current-value="generatorForm"
                   @close="generatorDialogVisible = false"
                   @change="handleChange"
                   :visible="generatorDialogVisible"
@@ -45,11 +45,10 @@ import {GeneratorTypes} from "~/types";
 import {ArrowDown, Close, Edit, Plus} from "@element-plus/icons-vue";
 import ValueGenerator from "~/views/modeling/ValueGenerator.vue";
 
-const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['datasource', 'model', 'field']);
 
 const generatorDialogVisible = ref<boolean>(false);
-const generatorForm = ref<any>();
+const generatorForm = defineModel<any>({required: true});
 const list = ref<any>();
 
 const filteredGeneratorTypes = computed(() => GeneratorTypes[props.field?.type]);
@@ -66,16 +65,13 @@ const displayValue = (item: any) => {
 }
 const addItem = () => {
   generatorDialogVisible.value = true;
-  // emits('update:modelValue', generatorForm.value);
 }
 const delItem = (index: number) => {
   list.value = [];
-  // emits('update:modelValue', null);
 }
 const editItem = (item: any) => {
   generatorDialogVisible.value = true;
   generatorForm.value = item;
-  // emits('update:modelValue', generatorForm.value);
 }
 
 watchEffect(() => {
@@ -88,11 +84,6 @@ watchEffect(() => {
     list.value = [generatorForm.value];
   }
 })
-watchEffect(() => {
-  if (props.modelValue) {
-    generatorForm.value = props.modelValue;
-  }
-});
 </script>
 <style scoped>
 

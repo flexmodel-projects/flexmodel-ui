@@ -36,6 +36,7 @@
     ref="treeRef"
     :height="300"
     node-key="name"
+    :highlight-current="true"
     :current-node-key="activeModel?.name"
     :data="modelList"
     :props="treeProps"

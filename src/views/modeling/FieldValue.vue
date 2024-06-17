@@ -15,18 +15,11 @@
   <el-input v-else v-model="value"/>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
 
-const props = defineProps(['modelValue', 'datasource', 'model', 'field']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['datasource', 'model', 'field']);
 
-const value = ref<any>(props.modelValue);
+const value = defineModel<any>({required: true});
 
-watchEffect(() => {
-  if (value) {
-    emits('update:modelValue', value);
-  }
-});
 </script>
 <style scoped>
 

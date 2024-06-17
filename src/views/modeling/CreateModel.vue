@@ -93,16 +93,16 @@
   />
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {computed, ref} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {displayFieldType} from "~/utils/models";
 import {FieldInitialValues, Model} from "~/types";
 
-const props = defineProps(['modelValue', 'datasource']);
-const emits = defineEmits(['update:modelValue', 'conform', 'cancel']);
+const props = defineProps(['datasource']);
+const emits = defineEmits(['conform', 'cancel']);
+const drawer = defineModel<boolean>({required: true});
 
-const drawer = ref(false);
 const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
 const form = ref<Model>({
@@ -122,7 +122,7 @@ const form = ref<Model>({
 });
 const fieldForm = ref<any>(FieldInitialValues['string']);
 const selectedFieldKey = ref<number>(-1);
-const indexForm = ref<any>({});
+const indexForm = ref<any>({required: true});
 const selectedIndexKey = ref<number>(-1);
 
 const datasourceName = computed(() => props.datasource);
@@ -176,23 +176,11 @@ const delIndex = (index: number) => {
 }
 const cancelForm = () => {
   emits('cancel');
-  drawer.value = false;
 }
 const submitForm = async () => {
   emits('conform', form.value);
-  drawer.value = false;
 }
 
-watchEffect(() => {
-  if (props.modelValue) {
-    drawer.value = props.modelValue;
-  }
-});
-watchEffect(() => {
-  if (drawer.value) {
-    emits('update:modelValue', drawer);
-  }
-});
 </script>
 <style scoped>
 

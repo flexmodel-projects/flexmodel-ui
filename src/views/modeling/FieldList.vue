@@ -54,16 +54,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {ref} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import {displayFieldType} from "~/utils/models";
 import {createField, dropField, modifyField} from "~/api/model";
 import {FieldInitialValues} from "~/types";
 
-const props = defineProps(['modelValue', 'datasource', 'model']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['datasource', 'model']);
 
-const fieldList = ref<any[]>([]);
+const fieldList = defineModel<any[]>({required: true});
 const changeDialogVisible = ref<boolean>(false);
 const selectedFieldIndex = ref<number>(-1);
 const selectedFieldForm = ref<any>();
@@ -75,7 +74,7 @@ const handleNewField = () => {
 }
 const handleEdit = (index: number) => {
   selectedFieldIndex.value = index;
-  selectedFieldForm.value = fieldList.value[index];
+  selectedFieldForm.value = {...fieldList.value[index]};
   changeDialogVisible.value = true;
 }
 const addOrEditField = async (item: any) => {
@@ -94,16 +93,6 @@ const delField = async (index: number) => {
   fieldList.value.splice(index, 1);
 }
 
-watchEffect(() => {
-  if (props.modelValue) {
-    fieldList.value = props.modelValue;
-  }
-})
-watchEffect(() => {
-  if (fieldList.value) {
-    emits('update:modelValue', fieldList.value);
-  }
-})
 </script>
 <style scoped>
 

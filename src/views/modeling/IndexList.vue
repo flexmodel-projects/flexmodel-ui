@@ -54,14 +54,13 @@
   />
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {ref} from "vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {createIndex, dropIndex, modifyIndex} from "~/api/model";
 
-const props = defineProps(['modelValue', 'datasource', 'model']);
-const emits = defineEmits(['update:modelValue']);
+const props = defineProps(['datasource', 'model']);
 
-const indexList = ref<any[]>([]);
+const indexList = defineModel<any[]>({required: true});
 const changeDialogVisible = ref<boolean>(false);
 const selectedIndexKey = ref<number>(-1);
 const selectedIndexForm = ref<any>();
@@ -93,17 +92,6 @@ const delIndex = async (key: number) => {
   changeDialogVisible.value = false;
 
 }
-
-watchEffect(() => {
-  if (props.modelValue) {
-    indexList.value = props.modelValue;
-  }
-})
-watchEffect(() => {
-  if (indexList.value) {
-    emits('update:modelValue', indexList.value);
-  }
-})
 </script>
 <style scoped>
 
