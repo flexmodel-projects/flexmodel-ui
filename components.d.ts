@@ -60,4 +60,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SelectModel: typeof import('./src/components/SelectModel.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

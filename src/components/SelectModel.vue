@@ -18,7 +18,7 @@
         </el-button>
       </template>
     </el-select>
-    <el-button class="ml-1" :icon="Refresh" @click="refreshDatasource" :loading="loading"/>
+    <el-button class="ml-1" :icon="Refresh" @click="refreshDatasource" :loading="dsLoading"/>
   </div>
   <el-divider/>
   <div>
@@ -33,6 +33,7 @@
   </div>
   <el-divider/>
   <el-tree-v2
+    v-loading="modelLoading"
     ref="treeRef"
     :height="300"
     node-key="name"
@@ -107,7 +108,8 @@ const activeDs = ref<string>(props.datasource);
 const activeModel = ref<any>({});
 const dsList = ref<Datasource[]>([]);
 const modelList = ref<any[]>([]);
-const loading = ref<boolean>(false);
+const dsLoading = ref<boolean>(false);
+const modelLoading = ref(false);
 const deleteDialogVisible = ref<boolean>(false);
 const treeRef = ref<InstanceType<any>>()
 const filterText = ref<string>();
@@ -118,7 +120,9 @@ const reqDatasourceList = async () => {
   activeDs.value = props.datasource || res[0].name;
 };
 const reqModelList = async () => {
+  modelLoading.value = true;
   const res: any = await getModelList(activeDs.value);
+  modelLoading.value = false;
   modelList.value = res;
   activeModel.value = res[0];
   emits('change', activeDs.value, res[0]);
@@ -134,9 +138,9 @@ const handleItemChange = (item: any) => {
   emits('change', activeDs.value, item);
 }
 const refreshDatasource = async () => {
-  loading.value = true;
+  dsLoading.value = true;
   modelList.value = await reqRefreshDatasource(activeDs.value);
-  loading.value = false;
+  dsLoading.value = false;
 }
 const handleDelete = async () => {
   await dropModel(activeDs.value, activeModel.value.name);
@@ -165,9 +169,6 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="scss">
-.tree-item-icon {
-}
-
 .tree-item-content {
   padding-left: 5px;
 }

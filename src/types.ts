@@ -16,6 +16,8 @@ import DM8 from "~/assets/icons/svg/dm.svg";
 import TiDB from "~/assets/icons/svg/tidb.svg";
 import MongoDB from "~/assets/icons/svg/mongodb.svg";
 
+import OIDC from "~/assets/icons/svg/idp_ocid.svg";
+
 export interface Datasource {
   name: string;
   type: string;
@@ -92,7 +94,22 @@ export const Dbs: Db[] = [
     icon: MongoDB,
   }
 ]
+
 export const DbsMap: Record<string, string> = Dbs.reduce((p, c) => {
+  p[c.name] = c.icon
+  return p
+}, {} as Record<string, string>)
+
+export type IdP = { name: string; icon: string; }
+
+export const IdPs: IdP[] = [
+  {
+    name: 'oidc',
+    icon: OIDC,
+  }
+];
+
+export const IdpMap: Record<string, string> = IdPs.reduce((p, c) => {
   p[c.name] = c.icon
   return p
 }, {} as Record<string, string>)
@@ -379,4 +396,15 @@ export const FieldInitialValues: any = {
     unique: false,
     nullable: true,
   },
+}
+
+export interface IdentifyProvider {
+  name: string,
+  provider: {
+    type: string,
+    clientId?: string,
+    clientSecret?: string,
+  },
+  createdAt?: string,
+  updatedAt?: string,
 }

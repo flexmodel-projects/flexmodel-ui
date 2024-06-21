@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import {computed, ref} from "vue";
-import {DataLine, Coin, Monitor, MagicStick, Document, Files, Refrigerator, Setting} from "@element-plus/icons-vue";
+import {DataLine, Coin, Monitor, MagicStick, Document, Files, Refrigerator, User, Setting} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
 
 const isCollapse = ref(false);
@@ -114,6 +114,11 @@ const items: MenuItem[] = [
         index: '/modeling',
       },
     ]
+  },
+  {
+    icon: User,
+    title: 'Identity Providers',
+    index: '/identity-providers',
   },
   {
     icon: Setting,

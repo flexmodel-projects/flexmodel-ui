@@ -4,34 +4,40 @@
       <el-card shadow="never">
         <div style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">DS management</div>
         <el-divider/>
-        <div class="datasource-wrap">
-          <div
-            class="ds-item"
-            :class="{ 'ds-item-active': item.name === activeDs.name }"
-            v-for="(item, index) in dsList"
-            :key="index"
-            @click="handleItemChange(item)"
-          >
-            <el-icon class="p-2" size="15">
-              <component :is="DbsMap[item.config?.dbKind]"/>
-            </el-icon>
-            {{ item.name }}
+        <el-tree-v2
+          v-loading="dsLoading"
+          node-key="name"
+          :data="dsList"
+          :highlight-current="true"
+          :current-node-key="activeDs?.name"
+          :props="treeProps"
+          @node-click="handleItemChange"
+        >
+          <template #default="{ node, data }">
+            <div>
+              <el-icon class="p-2" size="15">
+                <component :is="DbsMap[data.config?.dbKind]"/>
+              </el-icon>
+            </div>
+            <div class="tree-item-content">
+              <span>{{ node.label }}</span>
+            </div>
             <div class="absolute right-12px">
               <el-dropdown trigger="hover">
-                <el-icon class="icon-hover invisible" @click.stop>
+                <el-icon class="tree-item-more invisible" @click.stop>
                   <More/>
                 </el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :disabled="item.type==='system'" @click.stop="deleteVisible=true; activeDs=item;">
+                    <el-dropdown-item :disabled="data.type==='system'" @click.stop="deleteVisible=true; activeDs=data;">
                       <span class="text-#f56c6c">Delete</span>
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
             </div>
-          </div>
-        </div>
+          </template>
+        </el-tree-v2>
         <el-divider/>
         <div>
           <el-button type="primary" :icon="Connection" @click="drawerVisible = true" style="width: 100%" plain>
@@ -64,7 +70,7 @@
       </el-row>
     </el-col>
   </el-row>
-  <ConnectDatabase :visible="drawerVisible" @change="onChangeDatasource" @close="drawerVisible = false"/>
+  <ConnectDatabase v-model:visible="drawerVisible" @change="onChangeDatasource" @close="drawerVisible = false"/>
   <EditDSConfig :visible="editVisible" @conform="editDatabase" @cancel="editVisible = false"
                 @close="editVisible = false"
                 :datasource="activeDs"
@@ -102,6 +108,12 @@ import {Datasource, DbsMap} from "~/types";
 import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 import EditDSConfig from "~/views/datasource/EditDSConfig.vue";
 
+const treeProps = {
+  value: 'name',
+  children: 'children',
+  label: 'name',
+}
+
 const router = useRouter();
 
 const drawerVisible = ref<boolean>(false);
@@ -109,13 +121,16 @@ const editVisible = ref<boolean>(false);
 const deleteVisible = ref<boolean>(false);
 const dsList = ref<Datasource[]>([]);
 const activeDs = ref<Datasource>({});
+const dsLoading = ref<boolean>(false);
 const refreshLoading = ref<boolean>(false);
 const testLoading = ref<boolean>(false);
 
 const reqDatasourceList = async () => {
   try {
+    dsLoading.value = true;
     dsList.value = await getDatasourceList();
-    activeDs.value = dsList.value[0]
+    dsLoading.value = false;
+    activeDs.value = dsList.value[0];
   } catch (error) {
     ElMessage.error(error as Error);
   }
@@ -159,34 +174,11 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="scss">
-.datasource-wrap {
-  position: relative;
-  padding: 5px;
-
-  .ds-item {
-    font-size: var(--ep-font-size-base);
-    height: 32px;
-    line-height: 32px;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    padding: 0 4px;
-
-    &:hover {
-      background-color: var(--ep-fill-color-light);
-
-      .icon-hover {
-        visibility: visible;
-        top: 10px;
-      }
-    }
-
-    &-active {
-      background-color: var(--ep-fill-color-light);
+.ep-tree-node {
+  &:hover {
+    .tree-item-more {
+      visibility: visible;
     }
   }
 }
-
-
 </style>

@@ -19,6 +19,7 @@
             ref="treeRef"
             node-key="id"
             :data="data"
+            :highlight-current="true"
             :current-node-key="selectedNode?.id"
             :props="defaultProps"
             @node-click="handleNodeClick"

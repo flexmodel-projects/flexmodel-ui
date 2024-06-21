@@ -1,5 +1,5 @@
 <template>
-  <el-drawer @close="active=0" v-model="drawer" title="Connect Database" size="50%">
+  <el-drawer @close="active=0" v-model="visible" title="Connect Database" size="50%">
     <div style="padding-bottom: 20px">
       <el-steps :active="active" finish-status="success" align-center>
         <el-step title="Select Database"/>
@@ -9,13 +9,13 @@
     <el-form
       label-position="top"
       label-width="auto"
-      :model="data"
+      :model="form"
     >
       <div v-if="active==0">
         <el-form-item class="mb-2 flex items-center text-sm"
-                      label="Please select your database to connect">
+                      label="Please select your database to connect.">
           <div class="mb-2 flex items-center text-sm">
-            <el-radio-group class="ml-4" v-model="data.config.dbKind">
+            <el-radio-group class="ml-4" v-model="form.config.dbKind">
               <div class="segment-title">Relational</div>
               <el-radio value="mysql" border>MySQL</el-radio>
               <el-radio value="mariadb" border>MariaDB</el-radio>
@@ -37,14 +37,14 @@
       </div>
       <div v-if="active==1">
         <el-form-item required label="Connection name">
-          <el-input v-model="data.name"/>
+          <el-input v-model="form.name"/>
         </el-form-item>
       </div>
     </el-form>
     <div v-if="active==1">
-      <MySQLConfig v-if="data.config.dbKind === 'mysql'" v-model="data.config"/>
-      <SQLiteConfig v-else-if="data.config.dbKind === 'sqlite'" v-model="data.config"/>
-      <CommonConfig v-else v-model="data.config"/>
+      <MySQLConfig v-if="form.config.dbKind === 'mysql'" v-model="form.config"/>
+      <SQLiteConfig v-else-if="form.config.dbKind === 'sqlite'" v-model="form.config"/>
+      <CommonConfig v-else v-model="form.config"/>
     </div>
     <div v-if="active==2">
       <el-row>
@@ -52,7 +52,7 @@
           <span class="text-center">Connected successfully</span>
         </el-col>
         <el-col>
-          <DatabaseInfo :datasource="data"/>
+          <DatabaseInfo :datasource="form"/>
         </el-col>
         <el-col class="text-center">
           <el-button style="margin-top: 12px" @click="drawer = false">Close</el-button>
@@ -69,7 +69,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {ref, watchEffect} from "vue";
+import {ref} from "vue";
 import MySQLConfig from "~/views/datasource/MySQLConfig.vue";
 import CommonConfig from "~/views/datasource/CommonConfig.vue";
 import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
@@ -77,21 +77,21 @@ import {createDatasource, validateDatasource} from "~/api/datasource";
 import DatabaseInfo from "~/views/datasource/DatabaseInfo.vue";
 import {ElMessage} from "element-plus";
 
-const props = defineProps(['visible']);
 const emits = defineEmits(['change']);
 
-const drawer = ref(false);
-const data = ref<any>({config: {dbKind: 'mysql'}});
+const visible = defineModel('visible');
+
+const form = ref<any>({config: {dbKind: 'mysql'}});
 const active = ref(0);
 
 const prev = () => {
-  if (active.value-- < 0) active.value = 0
+  if (active.value-- < 0) active.value = 0;
 }
 const next = () => {
-  if (active.value++ > 2) active.value = 0
+  if (active.value++ > 2) active.value = 0;
 }
 const tesConnection = async () => {
-  const result = await validateDatasource(data.value);
+  const result = await validateDatasource(form.value);
   if (result.success) {
     ElMessage.success(`Succeed, ping: ${result.time}ms`);
   } else {
@@ -99,9 +99,9 @@ const tesConnection = async () => {
   }
 }
 const connectDatabase = async () => {
-  const result = await validateDatasource(data.value);
+  const result = await validateDatasource(form.value);
   if (result.success) {
-    const res = await createDatasource(data.value);
+    const res = await createDatasource(form.value);
     next();
     emits('change', res);
   } else {
@@ -109,11 +109,6 @@ const connectDatabase = async () => {
   }
 }
 
-watchEffect(() => {
-  if (props.visible) {
-    drawer.value = props.visible;
-  }
-});
 </script>
 <style scoped>
 .ep-radio {

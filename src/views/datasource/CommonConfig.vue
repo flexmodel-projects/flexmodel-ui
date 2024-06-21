@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import InputVariables from "~/components/InputVariables.vue";
 
-const config = defineModel({required: true});
+const config = defineModel<any>({required: true});
 </script>
 <style scoped>
 

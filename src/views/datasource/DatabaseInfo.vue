@@ -1,5 +1,5 @@
 <template>
-  <el-descriptions border column="1">
+  <el-descriptions border :column="1">
     <el-descriptions-item label="Connection name">{{ datasource.name }}</el-descriptions-item>
     <el-descriptions-item label="Connection type">{{ datasource.type }}</el-descriptions-item>
     <el-descriptions-item label="Database type">{{ datasource.config?.dbKind }}</el-descriptions-item>

@@ -9,6 +9,7 @@ import ApiLogs from "~/views/apilogs/index.vue";
 import Datasource from "~/views/datasource/index.vue";
 import Modeling from "~/views/modeling/index.vue";
 import Settings from "~/views/settings/index.vue";
+import IdentityProviders from "~/views/idps/index.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -62,6 +63,13 @@ const routes: RouteRecordRaw[] = [
         component: Datasource,
         meta: {
           title: 'Data source'
+        },
+      },
+      {
+        path: '/identity-providers',
+        component: IdentityProviders,
+        meta: {
+          title: 'Identity Providers'
         },
       },
       {

@@ -56,6 +56,17 @@
                 <el-form-item label="Auth" prop="auth">
                   <el-switch v-model="form.apis[item].auth"/>
                 </el-form-item>
+                <el-form-item v-if="form.apis[item].auth" required label="Identifier Provider"
+                              prop="identityProvider">
+                  <el-select v-model="form.apis[item].identityProvider">
+                    <el-option
+                      v-for="item in idPs"
+                      :key="item.name"
+                      :value="item.name"
+                      :label="item.name"
+                    />
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="Paging" prop="paging" v-if="item==='list'">
                   <el-switch v-model="form.apis[item].paging"/>
                 </el-form-item>
@@ -78,22 +89,17 @@
 </template>
 <script setup lang="ts">
 import SelectModel from "~/components/SelectModel.vue";
-import {ref, watch, watchEffect} from "vue";
+import {onMounted, ref, watch, watchEffect} from "vue";
 import {BASE_URI} from "~/api/base";
 import {createApi} from "~/api/api-info";
+import {getIdentityProviders} from "~/api/identity-providers";
 
 interface RestAPIForm {
   apiFolder: string,
-  apis: object,
+  apis: any,
 }
 
 const emits = defineEmits(['submit', 'cancel']);
-
-const activeDs = ref<string>();
-const activeModel = ref<any>({});
-const activeTab = ref<string>('list');
-const form = ref<RestAPIForm>({});
-const apiCheckList = ref<string[]>(['list']);
 
 const apiCheckOptions: { label: string, value: string }[] = [
   {
@@ -118,6 +124,13 @@ const apiCheckOptions: { label: string, value: string }[] = [
   },
 ];
 
+const activeDs = ref<string>();
+const activeModel = ref<any>({});
+const activeTab = ref<string>('list');
+const form = ref<RestAPIForm>({});
+const apiCheckList = ref<string[]>(['list']);
+const idPs = ref<any[]>([]);
+
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds;
   activeModel.value = item;
@@ -133,6 +146,7 @@ const submitForm = async () => {
     if (api.enable) {
       const meta: any = {
         auth: api.auth,
+        identityProvider: api.identityProvider,
         enable: api.enable,
         type: api.type,
         datasource: activeDs.value,
@@ -156,6 +170,12 @@ const submitForm = async () => {
 const handleCancel = () => {
   emits('cancel');
 }
+
+const reqIdentityProvider = async () => {
+  idPs.value = await getIdentityProviders();
+  form.apis[item].identityProvider = idPs?.value[0];
+}
+
 watchEffect(() => {
   if (activeModel.value) {
     form.value = {
@@ -219,6 +239,9 @@ watch(
     })
   }
 )
+onMounted(() => {
+  reqIdentityProvider();
+})
 </script>
 <style scoped>
 
