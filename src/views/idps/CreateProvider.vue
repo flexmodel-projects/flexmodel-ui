@@ -58,7 +58,7 @@
 import {ref} from "vue";
 import OIdcProvider from "~/views/idps/OIdcProvider.vue";
 import {IdentifyProvider} from "~/types";
-import {createIdentityProvider} from "~/api/identity-providers";
+import {createIdentityProvider} from "~/api/identity-provider";
 import IdPInfo from "~/views/idps/IdPInfo.vue";
 
 const emits = defineEmits(['change']);

@@ -92,7 +92,7 @@ import SelectModel from "~/components/SelectModel.vue";
 import {onMounted, ref, watch, watchEffect} from "vue";
 import {BASE_URI} from "~/api/base";
 import {createApi} from "~/api/api-info";
-import {getIdentityProviders} from "~/api/identity-providers";
+import {getIdentityProviders} from "~/api/identity-provider";
 
 interface RestAPIForm {
   apiFolder: string,
