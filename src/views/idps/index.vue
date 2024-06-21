@@ -96,10 +96,10 @@
 import {ElMessage} from "element-plus";
 
 import {onMounted, ref} from "vue";
-import {Connection, Folder, More} from "@element-plus/icons-vue";
-import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider} from "~/api/identity-providers";
+import {Connection, More} from "@element-plus/icons-vue";
+import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider} from "~/api/identity-provider";
 import IdPInfo from "~/views/idps/IdPInfo.vue";
-import {DbsMap, IdentifyProvider, IdpMap} from "~/types";
+import {IdentifyProvider, IdpMap} from "~/types";
 import CreateProvider from "~/views/idps/CreateProvider.vue";
 import EditProvider from "~/views/idps/EditProvider.vue";
 
