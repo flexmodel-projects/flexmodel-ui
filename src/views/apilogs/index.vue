@@ -20,43 +20,45 @@
         />
       </el-col>
       <el-col>
-        <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 100%">
-          <el-table-column prop="level" label="level" width="100">
-            <template #default="{ row }">
-              <el-tag type="primary" v-if="row.level==='DEBUG'">DEBUG</el-tag>
-              <el-tag type="info" v-if="row.level==='INFO'">INFO</el-tag>
-              <el-tag type="warning" v-if="row.level==='WARN'">WARN</el-tag>
-              <el-tag type="danger" v-if="row.level==='ERROR'">ERROR</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="uri" label="message">
-            <template #default="{ row }">
-              <el-row style="font-size: 12px;padding: 10px 10px 10px 0;">
-                <el-col style="padding: 10px 10px 10px 0;">
-                  {{ row.uri }}
-                </el-col>
-                <el-col>
-                  <div class="flex gap-2">
-                    <el-tag type="info" size="small">status: {{ row?.data?.status }}</el-tag>
-                    <el-tag type="info" size="small">execTime: {{ row?.data?.execTime }}ms</el-tag>
-                    <el-tag type="info" size="small" v-if="row?.data?.remoteIp">remoteIp: {{
-                        row?.data?.remoteIp
-                      }}
-                    </el-tag>
-                    <el-tag type="danger" v-if="row?.data?.status>=500" size="small">
-                      message: {{ row?.data?.message }}
-                    </el-tag>
-                    <el-tag type="warning" v-else-if="row?.data?.status>=400" size="small">
-                      message: {{ row?.data?.message }}
-                    </el-tag>
-                  </div>
-                </el-col>
-              </el-row>
+        <div style="width: 99%; padding: 5px;">
+          <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 100%">
+            <el-table-column prop="level" label="level" width="100">
+              <template #default="{ row }">
+                <el-tag type="primary" v-if="row.level==='DEBUG'">DEBUG</el-tag>
+                <el-tag type="info" v-if="row.level==='INFO'">INFO</el-tag>
+                <el-tag type="warning" v-if="row.level==='WARN'">WARN</el-tag>
+                <el-tag type="danger" v-if="row.level==='ERROR'">ERROR</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="uri" label="message">
+              <template #default="{ row }">
+                <el-row style="font-size: 12px;padding: 10px 10px 10px 0;">
+                  <el-col style="padding: 10px 10px 10px 0;">
+                    {{ row.uri }}
+                  </el-col>
+                  <el-col>
+                    <div class="flex gap-2">
+                      <el-tag type="info" size="small">status: {{ row?.data?.status }}</el-tag>
+                      <el-tag type="info" size="small">execTime: {{ row?.data?.execTime }}ms</el-tag>
+                      <el-tag type="info" size="small" v-if="row?.data?.remoteIp">remoteIp: {{
+                          row?.data?.remoteIp
+                        }}
+                      </el-tag>
+                      <el-tag type="danger" v-if="row?.data?.status>=500" size="small">
+                        message: {{ row?.data?.message }}
+                      </el-tag>
+                      <el-tag type="warning" v-else-if="row?.data?.status>=400" size="small">
+                        message: {{ row?.data?.message }}
+                      </el-tag>
+                    </div>
+                  </el-col>
+                </el-row>
 
-            </template>
-          </el-table-column>
-          <el-table-column prop="createdAt" label="createdAt" width="200"/>
-        </el-table>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createdAt" label="createdAt" width="200"/>
+          </el-table>
+        </div>
       </el-col>
       <el-col style="text-align: center">
         <el-button v-if="!isOver" class="mt-4" size="large" @click="onAddItem" :loading="isLoading">
