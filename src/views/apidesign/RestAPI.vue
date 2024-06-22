@@ -146,7 +146,7 @@ const submitForm = async () => {
     if (api.enable) {
       const meta: any = {
         auth: api.auth,
-        identityProvider: api.identityProvider,
+        identityProvider: api.auth ? api.identityProvider : null,
         enable: api.enable,
         type: api.type,
         datasource: activeDs.value,
@@ -173,7 +173,6 @@ const handleCancel = () => {
 
 const reqIdentityProvider = async () => {
   idPs.value = await getIdentityProviders();
-  form.apis[item].identityProvider = idPs?.value[0];
 }
 
 watchEffect(() => {
@@ -186,16 +185,18 @@ watchEffect(() => {
           name: `Fetch a paginated ${activeModel.value.name} records list`,
           path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'GET',
-          auth: true,
+          auth: idPs?.value.length > 0,
           paging: true,
-          enable: true,
+          enable: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0]
         },
         view: {
           type: "view",
           name: `Fetch a single ${activeModel.value.name} record`,
           path: `/${activeDs.value}_${activeModel.value.name}/{id}`,
           method: 'GET',
-          auth: true,
+          auth: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0],
           enable: false,
         },
         create: {
@@ -203,15 +204,17 @@ watchEffect(() => {
           name: `Create a single ${activeModel.value.name} record`,
           path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'POST',
-          auth: true,
-          enable: false,
+          auth: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0],
+          enable: idPs?.value.length > 0,
         },
         update: {
           type: "update",
           name: `Update a single ${activeModel.value.name} record`,
           path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'PUT',
-          auth: true,
+          auth: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0],
           enable: false,
         },
         delete: {
@@ -219,7 +222,8 @@ watchEffect(() => {
           name: `Delete a single ${activeModel.value.name} record`,
           path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'DELETE',
-          auth: true,
+          auth: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0],
           enable: false,
         },
       },

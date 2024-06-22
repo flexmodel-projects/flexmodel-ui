@@ -50,7 +50,7 @@
       </el-card>
     </el-col>
     <el-col :span="20">
-      <el-row>
+      <el-row v-if="idPList.length > 0">
         <el-col>
           <el-card shadow="never">
             <el-row>
@@ -67,6 +67,9 @@
             <IdPInfo v-model="activeIdP"/>
           </el-card>
         </el-col>
+      </el-row>
+      <el-row style="justify-content: center;" v-else>
+        <el-empty/>
       </el-row>
     </el-col>
   </el-row>
@@ -117,18 +120,18 @@ const activeIdP = ref<any>({});
 const loading = ref<boolean>(false);
 const editForm = ref<any>({});
 
-const reqIdPList = async () => {
+const reqIdPs = async () => {
   try {
     loading.value = true;
     idPList.value = await getIdentityProviders();
     loading.value = false;
-    activeIdP.value = idPList?.value[0];
+    activeIdP.value = idPList?.value[0] || {};
   } catch (error) {
     ElMessage.error(error as Error);
   }
 };
 const onChangeProvider = () => {
-  reqIdPList();
+  reqIdPs();
 }
 const editProvider = async () => {
   await updateIdentityProvider(editForm.value.name, editForm.value);
@@ -139,12 +142,12 @@ const handleItemChange = (item: IdentifyProvider) => {
 }
 const handleDelete = async () => {
   await deleteIdentityProvider(activeIdP.value?.name);
-  await reqIdPList();
+  await reqIdPs();
   deleteVisible.value = false;
 }
 
 onMounted(() => {
-  reqIdPList();
+  reqIdPs();
 });
 </script>
 <style scoped lang="scss">
