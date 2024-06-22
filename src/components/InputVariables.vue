@@ -33,7 +33,7 @@ const variableKeys = computed(() => {
   return list;
 });
 const handleCommand = (command: string) => {
-  input.value += `{{${command}}}`;
+  input.value = `{{${command}}}`;
 }
 
 onMounted(() => {
