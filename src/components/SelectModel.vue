@@ -125,7 +125,7 @@ const reqModelList = async () => {
   modelLoading.value = false;
   modelList.value = res;
   activeModel.value = res[0];
-  emits('change', activeDs.value, res[0]);
+  emits('change', activeDs.value, res[0] || []);
 };
 const filterMethod = (query: string, node: TreeNode) => {
   return node.name!.includes(query)
@@ -135,7 +135,7 @@ const onQueryChanged = (query: string) => {
 }
 const handleItemChange = (item: any) => {
   activeModel.value = item;
-  emits('change', activeDs.value, item);
+  emits('change', activeDs.value, item || []);
 }
 const refreshDatasource = async () => {
   dsLoading.value = true;
