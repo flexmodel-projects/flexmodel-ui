@@ -188,7 +188,7 @@ watchEffect(() => {
           auth: idPs?.value.length > 0,
           paging: true,
           enable: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0].name
+          identityProvider: idPs?.value[0]?.name
         },
         view: {
           type: "view",
@@ -196,7 +196,7 @@ watchEffect(() => {
           path: `/${activeDs.value}_${activeModel.value.name}/{id}`,
           method: 'GET',
           auth: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0].name,
+          identityProvider: idPs?.value[0]?.name,
           enable: false,
         },
         create: {
@@ -205,7 +205,7 @@ watchEffect(() => {
           path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'POST',
           auth: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0].name,
+          identityProvider: idPs?.value[0]?.name,
           enable: idPs?.value.length > 0,
         },
         update: {
@@ -214,7 +214,7 @@ watchEffect(() => {
           path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'PUT',
           auth: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0].name,
+          identityProvider: idPs?.value[0]?.name,
           enable: false,
         },
         delete: {
@@ -223,7 +223,7 @@ watchEffect(() => {
           path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'DELETE',
           auth: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0].name,
+          identityProvider: idPs?.value[0]?.name,
           enable: false,
         },
       },
