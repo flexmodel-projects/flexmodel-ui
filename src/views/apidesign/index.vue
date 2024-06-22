@@ -16,6 +16,7 @@
         <el-divider/>
         <el-scrollbar height="538">
           <el-tree
+            v-loading="loading"
             ref="treeRef"
             node-key="id"
             :data="data"
@@ -126,14 +127,16 @@ const defaultProps = {
   children: 'children',
   label: 'name',
 }
+
 interface Tree {
   name: string
   children?: Tree[]
 }
 
 const treeRef = ref<InstanceType<any>>();
-const viewType = ref<'REST_API' | 'DEFAULT_PAGE'>('DEFAULT_PAGE');
+const viewType = ref<'REST_API' | 'DEFAULT_PAGE' | string>('DEFAULT_PAGE');
 const filterText = ref<string>();
+const loading = ref<boolean>(false);
 const data = ref<Tree[]>([]);
 const deleteDialogVisible = ref<boolean>(false);
 const apiDialogVisible = ref<boolean>(false);
@@ -143,7 +146,9 @@ const handleNodeClick = (data: Tree) => {
   console.log(data)
 }
 const reqApiList = async () => {
+  loading.value = true;
   data.value = await getApis();
+  loading.value = false;
 }
 const filterNode = (value: string, data: Tree) => {
   if (!value) return true

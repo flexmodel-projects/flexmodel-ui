@@ -13,13 +13,14 @@
       <el-col>
         <el-input
           style="width: 100%"
+          v-model="filter"
           size="large"
           placeholder="Search keywords"
           :prefix-icon="Search"
         />
       </el-col>
       <el-col>
-        <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 99%">
+        <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 100%">
           <el-table-column prop="level" label="level" width="100">
             <template #default="{ row }">
               <el-tag type="primary" v-if="row.level==='DEBUG'">DEBUG</el-tag>
@@ -82,7 +83,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import {getApiLogs} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
 
@@ -92,9 +93,10 @@ const tableData = ref<any[]>([])
 const index = ref({count: 1});
 const log = ref<any>({});
 const drawer = ref(false);
+const filter = ref<string>(null);
 
 const reqApiLogs = async () => {
-  const res: any[] = await getApiLogs(index.value.count++);
+  const res: any[] = await getApiLogs(index.value.count++, 50, filter.value);
   if (res.length == 0) {
     isOver.value = true;
   }
@@ -122,6 +124,12 @@ const refreshLog = async () => {
   }
   tableData.value = res;
 }
+
+watchEffect(() => {
+  if (filter.value) {
+    reqApiLogs();
+  }
+});
 onMounted(() => {
   reqApiLogs();
 });
