@@ -4,8 +4,8 @@
     <el-descriptions-item label="Connection type">{{ datasource.type }}</el-descriptions-item>
     <el-descriptions-item label="Database type">{{ datasource.config?.dbKind }}</el-descriptions-item>
     <el-descriptions-item label="URL">{{ datasource.config?.url }}</el-descriptions-item>
-    <el-descriptions-item label="Username">{{ datasource.config?.username }}</el-descriptions-item>
-    <el-descriptions-item label="Password">
+    <el-descriptions-item v-if="datasource.config?.username" label="Username">{{ datasource.config?.username }}</el-descriptions-item>
+    <el-descriptions-item v-if="datasource.config?.password" label="Password">
       <HidePassword :text="datasource.config?.password"/>
     </el-descriptions-item>
     <el-descriptions-item label="Create time">{{ datasource.createdAt }}</el-descriptions-item>
