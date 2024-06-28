@@ -178,8 +178,9 @@ watch(() => form?.value?.type, () => {
       realType = 'relation';
     }
     form.value = {
+      ...FieldInitialValues[realType],
       ...form.value,
-      targetField: null, ...FieldInitialValues[realType]
+      targetField: null,
     };
   }
 })
