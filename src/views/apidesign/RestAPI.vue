@@ -186,9 +186,9 @@ watchEffect(() => {
           path: `/${activeDs.value}_${activeModel.value.name}`,
           method: 'GET',
           auth: idPs?.value.length > 0,
+          identityProvider: idPs?.value[0]?.name,
           paging: true,
-          enable: idPs?.value.length > 0,
-          identityProvider: idPs?.value[0]?.name
+          enable: true
         },
         view: {
           type: "view",
@@ -206,7 +206,7 @@ watchEffect(() => {
           method: 'POST',
           auth: idPs?.value.length > 0,
           identityProvider: idPs?.value[0]?.name,
-          enable: idPs?.value.length > 0,
+          enable: false,
         },
         update: {
           type: "update",
@@ -231,7 +231,7 @@ watchEffect(() => {
   }
 })
 watchEffect(() => {
-  if (!apiCheckList.value.includes(activeTab)) {
+  if (!apiCheckList.value.includes(activeTab.value)) {
     activeTab.value = apiCheckList.value[0];
   }
 });
