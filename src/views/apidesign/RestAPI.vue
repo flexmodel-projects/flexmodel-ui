@@ -150,7 +150,7 @@ const submitForm = async () => {
         enable: api.enable,
         type: api.type,
         datasource: activeDs.value,
-        model: activeModel.value
+        model: activeModel.value.name
       };
       if (key === 'list') {
         meta.paging = form.value.apis[key].paging;

@@ -1,12 +1,13 @@
 <template>
   <el-dialog @close="cancelForm(formRef)" v-model="visible">
     <template #header>
-      New field
+      <span v-if="form.name">Edit field</span>
+      <span v-else>New field</span>
     </template>
     <el-form label-position="right"
              label-width="150px" :model="form" ref="formRef">
       <el-form-item label="Name" prop="name" required>
-        <el-input v-model="form.name"/>
+        <el-input v-model="form.name" :disabled="form.name != null"/>
       </el-form-item>
       <el-form-item label="Comment" prop="comment">
         <el-input v-model="form.comment"/>

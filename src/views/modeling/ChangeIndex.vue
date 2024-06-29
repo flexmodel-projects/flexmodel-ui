@@ -1,7 +1,8 @@
 <template>
   <el-dialog v-model="visible" width="580px">
     <template #header>
-      New index
+      <span v-if="form.name">Edit index</span>
+      <span v-else>New index</span>
     </template>
     <el-form :model="form" ref="formRef">
       <el-form-item label="Name" prop="name" required>
