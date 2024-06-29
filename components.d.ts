@@ -55,6 +55,7 @@ declare module 'vue' {
     ElTreeV2: typeof import('element-plus/es')['ElTreeV2']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     HidePassword: typeof import('./src/components/HidePassword.vue')['default']
+    HoverEditInput: typeof import('./src/components/HoverEditInput.vue')['default']
     InputVariables: typeof import('./src/components/InputVariables.vue')['default']
     Logos: typeof import('./src/components/Logos.vue')['default']
     RequestMethodTag: typeof import('./src/components/RequestMethodTag.vue')['default']

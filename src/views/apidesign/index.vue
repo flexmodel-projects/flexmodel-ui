@@ -19,7 +19,7 @@
             v-loading="loading"
             ref="treeRef"
             node-key="id"
-            :data="data"
+            :data="apiList"
             :highlight-current="true"
             :current-node-key="selectedNode?.id"
             :props="defaultProps"
@@ -36,13 +36,19 @@
                     </el-icon>
                   </div>
                   <div class="tree-item-content">
-                    <span>{{ node.label }}</span>
+                    <span v-if="editNode == data.id">
+                      <HoverEditInput @change="editApi" v-model="editForm.name" size="small"/>
+                    </span>
+                    <span v-else>{{ node.label }}</span>
                   </div>
                 </div>
                 <div v-if="data.type=='REST_API'" :title="node.label" class="flex">
                   <RequestMethodTag class="text-12px" :method="data.method"/>
                   <div class="tree-item-content">
-                    <span>{{ node.label }}</span>
+                    <span v-if="editNode == data.id">
+                      <HoverEditInput @change="editApi" v-model="editForm.name" size="small"/>
+                    </span>
+                    <span v-else>{{ node.label }}</span>
                   </div>
                 </div>
                 <div class="absolute right-12px">
@@ -52,7 +58,7 @@
                     </el-icon>
                     <template #dropdown>
                       <el-dropdown-menu>
-                        <el-dropdown-item @click.stop="showCateAdd(data)">Rename</el-dropdown-item>
+                        <el-dropdown-item @click.stop="showEditInput(data)">Rename</el-dropdown-item>
                         <el-dropdown-item @click.stop="deleteDialogVisible=true;selectedNode=data">
                           <span class="text-#f56c6c">Delete</span>
                         </el-dropdown-item>
@@ -117,11 +123,12 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
 import {Folder, More, Plus} from "@element-plus/icons-vue";
-import {deleteApi, getApis} from "~/api/api-info";
+import {deleteApi, getApis, updateApi} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
 import RestAPI from "~/views/apidesign/RestAPI.vue";
 import DefaultPage from "~/views/apidesign/DefaultPage.vue";
 import RequestMethodTag from "~/components/RequestMethodTag.vue";
+import HoverEditInput from "~/components/HoverEditInput.vue";
 
 const defaultProps = {
   children: 'children',
@@ -137,17 +144,19 @@ const treeRef = ref<InstanceType<any>>();
 const viewType = ref<'REST_API' | 'DEFAULT_PAGE' | string>('DEFAULT_PAGE');
 const filterText = ref<string>();
 const loading = ref<boolean>(false);
-const data = ref<Tree[]>([]);
+const apiList = ref<Tree[]>([]);
 const deleteDialogVisible = ref<boolean>(false);
 const apiDialogVisible = ref<boolean>(false);
 const selectedNode = ref<Record<string, any> | null>();
+const editNode = ref<string>('');
+const editForm = ref<any>({});
 
 const handleNodeClick = (data: Tree) => {
   console.log(data)
 }
 const reqApiList = async () => {
   loading.value = true;
-  data.value = await getApis();
+  apiList.value = await getApis();
   loading.value = false;
 }
 const filterNode = (value: string, data: Tree) => {
@@ -172,6 +181,15 @@ const handleDelete = async () => {
   await deleteApi(selectedNode.value?.id);
   await reqApiList();
 }
+const showEditInput = (data: any) => {
+  editForm.value = data;
+  editNode.value = data.id;
+}
+const editApi = async () => {
+  editNode.value = '';
+  await updateApi(editForm.value.id, editForm.value);
+  await reqApiList();
+}
 
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
@@ -181,9 +199,6 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="scss">
-.tree-item-icon {
-}
-
 .tree-item-content {
   padding-left: 5px;
   white-space: nowrap;
