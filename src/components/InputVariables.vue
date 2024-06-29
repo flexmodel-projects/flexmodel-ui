@@ -15,7 +15,7 @@
   </el-input>
 </template>
 <script setup lang="ts">
-import {computed, onMounted, ref, watchEffect} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {getVariables} from "~/api/environment";
 
 const props = defineProps(['placeholder']);
@@ -33,7 +33,7 @@ const variableKeys = computed(() => {
   return list;
 });
 const handleCommand = (command: string) => {
-  input.value = `{{${command}}}`;
+  input.value = "${" + command + "}";
 }
 
 onMounted(() => {
