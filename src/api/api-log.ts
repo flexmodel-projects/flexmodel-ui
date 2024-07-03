@@ -12,3 +12,13 @@ export function getApiLogs(current: number = 1, pageSize: number = 50, filter?: 
     }
   });
 }
+
+export function getApiLogStat(filter?: string) {
+  return request({
+    url: `${BASE_URI}/logs/stat`,
+    method: 'get',
+    params: {
+      filter
+    }
+  })
+}

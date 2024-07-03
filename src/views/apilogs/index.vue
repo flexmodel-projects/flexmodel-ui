@@ -20,6 +20,9 @@
         />
       </el-col>
       <el-col>
+        <div id="logStat" ref="logStatRef"></div>
+      </el-col>
+      <el-col>
         <div style="width: 99%; padding: 5px;">
           <el-table @cellClick="showDetail" row-style="cursor: pointer;" :data="tableData" style="width: 100%">
             <el-table-column prop="level" label="level" width="100">
@@ -85,9 +88,40 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {onMounted, ref, watchEffect} from "vue";
-import {getApiLogs} from "~/api/api-log";
+import {onMounted, reactive, ref, watchEffect} from "vue";
+import {getApiLogs, getApiLogStat} from "~/api/api-log";
 import {Refresh, Search, Setting} from "@element-plus/icons-vue";
+import * as echarts from 'echarts';
+
+const option = reactive<any>({
+  tooltip: {
+    trigger: 'axis'
+  },
+  grid: {
+    top: '15%',
+    left: '3%',
+    right: '3%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: []
+  },
+  yAxis: {
+    splitNumber: 2,
+    type: 'value'
+  },
+  series: [
+    {
+      name: 'Total requests',
+      type: 'line',
+      stack: 'Total',
+      data: []
+    }
+  ]
+});
 
 const isOver = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
@@ -95,7 +129,8 @@ const tableData = ref<any[]>([])
 const index = ref({count: 1});
 const log = ref<any>({});
 const drawer = ref(false);
-const filter = ref<string>(null);
+const filter = ref<string>('');
+const logStatRef = ref({});
 
 const reqApiLogs = async () => {
   const res: any[] = await getApiLogs(index.value.count++, 50, filter.value);
@@ -104,6 +139,14 @@ const reqApiLogs = async () => {
   }
   tableData.value = res;
 }
+const reqApiLogStat = async () => {
+  const statList: any[] = await getApiLogStat(filter.value);
+  option.xAxis.data = statList.map(stat => stat.date);
+  option.series[0].data = statList.map(stat => stat.total);
+  const myChart = echarts.init(logStatRef.value);
+  myChart.setOption(option)
+}
+
 const showDetail = (row: any) => {
   log.value = row;
   drawer.value = true;
@@ -119,23 +162,32 @@ const onAddItem = async () => {
 }
 const refreshLog = async () => {
   isLoading.value = true;
+  index.value.count = 1;
   const res: any[] = await getApiLogs(1);
   isLoading.value = false;
   if (res.length == 0) {
     isOver.value = true;
   }
   tableData.value = res;
+  await reqApiLogStat();
 }
+
 
 watchEffect(() => {
   if (filter.value) {
+    index.value.count = 1;
     reqApiLogs();
+    reqApiLogStat();
   }
 });
 onMounted(() => {
   reqApiLogs();
+  reqApiLogStat();
 });
 </script>
 <style scoped>
-
+#logStat {
+  width: 98%;
+  height: 250px;
+}
 </style>
