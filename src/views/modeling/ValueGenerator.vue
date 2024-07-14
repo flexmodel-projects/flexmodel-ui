@@ -38,33 +38,24 @@ import type {FormInstance} from "element-plus";
 import {GenerationTimes} from "~/types";
 import FieldValue from "~/views/modeling/FieldValue.vue";
 
-const props = defineProps(['visible', 'datasource', 'model', 'field', 'currentValue']);
+const props = defineProps(['datasource', 'model', 'field', 'currentValue']);
 const emits = defineEmits(['change']);
 
-const visible = ref<boolean>(props.visible);
+const visible = defineModel<boolean>('visible');
+
 const form = ref<any>();
 const formRef = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
-  visible.value = false;
   emits('change', form.value);
-  if (!formEl) return;
-  formEl.resetFields();
 }
 const cancelForm = (formEl: FormInstance | undefined) => {
   visible.value = false;
-  if (!formEl) return;
-  formEl.resetFields();
 }
 
 watchEffect(() => {
-  if (props.visible) {
-    visible.value = props.visible;
-  }
-});
-watchEffect(() => {
   if (props.currentValue) {
-    visible.value = props.currentValue;
+    form.value = props.currentValue;
   }
 });
 </script>

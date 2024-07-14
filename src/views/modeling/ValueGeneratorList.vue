@@ -36,7 +36,7 @@
   <ValueGenerator :current-value="generatorForm"
                   @close="generatorDialogVisible = false"
                   @change="handleChange"
-                  :visible="generatorDialogVisible"
+                  v-model:visible="generatorDialogVisible"
                   :field="field"/>
 </template>
 <script setup lang="ts">
@@ -58,6 +58,7 @@ const handleCommand = (command: string) => {
   generatorDialogVisible.value = true;
 }
 const handleChange = (item: any) => {
+  generatorDialogVisible.value = false
   list.value = [item];
 }
 const displayValue = (item: any) => {

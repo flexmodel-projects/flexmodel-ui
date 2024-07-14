@@ -183,7 +183,7 @@ watchEffect(() => {
         list: {
           type: "list",
           name: `Fetch a paginated ${activeModel.value.name} records list`,
-          path: `/${activeDs.value}_${activeModel.value.name}`,
+          path: `/${activeDs.value}/${activeModel.value.name}`,
           method: 'GET',
           auth: idPs?.value.length > 0,
           identityProvider: idPs?.value[0]?.name,
@@ -193,7 +193,7 @@ watchEffect(() => {
         view: {
           type: "view",
           name: `Fetch a single ${activeModel.value.name} record`,
-          path: `/${activeDs.value}_${activeModel.value.name}/{id}`,
+          path: `/${activeDs.value}/${activeModel.value.name}/{id}`,
           method: 'GET',
           auth: idPs?.value.length > 0,
           identityProvider: idPs?.value[0]?.name,
@@ -202,7 +202,7 @@ watchEffect(() => {
         create: {
           type: "create",
           name: `Create a single ${activeModel.value.name} record`,
-          path: `/${activeDs.value}_${activeModel.value.name}`,
+          path: `/${activeDs.value}/${activeModel.value.name}`,
           method: 'POST',
           auth: idPs?.value.length > 0,
           identityProvider: idPs?.value[0]?.name,

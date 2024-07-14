@@ -3,7 +3,7 @@
     <template #header>
       {{ form.type }}
     </template>
-    <el-form ref="formRef" label-width="130px" :model="form">
+    <el-form label-width="130px" :model="form">
       <div v-if="field.type==='string'">
         <el-form-item v-if="form.type==='RegexpValidator'" label="Regexp" prop="regexp" required>
           <el-input v-model="form.regexp"/>
@@ -86,8 +86,8 @@
     </el-form>
     <template #footer>
       <div class="text-center">
-        <el-button @click="cancelForm(formRef)">Cancel</el-button>
-        <el-button type="primary" @click="submitForm(formRef)">
+        <el-button @click="cancelForm">Cancel</el-button>
+        <el-button type="primary" @click="submitForm">
           Conform
         </el-button>
       </div>
@@ -99,30 +99,19 @@ import FieldValue from "~/views/modeling/FieldValue.vue";
 import {ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
 
-const props = defineProps(['visible', 'currentValue', 'datasource', 'model', 'field']);
+const props = defineProps(['currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
+const visible =defineModel('visible');
 
-const visible = ref<boolean>(props.visible);
 const form = ref<any>();
-const formRef = ref<FormInstance>();
 
-const submitForm = (formEl: FormInstance | undefined) => {
-  visible.value = false;
+const submitForm = () => {
   emits('change', form.value);
-  if (!formEl) return;
-  formEl.resetFields();
 }
-const cancelForm = (formEl: FormInstance | undefined) => {
+const cancelForm = () => {
   visible.value = false;
-  if (!formEl) return;
-  formEl.resetFields();
 }
 
-watchEffect(() => {
-  if (props.visible) {
-    visible.value = props.visible;
-  }
-});
 watchEffect(() => {
   if (props.currentValue) {
     form.value = props.currentValue;

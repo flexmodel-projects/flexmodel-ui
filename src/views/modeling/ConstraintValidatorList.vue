@@ -37,7 +37,7 @@
   <ConstraintValidator :current-value="validatorForm"
                        @close="validatorDialogVisible = false"
                        @change="handleChange"
-                       :visible="validatorDialogVisible"
+                       v-model:visible="validatorDialogVisible"
                        :field="field"/>
 </template>
 <script setup lang="ts">
@@ -76,6 +76,7 @@ const editItem = (index: number) => {
   validatorForm.value = list.value[index];
 }
 const handleChange = (item: any) => {
+  validatorDialogVisible.value = false;
   if (selectedIndex.value == -1) {
     list.value.push(item);
   } else {
