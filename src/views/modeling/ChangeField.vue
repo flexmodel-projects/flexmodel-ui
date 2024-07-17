@@ -13,7 +13,7 @@
         <el-input v-model="form.comment"/>
       </el-form-item>
       <el-form-item label="Type" prop="type" required>
-        <el-select v-model="form.type" style="width: 100%;" filterable>
+        <el-select v-model="tmpType" style="width: 100%;" filterable>
           <el-option-group label="ID">
             <el-option key="id" label="ID" value="id" :disabled="hasId"/>
           </el-option-group>
@@ -70,7 +70,7 @@
       </div>
       <div v-if="form.type==='json'">
       </div>
-      <div v-if="form.type?.startsWith('relation')">
+      <div v-if="form.type==='relation'">
         <el-form-item label="Target field" prop="targetField" required>
           <el-select v-model="form.targetField">
             <el-option v-for="item in relationModel?.fields"
@@ -140,16 +140,30 @@ const emits = defineEmits(['conform', 'cancel']);
 const visible = defineModel('visible');
 
 const modelList = ref<any[]>([]);
+const formRef = ref<FormInstance>();
 const form = reactive<any>({
   type: '',
+  tmpType: '',
   name: '',
   comment: '',
   unique: false,
   nullable: true,
 });
-const formRef = ref<FormInstance>();
-const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
-  modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
+const tmpType = computed({
+    get: () => form.type === 'relation' ?
+      `${form.type}:${form.targetEntity}` : form.type,
+    set: (val) => {
+      if (val.startsWith('relation')) {
+        form.type = 'relation';
+        form.targetEntity = val.replace('relation:', '');
+        form.targetField = '';
+      } else {
+        form.type = val;
+      }
+    }
+  })
+;
+const relationModel = computed<any>(() => modelList.value.filter(m => tmpType.value?.endsWith(m.name))[0]);
 // 只能有一个ID字段
 const hasId = computed<boolean>(() => props.model.fields?.filter((f: any) => f.type === 'id').length > 0);
 
@@ -160,30 +174,16 @@ const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
 }
 const submitForm = (formEl: FormInstance | undefined) => {
-  let realType: string = form.type;
-  let targetEntity = undefined;
-  if (realType.startsWith('relation')) {
-    targetEntity = realType.replace('relation:', '');
-    realType = 'relation';
-  }
-  emits('conform', {
-    ...form,
-    type: realType,
-    targetEntity: targetEntity
-  });
+  debugger
+  emits('conform', form);
 }
 
-watch(() => form?.type, () => {
-  let realType: string = form.type;
-  if (realType.startsWith('relation')) {
-    realType = 'relation';
-  }
+watch(() => tmpType?.value, () => {
   Object.assign(form, {
-    ...FieldInitialValues[realType],
+    ...FieldInitialValues[form.type],
     ...form,
-    targetField: '',
   });
-})
+});
 watchEffect(() => {
   if (visible.value) {
     reqModelList();
