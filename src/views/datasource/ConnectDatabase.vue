@@ -55,7 +55,7 @@
           <DatabaseInfo :datasource="form"/>
         </el-col>
         <el-col class="text-center">
-          <el-button style="margin-top: 12px" @click="drawer = false">Close</el-button>
+          <el-button style="margin-top: 12px" @click="visible = false">Close</el-button>
         </el-col>
       </el-row>
     </div>
@@ -69,7 +69,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import MySQLConfig from "~/views/datasource/MySQLConfig.vue";
 import CommonConfig from "~/views/datasource/CommonConfig.vue";
 import SQLiteConfig from "~/views/datasource/SQLiteConfig.vue";
@@ -81,7 +81,7 @@ const emits = defineEmits(['change']);
 
 const visible = defineModel('visible');
 
-const form = ref<any>({config: {dbKind: 'mysql'}});
+const form = reactive<any>({config: {dbKind: 'mysql'}});
 const active = ref(0);
 
 const prev = () => {
@@ -91,7 +91,7 @@ const next = () => {
   if (active.value++ > 2) active.value = 0;
 }
 const tesConnection = async () => {
-  const result = await validateDatasource(form.value);
+  const result = await validateDatasource(form);
   if (result.success) {
     ElMessage.success(`Succeed, ping: ${result.time}ms`);
   } else {
@@ -99,9 +99,9 @@ const tesConnection = async () => {
   }
 }
 const connectDatabase = async () => {
-  const result = await validateDatasource(form.value);
+  const result = await validateDatasource(form);
   if (result.success) {
-    const res = await createDatasource(form.value);
+    const res = await createDatasource(form);
     next();
     emits('change', res);
   } else {

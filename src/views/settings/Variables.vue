@@ -49,7 +49,7 @@ const variables = ref<any>({});
 const filterKeyword = ref<string>('');
 
 const environmentVariables = computed(() => {
-  const list = [];
+  const list: any[] = [];
   const keys = Object.keys(variables.value['environment'] || {});
   keys.filter(k => k.includes(filterKeyword.value)).forEach(key => list.push({
     key: key,
@@ -58,7 +58,7 @@ const environmentVariables = computed(() => {
   return list;
 });
 const systemVariables = computed(() => {
-  const list = [];
+  const list: any[] = [];
   const keys = Object.keys(variables.value['system'] || {});
   keys?.filter(k => k.includes(filterKeyword.value)).forEach(key => list.push({
     key: key,

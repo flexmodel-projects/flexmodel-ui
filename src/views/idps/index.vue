@@ -98,7 +98,7 @@
 <script setup lang="ts">
 import {ElMessage} from "element-plus";
 
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {Connection, More} from "@element-plus/icons-vue";
 import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider} from "~/api/identity-provider";
 import IdPInfo from "~/views/idps/IdPInfo.vue";
@@ -118,7 +118,7 @@ const deleteVisible = ref<boolean>(false);
 const idPList = ref<any[]>([]);
 const activeIdP = ref<any>({});
 const loading = ref<boolean>(false);
-const editForm = ref<any>({});
+const editForm = reactive<any>({});
 
 const reqIdPs = async () => {
   try {
@@ -134,7 +134,7 @@ const onChangeProvider = () => {
   reqIdPs();
 }
 const editProvider = async () => {
-  await updateIdentityProvider(editForm.value.name, editForm.value);
+  await updateIdentityProvider(editForm.name, editForm);
   editVisible.value = false
 }
 const handleItemChange = (item: IdentifyProvider) => {

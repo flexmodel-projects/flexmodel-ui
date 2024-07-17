@@ -121,7 +121,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {Folder, More, Plus} from "@element-plus/icons-vue";
 import {deleteApi, getApis, updateApi} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
@@ -149,7 +149,7 @@ const deleteDialogVisible = ref<boolean>(false);
 const apiDialogVisible = ref<boolean>(false);
 const selectedNode = ref<Record<string, any> | null>();
 const editNode = ref<string>('');
-const editForm = ref<any>({});
+const editForm = reactive<any>({});
 
 const handleNodeClick = (data: Tree) => {
   console.log(data)
@@ -182,12 +182,12 @@ const handleDelete = async () => {
   await reqApiList();
 }
 const showEditInput = (data: any) => {
-  editForm.value = data;
+  Object.assign(editForm, data);
   editNode.value = data.id;
 }
 const editApi = async () => {
   editNode.value = '';
-  await updateApi(editForm.value.id, editForm.value);
+  await updateApi(editForm.id, editForm);
   await reqApiList();
 }
 

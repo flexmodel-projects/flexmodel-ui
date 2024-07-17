@@ -75,25 +75,23 @@
       <el-button type="primary" @click="submitForm">Create</el-button>
     </template>
   </el-drawer>
-  <ChangeField v-model="changeFieldDialogVisible"
-               :visible="changeFieldDialogVisible"
+  <ChangeField v-model:visible="changeFieldDialogVisible"
                :datasource="datasourceName"
                :model="form"
                :current-value="fieldForm"
                @conform="addOrEditField"
                @cancel="handleCancelFieldForm"
   />
-  <ChangeIndex v-model="changeIndexDialogVisible"
+  <ChangeIndex v-model:visible="changeIndexDialogVisible"
                :datasource="datasourceName"
                :model="form"
                :current-value="indexForm"
                @conform="addOrEditIndex"
                @cancel="changeIndexDialogVisible = false"
-
   />
 </template>
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {displayFieldType} from "~/utils/models";
@@ -105,7 +103,7 @@ const drawer = defineModel<boolean>({required: true});
 
 const changeFieldDialogVisible = ref<boolean>(false);
 const changeIndexDialogVisible = ref<boolean>(false);
-const form = ref<Model>({
+const form = reactive<Model>({
   name: '',
   comment: '',
   fields: [
@@ -120,65 +118,65 @@ const form = ref<Model>({
   ],
   indexes: []
 });
-const fieldForm = ref<any>(FieldInitialValues['string']);
+const fieldForm = reactive<any>(FieldInitialValues['string']);
 const selectedFieldKey = ref<number>(-1);
-const indexForm = ref<any>({required: true});
+const indexForm = reactive<any>({required: true});
 const selectedIndexKey = ref<number>(-1);
 
 const datasourceName = computed(() => props.datasource);
 
 
 const handleAddField = () => {
-  fieldForm.value = FieldInitialValues['string'];
+  Object.assign(fieldForm, FieldInitialValues['string']);
   selectedFieldKey.value = -1;
   changeFieldDialogVisible.value = true;
 }
 const handleEditField = (index: number) => {
-  fieldForm.value = form.value.fields[index];
+  Object.assign(fieldForm, form.fields[index]);
   selectedFieldKey.value = index;
   changeFieldDialogVisible.value = true;
 }
 const handleCancelFieldForm = () => {
-  fieldForm.value = {type: 'string'};
-  changeFieldDialogVisible.value = false
+  Object.assign(fieldForm, {type: 'string'});
+  changeFieldDialogVisible.value = false;
 }
 const addOrEditField = (val: any) => {
   if (selectedFieldKey.value === -1) {
-    form.value.fields.push(val);
+    form.fields.push(val);
   } else {
-    form.value.fields[selectedFieldKey.value] = val;
+    form.fields[selectedFieldKey.value] = val;
   }
   changeFieldDialogVisible.value = false;
 }
 const delField = (index: number) => {
-  form.value.fields.splice(index, 1);
+  form.fields.splice(index, 1);
 }
 const handleAddIndex = () => {
-  indexForm.value = {};
+  Object.assign(indexForm, {});
   selectedIndexKey.value = -1;
   changeIndexDialogVisible.value = true;
 }
 const handleEditIndex = (index: number) => {
-  indexForm.value = form.value.indexes[index];
+  Object.assign(indexForm, form.indexes[index]);
   selectedIndexKey.value = index;
   changeIndexDialogVisible.value = true;
 }
 const addOrEditIndex = (val: any) => {
   if (selectedIndexKey.value === -1) {
-    form.value.indexes.push(val);
+    form.indexes.push(val);
   } else {
-    form.value.indexes[selectedIndexKey.value] = val;
+    form.indexes[selectedIndexKey.value] = val;
   }
   changeIndexDialogVisible.value = false;
 }
 const delIndex = (index: number) => {
-  form.value.indexes.splice(index, 1);
+  form.indexes.splice(index, 1);
 }
 const cancelForm = () => {
   emits('cancel');
 }
 const submitForm = async () => {
-  emits('conform', form.value);
+  emits('conform', form);
 }
 
 </script>

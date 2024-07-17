@@ -87,7 +87,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {computed, reactive, ref, watchEffect} from "vue";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "~/api/record";
 import type {FormInstance, FormRules} from 'element-plus'
 
@@ -101,8 +101,8 @@ const query = ref({
   filter: '',
   sort: '',
 });
-const records = ref<any[]>([]);
-const form = ref<any>({});
+const records = ref<any>({});
+const form = reactive<any>({});
 const rules = ref<FormRules<any>>({});
 const formRef = ref<FormInstance>();
 
@@ -127,9 +127,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid) => {
     if (valid) {
       if (editMode.value) {
-        await updateRecord(props.datasource, model.value.name, form.value[model.value?.idField?.name], form.value);
+        await updateRecord(props.datasource, model.value.name, form[model.value?.idField?.name], form);
       } else {
-        await createRecord(props.datasource, model.value.name, form.value);
+        await createRecord(props.datasource, model.value.name, form);
       }
       await reqRecordList();
       dialogFormVisible.value = false;
@@ -140,7 +140,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   dialogFormVisible.value = false;
   if (!formEl) return;
   formEl.resetFields();
-  Object.keys(form.value).forEach(key => form.value[key] = '');
+  Object.keys(form).forEach(key => form[key] = '');
   editMode.value = false;
 }
 const handleEdit = (record: any) => {
@@ -148,7 +148,7 @@ const handleEdit = (record: any) => {
   editMode.value = true;
   Object.keys(record).forEach((key: string) => {
     const value = record[key];
-    form.value[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
+    form[key] = value !== null && typeof value === 'object' ? JSON.stringify(value) : value;
   });
 };
 

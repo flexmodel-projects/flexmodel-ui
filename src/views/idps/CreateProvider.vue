@@ -55,7 +55,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import OIdcProvider from "~/views/idps/OIdcProvider.vue";
 import {IdentifyProvider} from "~/types";
 import {createIdentityProvider} from "~/api/identity-provider";
@@ -65,7 +65,7 @@ const emits = defineEmits(['change']);
 
 const visible = defineModel('visible');
 
-const form = ref<IdentifyProvider>({name: '', provider: {type: 'oidc'}});
+const form = reactive<IdentifyProvider>({name: '', provider: {type: 'oidc'}});
 const active = ref(0);
 
 const prev = () => {
@@ -75,7 +75,7 @@ const next = () => {
   if (active.value++ > 2) active.value = 0
 }
 const createProvider = async () => {
-  const res = await createIdentityProvider(form.value);
+  const res = await createIdentityProvider(form);
   next();
   emits('change', res);
 }

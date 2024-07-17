@@ -27,7 +27,7 @@ const cancelForm = () => {
   emits('cancel');
 }
 const submitForm = () => {
-  emits('conform', form.value);
+  emits('conform', form);
 }
 </script>
 <style scoped>

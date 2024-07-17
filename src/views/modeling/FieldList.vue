@@ -54,7 +54,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import ChangeField from "~/views/modeling/ChangeField.vue";
 import {displayFieldType} from "~/utils/models";
 import {createField, dropField, modifyField} from "~/api/model";
@@ -65,16 +65,16 @@ const props = defineProps(['datasource', 'model']);
 const fieldList = defineModel<any[]>({required: true});
 const changeDialogVisible = ref<boolean>(false);
 const selectedFieldIndex = ref<number>(-1);
-const selectedFieldForm = ref<any>();
+const selectedFieldForm = reactive<any>({});
 
 const handleNewField = () => {
   changeDialogVisible.value = true;
   selectedFieldIndex.value = -1;
-  selectedFieldForm.value = FieldInitialValues['string'];
+  Object.assign(selectedFieldForm, FieldInitialValues['string']);
 }
 const handleEdit = (index: number) => {
   selectedFieldIndex.value = index;
-  selectedFieldForm.value = {...fieldList.value[index]};
+  Object.assign(selectedFieldForm, {...fieldList.value[index]});
   changeDialogVisible.value = true;
 }
 const addOrEditField = async (item: any) => {

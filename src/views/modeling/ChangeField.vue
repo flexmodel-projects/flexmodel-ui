@@ -1,13 +1,13 @@
 <template>
   <el-dialog @close="cancelForm(formRef)" v-model="visible">
     <template #header>
-      <span v-if="form.name">Edit field</span>
+      <span v-if="props.currentValue.name">Edit field</span>
       <span v-else>New field</span>
     </template>
     <el-form label-position="right"
              label-width="150px" :model="form" ref="formRef">
       <el-form-item label="Name" prop="name" required>
-        <el-input v-model="form.name" :disabled="form.name != null"/>
+        <el-input v-model="form.name" :disabled="props.currentValue.name != null"/>
       </el-form-item>
       <el-form-item label="Comment" prop="comment">
         <el-input v-model="form.comment"/>
@@ -127,19 +127,20 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, ref, watch, watchEffect} from "vue";
+import {computed, reactive, ref, watch, watchEffect} from "vue";
 import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "~/types";
 import {getModelList} from "~/api/model";
 import ConstraintValidatorList from "~/views/modeling/ConstraintValidatorList.vue";
 import type {FormInstance} from "element-plus";
 import ValueGeneratorList from "~/views/modeling/ValueGeneratorList.vue";
 
-const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
+const props = defineProps(['datasource', 'model', 'currentValue']);
 const emits = defineEmits(['conform', 'cancel']);
 
-const visible = ref<boolean>(false);
+const visible = defineModel('visible');
+
 const modelList = ref<any[]>([]);
-const form = ref<any>({
+const form = reactive<any>({
   type: '',
   name: '',
   comment: '',
@@ -147,10 +148,10 @@ const form = ref<any>({
   nullable: true,
 });
 const formRef = ref<FormInstance>();
-const relationModel = computed<any>(() => form.value.type?.startsWith('relation') ?
-  modelList.value.filter(m => form.value.type?.endsWith(m.name))[0] : []);
+const relationModel = computed<any>(() => form.type?.startsWith('relation') ?
+  modelList.value.filter(m => form.type?.endsWith(m.name))[0] : []);
 // 只能有一个ID字段
-const hasId = computed<boolean>(() => props.model.fields?.filter(f => f.type === 'id').length > 0);
+const hasId = computed<boolean>(() => props.model.fields?.filter((f: any) => f.type === 'id').length > 0);
 
 const reqModelList = async () => {
   modelList.value = await getModelList(props.datasource);
@@ -159,40 +160,38 @@ const cancelForm = (formEl: FormInstance | undefined) => {
   emits('cancel');
 }
 const submitForm = (formEl: FormInstance | undefined) => {
-  let realType: string = form.value.type;
+  let realType: string = form.type;
   let targetEntity = undefined;
   if (realType.startsWith('relation')) {
     targetEntity = realType.replace('relation:', '');
     realType = 'relation';
   }
   emits('conform', {
-    ...form.value,
+    ...form,
     type: realType,
     targetEntity: targetEntity
   });
 }
 
-watch(() => form?.value?.type, () => {
-  if (form.value?.type) {
-    let realType: string = form.value.type;
-    if (realType.startsWith('relation')) {
-      realType = 'relation';
-    }
-    form.value = {
-      ...FieldInitialValues[realType],
-      ...form.value,
-      targetField: null,
-    };
+watch(() => form?.type, () => {
+  let realType: string = form.type;
+  if (realType.startsWith('relation')) {
+    realType = 'relation';
   }
+  Object.assign(form, {
+    ...FieldInitialValues[realType],
+    ...form,
+    targetField: '',
+  });
 })
 watchEffect(() => {
-  if (props.visible) {
+  if (visible.value) {
     reqModelList();
   }
 });
 watchEffect(() => {
   if (props.currentValue) {
-    form.value = props.currentValue;
+    Object.assign(form, props.currentValue);
   }
 });
 </script>

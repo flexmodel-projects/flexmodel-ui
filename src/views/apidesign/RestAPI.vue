@@ -89,7 +89,7 @@
 </template>
 <script setup lang="ts">
 import SelectModel from "~/components/SelectModel.vue";
-import {onMounted, ref, watch, watchEffect} from "vue";
+import {onMounted, reactive, ref, watch, watchEffect} from "vue";
 import {BASE_URI} from "~/api/base";
 import {createApi} from "~/api/api-info";
 import {getIdentityProviders} from "~/api/identity-provider";
@@ -127,7 +127,7 @@ const apiCheckOptions: { label: string, value: string }[] = [
 const activeDs = ref<string>();
 const activeModel = ref<any>({});
 const activeTab = ref<string>('list');
-const form = ref<RestAPIForm>({});
+const form = reactive<RestAPIForm>({apiFolder: "", apis: {}});
 const apiCheckList = ref<string[]>(['list']);
 const idPs = ref<any[]>([]);
 
@@ -137,12 +137,12 @@ const handleItemChange = (ds: string, item: any) => {
 }
 const submitForm = async () => {
   const {id: parentId} = await createApi({
-    name: form.value.apiFolder,
+    name: form.apiFolder,
     type: 'FOLDER',
   });
-  const keys = Object.keys(form.value.apis);
+  const keys = Object.keys(form.apis);
   for (const key of keys) {
-    const api = form.value.apis[key];
+    const api = form.apis[key];
     if (api.enable) {
       const meta: any = {
         auth: api.auth,
@@ -153,7 +153,7 @@ const submitForm = async () => {
         model: activeModel.value.name
       };
       if (key === 'list') {
-        meta.paging = form.value.apis[key].paging;
+        meta.paging = form.apis[key].paging;
       }
       await createApi({
         parentId: parentId,
@@ -177,7 +177,7 @@ const reqIdentityProvider = async () => {
 
 watchEffect(() => {
   if (activeModel.value) {
-    form.value = {
+    Object.assign(form, {
       apiFolder: `${activeModel.value.name}'s folder`,
       apis: {
         list: {
@@ -227,7 +227,7 @@ watchEffect(() => {
           enable: false,
         },
       },
-    }
+    });
   }
 })
 watchEffect(() => {
@@ -239,7 +239,7 @@ watch(
   () => apiCheckList.value,
   () => {
     apiCheckOptions.forEach(option => {
-      form.value.apis[option.value].enable = apiCheckList.value.includes(option.value)
+      form.apis[option.value].enable = apiCheckList.value.includes(option.value)
     })
   }
 )

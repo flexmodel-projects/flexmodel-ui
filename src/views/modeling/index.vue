@@ -42,7 +42,7 @@
   />
 </template>
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import Record from "~/views/modeling/Record.vue";
 import SelectModel from "~/components/SelectModel.vue";
@@ -73,13 +73,13 @@ const options = [
 
 const selectedItem = ref<string>('field');
 const activeDs = ref<string>(datasource);
-const activeModel = ref<any>({});
+const activeModel = reactive<any>({});
 const drawerVisible = ref(false);
 const selectModelRef = ref<any>();
 
 const handleItemChange = (ds: string, item: any) => {
   activeDs.value = ds
-  activeModel.value = item
+  Object.assign(activeModel, item);
 }
 const addModel = async (item: any) => {
   await reqCreateModel(activeDs.value, item);

@@ -54,7 +54,7 @@
   />
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import ChangeIndex from "~/views/modeling/ChangeIndex.vue";
 import {createIndex, dropIndex, modifyIndex} from "~/api/model";
 
@@ -63,16 +63,16 @@ const props = defineProps(['datasource', 'model']);
 const indexList = defineModel<any[]>({required: true});
 const changeDialogVisible = ref<boolean>(false);
 const selectedIndexKey = ref<number>(-1);
-const selectedIndexForm = ref<any>();
+const selectedIndexForm = reactive<any>({});
 
 const handleAdd = () => {
   changeDialogVisible.value = true;
   selectedIndexKey.value = -1;
-  selectedIndexForm.value = {};
+  Object.assign(selectedIndexForm.value, {});
 }
 const handleEdit = (index: number) => {
   selectedIndexKey.value = index;
-  selectedIndexForm.value = indexList.value[index];
+  Object.assign(selectedIndexForm, indexList.value[index]);
   changeDialogVisible.value = true;
 }
 const addOrEditIndex = async (item: any) => {

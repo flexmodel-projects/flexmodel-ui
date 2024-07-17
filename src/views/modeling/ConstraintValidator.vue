@@ -96,17 +96,16 @@
 </template>
 <script setup lang="ts">
 import FieldValue from "~/views/modeling/FieldValue.vue";
-import {ref, watchEffect} from "vue";
-import type {FormInstance} from "element-plus";
+import {reactive, watchEffect} from "vue";
 
 const props = defineProps(['currentValue', 'datasource', 'model', 'field']);
 const emits = defineEmits(['change']);
-const visible =defineModel('visible');
+const visible = defineModel('visible');
 
-const form = ref<any>();
+const form = reactive<any>({});
 
 const submitForm = () => {
-  emits('change', form.value);
+  emits('change', form);
 }
 const cancelForm = () => {
   visible.value = false;
@@ -114,7 +113,7 @@ const cancelForm = () => {
 
 watchEffect(() => {
   if (props.currentValue) {
-    form.value = props.currentValue;
+    Object.assign(form, props.currentValue);
   }
 })
 </script>

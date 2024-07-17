@@ -51,21 +51,21 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {reactive, ref, watchEffect} from "vue";
 import type {FormInstance} from "element-plus";
 
-const props = defineProps(['visible', 'datasource', 'model', 'currentValue']);
+const props = defineProps(['datasource', 'model', 'currentValue']);
 const emits = defineEmits(['conform', 'cancel']);
 
-const form = ref<any>({});
-const formRef = ref<FormInstance>();
+const visible = defineModel('visible');
 
-const visible = computed(() => props.visible);
+const form = reactive<any>({});
+const formRef = ref<FormInstance>();
 
 const submitForm = () => {
   emits('conform', {
-    name: form.value.name,
-    fields: form.value.fields.map((f: any) => {
+    name: form.name,
+    fields: form.fields.map((f: any) => {
       let fieldName = f;
       let direction = undefined;
       if (f.endsWith('ASC')) {
@@ -80,7 +80,7 @@ const submitForm = () => {
         direction: direction,
       }
     }),
-    unique: form.value.unique
+    unique: form.unique
   });
 }
 const cancelForm = () => {
@@ -89,7 +89,7 @@ const cancelForm = () => {
 
 watchEffect(() => {
   if (props.currentValue) {
-    form.value = {
+    Object.assign(form, {
       name: props.currentValue?.name || '',
       fields: props.currentValue.fields?.map((f: any) => {
         if (f.direction) {
@@ -98,7 +98,7 @@ watchEffect(() => {
         return f.fieldName;
       }) || [],
       unique: props?.currentValue?.unique || false,
-    };
+    });
   }
 })
 </script>
