@@ -98,7 +98,7 @@
 import FieldValue from "~/views/modeling/FieldValue.vue";
 import {reactive, watchEffect} from "vue";
 
-const props = defineProps(['currentValue', 'datasource', 'model', 'field']);
+const props = defineProps(['currentValue', 'datasource', 'model', 'type', 'field']);
 const emits = defineEmits(['change']);
 const visible = defineModel('visible');
 

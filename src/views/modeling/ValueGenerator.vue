@@ -38,7 +38,7 @@ import type {FormInstance} from "element-plus";
 import {GenerationTimes} from "~/types";
 import FieldValue from "~/views/modeling/FieldValue.vue";
 
-const props = defineProps(['datasource', 'model', 'field', 'currentValue']);
+const props = defineProps(['datasource', 'model', 'field', 'type', 'currentValue']);
 const emits = defineEmits(['change']);
 
 const visible = defineModel<boolean>('visible');

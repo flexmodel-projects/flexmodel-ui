@@ -34,64 +34,59 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-  <ConstraintValidator :current-value="validatorForm"
-                       @close="validatorDialogVisible = false"
+  <ConstraintValidator :current-value="form"
+                       @close="dialogVisible = false"
                        @change="handleChange"
-                       v-model:visible="validatorDialogVisible"
+                       v-model:visible="dialogVisible"
                        :field="field"/>
 </template>
 <script setup lang="ts">
-import {computed, ref, watchEffect} from "vue";
+import {computed, reactive, ref, watchEffect} from "vue";
 import {ValidatorTypes} from "~/types";
 import {ArrowDown, Close, Edit, Plus} from "@element-plus/icons-vue";
 import ConstraintValidator from "~/views/modeling/ConstraintValidator.vue";
 
 const props = defineProps(['datasource', 'model', 'field']);
 
-const validatorDialogVisible = ref<boolean>(false);
-const validatorForm = defineModel<any>({required: true});
+const dialogVisible = ref<boolean>(false);
+const form = reactive<any>({});
 const selectedIndex = ref<number>(-1);
-const list = ref<any[]>([]);
+const list = defineModel<any[]>({default: []});
 
 const filteredValidatorTypes = computed(() => ValidatorTypes[props.field?.type]);
 
 const handleCommand = (command: string) => {
-  validatorForm.value.type = command;
-  validatorDialogVisible.value = true;
+  form.type = command;
+  dialogVisible.value = true;
 }
 const displayValue = (item: any) => {
   return `${item.type}: ${JSON.stringify(item)}`;
 }
 const addItem = () => {
   selectedIndex.value = -1;
-  validatorForm.value = {};
-  validatorDialogVisible.value = true;
+  Object.assign(form, {})
+  dialogVisible.value = true;
 }
 const delItem = (index: number) => {
   list.value.splice(index, 1);
 }
 const editItem = (index: number) => {
-  validatorDialogVisible.value = true;
+  dialogVisible.value = true;
   selectedIndex.value = index;
-  validatorForm.value = list.value[index];
+  Object.assign(form, list.value[index]);
 }
 const handleChange = (item: any) => {
-  validatorDialogVisible.value = false;
+  dialogVisible.value = false;
   if (selectedIndex.value == -1) {
-    list.value.push(item);
+    list.value.push({...item});
   } else {
-    list.value[selectedIndex.value] = item;
+    list.value[selectedIndex.value] = {...item};
   }
 }
 
 watchEffect(() => {
   if (props?.field.type) {
-    list.value = [];
-  }
-});
-watchEffect(() => {
-  if (validatorForm.value) {
-    list.value = validatorForm.value;
+    Object.assign(list.value, []);
   }
 });
 </script>
