@@ -73,10 +73,21 @@
       </el-card>
     </el-col>
     <el-col :span="18">
-      <RestAPI @submit="toDefault" @cancel="viewType = 'DEFAULT_PAGE';" v-if="viewType==='REST_API'"/>
-      <DefaultPage v-if="viewType==='DEFAULT_PAGE'"/>
+      <GraphQL/>
     </el-col>
   </el-row>
+  <el-drawer v-model="drawerVisible" title="API design" size="95%">
+    <RestAPI @submit="toDefault" @cancel="drawerVisible =false" v-if="viewType==='REST_API'"/>
+    <GraphQL v-if="viewType=='GRAPH_QL'"/>
+    <template #footer>
+      <div class="text-center">
+        <el-button @click="handleCancel">Cancel</el-button>
+        <el-button type="primary" @click="submitForm">
+          Create
+        </el-button>
+      </div>
+    </template>
+  </el-drawer>
   <el-dialog
     v-model="apiDialogVisible"
     width="600"
@@ -126,9 +137,9 @@ import {Folder, More, Plus} from "@element-plus/icons-vue";
 import {deleteApi, getApis, updateApi} from "~/api/api-info";
 import {Endpoint, Endpoints} from "~/types";
 import RestAPI from "~/views/apidesign/RestAPI.vue";
-import DefaultPage from "~/views/apidesign/DefaultPage.vue";
 import RequestMethodTag from "~/components/RequestMethodTag.vue";
 import HoverEditInput from "~/components/HoverEditInput.vue";
+import GraphQL from "~/views/apidesign/GraphQL.vue";
 
 const defaultProps = {
   children: 'children',
@@ -140,8 +151,9 @@ interface Tree {
   children?: Tree[]
 }
 
+const drawerVisible = ref<boolean>(false);
 const treeRef = ref<InstanceType<any>>();
-const viewType = ref<'REST_API' | 'DEFAULT_PAGE' | string>('DEFAULT_PAGE');
+const viewType = ref<'REST_API' | 'GRAPH_QL' | 'DEFAULT_PAGE' | string>('DEFAULT_PAGE');
 const filterText = ref<string>();
 const loading = ref<boolean>(false);
 const apiList = ref<Tree[]>([]);
@@ -170,6 +182,7 @@ const toApiDesign = (item: Endpoint) => {
   }
   viewType.value = item.type;
   apiDialogVisible.value = false;
+  drawerVisible.value = true;
 }
 const toDefault = () => {
   viewType.value = 'DEFAULT_PAGE';

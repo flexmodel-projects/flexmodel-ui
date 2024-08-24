@@ -41,7 +41,7 @@ export interface Model {
 export type Endpoint = { name: string; type: string; icon: string; enable: boolean }
 export const Endpoints: Endpoint[] = [
   {name: 'REST API', type: 'REST_API', icon: REST_API, enable: true},
-  {name: 'GraphQL', type: 'GRAPH_QL', icon: GraphQL, enable: false},
+  {name: 'GraphQL', type: 'GRAPH_QL', icon: GraphQL, enable: true},
   {name: 'gRPC', type: 'GRPC', icon: gRPC, enable: false},
   {name: 'WebSocket', type: 'WEB_SOCKET', icon: WebSocket, enable: false},
   {name: 'MQTT', type: 'MQTT', icon: MQTT, enable: false},
