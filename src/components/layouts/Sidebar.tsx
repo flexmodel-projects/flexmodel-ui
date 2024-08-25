@@ -50,6 +50,12 @@ class Sidebar extends React.Component<unknown, SidebarState> {
               <span className="nav-text">About</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="4">
+            <Link to="/datasource">
+              <Icons.FileOutlined/>
+              <span className="nav-text">Data source</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </Layout.Sider>
     );
