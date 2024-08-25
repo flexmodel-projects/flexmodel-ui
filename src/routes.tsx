@@ -1,7 +1,7 @@
 import {useRoutes} from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import {TodoPage} from "./pages/TodoPage";
-import AboutPage from "./pages/AboutPage";
+import HomePage from "./pages/HomePage.tsx";
+import {TodoPage} from "./pages/TodoPage.tsx";
+import AboutPage from "./pages/AboutPage.tsx";
 
 export const routes = [
   {

@@ -3,9 +3,9 @@ import * as Redux from 'redux';
 import {connect} from 'react-redux';
 import { Card, Table, Button, Modal, Input } from 'antd';
 import * as Icons from '@ant-design/icons';
-import { TodoItem } from '../model/TodoItem';
-import { IState } from '../store/configStore';
-import { actionCreators } from '../actions/actions';
+import { TodoItem } from '../model/TodoItem.ts';
+import { IState } from '../store/configStore.ts';
+import { actionCreators } from '../actions/actions.ts';
 
 const { Column } = Table;
 

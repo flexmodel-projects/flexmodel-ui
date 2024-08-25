@@ -1,5 +1,5 @@
-import { TodoItem } from "../model/TodoItem";
-import { ActionTypes, IInitStoreAction, IAddTodoAction, ICompleteTodoAction } from "./actionTypes";
+import { TodoItem } from "../model/TodoItem.ts";
+import { ActionTypes, IInitStoreAction, IAddTodoAction, ICompleteTodoAction } from "./actionTypes.ts";
 
 export const initStoreAction = (todos: TodoItem[]): IInitStoreAction => {
     return {type: ActionTypes.INIT_STORE, todos};

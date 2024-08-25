@@ -1,7 +1,7 @@
 import { Action } from "redux";
-import { initState } from "./rootReducer";
-import * as todoActions from "../actions/actionTypes";
-import { TodoItem } from "../model/TodoItem";
+import { initState } from "./rootReducer.ts";
+import * as todoActions from "../actions/actionTypes.ts";
+import { TodoItem } from "../model/TodoItem.ts";
 
 export const todos = (
     state = initState.todos,

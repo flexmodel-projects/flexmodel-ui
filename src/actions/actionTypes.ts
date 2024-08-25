@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { TodoItem } from "../model/TodoItem";
+import { TodoItem } from "../model/TodoItem.ts";
 
 export const ActionTypes = {
     INIT_STORE: "INIT_STORE",

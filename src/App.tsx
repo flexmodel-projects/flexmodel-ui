@@ -3,8 +3,8 @@ import {HashRouter, Route, Routes} from "react-router-dom";
 import {Provider} from "react-redux";
 import {ConfigProvider} from "antd";
 import enUS from 'antd/es/locale/en_US';
-import {configureStore, initStore} from "./store/configStore";
-import PageLayout from "./layouts/PageLayout.tsx";
+import {configureStore, initStore} from "./store/configStore.ts";
+import PageLayout from "./components/layouts/PageLayout.tsx";
 const store = configureStore();
 store.dispatch<any>(initStore());
 

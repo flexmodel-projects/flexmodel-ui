@@ -1,10 +1,10 @@
 import {Action, applyMiddleware, createStore, Dispatch, Store} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension/developmentOnly";
 import thunk from "redux-thunk";
-import {TodoItem} from "../model/TodoItem";
-import {initStoreAction} from "../actions/actions";
-import {rootReducer} from "../reducers/rootReducer";
-import {IInitStoreAction} from "../actions/actionTypes";
+import {TodoItem} from "../model/TodoItem.ts";
+import {initStoreAction} from "../actions/actions.ts";
+import {rootReducer} from "../reducers/rootReducer.ts";
+import {IInitStoreAction} from "../actions/actionTypes.ts";
 
 export interface IState {
   todos: TodoItem[];
