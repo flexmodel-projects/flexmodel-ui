@@ -7,14 +7,20 @@ import './Sidebar.css';
 interface SidebarState {
   collapsed: boolean;
   mode: "vertical" | "inline" | "horizontal" | undefined;
+  selectedKey: string;
 }
 
-class Sidebar extends React.Component<unknown, SidebarState> {
-  constructor(props: unknown) {
+interface SidebarProps {
+  defaultSelectedKey?: string;
+}
+
+class Sidebar extends React.Component<SidebarProps, SidebarState> {
+  constructor(props: SidebarProps) {
     super(props);
     this.state = {
       collapsed: false,
       mode: "inline",
+      selectedKey: this.props.defaultSelectedKey || "1"
     };
   }
 
@@ -31,26 +37,26 @@ class Sidebar extends React.Component<unknown, SidebarState> {
             </Col>}
           </Row>
         </div>
-        <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={["1"]}>
-          <Menu.Item key="1">
+        <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={[this.state.selectedKey]}>
+          <Menu.Item key="/home">
             <Link to="/home">
               <Icons.HomeOutlined/>
               <span className="nav-text">Home</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key="2">
+          <Menu.Item key="/todo">
             <Link to="/todo">
               <Icons.CheckSquareOutlined/>
               <span className="nav-text">Todo</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key="3">
+          <Menu.Item key="/about">
             <Link to="/about">
               <Icons.FileOutlined/>
               <span className="nav-text">About</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key="4">
+          <Menu.Item key="/datasource">
             <Link to="/datasource">
               <Icons.FileOutlined/>
               <span className="nav-text">Data source</span>

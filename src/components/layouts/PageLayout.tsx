@@ -3,11 +3,13 @@ import Sidebar from "./Sidebar";
 import {Header} from "./Header";
 import "./PageLayout.css";
 import {RenderRoutes} from "../../routes.tsx";
+import {useLocation} from "react-router-dom";
 
 const PageLayout = () => {
+  const location = useLocation();
   return (
     <Layout className="ant-layout-has-sider">
-      <Sidebar/>
+      <Sidebar defaultSelectedKey={location.pathname}/>
       <Layout>
         <Layout.Content>
           <Header/>

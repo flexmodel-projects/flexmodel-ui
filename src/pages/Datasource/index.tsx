@@ -19,20 +19,21 @@ const DatasourceManagement: React.FC = () => {
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
 
+  const fetchDatasourceList = async () => {
+    try {
+      setDsLoading(true);
+      const list = await getDatasourceList();
+      setDsList(list);
+      setActiveDs(list[0]);
+    } catch (error) {
+      message.error('Failed to load datasource list.');
+      console.error(error);
+    } finally {
+      setDsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchDatasourceList = async () => {
-      try {
-        setDsLoading(true);
-        const list = await getDatasourceList();
-        setDsList(list);
-        setActiveDs(list[0]);
-      } catch (error) {
-        message.error('Failed to load datasource list.');
-        console.error(error);
-      } finally {
-        setDsLoading(false);
-      }
-    };
     fetchDatasourceList();
   }, []);
 
@@ -90,7 +91,7 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', margin: "16px 16px" }}>
         <Card style={{ width: '25%' }}>
           <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>DS management</div>
           <Divider />
