@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage.tsx";
 import {TodoPage} from "./pages/TodoPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import Datasource from "./pages/Datasource/index.tsx";
+import ApiManagement from "./pages/ApiManagement/index.tsx";
 
 export const routes = [
   {
@@ -25,6 +26,10 @@ export const routes = [
     path: "/datasource",
     element: <Datasource/>,
   },
+  {
+    path: "/api-management",
+    element: <ApiManagement/>
+  }
 ];
 
 export const RenderRoutes = () => useRoutes(routes)

@@ -13,7 +13,9 @@ const PageLayout = () => {
       <Layout>
         <Layout.Content>
           <Header/>
-          <RenderRoutes/>
+          <div style={{padding: '15px'}}>
+            <RenderRoutes/>
+          </div>
         </Layout.Content>
       </Layout>
     </Layout>

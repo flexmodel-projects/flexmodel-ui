@@ -91,7 +91,7 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', margin: "16px 16px" }}>
+      <div style={{ display: 'flex'}}>
         <Card style={{ width: '25%' }}>
           <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>DS management</div>
           <Divider />

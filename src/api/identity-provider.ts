@@ -8,7 +8,7 @@ export function getIdentityProviders() {
   });
 }
 
-export function createIdentityProvider(data: {}) {
+export function createIdentityProvider(data: object) {
   return request({
     url: `${BASE_URI}/identity-providers`,
     method: 'post',
@@ -16,7 +16,7 @@ export function createIdentityProvider(data: {}) {
   });
 }
 
-export function updateIdentityProvider(id: string, data: {}) {
+export function updateIdentityProvider(id: string, data: object) {
   return request({
     url: `${BASE_URI}/identity-providers/${id}`,
     method: 'put',
