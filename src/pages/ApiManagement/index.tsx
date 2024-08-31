@@ -1,36 +1,68 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Button, Card, Col, Drawer, Dropdown, Input, Menu, Modal, Row, Tree,} from "antd";
-import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {
+  Button,
+  Card,
+  Col,
+  ConfigProvider,
+  Drawer,
+  Dropdown,
+  Flex,
+  Input,
+  Menu,
+  Modal,
+  Row,
+  Select,
+  Switch,
+  Tree,
+} from "antd";
+import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
 import GraphQL from "./components/GraphQL";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import "./index.css";
+import {css} from '@emotion/css';
 
 const {Search} = Input;
 const {DirectoryTree} = Tree;
 
 // 定义 Tree 数据类型
-interface TreeNode {
+interface ApiInfo {
   id: string;
   name: string;
   type?: string;
   method?: string;
+  children?: ApiInfo[];
+  settingVisible?: boolean;
+  data: any;
+  meta: any;
+}
+
+interface TreeNode {
+  title: string;
+  key: string;
+  isLeaf?: boolean;
   children?: TreeNode[];
   settingVisible?: boolean;
+  data: ApiInfo;
 }
 
 const ApiManagement: React.FC = () => {
   // 状态定义
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [viewType, setViewType] = useState<"REST_API" | "GRAPH_QL" | "DEFAULT_PAGE" | string>("DEFAULT_PAGE");
-  const [apiList, setApiList] = useState<TreeNode[]>([]);
+  const [apiList, setApiList] = useState<ApiInfo[]>([]);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
   const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false);
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [editNode, setEditNode] = useState<string>("");
-  const [editForm, setEditForm] = useState<Partial<TreeNode>>({});
+  const [editForm, setEditForm] = useState<any>({});
   const treeRef = useRef<any>(null); // 使用 `any` 类型避免过于严格的类型检查
 
+  useEffect(() => {
+    setEditForm(selectedNode?.data)
+  }, [selectedNode]);
+
+  useEffect(() => {
+  }, [editForm]);
 
   // 请求 API 列表数据
   useEffect(() => {
@@ -60,24 +92,17 @@ const ApiManagement: React.FC = () => {
       setDrawerVisible(true);
     };*/
 
-  // 重置为默认页面
-  const toDefault = () => {
-    setViewType("DEFAULT_PAGE");
-    setApiDialogVisible(false);
-    reqApiList();
-  };
-
   // 删除处理
   const handleDelete = async () => {
     setDeleteDialogVisible(false);
     if (selectedNode) {
-      await deleteApi(selectedNode.id);
+      await deleteApi(selectedNode.data.id);
       await reqApiList();
     }
   };
 
   // 显示编辑输入框
-  const showEditInput = (data: TreeNode) => {
+  const showEditInput = (data: ApiInfo) => {
     setEditForm(data);
     setEditNode(data.id);
   };
@@ -90,9 +115,43 @@ const ApiManagement: React.FC = () => {
       await reqApiList();
     }
   };
+  const {getPrefixCls} = useContext(ConfigProvider.ConfigContext);
+  const rootPrefixCls = getPrefixCls();
+
+  const linearGradientButton = css`
+    &.${rootPrefixCls}-btn-primary:not([disabled]):not(.${rootPrefixCls}-btn-dangerous) {
+      border-width: 0;
+
+      > span {
+        position: relative;
+      }
+
+      &::before {
+        content: '';
+        background: linear-gradient(135deg, #6253E1, #04BEFE);
+        position: absolute;
+        inset: 0;
+        opacity: 1;
+        transition: all 0.3s;
+        border-radius: inherit;
+      }
+
+      &:hover::before {
+        opacity: 0;
+      }
+    }
+  `;
+
+  const methodOptions = [
+    {value: 'GET', label: 'GET'},
+    {value: 'POST', label: 'POST'},
+    {value: 'PUT', label: 'PUT'},
+    {value: 'PATCH', label: 'PATCH'},
+    {value: 'DELETE', label: 'DELETE'},
+  ];
 
   // 渲染树节点
-  const renderTreeNodes = (data: TreeNode[]): any[] =>
+  const renderTreeNodes = (data: ApiInfo[]): any[] =>
     data.map((item) => ({
       title: (
         <>
@@ -107,7 +166,6 @@ const ApiManagement: React.FC = () => {
                 <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
                 <Menu.Item onClick={() => {
                   setDeleteDialogVisible(true);
-                  setSelectedNode(item);
                 }}>Delete</Menu.Item>
               </Menu>
             }
@@ -120,53 +178,85 @@ const ApiManagement: React.FC = () => {
       key: item.id,
       isLeaf: item.children?.length == 0,
       children: item.children ? renderTreeNodes(item.children) : [],
+      data: item
     }));
 
+  const handleSaveApi = () => {
+    console.log('save:', editForm)
+  }
+
   return (
-    <Row>
-      <Col span={6}>
-        <Card>
-          <Search style={{marginBottom: 8}} placeholder="Search"/>
-          <DirectoryTree
-            ref={treeRef}
-            treeData={renderTreeNodes(apiList)}
-            onSelect={(_, {node}) => handleNodeClick(node)}
-            defaultExpandAll
-            height={538}
-          />
-          <Button
-            type="link"
-            icon={<PlusOutlined/>}
-            onClick={() => setApiDialogVisible(true)}
-          >Batch create</Button>
-        </Card>
-      </Col>
-      <Col span={18} style={{paddingLeft: '10px'}}>
-        <GraphQL/>
-      </Col>
-      <Drawer
-        open={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        width="95%"
-        title="API design"
-        footer={
-          <div style={{textAlign: 'center'}}>
-            <Button onClick={() => setDrawerVisible(false)}>Cancel</Button>
-            <Button type="primary" onClick={toDefault}>
-              Create
-            </Button>
-          </div>
-        }
-      >
-        {viewType === 'GRAPH_QL' && <GraphQL/>}
-      </Drawer>
-      <Modal
-        open={apiDialogVisible}
-        width={600}
-        onCancel={() => setApiDialogVisible(false)}
-        footer={null}
-      >
-        {/*<Row gutter={[10, 10]}>
+    <>
+      <Row>
+        <Col span={5}>
+          <Card>
+            <Search style={{marginBottom: 8}} placeholder="Search"/>
+            <DirectoryTree
+              ref={treeRef}
+              treeData={renderTreeNodes(apiList)}
+              onSelect={(_, {node}) => handleNodeClick(node)}
+              height={538}
+            />
+            <Button
+              type="link"
+              icon={<PlusOutlined/>}
+              onClick={() => setApiDialogVisible(true)}
+            >Batch create</Button>
+          </Card>
+        </Col>
+        <Col span={19} style={{paddingLeft: '10px'}}>
+          <Row>
+            <Col style={{paddingBottom: '10px'}} span={24}>
+              <Flex gap="small" justify="flex-start" wrap>
+                <Input addonBefore={
+                  <Select value={editForm?.method}
+                          onChange={value => setEditForm({...editForm, method: value})}
+                          options={methodOptions}/>
+                }
+                       prefix={<span>/api/v2</span>}
+                       style={{width: '85%'}} value={editForm?.path}
+                       onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
+                <ConfigProvider
+                  button={{
+                    className: linearGradientButton,
+                  }}
+                >
+                  <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
+                    Save
+                  </Button>
+                  <Switch/>
+                </ConfigProvider>
+              </Flex>
+            </Col>
+            <Col span={24}>
+              <GraphQL onChange={value => setEditForm({...editForm, meta: {...editForm?.meta, execution: value}})}
+                       data={selectedNode?.data?.meta?.execution}/>
+            </Col>
+          </Row>
+        </Col>
+        <Drawer
+          open={drawerVisible}
+          onClose={() => setDrawerVisible(false)}
+          width="95%"
+          title="API design"
+          footer={
+            <div style={{textAlign: 'center'}}>
+              <Button onClick={() => setDrawerVisible(false)}>Cancel</Button>
+              <Button type="primary">
+                Create
+              </Button>
+            </div>
+          }
+        >
+          {/*{viewType === 'GRAPH_QL' && <GraphQL/>}*/}
+        </Drawer>
+        <Modal
+          open={apiDialogVisible}
+          width={600}
+          onCancel={() => setApiDialogVisible(false)}
+          footer={null}
+        >
+          {/*<Row gutter={[10, 10]}>
           {Endpoints.map((item, index) => (
             <Col key={index} span={6}>
               <Card
@@ -188,20 +278,21 @@ const ApiManagement: React.FC = () => {
             </Col>
           ))}
         </Row>*/}
-      </Modal>
-      <Modal
-        open={deleteDialogVisible}
-        onOk={handleDelete}
-        onCancel={() => setDeleteDialogVisible(false)}
-        title={`Delete '${selectedNode?.name}?'`}
-        okText="Delete"
-        okButtonProps={{danger: true}}
-      >
+        </Modal>
+        <Modal
+          open={deleteDialogVisible}
+          onOk={handleDelete}
+          onCancel={() => setDeleteDialogVisible(false)}
+          title={`Delete '${selectedNode?.data?.name}?'`}
+          okText="Delete"
+          okButtonProps={{danger: true}}
+        >
         <span>
-          Are you sure you want to delete <strong>{selectedNode?.name}</strong>?
+          Are you sure you want to delete <strong>{selectedNode?.data?.name}</strong>?
         </span>
-      </Modal>
-    </Row>
+        </Modal>
+      </Row>
+    </>
   );
 };
 

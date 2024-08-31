@@ -1,80 +1,80 @@
-import React from 'react';
-import {Card, Form, Input, Select, Switch} from 'antd';
-import {GraphiQL} from "graphiql";
+import React, {useEffect, useState} from 'react';
+import {Card} from 'antd';
 import 'graphiql/graphiql.css';
 import {graphqlExecute} from "../../../api/api-management.ts";
+import {explorerPlugin} from "@graphiql/plugin-explorer";
+import {GraphiQL} from "graphiql";
 
-const { Option } = Select;
-const BASE_URI = '/api';  // Replace with actual base URI if different
+interface GraphQLProps {
+  data: any
+  onChange: (data: any) => void | undefined
+}
 
-const GraphQL: React.FC = () => {
-  const [form] = Form.useForm();
+const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
 
-  // Example options for Identifier Provider
-  const idPs = [
-    { name: 'Provider1' },
-    { name: 'Provider2' },
-  ];
+  useEffect(() => {
+    setOperationName(data?.operationName)
+    setQuery(data?.query)
+    setHeaders(JSON.stringify(data?.headers))
+    setVariables(JSON.stringify(data?.variables))
+  }, [data]);
 
+  const [operationName, setOperationName] = useState<string>('MyQuery')
+  const [query, setQuery] = useState<string>('props.input')
+  const [headers, setHeaders] = useState<string>('{}')
+  const [variables, setVariables] = useState<string>('{}')
+
+  const explorer = explorerPlugin();
 
   return (
     <Card>
-      <Form
-        form={form}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-        layout="horizontal"
-        requiredMark={false}
-      >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: 'Please input the name!' }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="URI"
-          name="path"
-          rules={[{ required: true, message: 'Please input the URI!' }]}
-        >
-          <Input
-            addonBefore={<div>{`${BASE_URI}/v1`}</div>}
-            addonAfter={
-              <Select defaultValue="GET" style={{ width: 100 }} disabled>
-                <Option value="GET">GET</Option>
-                <Option value="POST">POST</Option>
-                <Option value="PUT">PUT</Option>
-                <Option value="DELETE">DELETE</Option>
-              </Select>
-            }
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Auth"
-          name="auth"
-        >
-          <Switch />
-        </Form.Item>
-
-        <Form.Item
-          label="Identifier Provider"
-          name="identityProvider"
-          rules={[{ required: true, message: 'Please select an identifier provider!' }]}
-        >
-          <Select>
-            {idPs.map((item) => (
-              <Option key={item.name} value={item.name}>
-                {item.name}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
-      <div style={{ height: '100%' }}>
-        <GraphiQL fetcher={graphqlExecute} />
+      <div>
+        <GraphiQL
+          operationName={operationName}
+          query={query}
+          headers={headers}
+          variables={variables}
+          onEditQuery={value => {
+            setQuery(value)
+            console.log('query2222: ', value);
+            onChange({
+              operationName: operationName,
+              query: value,
+              variables: variables ? JSON.parse(variables) : null,
+              headers: headers ? JSON.parse(headers) : null
+            })
+          }}
+          onEditVariables={value => {
+            setVariables(value)
+            onChange({
+              operationName: operationName,
+              query: query,
+              variables: value ? JSON.parse(value) : null,
+              headers: headers ? JSON.parse(headers) : null
+            })
+          }}
+          onEditOperationName={value => {
+            setOperationName(value)
+            onChange({
+              operationName: value,
+              query: query,
+              variables: variables ? JSON.parse(variables) : null,
+              headers: headers ? JSON.parse(headers) : null
+            })
+          }}
+          onEditHeaders={value => {
+            setHeaders(value)
+            onChange({
+              operationName: operationName,
+              query: query,
+              variables: variables ? JSON.parse(variables) : null,
+              headers: value ? JSON.parse(value) : null
+            })
+          }}
+          disableTabs={true}
+          fetcher={graphqlExecute}
+          plugins={[explorer]}>
+        </GraphiQL>
       </div>
     </Card>
   );

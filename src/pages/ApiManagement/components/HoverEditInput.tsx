@@ -8,7 +8,7 @@ interface HoverEditInputProps {
 
 const HoverEditInput: React.FC<HoverEditInputProps> = ({ value, onChange }) => {
   const [val, setVal] = useState<string>(value);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<any>(null);
 
   const handleKeyEnter = () => {
     onChange(val);
