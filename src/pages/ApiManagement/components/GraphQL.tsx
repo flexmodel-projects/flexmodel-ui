@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Card} from 'antd';
 import 'graphiql/graphiql.css';
 import {graphqlExecute} from "../../../api/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
@@ -27,56 +26,52 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   const explorer = explorerPlugin();
 
   return (
-    <Card>
-      <div>
-        <GraphiQL
-          operationName={operationName}
-          query={query}
-          headers={headers}
-          variables={variables}
-          onEditQuery={value => {
-            setQuery(value)
-            console.log('query2222: ', value);
-            onChange({
-              operationName: operationName,
-              query: value,
-              variables: variables ? JSON.parse(variables) : null,
-              headers: headers ? JSON.parse(headers) : null
-            })
-          }}
-          onEditVariables={value => {
-            setVariables(value)
-            onChange({
-              operationName: operationName,
-              query: query,
-              variables: value ? JSON.parse(value) : null,
-              headers: headers ? JSON.parse(headers) : null
-            })
-          }}
-          onEditOperationName={value => {
-            setOperationName(value)
-            onChange({
-              operationName: value,
-              query: query,
-              variables: variables ? JSON.parse(variables) : null,
-              headers: headers ? JSON.parse(headers) : null
-            })
-          }}
-          onEditHeaders={value => {
-            setHeaders(value)
-            onChange({
-              operationName: operationName,
-              query: query,
-              variables: variables ? JSON.parse(variables) : null,
-              headers: value ? JSON.parse(value) : null
-            })
-          }}
-          disableTabs={true}
-          fetcher={graphqlExecute}
-          plugins={[explorer]}>
-        </GraphiQL>
-      </div>
-    </Card>
+    <div>
+      <GraphiQL
+        operationName={operationName}
+        query={query}
+        headers={headers}
+        variables={variables}
+        onEditQuery={value => {
+          setQuery(value)
+          onChange({
+            operationName: operationName,
+            query: value,
+            variables: variables ? JSON.parse(variables) : null,
+            headers: headers ? JSON.parse(headers) : null
+          })
+        }}
+        onEditVariables={value => {
+          setVariables(value)
+          onChange({
+            operationName: operationName,
+            query: query,
+            variables: value ? JSON.parse(value) : null,
+            headers: headers ? JSON.parse(headers) : null
+          })
+        }}
+        onEditOperationName={value => {
+          setOperationName(value)
+          onChange({
+            operationName: value,
+            query: query,
+            variables: variables ? JSON.parse(variables) : null,
+            headers: headers ? JSON.parse(headers) : null
+          })
+        }}
+        onEditHeaders={value => {
+          setHeaders(value)
+          onChange({
+            operationName: operationName,
+            query: query,
+            variables: variables ? JSON.parse(variables) : null,
+            headers: value ? JSON.parse(value) : null
+          })
+        }}
+        fetcher={graphqlExecute}
+        plugins={[explorer]}>
+      </GraphiQL>
+    </div>
   );
 };
 

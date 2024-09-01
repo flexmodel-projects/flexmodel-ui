@@ -9,13 +9,14 @@ import {
   Flex,
   Input,
   Menu,
+  message,
   Modal,
   Row,
   Select,
   Switch,
   Tree,
 } from "antd";
-import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
 import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
 import GraphQL from "./components/GraphQL";
 import HoverEditInput from "./components/HoverEditInput.tsx";
@@ -48,75 +49,75 @@ interface TreeNode {
 
 const ApiManagement: React.FC = () => {
   // 状态定义
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [apiList, setApiList] = useState<ApiInfo[]>([]);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
-  const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false);
-  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
-  const [editNode, setEditNode] = useState<string>("");
-  const [editForm, setEditForm] = useState<any>({});
-  const treeRef = useRef<any>(null); // 使用 `any` 类型避免过于严格的类型检查
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
+  const [apiList, setApiList] = useState<ApiInfo[]>([])
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false)
+  const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false)
+  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null)
+  const [editNode, setEditNode] = useState<string>("")
+  const [editForm, setEditForm] = useState<any>({})
+  const treeRef = useRef<any>(null) // 使用 `any` 类型避免过于严格的类型检查
 
   useEffect(() => {
     setEditForm(selectedNode?.data)
-  }, [selectedNode]);
+  }, [selectedNode])
 
   useEffect(() => {
-  }, [editForm]);
+  }, [editForm])
 
   // 请求 API 列表数据
   useEffect(() => {
-    reqApiList();
-  }, []);
+    reqApiList()
+  }, [])
 
   // 请求 API 列表数据
   const reqApiList = async () => {
-    const apis = await getApis();
-    setApiList(apis);
+    const apis = await getApis()
+    setApiList(apis)
   };
 
   // 节点点击处理
   const handleNodeClick = (nodeData: TreeNode) => {
-    console.log(nodeData);
-    setSelectedNode(nodeData);
+    console.log(nodeData)
+    setSelectedNode(nodeData)
   };
 
   // 进入 API 设计界面
   /*  const toApiDesign = (item: Endpoint) => {
       if (!item.enable) {
-        message.warning("Not available");
+        message.warning("Not available")
         return;
       }
-      setViewType(item.type);
-      setApiDialogVisible(false);
-      setDrawerVisible(true);
+      setViewType(item.type)
+      setApiDialogVisible(false)
+      setDrawerVisible(true)
     };*/
 
   // 删除处理
   const handleDelete = async () => {
-    setDeleteDialogVisible(false);
+    setDeleteDialogVisible(false)
     if (selectedNode) {
-      await deleteApi(selectedNode.data.id);
-      await reqApiList();
+      await deleteApi(selectedNode.data.id)
+      await reqApiList()
     }
   };
 
   // 显示编辑输入框
   const showEditInput = (data: ApiInfo) => {
-    setEditForm(data);
-    setEditNode(data.id);
+    setEditForm(data)
+    setEditNode(data.id)
   };
 
   // 编辑 API
   const editApi = async () => {
-    setEditNode('');
+    setEditNode('')
     if (editForm.id) {
-      await updateApi(editForm.id, editForm);
-      await reqApiList();
+      await updateApi(editForm.id, editForm)
+      await reqApiList()
     }
   };
-  const {getPrefixCls} = useContext(ConfigProvider.ConfigContext);
-  const rootPrefixCls = getPrefixCls();
+  const {getPrefixCls} = useContext(ConfigProvider.ConfigContext)
+  const rootPrefixCls = getPrefixCls()
 
   const linearGradientButton = css`
     &.${rootPrefixCls}-btn-primary:not([disabled]):not(.${rootPrefixCls}-btn-dangerous) {
@@ -128,7 +129,7 @@ const ApiManagement: React.FC = () => {
 
       &::before {
         content: '';
-        background: linear-gradient(135deg, #6253E1, #04BEFE);
+        background: linear-gradient(135deg, #6253E1, #04BEFE)
         position: absolute;
         inset: 0;
         opacity: 1;
@@ -165,7 +166,7 @@ const ApiManagement: React.FC = () => {
               <Menu>
                 <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
                 <Menu.Item onClick={() => {
-                  setDeleteDialogVisible(true);
+                  setDeleteDialogVisible(true)
                 }}>Delete</Menu.Item>
               </Menu>
             }
@@ -179,10 +180,12 @@ const ApiManagement: React.FC = () => {
       isLeaf: item.children?.length == 0,
       children: item.children ? renderTreeNodes(item.children) : [],
       data: item
-    }));
+    }))
 
-  const handleSaveApi = () => {
-    console.log('save:', editForm)
+  const handleSaveApi = async () => {
+    await updateApi(editForm.id, editForm)
+    message.success('Saved')
+    await reqApiList()
   }
 
   return (
@@ -199,7 +202,11 @@ const ApiManagement: React.FC = () => {
             />
             <Button
               type="link"
-              icon={<PlusOutlined/>}
+              onClick={() => setApiDialogVisible(true)}
+            >New</Button>
+            or
+            <Button
+              type="link"
               onClick={() => setApiDialogVisible(true)}
             >Batch create</Button>
           </Card>
@@ -213,7 +220,7 @@ const ApiManagement: React.FC = () => {
                           onChange={value => setEditForm({...editForm, method: value})}
                           options={methodOptions}/>
                 }
-                       prefix={<span>/api/v2</span>}
+                       prefix={<span>/api/v1</span>}
                        style={{width: '85%'}} value={editForm?.path}
                        onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
                 <ConfigProvider
@@ -293,7 +300,7 @@ const ApiManagement: React.FC = () => {
         </Modal>
       </Row>
     </>
-  );
+  )
 };
 
-export default ApiManagement;
+export default ApiManagement

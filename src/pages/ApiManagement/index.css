@@ -3,7 +3,7 @@
 }
 
 .graphiql-container {
-  height: 600px;
+  border-radius: 8px;
 }
 
 .graphiql-session-header {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Divider, Dropdown, Menu, Modal, Spin, Tree, message } from 'antd';
+import {Button, Card, Divider, Dropdown, Menu, Modal, Spin, Tree, message, Space} from 'antd';
 import { MoreOutlined, DatabaseOutlined } from '@ant-design/icons';
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseDrawer.tsx";
@@ -59,6 +59,7 @@ const DatasourceManagement: React.FC = () => {
         message.error(`Failed, error msg: ${result.errorMsg}`);
       }
     } catch (error) {
+      console.log(error)
       message.error('Failed to test connection.');
     } finally {
       setTestLoading(false);
@@ -75,17 +76,14 @@ const DatasourceManagement: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    try {
-      await deleteDatasource(activeDs.name);
-      const list = await getDatasourceList();
-      setDsList(list);
-      setDeleteVisible(false);
-    } catch (error) {
-      message.error('Failed to delete datasource.');
-    }
+    await deleteDatasource(activeDs.name);
+    const list = await getDatasourceList();
+    setDsList(list);
+    setDeleteVisible(false);
   };
 
   const handleTreeClick = (item: any) => {
+    console.log(item)
     setActiveDs(item);
   };
 
@@ -98,15 +96,14 @@ const DatasourceManagement: React.FC = () => {
           <Spin spinning={dsLoading}>
             <DirectoryTree
               treeData={dsList.map(ds => ({
+                ...ds,
                 title: ds.name,
                 key: ds.name,
                 icon: <DatabaseOutlined />
               }))}
-              defaultExpandAll
               selectedKeys={[activeDs.name]}
               titleRender={(node) => (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <DatabaseOutlined style={{ marginRight: 8 }} />
                   <span>{node.title}</span>
                   <Dropdown
                     overlay={
@@ -137,6 +134,7 @@ const DatasourceManagement: React.FC = () => {
             icon={<DatabaseOutlined />}
             onClick={() => setDrawerVisible(true)}
             style={{ width: '100%' }}
+            ghost
           >
             Connect Database
           </Button>
@@ -146,16 +144,18 @@ const DatasourceManagement: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>{activeDs.name}</div>
               <div>
-                <Button onClick={() => {/* router.push(`/modeling?datasource=${activeDs.name}`) */}}>Modeling</Button>
-                <Button onClick={handleRefresh} loading={refreshLoading}>Refresh</Button>
-                <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>
-                <Button
-                  type="primary"
-                  disabled={activeDs.type === 'system'}
-                  onClick={() => setEditVisible(true)}
-                >
-                  Edit
-                </Button>
+                <Space>
+                  <Button onClick={() => {/* router.push(`/modeling?datasource=${activeDs.name}`) */}}>Modeling</Button>
+                  <Button onClick={handleRefresh} loading={refreshLoading}>Refresh</Button>
+                  <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>
+                  <Button
+                    type="primary"
+                    disabled={activeDs.type === 'system'}
+                    onClick={() => setEditVisible(true)}
+                  >
+                    Edit
+                  </Button>
+                </Space>
               </div>
             </div>
           </Card>
