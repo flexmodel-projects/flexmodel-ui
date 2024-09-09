@@ -68,6 +68,12 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
               <span className="nav-text">API Management</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="/api-document">
+            <Link to="/api-document">
+              <Icons.FileOutlined/>
+              <span className="nav-text">API Document</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </Layout.Sider>
     );

@@ -18,10 +18,10 @@ import {
 } from "antd";
 import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
 import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
-import GraphQL from "./components/GraphQL";
-import HoverEditInput from "./components/HoverEditInput.tsx";
 import "./index.css";
 import {css} from '@emotion/css';
+import GraphQL from "./components/GraphQL.tsx";
+import HoverEditInput from "./components/HoverEditInput.tsx";
 
 const {Search} = Input;
 const {DirectoryTree} = Tree;

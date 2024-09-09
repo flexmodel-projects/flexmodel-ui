@@ -13,7 +13,7 @@ const PageLayout = () => {
       <Layout>
         <Layout.Content>
           <Header/>
-          <div style={{padding: '15px'}}>
+          <div style={{padding: '15px', height:'calc(100vh - 64px)'}}>
             <RenderRoutes/>
           </div>
         </Layout.Content>

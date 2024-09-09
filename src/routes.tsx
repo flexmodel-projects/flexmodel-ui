@@ -3,7 +3,8 @@ import HomePage from "./pages/HomePage.tsx";
 import {TodoPage} from "./pages/TodoPage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import Datasource from "./pages/Datasource/index.tsx";
-import ApiManagement from "./pages/ApiManagement/index.tsx";
+import APIManagement from "./pages/APIManagement/index.tsx";
+import APIDocument from "./pages/APIDocument/index.tsx";
 
 export const routes = [
   {
@@ -28,7 +29,11 @@ export const routes = [
   },
   {
     path: "/api-management",
-    element: <ApiManagement/>
+    element: <APIManagement/>
+  },
+  {
+    path: "/api-document",
+    element: <APIDocument/>
   }
 ];
 

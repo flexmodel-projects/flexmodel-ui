@@ -19,7 +19,7 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   }, [data]);
 
   const [operationName, setOperationName] = useState<string>('MyQuery')
-  const [query, setQuery] = useState<string>('props.input')
+  const [query, setQuery] = useState<string>('')
   const [headers, setHeaders] = useState<string>('{}')
   const [variables, setVariables] = useState<string>('{}')
 
@@ -28,6 +28,7 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   return (
     <div>
       <GraphiQL
+
         operationName={operationName}
         query={query}
         headers={headers}
