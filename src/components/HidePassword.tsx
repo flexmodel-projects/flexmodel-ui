@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Typography } from 'antd';
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import React, {useState} from 'react';
+import {Button, Typography} from 'antd';
+import {EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons';
 
 interface HidePasswordProps {
-  text: string;
+  text: string | undefined;
 }
 
-const HidePassword: React.FC<HidePasswordProps> = ({ text }) => {
+const HidePassword: React.FC<HidePasswordProps> = ({text}) => {
   const [isHide, setIsHide] = useState<boolean>(true);
 
   const toggleHide = () => {
@@ -20,7 +20,7 @@ const HidePassword: React.FC<HidePasswordProps> = ({ text }) => {
       </Typography.Text>
       <Button
         type="link"
-        icon={isHide ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+        icon={isHide ? <EyeOutlined/> : <EyeInvisibleOutlined/>}
         onClick={toggleHide}
       />
     </div>

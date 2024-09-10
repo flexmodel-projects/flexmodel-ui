@@ -38,24 +38,6 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
           </Row>
         </div>
         <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={[this.state.selectedKey]}>
-          <Menu.Item key="/home">
-            <Link to="/home">
-              <Icons.HomeOutlined/>
-              <span className="nav-text">Home</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/todo">
-            <Link to="/todo">
-              <Icons.CheckSquareOutlined/>
-              <span className="nav-text">Todo</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/about">
-            <Link to="/about">
-              <Icons.FileOutlined/>
-              <span className="nav-text">About</span>
-            </Link>
-          </Menu.Item>
           <Menu.Item key="/datasource">
             <Link to="/datasource">
               <Icons.FileOutlined/>
@@ -72,6 +54,18 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
             <Link to="/api-document">
               <Icons.FileOutlined/>
               <span className="nav-text">API Document</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/api-log">
+            <Link to="/api-log">
+              <Icons.FileOutlined/>
+              <span className="nav-text">API Log</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/identity-providers">
+            <Link to="/identity-providers">
+              <Icons.FileOutlined/>
+              <span className="nav-text">Identity Providers</span>
             </Link>
           </Menu.Item>
         </Menu>

@@ -11,9 +11,9 @@ const PageLayout = () => {
     <Layout className="ant-layout-has-sider">
       <Sidebar defaultSelectedKey={location.pathname}/>
       <Layout>
-        <Layout.Content>
+        <Layout.Content style={{overflowX: 'auto'}}>
           <Header/>
-          <div style={{padding: '15px', height:'calc(100vh - 64px)'}}>
+          <div style={{padding: '15px', height: 'calc(100vh - 64px)'}}>
             <RenderRoutes/>
           </div>
         </Layout.Content>

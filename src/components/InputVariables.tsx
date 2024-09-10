@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Input, Button, Dropdown, Menu } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Button, Dropdown, Input, Menu} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
 import {getVariables} from "../api/environment.ts";
 
 interface InputVariablesProps {
+  value: string;
   placeholder?: string;
 }
 
-const InputVariables: React.FC<InputVariablesProps> = ({ placeholder }) => {
+const InputVariables: React.FC<InputVariablesProps> = ({value, placeholder}) => {
   const [input, setInput] = useState<string>('');
   const [variables, setVariables] = useState<Record<string, any>>({});
 
@@ -15,6 +16,10 @@ const InputVariables: React.FC<InputVariablesProps> = ({ placeholder }) => {
     const result = await getVariables();
     setVariables(result);
   }, []);
+
+  useEffect(() => {
+    setInput(value)
+  }, [value]);
 
   useEffect(() => {
     reqVariables();
@@ -43,7 +48,7 @@ const InputVariables: React.FC<InputVariablesProps> = ({ placeholder }) => {
       placeholder={placeholder}
       suffix={
         <Dropdown overlay={menu} trigger={['click']}>
-          <Button size="small" type="link" icon={<DownOutlined />} />
+          <Button size="small" type="link" icon={<DownOutlined/>}/>
         </Dropdown>
       }
       onChange={(e) => setInput(e.target.value)}
