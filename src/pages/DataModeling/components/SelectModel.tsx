@@ -147,7 +147,7 @@ const SelectModel: React.FC<{
           selectedKeys={[activeModel?.name || '']}
           onSelect={(_, {node}) => handleItemChange(node)}
           titleRender={node => (
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '150px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '160px'}}>
               <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>
                   <TableOutlined/>
@@ -158,7 +158,7 @@ const SelectModel: React.FC<{
                 <Dropdown
                   overlay={
                     <Menu onClick={handleMenuClick}>
-                      <Menu.Item key="delete" icon={<DeleteOutlined/>}>
+                      <Menu.Item key="delete" style={{color:'red'}} icon={<DeleteOutlined/>}>
                         Delete
                       </Menu.Item>
                     </Menu>

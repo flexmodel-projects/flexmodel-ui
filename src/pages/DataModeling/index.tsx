@@ -1,26 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Row, Col, Card, Button, Divider, Segmented, Drawer } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { createModel as reqCreateModel } from '../../api/model';
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Card, Col, Divider, Drawer, Row, Segmented} from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {createModel as reqCreateModel} from '../../api/model';
 import SelectModel from "./components/SelectModel.tsx";
 import FieldList from "./components/FieldList.tsx";
 import IndexList from "./components/IndexList.tsx";
 import RecordList from "./components/RecordList.tsx";
-import CreateModel from "./components/CreateModel.tsx"; // 假设是API请求
+import CreateModel from "./components/CreateModel.tsx";
+import {getRecordList} from "../../api/record.ts"; // 假设是API请求
 
 const ModelingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate(); // 替代 useHistory
 
   // 从URL中获取datasource参数
-  const { datasource } = location.state as { datasource: string } || {};
+  const {datasource} = location.state as { datasource: string } || {};
 
   // 选项设置
   const options = [
-    { label: 'Field', value: 'field' },
-    { label: 'Index', value: 'index' },
-    { label: 'Record', value: 'record' },
+    {label: 'Field', value: 'field'},
+    {label: 'Index', value: 'index'},
+    {label: 'Record', value: 'record'},
   ];
 
   const [selectedItem, setSelectedItem] = useState<string>('field');
@@ -48,7 +49,7 @@ const ModelingPage: React.FC = () => {
   // 模拟 Vue 的 onMounted 钩子
   useEffect(() => {
     if (activeDs) {
-      navigate(`/modeling`, { state: { datasource: activeDs } });
+      navigate(`/modeling`, {state: {datasource: activeDs}});
     }
   }, [activeDs, navigate]);
 
@@ -60,7 +61,7 @@ const ModelingPage: React.FC = () => {
             <Col span={12}>
               Data modeling
             </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
+            <Col span={12} style={{textAlign: 'right'}}>
               <Segmented
                 value={selectedItem}
                 onChange={(val) => setSelectedItem(val as string)}
@@ -77,10 +78,10 @@ const ModelingPage: React.FC = () => {
             editable
             onChange={handleItemChange}
           />
-          <Divider />
+          <Divider/>
           <Button
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined/>}
             onClick={() => setDrawerVisible(true)}
             block
             ghost
@@ -94,7 +95,7 @@ const ModelingPage: React.FC = () => {
           <FieldList
             datasource={activeDs}
             model={activeModel}
-           /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
+            /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
           />
         )}
         {selectedItem === 'index' && (
@@ -105,7 +106,12 @@ const ModelingPage: React.FC = () => {
           />
         )}
         {selectedItem === 'record' && (
-          <RecordList datasource={activeDs} model={activeModel}/>
+          <RecordList datasource={activeDs} model={activeModel}
+                      getRecordList={(datasource: string, modelName: string, query: {
+                        current: number;
+                        pageSize: number
+                      }) => getRecordList(datasource, modelName, query)}
+          />
         )}
       </Col>
 
@@ -115,8 +121,8 @@ const ModelingPage: React.FC = () => {
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         footer={
-          <div style={{ textAlign: 'right' }}>
-            <Button onClick={() => setDrawerVisible(false)} style={{ marginRight: 8 }}>
+          <div style={{textAlign: 'right'}}>
+            <Button onClick={() => setDrawerVisible(false)} style={{marginRight: 8}}>
               Cancel
             </Button>
             <Button onClick={() => addModel(activeModel)} type="primary">
@@ -125,7 +131,7 @@ const ModelingPage: React.FC = () => {
           </div>
         }
       >
-        <CreateModel datasource={activeDs} onConform={addModel} onCancel={() => setDrawerVisible(false)} />
+        <CreateModel datasource={activeDs} onConform={addModel} onCancel={() => setDrawerVisible(false)}/>
       </Drawer>
     </Row>
   );

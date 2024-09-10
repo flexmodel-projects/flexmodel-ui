@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Card, Table, Modal, Popconfirm, Tag, Form, Input, notification } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { createIndex, dropIndex, modifyIndex } from '../../../api/model';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Button, Card, Form, Input, Modal, notification, Popconfirm, Table, Tag} from 'antd';
+import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 
 interface Model {
   name?: string;
   comment?: string;
+  indexes: Index[];
 }
 
 interface Index {
@@ -19,17 +20,17 @@ interface MyComponentProps {
   model: Model;
 }
 
-const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
+const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
-  const [selectedIndexForm] = useState<Index>({ name: '', fields: [], unique: false });
+  const [selectedIndexForm] = useState<Index>({name: '', fields: [], unique: false});
   const [form] = Form.useForm();
 
   const fetchIndexes = useCallback(async () => {
     // Replace this with actual fetch call
     // const res = await getIndexes(datasource, model?.name);
-    // setIndexList(res);
+    setIndexList(model.indexes);
   }, [datasource, model?.name]);
 
   useEffect(() => {
@@ -60,9 +61,9 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
         setIndexList(updatedIndexes);
       }
       setChangeDialogVisible(false);
-      notification.success({ message: 'Index saved successfully' });
+      notification.success({message: 'Index saved successfully'});
     } catch (error) {
-      notification.error({ message: 'Failed to save index' });
+      notification.error({message: 'Failed to save index'});
     }
   };
 
@@ -71,14 +72,14 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
       const index = indexList[key];
       await dropIndex(datasource, model?.name, index.name);
       setIndexList(indexList.filter((_, i) => i !== key));
-      notification.success({ message: 'Index deleted successfully' });
+      notification.success({message: 'Index deleted successfully'});
     } catch (error) {
-      notification.error({ message: 'Failed to delete index' });
+      notification.error({message: 'Failed to delete index'});
     }
   };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
+    {title: 'Name', dataIndex: 'name', key: 'name'},
     {
       title: 'Fields',
       dataIndex: 'fields',
@@ -86,22 +87,22 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
       render: (fields: { fieldName: string; direction: string }[]) => (
         <div>
           {fields.map((field, index) => (
-            <Tag key={index} color="info">
+            <Tag key={index} color="default">
               {field.fieldName} {field.direction}
             </Tag>
           ))}
         </div>
       ),
     },
-    { title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No') },
+    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
     {
       title: 'Operations',
       key: 'operations',
       render: (_: any, record: Index, index: number) => (
         <div>
           <Button
-            type="primary"
-            icon={<EditOutlined />}
+            type="link"
+            icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
           >
             Edit
@@ -111,9 +112,9 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
             onConfirm={() => delIndex(index)}
           >
             <Button
-              type="primary"
+              type="link"
               danger
-              icon={<DeleteOutlined />}
+              icon={<DeleteOutlined/>}
             >
               Delete
             </Button>
@@ -126,21 +127,22 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
   return (
     <div>
       <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <div>
             {model?.name} {model?.comment}
           </div>
           <Button
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined/>}
             onClick={handleAdd}
           >
             New Index
           </Button>
         </div>
       </Card>
-      <Card style={{ marginTop: 16 }}>
+      <Card style={{marginTop: 16}}>
         <Table
+          size="small"
           rowKey="name"
           dataSource={indexList}
           columns={columns}
@@ -161,28 +163,28 @@ const IndexList: React.FC<MyComponentProps> = ({ datasource, model }) => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ ...selectedIndexForm }}
+          initialValues={{...selectedIndexForm}}
         >
           <Form.Item
             name="name"
             label="Name"
-            rules={[{ required: true, message: 'Please input the index name!' }]}
+            rules={[{required: true, message: 'Please input the index name!'}]}
           >
-            <Input />
+            <Input/>
           </Form.Item>
           <Form.Item
             name="fields"
             label="Fields"
-            rules={[{ required: true, message: 'Please input the index fields!' }]}
+            rules={[{required: true, message: 'Please input the index fields!'}]}
           >
             {/* Customize this field according to your needs */}
-            <Input.TextArea />
+            <Input.TextArea/>
           </Form.Item>
           <Form.Item
             name="unique"
             valuePropName="checked"
           >
-            <Input type="checkbox" /> Unique
+            <Input type="checkbox"/> Unique
           </Form.Item>
         </Form>
       </Modal>

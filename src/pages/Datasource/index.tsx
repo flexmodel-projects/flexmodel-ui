@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {Button, Card, Divider, Dropdown, Menu, Modal, Spin, Tree, message, Space} from 'antd';
-import {MoreOutlined, DatabaseOutlined, BlockOutlined} from '@ant-design/icons';
+import {MoreOutlined, DatabaseOutlined, BlockOutlined, DeleteOutlined} from '@ant-design/icons';
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseDrawer.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
 import { getDatasourceList, refreshDatasource as reqRefreshDatasource, updateDatasource, validateDatasource, deleteDatasource } from "../../api/datasource.ts";
-
-
-const { DirectoryTree } = Tree;
 
 const DatasourceManagement: React.FC = () => {
   const [dsList, setDsList] = useState<any[]>([]);
@@ -96,7 +93,7 @@ const DatasourceManagement: React.FC = () => {
           <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>DS management</div>
           <Divider />
           <Spin spinning={dsLoading}>
-            <DirectoryTree
+            <Tree
               treeData={dsList.map(ds => ({
                 ...ds,
                 title: ds.name,
@@ -105,12 +102,14 @@ const DatasourceManagement: React.FC = () => {
               }))}
               selectedKeys={[activeDs.name]}
               titleRender={(node) => (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', width: '250px' }}>
                   <span>{node.title}</span>
                   <Dropdown
                     overlay={
                       <Menu>
                         <Menu.Item
+                          style={{color:'red'}}
+                          icon={<DeleteOutlined/>}
                           disabled={activeDs.type === 'system'}
                           onClick={() => {
                             setDeleteVisible(true);

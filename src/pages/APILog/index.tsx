@@ -171,6 +171,7 @@ const LogViewer: React.FC = () => {
       <Row>
         <Col span={24}>
           <Table
+            size="small"
             columns={columns}
             dataSource={tableData}
             rowKey="id"

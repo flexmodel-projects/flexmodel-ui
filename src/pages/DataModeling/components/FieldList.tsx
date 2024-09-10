@@ -90,9 +90,11 @@ const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
       key: 'type',
     },
     {
-      title: 'Unique', dataIndex: 'unique', key: 'unique', render: (val: boolean) => val + ''
+      title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')
     },
-    {title: 'Nullable', dataIndex: 'nullable', key: 'nullable', render: (val: boolean) => val + ''},
+    {
+      title: 'Nullable', dataIndex: 'nullable', key: 'nullable', render: (unique: boolean) => (unique ? 'Yes' : 'No')
+    },
     {title: 'Comment', dataIndex: 'comment', key: 'comment'},
     {
       title: 'Operations',
