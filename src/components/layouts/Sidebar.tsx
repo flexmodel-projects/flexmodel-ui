@@ -3,7 +3,13 @@ import {Col, Layout, Menu, Row} from 'antd';
 import * as Icons from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import './Sidebar.css';
-import {ApiOutlined, DatabaseOutlined, UserOutlined} from "@ant-design/icons";
+import {
+  ApiOutlined,
+  DatabaseOutlined,
+  DeploymentUnitOutlined,
+  FileTextOutlined, LineChartOutlined, SettingOutlined,
+  UserOutlined
+} from "@ant-design/icons";
 
 interface SidebarState {
   collapsed: boolean;
@@ -42,19 +48,19 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
           <Menu.SubMenu key="api" icon={<ApiOutlined />} title="API">
             <Menu.Item key="/api-management">
               <Link to="/api-management">
-                <Icons.FileOutlined/>
+                <DeploymentUnitOutlined />
                 <span className="nav-text">API Management</span>
               </Link>
             </Menu.Item>
             <Menu.Item key="/api-document">
               <Link to="/api-document">
-                <Icons.FileOutlined/>
+                <FileTextOutlined />
                 <span className="nav-text">API Document</span>
               </Link>
             </Menu.Item>
             <Menu.Item key="/api-log">
               <Link to="/api-log">
-                <Icons.FileOutlined/>
+                <LineChartOutlined />
                 <span className="nav-text">API Log</span>
               </Link>
             </Menu.Item>
@@ -71,6 +77,12 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
             <Link to="/identity-providers">
               <UserOutlined />
               <span className="nav-text">Identity Providers</span>
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/settings">
+            <Link to="/settings">
+              <SettingOutlined />
+              <span className="nav-text">Settings</span>
             </Link>
           </Menu.Item>
         </Menu>

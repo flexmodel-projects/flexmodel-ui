@@ -7,6 +7,7 @@ import APIManagement from "./pages/APIManagement/index.tsx";
 import APIDocument from "./pages/APIDocument/index.tsx";
 import APILog from "./pages/APILog/index.tsx";
 import IdPManagement from "./pages/IdPManagement/index.tsx";
+import Settings from "./pages/Settings/index.tsx";
 
 export const routes = [
   {
@@ -44,6 +45,10 @@ export const routes = [
   {
     path: "/identity-providers",
     element: <IdPManagement/>,
+  },
+  {
+    path: "/settings",
+    element: <Settings/>,
   },
 ];
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Button, Card, Divider, Dropdown, Menu, Modal, Spin, Tree, message, Space} from 'antd';
-import { MoreOutlined, DatabaseOutlined } from '@ant-design/icons';
+import {MoreOutlined, DatabaseOutlined, BlockOutlined} from '@ant-design/icons';
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseDrawer.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
@@ -43,6 +43,7 @@ const DatasourceManagement: React.FC = () => {
       await reqRefreshDatasource(activeDs.name);
       message.success('Refresh succeeded');
     } catch (error) {
+      console.error(error)
       message.error('Failed to refresh datasource.');
     } finally {
       setRefreshLoading(false);
@@ -71,6 +72,7 @@ const DatasourceManagement: React.FC = () => {
       await updateDatasource(activeDs.name, activeDs);
       setEditVisible(false);
     } catch (error) {
+      console.error(error)
       message.error('Failed to update datasource.');
     }
   };
@@ -131,7 +133,7 @@ const DatasourceManagement: React.FC = () => {
           <Divider />
           <Button
             type="primary"
-            icon={<DatabaseOutlined />}
+            icon={<BlockOutlined />}
             onClick={() => setDrawerVisible(true)}
             style={{ width: '100%' }}
             ghost
@@ -168,9 +170,8 @@ const DatasourceManagement: React.FC = () => {
       <EditDSConfig
         visible={editVisible}
         datasource={activeDs}
-        onConfirm={handleEdit}
+        onConform={handleEdit}
         onCancel={() => setEditVisible(false)}
-        onClose={() => setEditVisible(false)}
       />
       <Modal
         open={deleteVisible}
