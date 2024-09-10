@@ -72,6 +72,12 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 <span className="nav-text">Data source</span>
               </Link>
             </Menu.Item>
+            <Menu.Item key="/modeling">
+              <Link to="/modeling">
+                <Icons.FileOutlined/>
+                <span className="nav-text">Data modeling</span>
+              </Link>
+            </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key="/identity-providers">
             <Link to="/identity-providers">
