@@ -4,7 +4,7 @@ import {DownOutlined} from '@ant-design/icons';
 import {getVariables} from "../api/environment.ts";
 
 interface InputVariablesProps {
-  value: string;
+  value?: string;
   placeholder?: string;
 }
 

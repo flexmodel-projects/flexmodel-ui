@@ -3,6 +3,7 @@ import {Col, Layout, Menu, Row} from 'antd';
 import * as Icons from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import './Sidebar.css';
+import {ApiOutlined, DatabaseOutlined, UserOutlined} from "@ant-design/icons";
 
 interface SidebarState {
   collapsed: boolean;
@@ -38,33 +39,37 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
           </Row>
         </div>
         <Menu theme="dark" mode={this.state.mode} defaultSelectedKeys={[this.state.selectedKey]}>
-          <Menu.Item key="/datasource">
-            <Link to="/datasource">
-              <Icons.FileOutlined/>
-              <span className="nav-text">Data source</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/api-management">
-            <Link to="/api-management">
-              <Icons.FileOutlined/>
-              <span className="nav-text">API Management</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/api-document">
-            <Link to="/api-document">
-              <Icons.FileOutlined/>
-              <span className="nav-text">API Document</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/api-log">
-            <Link to="/api-log">
-              <Icons.FileOutlined/>
-              <span className="nav-text">API Log</span>
-            </Link>
-          </Menu.Item>
+          <Menu.SubMenu key="api" icon={<ApiOutlined />} title="API">
+            <Menu.Item key="/api-management">
+              <Link to="/api-management">
+                <Icons.FileOutlined/>
+                <span className="nav-text">API Management</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/api-document">
+              <Link to="/api-document">
+                <Icons.FileOutlined/>
+                <span className="nav-text">API Document</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="/api-log">
+              <Link to="/api-log">
+                <Icons.FileOutlined/>
+                <span className="nav-text">API Log</span>
+              </Link>
+            </Menu.Item>
+          </Menu.SubMenu>
+          <Menu.SubMenu key="data" icon={<DatabaseOutlined />} title="Data">
+            <Menu.Item key="/datasource">
+              <Link to="/datasource">
+                <Icons.FileOutlined/>
+                <span className="nav-text">Data source</span>
+              </Link>
+            </Menu.Item>
+          </Menu.SubMenu>
           <Menu.Item key="/identity-providers">
             <Link to="/identity-providers">
-              <Icons.FileOutlined/>
+              <UserOutlined />
               <span className="nav-text">Identity Providers</span>
             </Link>
           </Menu.Item>
