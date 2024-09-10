@@ -28,7 +28,6 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   return (
     <div>
       <GraphiQL
-        defaultQuery={operationName}
         query={query}
         operationName={operationName}
         headers={headers}
