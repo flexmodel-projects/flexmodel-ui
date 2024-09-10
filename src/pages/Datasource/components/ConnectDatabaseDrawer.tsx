@@ -4,6 +4,7 @@ import {createDatasource, validateDatasource} from "../../../api/datasource.ts";
 import MySQLConfig from "./MySQLConfig.tsx";
 import SQLiteConfig from "./SQLiteConfig.tsx";
 import CommonConfig from "./CommonConfig.tsx";
+import DatabaseInfo from "./DatabaseInfo.tsx";
 
 const { Step } = Steps;
 
@@ -34,6 +35,7 @@ const ConnectDatabaseDrawer: React.FC<{ visible: boolean; onChange: (data: any) 
         message.error(`Failed, error msg: ${result.errorMsg}`);
       }
     } catch (error) {
+      console.error(error)
       // Handle validation or network errors
     }
   };
@@ -50,6 +52,7 @@ const ConnectDatabaseDrawer: React.FC<{ visible: boolean; onChange: (data: any) 
         message.error(`Failed, error msg: ${result.errorMsg}`);
       }
     } catch (error) {
+      console.error(error)
       // Handle validation or network errors
     }
   };
