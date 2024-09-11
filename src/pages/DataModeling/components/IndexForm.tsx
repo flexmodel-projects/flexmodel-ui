@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Modal, Form, Input, Select, Switch, Button, notification } from 'antd';
+import React, {useEffect} from 'react';
+import {Form, Input, Modal, Select, Switch} from 'antd';
 
 interface Field {
   fieldName: string;
@@ -15,14 +15,14 @@ interface ChangeIndexProps {
   onCancel: () => void;
 }
 
-const IndexForm: React.FC<ChangeIndexProps> = ({ visible, datasource, model, currentValue, onConform, onCancel }) => {
+const IndexForm: React.FC<ChangeIndexProps> = ({visible, datasource, model, currentValue, onConform, onCancel}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (currentValue) {
       form.setFieldsValue({
         name: currentValue.name || '',
-        fields: currentValue.fields.map(field => field.direction ? `${field.fieldName}:${field.direction}` : field.fieldName),
+        fields: currentValue.fields?.map(field => field.direction ? `${field.fieldName}:${field.direction}` : field.fieldName) || [],
         unique: currentValue.unique || false
       });
     }
@@ -76,14 +76,14 @@ const IndexForm: React.FC<ChangeIndexProps> = ({ visible, datasource, model, cur
         <Form.Item
           name="name"
           label="Name"
-          rules={[{ required: true, message: 'Please input the index name!' }]}
+          rules={[{required: true, message: 'Please input the index name!'}]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           name="fields"
           label="Fields"
-          rules={[{ required: true, message: 'Please select the index fields!' }]}
+          rules={[{required: true, message: 'Please select the index fields!'}]}
         >
           <Select mode="multiple" allowClear>
             {model.fields.map(field => (
@@ -106,7 +106,7 @@ const IndexForm: React.FC<ChangeIndexProps> = ({ visible, datasource, model, cur
           </Select>
         </Form.Item>
         <Form.Item name="unique" label="Unique" valuePropName="checked">
-          <Switch />
+          <Switch/>
         </Form.Item>
       </Form>
     </Modal>

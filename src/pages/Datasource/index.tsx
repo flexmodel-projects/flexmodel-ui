@@ -12,8 +12,12 @@ import {
   validateDatasource
 } from "../../api/datasource.ts";
 import {DbsMap} from "../DataModeling/components/types.ts";
+import {useNavigate} from "react-router-dom";
 
 const DatasourceManagement: React.FC = () => {
+
+  const navigate = useNavigate();
+
   const [dsList, setDsList] = useState<any[]>([]);
   const [activeDs, setActiveDs] = useState<any>({config: {dbKind: ''}, createTime: '', name: '', type: ''});
   const [dsLoading, setDsLoading] = useState<boolean>(false);
@@ -163,7 +167,7 @@ const DatasourceManagement: React.FC = () => {
               <div>{activeDs.name}</div>
               <div>
                 <Space>
-                  <Button onClick={() => {/* router.push(`/modeling?datasource=${activeDs.name}`) */
+                  <Button onClick={() => {navigate(`/modeling?datasource=${activeDs.name}`)
                   }}>Modeling</Button>
                   <Button onClick={handleRefresh} loading={refreshLoading}>Refresh</Button>
                   <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>

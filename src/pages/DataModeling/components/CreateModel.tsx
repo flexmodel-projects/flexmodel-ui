@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { Button, Drawer, Form, Input, Table, Popconfirm, Tag, Modal, message } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { FieldInitialValues, Model } from './types';
+import React, {useEffect, useState} from 'react';
+import {Button, Drawer, Form, Input, Popconfirm, Table, Tag} from 'antd';
+import {ColumnsType} from 'antd/es/table';
+import {FieldInitialValues, Model} from './types';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 
@@ -9,9 +9,10 @@ interface Props {
   datasource: string;
   onConform: (model: Model) => void;
   onCancel: () => void;
+  visible: boolean;
 }
 
-const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
+const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}) => {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState<boolean>(false);
   const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState<boolean>(false);
@@ -20,6 +21,10 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
   const [selectedIndexIndex, setSelectedIndexIndex] = useState<number>(-1);
   const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues['string']);
   const [indexForm, setIndexForm] = useState<any>({});
+
+  useEffect(() => {
+    setDrawerVisible(visible);
+  }, [visible]);
 
   const [model, setModel] = useState<Model>({
     name: '',
@@ -61,13 +66,13 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
     } else {
       newFields[selectedFieldIndex] = val;
     }
-    setModel({ ...model, fields: newFields });
+    setModel({...model, fields: newFields});
     setChangeFieldDialogVisible(false);
   };
 
   const handleDeleteField = (index: number) => {
     const newFields = model.fields.filter((_, i) => i !== index);
-    setModel({ ...model, fields: newFields });
+    setModel({...model, fields: newFields});
   };
 
   const handleAddIndex = () => {
@@ -89,13 +94,13 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
     } else {
       newIndexes[selectedIndexIndex] = val;
     }
-    setModel({ ...model, indexes: newIndexes });
+    setModel({...model, indexes: newIndexes});
     setChangeIndexDialogVisible(false);
   };
 
   const handleDeleteIndex = (index: number) => {
     const newIndexes = model.indexes.filter((_, i) => i !== index);
-    setModel({ ...model, indexes: newIndexes });
+    setModel({...model, indexes: newIndexes});
   };
 
   const handleSubmit = () => {
@@ -109,19 +114,19 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
   };
 
   const fieldColumns: ColumnsType<any> = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Type', dataIndex: 'type', key: 'type', render: (text) => text },
-    { title: 'Unique', dataIndex: 'unique', key: 'unique' },
-    { title: 'Nullable', dataIndex: 'nullable', key: 'nullable' },
-    { title: 'Comment', dataIndex: 'comment', key: 'comment' },
+    {title: 'Name', dataIndex: 'name', key: 'name'},
+    {title: 'Type', dataIndex: 'type', key: 'type', render: (text) => text},
+    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
+    {title: 'Nullable', dataIndex: 'nullable', key: 'nullable', render: (nullable: boolean) => (nullable ? 'Yes' : 'No')},
+    {title: 'Comment', dataIndex: 'comment', key: 'comment'},
     {
       title: 'Operations',
       key: 'operations',
       render: (_, __, index) => (
         <>
-          <Button type="primary" onClick={() => handleEditField(index)}>Edit</Button>
+          <Button type="link" onClick={() => handleEditField(index)}>Edit</Button>
           <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteField(index)}>
-            <Button type="primary" danger style={{ marginLeft: 8 }}>Delete</Button>
+            <Button type="link" danger style={{marginLeft: 8}}>Delete</Button>
           </Popconfirm>
         </>
       )
@@ -129,7 +134,7 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
   ];
 
   const indexColumns: ColumnsType<any> = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
+    {title: 'Name', dataIndex: 'name', key: 'name'},
     {
       title: 'Fields',
       key: 'fields',
@@ -143,7 +148,7 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
         </div>
       )
     },
-    { title: 'Unique', dataIndex: 'unique', key: 'unique' },
+    {title: 'Unique', dataIndex: 'unique', key: 'unique'},
     {
       title: 'Operations',
       key: 'operations',
@@ -151,7 +156,7 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
         <>
           <Button type="primary" onClick={() => handleEditIndex(index)}>Edit</Button>
           <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteIndex(index)}>
-            <Button type="primary" danger style={{ marginLeft: 8 }}>Delete</Button>
+            <Button type="primary" danger style={{marginLeft: 8}}>Delete</Button>
           </Popconfirm>
         </>
       )
@@ -163,42 +168,56 @@ const CreateModel: React.FC<Props> = ({ datasource, onConform, onCancel }) => {
       <Drawer
         title="Create Model"
         placement="right"
-        onClose={() => setDrawerVisible(false)}
+        onClose={() => {
+          setDrawerVisible(false);
+          onCancel();
+        }}
         open={drawerVisible}
         width="50%"
+        footer={
+          <div style={{textAlign: 'right'}}>
+            <Button onClick={() => {
+              setDrawerVisible(false);
+              onCancel();
+            }} style={{marginRight: 8}}>
+              Cancel
+            </Button>
+            <Button onClick={() => onConform(form.getFieldsValue())} type="primary">
+              Conform
+            </Button>
+          </div>
+        }
       >
         <Form form={form} layout="vertical">
-          <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please input the name!' }]}>
-            <Input />
+          <Form.Item label="Name" name="name" rules={[{required: true, message: 'Please input the name!'}]}>
+            <Input/>
           </Form.Item>
           <Form.Item label="Comment" name="comment">
-            <Input />
+            <Input/>
           </Form.Item>
           <Form.Item label="Fields">
             <Table
+              size="small"
               columns={fieldColumns}
               dataSource={model.fields}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" style={{ width: '100%' }} onClick={handleAddField}>Add Field</Button>
+                <Button type="primary" style={{width: '100%'}} onClick={handleAddField} ghost>Add Field</Button>
               )}
             />
           </Form.Item>
           <Form.Item label="Indexes">
             <Table
+              size="small"
               columns={indexColumns}
               dataSource={model.indexes}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" style={{ width: '100%' }} onClick={handleAddIndex}>Add Index</Button>
+                <Button type="primary" style={{width: '100%'}} onClick={handleAddIndex} ghost>Add Index</Button>
               )}
             />
-          </Form.Item>
-          <Form.Item>
-            <Button onClick={handleCancel}>Cancel</Button>
-            <Button type="primary" onClick={handleSubmit}>Create</Button>
           </Form.Item>
         </Form>
       </Drawer>

@@ -1,4 +1,4 @@
-import {Layout} from "antd";
+import {FloatButton, Layout} from "antd";
 import Sidebar from "./Sidebar";
 import {Header} from "./Header";
 import "./PageLayout.css";
@@ -16,6 +16,7 @@ const PageLayout = () => {
           <div style={{padding: '15px', height: 'calc(100vh - 64px)'}}>
             <RenderRoutes/>
           </div>
+          <FloatButton.BackTop  visibilityHeight={800}/>
         </Layout.Content>
       </Layout>
     </Layout>

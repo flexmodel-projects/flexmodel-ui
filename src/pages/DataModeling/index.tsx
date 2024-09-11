@@ -71,7 +71,7 @@ const ModelingPage: React.FC = () => {
           </Row>
         </Card>
       </Col>
-      <Col span={4}>
+      <Col span={5}>
         <Card bordered={false}>
           <SelectModel
             datasource={activeDs}
@@ -90,7 +90,7 @@ const ModelingPage: React.FC = () => {
           </Button>
         </Card>
       </Col>
-      <Col span={20}>
+      <Col span={19}>
         {selectedItem === 'field' && (
           <FieldList
             datasource={activeDs}
@@ -115,7 +115,8 @@ const ModelingPage: React.FC = () => {
         )}
       </Col>
 
-      <Drawer
+      <CreateModel visible={drawerVisible} datasource={activeDs} onConform={addModel} onCancel={() => setDrawerVisible(false)}/>
+      {/*<Drawer
         title="Create Model"
         width={500}
         visible={drawerVisible}
@@ -131,8 +132,8 @@ const ModelingPage: React.FC = () => {
           </div>
         }
       >
-        <CreateModel datasource={activeDs} onConform={addModel} onCancel={() => setDrawerVisible(false)}/>
-      </Drawer>
+
+      </Drawer>*/}
     </Row>
   );
 };

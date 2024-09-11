@@ -147,18 +147,20 @@ const SelectModel: React.FC<{
           selectedKeys={[activeModel?.name || '']}
           onSelect={(_, {node}) => handleItemChange(node)}
           titleRender={node => (
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '160px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '220px'}}>
               <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>
                   <TableOutlined/>
+                  <span title={node.name} style={{textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block'}}>
                   {node.name}
+                  </span>
                 </Space>
               </div>
               {editable && (
                 <Dropdown
                   overlay={
                     <Menu onClick={handleMenuClick}>
-                      <Menu.Item key="delete" style={{color:'red'}} icon={<DeleteOutlined/>}>
+                      <Menu.Item key="delete" style={{color: 'red'}} icon={<DeleteOutlined/>}>
                         Delete
                       </Menu.Item>
                     </Menu>
