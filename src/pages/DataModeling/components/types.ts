@@ -1,22 +1,22 @@
-import REST_API from "../../../assets/icons/design_restapi.svg";
-import GraphQL from "../../../assets/icons/design_graphql.svg";
-import gRPC from "../../../assets/icons/design_grpc.svg";
-import WebSocket from "../../../assets/icons/design_websocket.svg";
-import MQTT from "../../../assets/icons/design_mqtt.svg";
+import REST_API from "../../../assets/icons/design_restapi.svg?react";
+import GraphQL from "../../../assets/icons/design_graphql.svg?react";
+import gRPC from "../../../assets/icons/design_grpc.svg?react";
+import WebSocket from "../../../assets/icons/design_websocket.svg?react";
+import MQTT from "../../../assets/icons/design_mqtt.svg?react";
 
-import MySQL from "../../../assets/icons/svg/mysql.svg";
-import MariaDB from "../../../assets/icons/svg/mariadb.svg";
-import Oracle from "../../../assets/icons/svg/oracle.svg";
-import SqlServer from "../../../assets/icons/svg/sqlserver.svg";
-import PostgreSQL from "../../../assets/icons/svg/postgresql.svg";
-import DB2 from "../../../assets/icons/svg/db2.svg";
-import SQLite from "../../../assets/icons/svg/sqlite.svg";
-import GBase from "../../../assets/icons/svg/gbase.svg";
-import DM8 from "../../../assets/icons/svg/dm.svg";
-import TiDB from "../../../assets/icons/svg/tidb.svg";
-import MongoDB from "../../../assets/icons/svg/mongodb.svg";
+import MySQL from "../../../assets/icons/svg/mysql.svg?react";
+import MariaDB from "../../../assets/icons/svg/mariadb.svg?react";
+import Oracle from "../../../assets/icons/svg/oracle.svg?react";
+import SqlServer from "../../../assets/icons/svg/sqlserver.svg?react";
+import PostgreSQL from "../../../assets/icons/svg/postgresql.svg?react";
+import DB2 from "../../../assets/icons/svg/db2.svg?react";
+import SQLite from "../../../assets/icons/svg/sqlite.svg?react";
+import GBase from "../../../assets/icons/svg/gbase.svg?react";
+import DM8 from "../../../assets/icons/svg/dm.svg?react";
+import TiDB from "../../../assets/icons/svg/tidb.svg?react";
+import MongoDB from "../../../assets/icons/svg/mongodb.svg?react";
 
-import OIDC from "../../../assets/icons/svg/idp_ocid.svg";
+import OIDC from "../../../assets/icons/svg/idp_ocid.svg?react";
 
 export interface Datasource {
   name: string;
@@ -95,7 +95,7 @@ export const Dbs: Db[] = [
   }
 ]
 
-export const DbsMap: Record<string, string> = Dbs.reduce((p, c) => {
+export const DbsMap: Record<string, any> = Dbs.reduce((p, c) => {
   p[c.name] = c.icon
   return p
 }, {} as Record<string, string>)

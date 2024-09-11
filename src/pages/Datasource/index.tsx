@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import {Button, Card, Divider, Dropdown, Menu, Modal, Spin, Tree, message, Space} from 'antd';
-import {MoreOutlined, DatabaseOutlined, BlockOutlined, DeleteOutlined} from '@ant-design/icons';
+import React, {useEffect, useState} from 'react';
+import {Button, Card, Divider, Dropdown, Menu, message, Modal, Space, Spin, Tree} from 'antd';
+import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from '@ant-design/icons';
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
-import EditDSConfig from "./components/EditDatabaseDrawer.tsx";
+import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
-import { getDatasourceList, refreshDatasource as reqRefreshDatasource, updateDatasource, validateDatasource, deleteDatasource } from "../../api/datasource.ts";
+import {
+  deleteDatasource,
+  getDatasourceList,
+  refreshDatasource as reqRefreshDatasource,
+  updateDatasource,
+  validateDatasource
+} from "../../api/datasource.ts";
+import {DbsMap} from "../DataModeling/components/types.ts";
 
 const DatasourceManagement: React.FC = () => {
   const [dsList, setDsList] = useState<any[]>([]);
-  const [activeDs, setActiveDs] = useState<any>({ config: { dbKind: '' }, createTime: '', name: '', type: '' });
+  const [activeDs, setActiveDs] = useState<any>({config: {dbKind: ''}, createTime: '', name: '', type: ''});
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
@@ -21,7 +28,9 @@ const DatasourceManagement: React.FC = () => {
       setDsLoading(true);
       const list = await getDatasourceList();
       setDsList(list);
-      setActiveDs(list[0]);
+      if (!activeDs.name) {
+        setActiveDs(list[0]);
+      }
     } catch (error) {
       message.error('Failed to load datasource list.');
       console.error(error);
@@ -64,10 +73,19 @@ const DatasourceManagement: React.FC = () => {
     }
   };
 
-  const handleEdit = async () => {
+  const handleEdit = async (formData: any) => {
     try {
-      await updateDatasource(activeDs.name, activeDs);
+      const res = await updateDatasource(formData.name, {
+        config: {
+          dbKind: formData.dbKind,
+          username: formData.username,
+          password: formData.password,
+          url: formData.url,
+        }
+      });
       setEditVisible(false);
+      setActiveDs(res);
+      fetchDatasourceList();
     } catch (error) {
       console.error(error)
       message.error('Failed to update datasource.');
@@ -88,27 +106,26 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <div style={{ display: 'flex'}}>
-        <Card style={{ width: '25%' }}>
-          <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>DS management</div>
-          <Divider />
+      <div style={{display: 'flex'}}>
+        <Card style={{width: '25%'}}>
+          <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>DS management</div>
+          <Divider/>
           <Spin spinning={dsLoading}>
             <Tree
               treeData={dsList.map(ds => ({
                 ...ds,
                 title: ds.name,
                 key: ds.name,
-                icon: <DatabaseOutlined />
               }))}
               selectedKeys={[activeDs.name]}
               titleRender={(node) => (
-                <div style={{ display: 'flex', alignItems: 'center', width: '250px' }}>
-                  <span>{node.title}</span>
+                <div style={{display: 'flex', alignItems: 'center', width: '250px'}}>
+                  {<Icon component={DbsMap[node.config?.dbKind]}/>}&nbsp;<span>{node.title}</span>
                   <Dropdown
                     overlay={
                       <Menu>
                         <Menu.Item
-                          style={{color:'red'}}
+                          style={{color: 'red'}}
                           icon={<DeleteOutlined/>}
                           disabled={activeDs.type === 'system'}
                           onClick={() => {
@@ -122,31 +139,32 @@ const DatasourceManagement: React.FC = () => {
                     trigger={['hover']}
                     placement="bottomRight"
                   >
-                    <MoreOutlined style={{ marginLeft: 'auto', cursor: 'pointer' }} />
+                    <MoreOutlined style={{marginLeft: 'auto', cursor: 'pointer'}}/>
                   </Dropdown>
                 </div>
               )}
-              onSelect={(_, { node }) => handleTreeClick(node)}
+              onSelect={(_, {node}) => handleTreeClick(node)}
             />
           </Spin>
-          <Divider />
+          <Divider/>
           <Button
             type="primary"
-            icon={<BlockOutlined />}
+            icon={<BlockOutlined/>}
             onClick={() => setDrawerVisible(true)}
-            style={{ width: '100%' }}
+            style={{width: '100%'}}
             ghost
           >
             Connect Database
           </Button>
         </Card>
-        <div style={{ width: '75%' }}>
+        <div style={{width: '75%'}}>
           <Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
               <div>{activeDs.name}</div>
               <div>
                 <Space>
-                  <Button onClick={() => {/* router.push(`/modeling?datasource=${activeDs.name}`) */}}>Modeling</Button>
+                  <Button onClick={() => {/* router.push(`/modeling?datasource=${activeDs.name}`) */
+                  }}>Modeling</Button>
                   <Button onClick={handleRefresh} loading={refreshLoading}>Refresh</Button>
                   <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>
                   <Button
@@ -161,11 +179,16 @@ const DatasourceManagement: React.FC = () => {
             </div>
           </Card>
           <Card>
-            <DatabaseInfo datasource={activeDs} />
+            <DatabaseInfo datasource={activeDs}/>
           </Card>
         </div>
       </div>
-      <ConnectDatabaseDrawer visible={drawerVisible} onChange={() => fetchDatasourceList()} onClose={() => setDrawerVisible(false)} />
+      <ConnectDatabaseDrawer visible={drawerVisible} onChange={(data) => {
+        fetchDatasourceList();
+        setActiveDs(data);
+      }} onClose={() => {
+        setDrawerVisible(false);
+      }}/>
       <EditDSConfig
         visible={editVisible}
         datasource={activeDs}

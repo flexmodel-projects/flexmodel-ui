@@ -18,13 +18,8 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = ({ config, onChange }) => 
   };
 
   return (
-    <Form
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-      labelAlign="top"
-      initialValues={config}
-      onValuesChange={handleFieldChange}
-    >
+    <>
+      <Form.Item name="dbKind" hidden/>
       <Form.Item
         name="url"
         label="Database URL"
@@ -38,7 +33,7 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = ({ config, onChange }) => 
       <Form.Item name="password" label="Password">
         <Input.Password />
       </Form.Item>
-    </Form>
+    </>
   );
 };
 

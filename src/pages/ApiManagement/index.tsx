@@ -12,11 +12,11 @@ import {
   message,
   Modal,
   Row,
-  Select,
+  Select, Space,
   Switch,
   Tree,
 } from "antd";
-import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
+import {DeleteOutlined, MoreOutlined, SaveOutlined, TableOutlined} from "@ant-design/icons";
 import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
 import "./index.css";
 import {css} from '@emotion/css';
@@ -156,24 +156,27 @@ const ApiManagement: React.FC = () => {
     data.map((item) => ({
       title: (
         <>
-          {editNode === item.id ? (
-            <HoverEditInput onChange={editApi} value={editForm.name || ''}/>
-          ) : (
-            item.name
-          )}
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
-                <Menu.Item onClick={() => {
-                  setDeleteDialogVisible(true)
-                }}>Delete</Menu.Item>
-              </Menu>
-            }
-            trigger={['hover']}
-          >
-            <MoreOutlined className={item.settingVisible ? "" : "invisible"} onClick={(e) => e.stopPropagation()}/>
-          </Dropdown>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            {editNode === item.id ? (
+              <HoverEditInput onChange={editApi} value={editForm.name || ''}/>
+            ) : (
+              item.name
+            )}
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
+                    <Menu.Item onClick={() => {
+                      setDeleteDialogVisible(true)
+                    }}>Delete</Menu.Item>
+                  </Menu>
+                }
+                trigger={['hover']}
+              >
+                <MoreOutlined className={item.settingVisible ? "" : "invisible"} onClick={(e) => e.stopPropagation()}/>
+              </Dropdown>
+          </div>
+
         </>
       ),
       key: item.id,

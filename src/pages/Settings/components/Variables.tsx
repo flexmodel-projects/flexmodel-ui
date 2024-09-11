@@ -62,9 +62,10 @@ const Variables: React.FC = () => {
       </Row>
 
       <div style={{ height: '540px', overflow: 'auto' }}>
-        <Collapse defaultActiveKey={['1','2']}>
+        <Collapse defaultActiveKey={['1','2']} ghost>
           <Panel header="Environment Variables" key="1">
             <Table
+              size="small"
               dataSource={environmentVariables}
               columns={columns}
               pagination={false}
@@ -73,6 +74,7 @@ const Variables: React.FC = () => {
           </Panel>
           <Panel header="System Variables" key="2">
             <Table
+              size="small"
               dataSource={systemVariables}
               columns={columns}
               pagination={false}

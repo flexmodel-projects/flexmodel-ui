@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, Modal } from 'antd';
-import InputVariables from "../../../components/InputVariables.tsx";
+import React, {useEffect, useState} from 'react';
+import {Button, Form, Input, Modal} from 'antd';
 
 interface EditDatabaseProps {
   visible: boolean;
   datasource: {
     name: string;
-    url: string;
-    username: string;
-    password: string;
+    config: {
+      dbKind: string;
+      url: string;
+      username: string;
+      password: string;
+    }
   };
   onConform: (formData: any) => void;
   onCancel: () => void;
 }
 
-const EditDatabaseDrawer: React.FC<EditDatabaseProps> = ({ visible, datasource, onConform, onCancel }) => {
+const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, onConform, onCancel}) => {
   const [form] = Form.useForm();
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -22,9 +24,10 @@ const EditDatabaseDrawer: React.FC<EditDatabaseProps> = ({ visible, datasource, 
     setIsVisible(visible);
     form.setFieldsValue({
       name: datasource.name,
-      url: datasource.url,
-      username: datasource.username,
-      password: datasource.password,
+      dbKind: datasource.config.dbKind,
+      url: datasource.config.url,
+      username: datasource.config.username,
+      password: datasource.config.password,
     });
   }, [visible, datasource, form]);
 
@@ -70,25 +73,26 @@ const EditDatabaseDrawer: React.FC<EditDatabaseProps> = ({ visible, datasource, 
           password: datasource.password,
         }}
       >
+        <Form.Item name="dbKind" hidden/>
         <Form.Item label="Connection name" name="name">
-          <Input value={datasource.name} readOnly />
+          <Input readOnly/>
         </Form.Item>
         <Form.Item
           name="url"
           label="Database URL"
-          rules={[{ required: true, message: 'Please input the database URL!' }]}
+          rules={[{required: true, message: 'Please input the database URL!'}]}
         >
-          <InputVariables />
+          <Input/>
         </Form.Item>
         <Form.Item name="username" label="Username">
-          <InputVariables />
+          <Input/>
         </Form.Item>
         <Form.Item name="password" label="Password">
-          <InputVariables placeholder="password" />
+          <Input placeholder="password"/>
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default EditDatabaseDrawer;
+export default EditDatabaseModal;
