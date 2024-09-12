@@ -1,5 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, DatePicker, Empty, Form, Input, message, Modal, Pagination, Row, Switch, Table} from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Row,
+  Switch,
+  Table,
+  Tooltip
+} from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
@@ -28,17 +42,20 @@ interface RecordListProps {
   updateRecord?: (datasource: string, modelName: string, id: any, data: Record) => Promise<void>;
   deleteRecord?: (datasource: string, modelName: string, id: any) => Promise<void>;
   getRecordList?: (datasource: string, modelName: string, query: { current: number; pageSize: number }) => Promise<{
-  list: Record[];
-  total: number;
+    list: Record[];
+    total: number;
   }>;
 }
 
 const RecordList: React.FC<RecordListProps> = ({
                                                  datasource,
                                                  model,
-                                                 createRecord = async () => {},
-                                                 updateRecord = async () => {},
-                                                 deleteRecord = async () => {},
+                                                 createRecord = async () => {
+                                                 },
+                                                 updateRecord = async () => {
+                                                 },
+                                                 deleteRecord = async () => {
+                                                 },
                                                  getRecordList = async () => ({list: [], total: 0}),
                                                }) => {
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
@@ -92,23 +109,24 @@ const RecordList: React.FC<RecordListProps> = ({
   const renderFieldInput = (field: Field) => {
     switch (field.type) {
       case 'id':
-        return <Input disabled={editMode} />;
+        return <Input disabled={editMode}/>;
       case 'string':
       case 'text':
       case 'json':
-        return field.type === 'text' ? <Input.TextArea placeholder={field.comment} /> : <Input placeholder={field.comment} />;
+        return field.type === 'text' ? <Input.TextArea placeholder={field.comment}/> :
+          <Input placeholder={field.comment}/>;
       case 'decimal':
       case 'int':
       case 'bigint':
-        return <Input type="number" placeholder={field.comment} />;
+        return <Input type="number" placeholder={field.comment}/>;
       case 'boolean':
-        return <Switch />;
+        return <Switch/>;
       case 'date':
-        return <DatePicker placeholder={field.comment} style={{width: '100%'}} />;
+        return <DatePicker placeholder={field.comment} style={{width: '100%'}}/>;
       case 'datetime':
-        return <DatePicker picker="datetime" placeholder={field.comment} style={{width: '100%'}} />;
+        return <DatePicker picker="datetime" placeholder={field.comment} style={{width: '100%'}}/>;
       default:
-        return <Input />;
+        return <Input/>;
     }
   };
 
@@ -116,18 +134,30 @@ const RecordList: React.FC<RecordListProps> = ({
     title: field.name,
     dataIndex: field.name,
     key: field.name,
-    render: (text) => (typeof text === 'object' ? JSON.stringify(text) : text),
+    render: (text) => {
+      const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
+      if (field.type === 'text' || field.type == 'json') {
+        return (<Tooltip title={fmtText}>
+          <span
+            style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
+          {fmtText}
+         </span>
+        </Tooltip>);
+      }
+      return fmtText;
+    },
   })) || [];
 
   columns.push({
     title: 'Operations',
     key: 'operations',
     fixed: 'right',
-    width: 120,
+    width: 180,
     render: (_, record) => (
       <>
-        <Button size="small" type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>Edit</Button>
-        <Button size="small" type="link" icon={<DeleteOutlined />} danger onClick={() => handleDelete(record)} style={{marginLeft: 8}}>
+        <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>Edit</Button>
+        <Button size="small" type="link" icon={<DeleteOutlined/>} danger onClick={() => handleDelete(record)}
+                style={{marginLeft: 8}}>
           Delete
         </Button>
       </>
@@ -140,7 +170,10 @@ const RecordList: React.FC<RecordListProps> = ({
         <Row justify="space-between">
           <Col>{model.name} {model.comment}</Col>
           <Col>
-            <Button type="primary" onClick={() => { setDialogFormVisible(true); setEditMode(false); }}>
+            <Button type="primary" onClick={() => {
+              setDialogFormVisible(true);
+              setEditMode(false);
+            }}>
               New Record
             </Button>
           </Col>
@@ -175,14 +208,15 @@ const RecordList: React.FC<RecordListProps> = ({
         >
           <Form form={form} layout="vertical">
             {model.fields.map(field => (
-              <Form.Item key={field.name} name={field.name} label={field.name} rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}>
+              <Form.Item key={field.name} name={field.name} label={field.name}
+                         rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}>
                 {renderFieldInput(field)}
               </Form.Item>
             ))}
           </Form>
         </Modal>
       </div>
-    ) : <Empty />
+    ) : <Empty/>
   );
 };
 

@@ -4,6 +4,7 @@ import {ColumnsType} from 'antd/es/table';
 import {FieldInitialValues, Model} from './types';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
+import {PlusOutlined} from "@ant-design/icons";
 
 interface Props {
   datasource: string;
@@ -117,7 +118,12 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
     {title: 'Name', dataIndex: 'name', key: 'name'},
     {title: 'Type', dataIndex: 'type', key: 'type', render: (text) => text},
     {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
-    {title: 'Nullable', dataIndex: 'nullable', key: 'nullable', render: (nullable: boolean) => (nullable ? 'Yes' : 'No')},
+    {
+      title: 'Nullable',
+      dataIndex: 'nullable',
+      key: 'nullable',
+      render: (nullable: boolean) => (nullable ? 'Yes' : 'No')
+    },
     {title: 'Comment', dataIndex: 'comment', key: 'comment'},
     {
       title: 'Operations',
@@ -203,7 +209,8 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" style={{width: '100%'}} onClick={handleAddField} ghost>Add Field</Button>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddField} ghost>Add
+                  Field</Button>
               )}
             />
           </Form.Item>
@@ -215,7 +222,7 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" style={{width: '100%'}} onClick={handleAddIndex} ghost>Add Index</Button>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>Add Index</Button>
               )}
             />
           </Form.Item>

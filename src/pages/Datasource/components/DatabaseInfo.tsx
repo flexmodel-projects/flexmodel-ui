@@ -57,12 +57,12 @@ const DatabaseInfo: React.FC<DatabaseInfoProps> = ({ datasource }) => {
         children: <HidePassword text={datasource.config.password} />,
         span: 1,
       }] : []),
-      {
+      ...(datasource.createdAt ? [{
         key: 'Create time',
         label: 'Create time',
         children: datasource.createdAt,
         span: 1,
-      }
+      }] : []),
     ]} />
   );
 };

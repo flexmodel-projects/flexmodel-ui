@@ -3,6 +3,7 @@ import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd
 import OIdcProvider from "./OIdcProvider.tsx";
 import {createIdentityProvider} from "../../../api/identity-provider.ts";
 import IdPInfo from "./IdPInfo.tsx";
+import {css} from "@emotion/css";
 
 interface ProviderForm {
   name: string;
@@ -50,6 +51,12 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
     }
   };
 
+  const segmentTitle = css`
+    font-size: 16px;
+    font-weight: bold;
+    padding-bottom: 10px;
+  `;
+
   return (
     <Drawer
       title="New provider"
@@ -92,9 +99,9 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
         {currentStep === 0 && (
           <Form.Item label="Please select your IdP to create">
             <Radio.Group value={formData.provider.type}>
-              <div className="segment-title">User-defined</div>
+              <div className={segmentTitle}>User-defined</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
-              <div className="segment-title">Social</div>
+              <div className={segmentTitle}>Social</div>
               <Radio value="github" disabled>
                 Github (github)
               </Radio>
