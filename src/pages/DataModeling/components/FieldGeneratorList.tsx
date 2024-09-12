@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Dropdown, Menu, Input, Modal, Select } from 'antd';
+import { Button, Dropdown, Menu, Input } from 'antd';
 import { PlusOutlined, EditOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons';
 import { GeneratorTypes } from './types';
 import FieldGeneratorModal from "./FieldGeneratorModal.tsx";
@@ -101,7 +101,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
           trigger={['click']}
         >
           <Button icon={<PlusOutlined />}>
-            <DownOutlined className="hover:text-primary" />
+            <DownOutlined/>
           </Button>
         </Dropdown>
       )}

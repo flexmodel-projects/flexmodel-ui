@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dropdown, Input, Menu} from 'antd';
-import {ArrowDownOutlined, CloseOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {CloseOutlined, DownOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {ValidatorTypes} from './types';
 import FieldValidatorModal from "./FieldValidatorModal.tsx"; // 假设 ValidatorTypes 是预定义的验证器类型
 
@@ -102,7 +102,7 @@ const FieldValidatorList: React.FC<FieldProps> = ({datasource, model, field}) =>
         trigger={['click']}
       >
         <Button icon={<PlusOutlined/>}>
-          <ArrowDownOutlined/>
+          <DownOutlined/>
         </Button>
       </Dropdown>
 
