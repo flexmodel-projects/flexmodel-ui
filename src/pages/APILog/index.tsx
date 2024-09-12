@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Button, Card, Col, Descriptions, Drawer, Input, Row, Space, Table, Tag} from "antd";
-import {ReloadOutlined, SearchOutlined, SettingOutlined} from "@ant-design/icons";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Card, Col, Descriptions, Drawer, Input, Row, Space, Table, Tag } from "antd";
+import { ReloadOutlined, SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import * as echarts from "echarts";
-import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
-import {css} from "@emotion/css"; // 替换为你的API导入路径
+import { getApiLogs, getApiLogStat } from "../../api/api-log.ts";
+import { css } from "@emotion/css";
 import { FloatButton } from 'antd';
 
 const LogViewer: React.FC = () => {
@@ -15,6 +15,7 @@ const LogViewer: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const logStatRef = useRef<HTMLDivElement>(null);
+  const chartInstance = useRef<echarts.ECharts | null>(null);
 
   const option: any = {
     tooltip: {
@@ -31,6 +32,20 @@ const LogViewer: React.FC = () => {
       type: "category",
       boundaryGap: false,
       data: [],
+      axisLabel: {
+        formatter: function (value: string) {
+          const date = new Date(value);
+          return `${date.getFullYear()}-${(date.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date
+            .getHours()
+            .toString()
+            .padStart(2, '0')}:${date
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}`;
+        }
+      },
     },
     yAxis: {
       splitNumber: 2,
@@ -58,9 +73,37 @@ const LogViewer: React.FC = () => {
     const statList: any[] = await getApiLogStat(filter);
     option.xAxis.data = statList.map((stat) => stat.date);
     option.series[0].data = statList.map((stat) => stat.total);
-    const myChart = echarts.init(logStatRef.current!);
-    myChart.setOption(option);
+    if (chartInstance.current) {
+      chartInstance.current.setOption(option);
+    }
   };
+
+  const initializeChart = () => {
+    if (logStatRef.current) {
+      chartInstance.current = echarts.init(logStatRef.current);
+      fetchApiLogStat();
+    }
+  };
+
+  useEffect(() => {
+    initializeChart();
+    // 在窗口大小变化时更新图表大小
+    const resizeChart = () => chartInstance.current?.resize();
+    window.addEventListener("resize", resizeChart);
+    return () => {
+      window.removeEventListener("resize", resizeChart);
+      // 销毁图表实例
+      chartInstance.current?.dispose();
+      chartInstance.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchApiLogs();
+    if (chartInstance.current) {
+      fetchApiLogStat();
+    }
+  }, [filter]);
 
   const showDetail = (record: any) => {
     setLog(record);
@@ -87,13 +130,8 @@ const LogViewer: React.FC = () => {
       setIsOver(true);
     }
     setTableData(res);
-    await fetchApiLogStat();
-  };
-
-  useEffect(() => {
-    fetchApiLogs();
     fetchApiLogStat();
-  }, [filter]);
+  };
 
   const columns = [
     {
