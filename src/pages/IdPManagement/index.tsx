@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Card, Col, Divider, Dropdown, Empty, message, Modal, Row, Tree} from 'antd';
-import {MoreOutlined} from '@ant-design/icons';
+import {MoreOutlined, PlusOutlined} from '@ant-design/icons';
 import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider} from '../../api/identity-provider';
 import IdPInfo from "./components/IdPInfo.tsx";
 import EditProvider from "./components/EditProvider.tsx";
@@ -113,7 +113,7 @@ const IdPManagement: React.FC = () => {
               </div>
             )}
           />
-          <Button type="primary" icon={<MoreOutlined/>} onClick={() => setDrawerVisible(true)} block ghost>
+          <Button type="primary" icon={<PlusOutlined/>} onClick={() => setDrawerVisible(true)} block ghost>
             New provider
           </Button>
         </Card>

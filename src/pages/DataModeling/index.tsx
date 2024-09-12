@@ -61,7 +61,9 @@ const ModelingPage: React.FC = () => {
             <div>
               <Row>
                 <Col span={12}>
+                  <span style={{fontWeight: 600, fontSize: '16px'}}>
                   Data modeling
+                  </span>
                 </Col>
                 <Col span={12} style={{textAlign: 'right'}}>
                   <Segmented
