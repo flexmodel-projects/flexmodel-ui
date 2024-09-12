@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {Button, Card, Col, Form, Input, Modal, Row, Switch, Table, Pagination, message, DatePicker} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Button, Col, DatePicker, Empty, Form, Input, message, Modal, Pagination, Row, Switch, Table} from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
@@ -27,32 +27,30 @@ interface RecordListProps {
   createRecord?: (datasource: string, modelName: string, data: Record) => Promise<void>;
   updateRecord?: (datasource: string, modelName: string, id: any, data: Record) => Promise<void>;
   deleteRecord?: (datasource: string, modelName: string, id: any) => Promise<void>;
-  getRecordList?: (datasource: string, modelName: string, query: { current: number; pageSize: number }) => Promise<{ list: Record[]; total: number }>;
+  getRecordList?: (datasource: string, modelName: string, query: { current: number; pageSize: number }) => Promise<{
+  list: Record[];
+  total: number;
+  }>;
 }
 
-const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord, updateRecord, deleteRecord, getRecordList }) => {
-  const [dialogFormVisible, setDialogFormVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [editMode, setEditMode] = useState<boolean>(false);
-  const [records, setRecords] = useState<{ list: Record[]; total: number }>({list: [], total: 0});
+const RecordList: React.FC<RecordListProps> = ({
+                                                 datasource,
+                                                 model,
+                                                 createRecord = async () => {},
+                                                 updateRecord = async () => {},
+                                                 deleteRecord = async () => {},
+                                                 getRecordList = async () => ({list: [], total: 0}),
+                                               }) => {
+  const [dialogFormVisible, setDialogFormVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [records, setRecords] = useState({list: [], total: 0});
   const [form] = Form.useForm();
-  const [query, setQuery] = useState({current: 1, pageSize: 10, filter: '', sort: ''});
+  const [query, setQuery] = useState({current: 1, pageSize: 10});
 
   useEffect(() => {
-    fetchRecords();
+    if (model) fetchRecords();
   }, [query, model]);
-
-  useEffect(() => {
-    // Define form rules based on the model fields
-    const rules: any = {};
-    model.fields.forEach(field => {
-      rules[field.name] = [{required: !field.nullable, message: `Please input ${field.name}`}];
-    });
-    form.setFields(Object.keys(rules).map(key => ({
-      name: key,
-      rules: rules[key]
-    })));
-  }, [form, model.fields]);
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -87,126 +85,104 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord
       fetchRecords();
       setDialogFormVisible(false);
     } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
+      console.error('Failed:', errorInfo);
     }
   };
 
-  const columns: ColumnsType<Record> = [
-    ...model.fields.map(field => ({
-      title: field.name,
-      dataIndex: field.name,
-      key: field.name,
-      width: 100,
+  const renderFieldInput = (field: Field) => {
+    switch (field.type) {
+      case 'id':
+        return <Input disabled={editMode} />;
+      case 'string':
+      case 'text':
+      case 'json':
+        return field.type === 'text' ? <Input.TextArea placeholder={field.comment} /> : <Input placeholder={field.comment} />;
+      case 'decimal':
+      case 'int':
+      case 'bigint':
+        return <Input type="number" placeholder={field.comment} />;
+      case 'boolean':
+        return <Switch />;
+      case 'date':
+        return <DatePicker placeholder={field.comment} style={{width: '100%'}} />;
+      case 'datetime':
+        return <DatePicker picker="datetime" placeholder={field.comment} style={{width: '100%'}} />;
+      default:
+        return <Input />;
+    }
+  };
 
-      render: (text: any) => (typeof text === 'object' ? JSON.stringify(text) : text),
-    })),
-    {
-      title: 'Operations',
-      key: 'operations',
-      fixed: 'right',
-      width: 120,
-      render: (_, record) => (
-        <>
-          <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>Edit</Button>
-          <Button size="small" type="link" icon={<DeleteOutlined/>} danger onClick={() => handleDelete(record)}
-                  style={{marginLeft: 8}}>
-            Delete
-          </Button>
-        </>
-      ),
-    },
-  ];
+  const columns: ColumnsType<Record> = model?.fields.map(field => ({
+    title: field.name,
+    dataIndex: field.name,
+    key: field.name,
+    render: (text) => (typeof text === 'object' ? JSON.stringify(text) : text),
+  })) || [];
+
+  columns.push({
+    title: 'Operations',
+    key: 'operations',
+    fixed: 'right',
+    width: 120,
+    render: (_, record) => (
+      <>
+        <Button size="small" type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>Edit</Button>
+        <Button size="small" type="link" icon={<DeleteOutlined />} danger onClick={() => handleDelete(record)} style={{marginLeft: 8}}>
+          Delete
+        </Button>
+      </>
+    ),
+  });
 
   return (
-    <div style={{padding: '20px'}}>
-      <Row>
-        <Col span={24}>
-          <div>
-            <Row>
-              <Col span={12}>
-                {model.name} {model.comment}
-              </Col>
-              <Col span={12} style={{textAlign: 'right'}}>
-                <Button type="primary" onClick={() => {
-                  setDialogFormVisible(true);
-                  setEditMode(false);
-                }}>
-                  New Record
-                </Button>
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <div  style={{marginTop: 16}}>
-            <Table
-              loading={loading}
-              scroll={{x: 1500, y: 400}}
-              style={{width: '100%'}}
-              size="small"
-              columns={columns}
-              dataSource={records.list}
-              pagination={false}
-              rowKey={(record) => record[model.idField?.name] || 'id'}
-            />
-            <div style={{marginTop: 16}}>
-              <Pagination
-                align="end"
-                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-                current={query.current}
-                pageSize={query.pageSize}
-                total={records.total}
-                onChange={(page, pageSize) => setQuery(prev => ({...prev, current: page, pageSize}))}
-                pageSizeOptions={[10, 20, 50, 100]}
-              />
-            </div>
-          </div>
-        </Col>
-      </Row>
-      <Modal
-        title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
-        visible={dialogFormVisible}
-        onCancel={() => setDialogFormVisible(false)}
-        onOk={handleSubmit}
-        width={600}
-      >
-        <Form
-          form={form}
-          layout="vertical"
+    model ? (
+      <div style={{padding: '20px'}}>
+        <Row justify="space-between">
+          <Col>{model.name} {model.comment}</Col>
+          <Col>
+            <Button type="primary" onClick={() => { setDialogFormVisible(true); setEditMode(false); }}>
+              New Record
+            </Button>
+          </Col>
+        </Row>
+
+        <Table
+          loading={loading}
+          scroll={{x: 1500, y: 400}}
+          columns={columns}
+          dataSource={records.list}
+          pagination={false}
+          rowKey={(record) => record[model.idField?.name] || 'id'}
+          style={{marginTop: 16}}
+        />
+
+        <Pagination
+          align="end"
+          current={query.current}
+          pageSize={query.pageSize}
+          total={records.total}
+          showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+          onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
+          style={{marginTop: 16}}
+        />
+
+        <Modal
+          title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
+          visible={dialogFormVisible}
+          onCancel={() => setDialogFormVisible(false)}
+          onOk={handleSubmit}
+          width={600}
         >
-          {model.fields.map(field => (
-            <Form.Item
-              key={field.name}
-              name={field.name}
-              label={field.name}
-              rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}
-            >
-              {field.type === 'id' ? (
-                <Input disabled={editMode}/>
-              ) : field.type === 'string' ? (
-                <Input placeholder={field.comment}/>
-              ) : field.type === 'text' ? (
-                <Input.TextArea placeholder={field.comment}/>
-              ) : field.type === 'decimal' || field.type === 'int' || field.type === 'bigint' ? (
-                <Input type="number" placeholder={field.comment}/>
-              ) : field.type === 'boolean' ? (
-                <Switch/>
-              ) : field.type === 'date' ? (
-                <DatePicker placeholder={field.comment} style={{width: '100%'}}/>
-              ) : field.type === 'datetime' ? (
-                <DatePicker picker="datetime" placeholder={field.comment} style={{width: '100%'}}/>
-              ) : field.type === 'json' ? (
-                <Input.TextArea placeholder={field.comment}/>
-              ) : (
-                <Input/>
-              )}
-            </Form.Item>
-          ))}
-        </Form>
-      </Modal>
-    </div>
+          <Form form={form} layout="vertical">
+            {model.fields.map(field => (
+              <Form.Item key={field.name} name={field.name} label={field.name} rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}>
+                {renderFieldInput(field)}
+              </Form.Item>
+            ))}
+          </Form>
+        </Modal>
+      </div>
+    ) : <Empty />
   );
 };
 

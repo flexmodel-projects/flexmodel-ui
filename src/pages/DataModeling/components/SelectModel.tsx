@@ -4,6 +4,7 @@ import {DeleteOutlined, EditOutlined, MoreOutlined, ReloadOutlined, TableOutline
 import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from '../../../api/datasource';
 import {dropModel, getModelList} from '../../../api/model';
 import {css} from "@emotion/css";
+import {useNavigate} from "react-router-dom";
 
 interface Datasource {
   name: string;
@@ -20,6 +21,8 @@ const SelectModel: React.FC<{
   editable: boolean;
   onChange: (ds: string, model: Model) => void;
 }> = ({datasource, editable, onChange}) => {
+
+  const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource);
   const [dsList, setDsList] = useState<Datasource[]>([]);
   const [modelList, setModelList] = useState<Model[]>([]);
@@ -98,7 +101,6 @@ const SelectModel: React.FC<{
         onChange={onSelectDatasource}
         placeholder="Data source"
         style={{width: 'calc(100% - 50px)'}}
-        suffixIcon={<EditOutlined/>}
       >
         {dsList.map(item => (
           <Select.Option key={item.name} value={item.name}>
@@ -109,10 +111,10 @@ const SelectModel: React.FC<{
         ))}
         <Select.Option value="manage" disabled>
           <Button
-            type="primary"
+            type="link"
             icon={<EditOutlined/>}
             style={{width: '100%'}}
-            onClick={() => window.location.href = '/datasource'}
+            onClick={() => navigate('/datasource')}
           >
             Management
           </Button>
@@ -151,7 +153,8 @@ const SelectModel: React.FC<{
               <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>
                   <TableOutlined/>
-                  <span title={node.name} style={{textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block'}}>
+                  <span title={node.name}
+                        style={{textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block'}}>
                   {node.name}
                   </span>
                 </Space>
