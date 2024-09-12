@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Card, Form, Input, Modal, notification, Popconfirm, Table} from 'antd';
+import {Button, Form, Input, Modal, notification, Popconfirm, Table} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import {FieldInitialValues} from './types';
@@ -126,22 +126,20 @@ const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
   ];
 
   return (
-    <div>
-      <Card>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <div>
-            {model?.name} {model?.comment}
-          </div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined/>}
-            onClick={handleNewField}
-          >
-            New Field
-          </Button>
+    <div style={{padding: '20px'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <div>
+          {model?.name} {model?.comment}
         </div>
-      </Card>
-      <Card style={{marginTop: 16}}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined/>}
+          onClick={handleNewField}
+        >
+          New Field
+        </Button>
+      </div>
+      <div style={{marginTop: 16}}>
         <Table
           size="small"
           rowKey="name"
@@ -150,7 +148,7 @@ const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
           pagination={false}
           style={{width: '100%'}}
         />
-      </Card>
+      </div>
       <Modal
         title={selectedFieldIndex === -1 ? 'New Field' : 'Edit Field'}
         visible={changeDialogVisible}

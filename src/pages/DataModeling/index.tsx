@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, Card, Col, Divider, Drawer, Row, Segmented} from 'antd';
+import {Button, Card, Col, Divider, Row, Segmented} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {createModel as reqCreateModel} from '../../api/model';
@@ -54,87 +54,73 @@ const ModelingPage: React.FC = () => {
   }, [activeDs, navigate]);
 
   return (
-    <Row>
-      <Col span={24}>
-        <Card bordered={false}>
-          <Row>
-            <Col span={12}>
-              Data modeling
-            </Col>
-            <Col span={12} style={{textAlign: 'right'}}>
-              <Segmented
-                value={selectedItem}
-                onChange={(val) => setSelectedItem(val as string)}
-                options={options}
+    <>
+      <Card>
+        <Row>
+          <Col span={24}>
+            <div>
+              <Row>
+                <Col span={12}>
+                  Data modeling
+                </Col>
+                <Col span={12} style={{textAlign: 'right'}}>
+                  <Segmented
+                    value={selectedItem}
+                    onChange={(val) => setSelectedItem(val as string)}
+                    options={options}
+                  />
+                </Col>
+              </Row>
+            </div>
+          </Col>
+          <Col span={5}>
+            <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
+              <SelectModel
+                datasource={activeDs}
+                editable
+                onChange={handleItemChange}
               />
-            </Col>
-          </Row>
-        </Card>
-      </Col>
-      <Col span={5}>
-        <Card bordered={false}>
-          <SelectModel
-            datasource={activeDs}
-            editable
-            onChange={handleItemChange}
-          />
-          <Divider/>
-          <Button
-            type="primary"
-            icon={<PlusOutlined/>}
-            onClick={() => setDrawerVisible(true)}
-            block
-            ghost
-          >
-            New model
-          </Button>
-        </Card>
-      </Col>
-      <Col span={19}>
-        {selectedItem === 'field' && (
-          <FieldList
-            datasource={activeDs}
-            model={activeModel}
-            /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
-          />
-        )}
-        {selectedItem === 'index' && (
-          <IndexList
-            datasource={activeDs}
-            model={activeModel}
-            /*onIndexesChange={(indexes) => setActiveModel((prev) => ({ ...prev, indexes }))}*/
-          />
-        )}
-        {selectedItem === 'record' && (
-          <RecordList datasource={activeDs} model={activeModel}
-                      getRecordList={(datasource: string, modelName: string, query: {
-                        current: number;
-                        pageSize: number
-                      }) => getRecordList(datasource, modelName, query)}
-          />
-        )}
-      </Col>
-
-      <CreateModel visible={drawerVisible} datasource={activeDs} onConform={addModel} onCancel={() => setDrawerVisible(false)}/>
-      {/*<Drawer
-        title="Create Model"
-        width={500}
-        visible={drawerVisible}
-        onClose={() => setDrawerVisible(false)}
-        footer={
-          <div style={{textAlign: 'right'}}>
-            <Button onClick={() => setDrawerVisible(false)} style={{marginRight: 8}}>
-              Cancel
-            </Button>
-            <Button onClick={() => addModel(activeModel)} type="primary">
-              Conform
-            </Button>
-          </div>
-        }
-      >
-
-      </Drawer>*/}
-    </Row>
+              <Divider/>
+              <Button
+                type="primary"
+                icon={<PlusOutlined/>}
+                onClick={() => setDrawerVisible(true)}
+                block
+                ghost
+              >
+                New model
+              </Button>
+            </div>
+          </Col>
+          <Col span={19}>
+            {selectedItem === 'field' && (
+              <FieldList
+                datasource={activeDs}
+                model={activeModel}
+                /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
+              />
+            )}
+            {selectedItem === 'index' && (
+              <IndexList
+                datasource={activeDs}
+                model={activeModel}
+                /*onIndexesChange={(indexes) => setActiveModel((prev) => ({ ...prev, indexes }))}*/
+              />
+            )}
+            {selectedItem === 'record' && (
+              <RecordList datasource={activeDs} model={activeModel}
+                          getRecordList={(datasource: string, modelName: string, query: {
+                            current: number;
+                            pageSize: number
+                          }) => getRecordList(datasource, modelName, query)}
+              />
+            )}
+          </Col>
+        </Row>
+      </Card>
+      <CreateModel visible={drawerVisible} datasource={activeDs} onConform={addModel}
+                   onCancel={() => setDrawerVisible(false)}/>
+    </>
   );
 };
 

@@ -118,10 +118,10 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord
   ];
 
   return (
-    <>
+    <div style={{padding: '20px'}}>
       <Row>
         <Col span={24}>
-          <Card>
+          <div>
             <Row>
               <Col span={12}>
                 {model.name} {model.comment}
@@ -135,12 +135,12 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord
                 </Button>
               </Col>
             </Row>
-          </Card>
+          </div>
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-          <Card>
+          <div  style={{marginTop: 16}}>
             <Table
               loading={loading}
               scroll={{x: 1500, y: 400}}
@@ -151,14 +151,18 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord
               pagination={false}
               rowKey={(record) => record[model.idField?.name] || 'id'}
             />
-            <Pagination
-              current={query.current}
-              pageSize={query.pageSize}
-              total={records.total}
-              onChange={(page, pageSize) => setQuery(prev => ({...prev, current: page, pageSize}))}
-              pageSizeOptions={[10, 20, 50, 100]}
-            />
-          </Card>
+            <div style={{marginTop: 16}}>
+              <Pagination
+                align="end"
+                showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                current={query.current}
+                pageSize={query.pageSize}
+                total={records.total}
+                onChange={(page, pageSize) => setQuery(prev => ({...prev, current: page, pageSize}))}
+                pageSizeOptions={[10, 20, 50, 100]}
+              />
+            </div>
+          </div>
         </Col>
       </Row>
       <Modal
@@ -202,7 +206,7 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model, createRecord
           ))}
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -46,20 +46,21 @@ const Variables: React.FC = () => {
 
   return (
     <Card>
-      <Row>
-        <Col span={12}>
-          <h2>Variables</h2>
-        </Col>
-        <Col span={6}></Col>
-        <Col span={6}>
-          <Input
-            placeholder="Search variables"
-            value={filterKeyword}
-            onChange={(e) => setFilterKeyword(e.target.value)}
-            allowClear
-          />
-        </Col>
-      </Row>
+      <div style={{paddingBottom:'20px'}}>
+        <Row>
+          <Col span={12}>
+          </Col>
+          <Col span={6}></Col>
+          <Col span={6}>
+            <Input
+              placeholder="Search variables"
+              value={filterKeyword}
+              onChange={(e) => setFilterKeyword(e.target.value)}
+              allowClear
+            />
+          </Col>
+        </Row>
+      </div>
 
       <div style={{ height: '540px', overflow: 'auto' }}>
         <Collapse defaultActiveKey={['1','2']} ghost>

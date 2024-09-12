@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Card, Form, Input, Modal, notification, Popconfirm, Table, Tag} from 'antd';
+import {Button, Form, Input, Modal, notification, Popconfirm, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 
@@ -125,8 +125,8 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   ];
 
   return (
-    <div>
-      <Card>
+    <div style={{padding: '20px'}}>
+      <div>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <div>
             {model?.name} {model?.comment}
@@ -139,8 +139,8 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
             New Index
           </Button>
         </div>
-      </Card>
-      <Card style={{marginTop: 16}}>
+      </div>
+      <div style={{marginTop: 16}}>
         <Table
           size="small"
           rowKey="name"
@@ -148,7 +148,7 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
           columns={columns}
           pagination={false}
         />
-      </Card>
+      </div>
       <Modal
         title={selectedIndexKey === -1 ? 'New Index' : 'Edit Index'}
         visible={changeDialogVisible}
