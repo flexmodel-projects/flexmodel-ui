@@ -55,11 +55,6 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
     setChangeFieldDialogVisible(true);
   };
 
-  const handleCancelFieldForm = () => {
-    setFieldForm(FieldInitialValues['string']);
-    setChangeFieldDialogVisible(false);
-  };
-
   const addOrEditField = (val: any) => {
     const newFields = [...model.fields];
     if (selectedFieldIndex === -1) {
@@ -104,16 +99,6 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
     setModel({...model, indexes: newIndexes});
   };
 
-  const handleSubmit = () => {
-    onConform(model);
-    setDrawerVisible(false);
-  };
-
-  const handleCancel = () => {
-    onCancel();
-    setDrawerVisible(false);
-  };
-
   const fieldColumns: ColumnsType<any> = [
     {title: 'Name', dataIndex: 'name', key: 'name'},
     {title: 'Type', dataIndex: 'type', key: 'type', render: (text) => text},
@@ -146,7 +131,7 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
       key: 'fields',
       render: (text) => (
         <div className="flex gap-1">
-          {text.map((item: any) => (
+          {text?.fields?.map((item: any) => (
             <Tag color="blue" key={item.fieldName}>
               {item.fieldName} {item.direction}
             </Tag>
@@ -154,15 +139,15 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
         </div>
       )
     },
-    {title: 'Unique', dataIndex: 'unique', key: 'unique'},
+    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique) => unique ? 'Yes' : 'No'},
     {
       title: 'Operations',
       key: 'operations',
       render: (_, __, index) => (
         <>
-          <Button type="primary" onClick={() => handleEditIndex(index)}>Edit</Button>
+          <Button type="link" size="small" onClick={() => handleEditIndex(index)}>Edit</Button>
           <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteIndex(index)}>
-            <Button type="primary" danger style={{marginLeft: 8}}>Delete</Button>
+            <Button type="link" size="small" danger style={{marginLeft: 8}}>Delete</Button>
           </Popconfirm>
         </>
       )
@@ -188,7 +173,11 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
             }} style={{marginRight: 8}}>
               Cancel
             </Button>
-            <Button onClick={() => onConform(form.getFieldsValue())} type="primary">
+            <Button onClick={() => {
+              form.setFieldValue('fields', model.fields);
+              form.setFieldValue('indexes', model.indexes);
+              onConform(form.getFieldsValue(true));
+            }} type="primary">
               Conform
             </Button>
           </div>
@@ -222,7 +211,8 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>Add Index</Button>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>Add
+                  Index</Button>
               )}
             />
           </Form.Item>

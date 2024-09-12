@@ -15,7 +15,7 @@ interface ChangeIndexProps {
   onCancel: () => void;
 }
 
-const IndexForm: React.FC<ChangeIndexProps> = ({visible, datasource, model, currentValue, onConform, onCancel}) => {
+const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, onConfirm, onCancel}) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, datasource, model, curr
         };
       });
 
-      onConform({
+      onConfirm({
         name: values.name,
         fields,
         unique: values.unique,

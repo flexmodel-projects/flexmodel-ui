@@ -17,10 +17,11 @@ interface Model {
 }
 
 const SelectModel: React.FC<{
+  key: number;
   datasource: string;
   editable: boolean;
   onChange: (ds: string, model: Model) => void;
-}> = ({datasource, editable, onChange}) => {
+}> = ({key, datasource, editable, onChange}) => {
 
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource);
@@ -92,7 +93,7 @@ const SelectModel: React.FC<{
     if (activeDs) {
       reqModelList();
     }
-  }, [activeDs]);
+  }, [activeDs, key]);
 
   return (
     <div>

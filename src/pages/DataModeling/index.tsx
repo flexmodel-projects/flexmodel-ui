@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Card, Col, Divider, Row, Segmented} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -24,12 +24,15 @@ const ModelingPage: React.FC = () => {
     {label: 'Record', value: 'record'},
   ];
 
+  const [selectModelKey, setSelectModelKey] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<string>('field');
   const [activeDs, setActiveDs] = useState<string>(datasource || '');
   const [activeModel, setActiveModel] = useState<any>({});
   const [drawerVisible, setDrawerVisible] = useState(false);
 
-  const selectModelRef = useRef<any>(null);
+  const handleRefreshModelList = () => {
+    setSelectModelKey(prevKey => prevKey + 1); // 更新key，导致子组件重新渲染
+  };
 
   // 处理选择的模型变化
   const handleItemChange = (ds: string, item: any) => {
@@ -41,12 +44,9 @@ const ModelingPage: React.FC = () => {
   const addModel = async (item: any) => {
     await reqCreateModel(activeDs, item);
     setDrawerVisible(false);
-    if (selectModelRef.current) {
-      selectModelRef.current.reload();
-    }
+    handleRefreshModelList();
   };
 
-  // 模拟 Vue 的 onMounted 钩子
   useEffect(() => {
     if (activeDs) {
       navigate(`/modeling`, {state: {datasource: activeDs}});
@@ -78,6 +78,7 @@ const ModelingPage: React.FC = () => {
           <Col span={5}>
             <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
               <SelectModel
+                key={selectModelKey}
                 datasource={activeDs}
                 editable
                 onChange={handleItemChange}
