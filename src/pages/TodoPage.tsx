@@ -54,7 +54,7 @@ class TodoPageComponent extends React.Component<ITodoProps, ITodoState> {
                         )} />
                     </Table>
                 </Card>
-                <Modal title="New Task" visible={this.state.modalVisible}
+                <Modal title="New Task" open={this.state.modalVisible}
                     onOk={() => this.handleOk()}
                     onCancel={() => this.handleCancel()}>
                     <Input.TextArea placeholder="Input the name of the task" rows={4}

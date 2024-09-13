@@ -19,7 +19,7 @@ const EditProvider: React.FC<EditProviderProps> = ({ visible, form, onCancel, on
   return (
     <Modal
       title="Edit provider"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>

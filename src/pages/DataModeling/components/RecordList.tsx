@@ -16,6 +16,7 @@ import {
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 
 interface Field {
   name: string;
@@ -38,25 +39,11 @@ interface Model {
 interface RecordListProps {
   datasource: string;
   model: Model;
-  createRecord?: (datasource: string, modelName: string, data: Record) => Promise<void>;
-  updateRecord?: (datasource: string, modelName: string, id: any, data: Record) => Promise<void>;
-  deleteRecord?: (datasource: string, modelName: string, id: any) => Promise<void>;
-  getRecordList?: (datasource: string, modelName: string, query: { current: number; pageSize: number }) => Promise<{
-    list: Record[];
-    total: number;
-  }>;
 }
 
 const RecordList: React.FC<RecordListProps> = ({
                                                  datasource,
                                                  model,
-                                                 createRecord = async () => {
-                                                 },
-                                                 updateRecord = async () => {
-                                                 },
-                                                 deleteRecord = async () => {
-                                                 },
-                                                 getRecordList = async () => ({list: [], total: 0}),
                                                }) => {
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -95,7 +82,12 @@ const RecordList: React.FC<RecordListProps> = ({
     try {
       const values = await form.validateFields();
       if (editMode) {
-        await updateRecord(datasource, model.name, values[model.idField?.name], values);
+        const idField = model.fields.filter(f => f.type === 'id')[0];
+        if (!idField) {
+          message.warning('Update field, ID field not found!');
+          return;
+        }
+        await updateRecord(datasource, model.name, values[idField.name], values);
       } else {
         await createRecord(datasource, model.name, values);
       }
@@ -201,7 +193,7 @@ const RecordList: React.FC<RecordListProps> = ({
 
         <Modal
           title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
-          visible={dialogFormVisible}
+          open={dialogFormVisible}
           onCancel={() => setDialogFormVisible(false)}
           onOk={handleSubmit}
           width={600}

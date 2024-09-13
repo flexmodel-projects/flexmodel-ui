@@ -66,7 +66,7 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
   };
 
   return (
-    <Modal visible={visible} onCancel={onCancel} onOk={handleConfirm} title={currentValue?.name ? 'Edit field' : 'New field'}>
+    <Modal open={visible} onCancel={onCancel} onOk={handleConfirm} title={currentValue?.name ? 'Edit field' : 'New field'}>
       <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} layout="horizontal">
         <Form.Item label="Name" name="name" rules={[{ required: true }]}>
           <Input disabled={!!currentValue?.name} />

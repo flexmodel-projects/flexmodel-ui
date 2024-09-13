@@ -164,7 +164,7 @@ const IdPManagement: React.FC = () => {
         onConfirm={handleEditProvider}
       />
       <Modal
-        visible={deleteVisible}
+        open={deleteVisible}
         title={`Delete '${activeIdP?.name}'?`}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}

@@ -137,7 +137,7 @@ const FieldValidatorModal: React.FC<FieldProps> = ({
   return (
     <Modal
       title={formValues.type}
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>

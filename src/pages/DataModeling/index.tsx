@@ -8,7 +8,6 @@ import FieldList from "./components/FieldList.tsx";
 import IndexList from "./components/IndexList.tsx";
 import RecordList from "./components/RecordList.tsx";
 import CreateModel from "./components/CreateModel.tsx";
-import {getRecordList} from "../../api/record.ts"; // 假设是API请求
 
 const ModelingPage: React.FC = () => {
   const location = useLocation();
@@ -111,12 +110,7 @@ const ModelingPage: React.FC = () => {
               />
             )}
             {selectedItem === 'record' && (
-              <RecordList datasource={activeDs} model={activeModel}
-                          getRecordList={(datasource: string, modelName: string, query: {
-                            current: number;
-                            pageSize: number
-                          }) => getRecordList(datasource, modelName, query)}
-              />
+              <RecordList datasource={activeDs} model={activeModel}/>
             )}
           </Col>
         </Row>

@@ -60,7 +60,7 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, on
   return (
     <Modal
       title={currentValue?.name ? 'Edit Index' : 'New Index'}
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={handleSubmit}
       width={580}

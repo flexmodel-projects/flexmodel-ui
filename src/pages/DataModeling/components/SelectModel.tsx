@@ -180,7 +180,7 @@ const SelectModel: React.FC<{
       </Spin>
       <Modal
         title={`Delete '${activeModel?.name}'?`}
-        visible={deleteDialogVisible}
+        open={deleteDialogVisible}
         onCancel={() => setDeleteDialogVisible(false)}
         onOk={handleDelete}
       >

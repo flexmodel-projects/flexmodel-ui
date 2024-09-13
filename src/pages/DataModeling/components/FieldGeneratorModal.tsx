@@ -44,7 +44,7 @@ const FieldGeneratorModal: React.FC<Props> = ({
   return (
     <Modal
       title={type}
-      visible={visible}
+      open={visible}
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" onClick={handleCancel}>
