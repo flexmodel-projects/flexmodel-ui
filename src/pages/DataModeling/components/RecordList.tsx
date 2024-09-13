@@ -181,7 +181,7 @@ const RecordList: React.FC<RecordListProps> = ({
 
         <Table
           loading={loading}
-          scroll={{x: 1500, y: 400}}
+          scroll={{y: 400}}
           columns={columns}
           dataSource={records.list}
           pagination={false}

@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Form, Input, Modal, notification, Popconfirm, Table} from 'antd';
+import {Button, notification, Popconfirm, Table} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import {FieldInitialValues} from './types';
+import FieldForm from "./FieldForm.tsx";
 
 interface Model {
   name: string;
@@ -16,18 +17,20 @@ interface Field {
   unique: boolean;
   nullable: boolean;
   comment: string;
+  validators: [];
+  generator: object | undefined;
 }
 
-interface MyComponentProps {
+interface FieldListProps {
   datasource: string;
   model: Model;
 }
 
-const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
+const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
-  const [form] = Form.useForm();
+  const [currentVal, setCurrentVal] = useState<Field>(FieldInitialValues['string']);
 
   const fetchFields = useCallback(async () => {
     // Replace this with actual fetch call
@@ -42,12 +45,12 @@ const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const handleNewField = () => {
     setChangeDialogVisible(true);
     setSelectedFieldIndex(-1);
-    form.setFieldsValue(FieldInitialValues['string']);
+    setCurrentVal(FieldInitialValues['string']);
   };
 
   const handleEdit = (index: number) => {
     setSelectedFieldIndex(index);
-    form.setFieldsValue(fieldList[index]);
+    setCurrentVal(fieldList[index]);
     setChangeDialogVisible(true);
   };
 
@@ -149,47 +152,14 @@ const FieldList: React.FC<MyComponentProps> = ({datasource, model}) => {
           style={{width: '100%'}}
         />
       </div>
-      <Modal
-        title={selectedFieldIndex === -1 ? 'New Field' : 'Edit Field'}
+      <FieldForm
         visible={changeDialogVisible}
+        datasource={datasource}
+        model={model}
+        currentValue={currentVal}
+        onConfirm={addOrEditField}
         onCancel={() => setChangeDialogVisible(false)}
-        onOk={() => form
-          .validateFields()
-          .then(values => addOrEditField(values))
-          .catch(info => {
-            console.log('Validate Failed:', info);
-          })}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={FieldInitialValues['string']}
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{required: true, message: 'Please input the field name!'}]}
-          >
-            <Input/>
-          </Form.Item>
-          <Form.Item
-            name="type"
-            label="Type"
-            rules={[{required: true, message: 'Please select the field type!'}]}
-          >
-            <Input/>
-          </Form.Item>
-          <Form.Item name="unique" valuePropName="checked">
-            <Input type="checkbox"/> Unique
-          </Form.Item>
-          <Form.Item name="nullable" valuePropName="checked">
-            <Input type="checkbox"/> Nullable
-          </Form.Item>
-          <Form.Item name="comment" label="Comment">
-            <Input.TextArea/>
-          </Form.Item>
-        </Form>
-      </Modal>
+      />
     </div>
   );
 };
