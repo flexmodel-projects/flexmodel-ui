@@ -1,17 +1,18 @@
 import React, {useEffect} from 'react';
 import {Form, Input, Modal, Select, Switch} from 'antd';
 
-interface Field {
-  fieldName: string;
-  direction?: 'ASC' | 'DESC';
+interface Index {
+  name: string;
+  fields: { fieldName: string; direction: 'ASC' | 'DESC' }[];
+  unique: boolean;
 }
 
 interface ChangeIndexProps {
   visible: boolean;
   datasource: string;
-  model: { fields: { name: string }[] };
-  currentValue: { name?: string; fields: Field[]; unique?: boolean };
-  onConfirm: (data: { name: string; fields: Field[]; unique: boolean }) => void;
+  model: any;
+  currentValue: Index | null;
+  onConfirm: (data: Index) => void;
   onCancel: () => void;
 }
 

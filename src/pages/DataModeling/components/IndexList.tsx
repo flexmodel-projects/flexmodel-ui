@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Form, Input, Modal, notification, Popconfirm, Table, Tag} from 'antd';
+import {Button, notification, Popconfirm, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
+import IndexForm from "./IndexForm";
 
 interface Model {
   name?: string;
@@ -24,8 +25,7 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
-  const [selectedIndexForm] = useState<Index>({name: '', fields: [], unique: false});
-  const [form] = Form.useForm();
+  const [currentVal, setCurrentVal] = useState<Index>(null);
 
   const fetchIndexes = useCallback(async () => {
     // Replace this with actual fetch call
@@ -40,12 +40,11 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const handleAdd = () => {
     setChangeDialogVisible(true);
     setSelectedIndexKey(-1);
-    form.resetFields();
   };
 
   const handleEdit = (index: number) => {
     setSelectedIndexKey(index);
-    form.setFieldsValue(indexList[index]);
+    setCurrentVal(indexList[index]);
     setChangeDialogVisible(true);
   };
 
@@ -149,45 +148,13 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
           pagination={false}
         />
       </div>
-      <Modal
-        title={selectedIndexKey === -1 ? 'New Index' : 'Edit Index'}
+      <IndexForm
         visible={changeDialogVisible}
-        onCancel={() => setChangeDialogVisible(false)}
-        onOk={() => form
-          .validateFields()
-          .then(values => addOrEditIndex(values))
-          .catch(info => {
-            console.log('Validate Failed:', info);
-          })}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{...selectedIndexForm}}
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{required: true, message: 'Please input the index name!'}]}
-          >
-            <Input/>
-          </Form.Item>
-          <Form.Item
-            name="fields"
-            label="Fields"
-            rules={[{required: true, message: 'Please input the index fields!'}]}
-          >
-            {/* Customize this field according to your needs */}
-            <Input.TextArea/>
-          </Form.Item>
-          <Form.Item
-            name="unique"
-            valuePropName="checked"
-          >
-            <Input type="checkbox"/> Unique
-          </Form.Item>
-        </Form>
-      </Modal>
+        datasource={datasource}
+        model={model}
+        currentValue={currentVal}
+        onConfirm={addOrEditIndex}
+        onCancel={() => setChangeDialogVisible(false)}/>
     </div>
   );
 };
