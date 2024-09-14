@@ -227,11 +227,12 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         columns={columns}
         dataSource={records.list}
         pagination={false}
-        rowKey={record => record[idField?.name]}
+        rowKey={idField?.name}
         style={{marginTop: 16}}
       />
 
       <Pagination
+        align="end"
         current={query.current}
         pageSize={query.pageSize}
         total={records.total}
