@@ -51,7 +51,7 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
   return (
     <Modal
       title="Edit Database"
-      visible={isVisible}
+      open={isVisible}
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" onClick={handleCancel}>

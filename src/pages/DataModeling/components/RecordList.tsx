@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
   Col,
@@ -9,6 +9,7 @@ import {
   message,
   Modal,
   Pagination,
+  Popconfirm,
   Row,
   Switch,
   Table,
@@ -17,15 +18,17 @@ import {
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
+import dayjs from "dayjs";
 
 interface Field {
   name: string;
   type: string;
   nullable?: boolean;
   comment?: string;
+  generatedValue?: 'AUTO_INCREMENT' | 'BIGINT_NOT_GENERATED' | 'STRING_NOT_GENERATED';
 }
 
-interface Record {
+interface MRecord {
   [key: string]: any;
 }
 
@@ -41,10 +44,7 @@ interface RecordListProps {
   model: Model;
 }
 
-const RecordList: React.FC<RecordListProps> = ({
-                                                 datasource,
-                                                 model,
-                                               }) => {
+const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -52,91 +52,143 @@ const RecordList: React.FC<RecordListProps> = ({
   const [form] = Form.useForm();
   const [query, setQuery] = useState({current: 1, pageSize: 10});
 
+  const idField = model?.fields?.find(f => f.type === 'id');
+
+  const fieldMap: Record<string, Field> = model.fields.reduce((p, c) => {
+    p[c.name] = c
+    return p
+  }, {} as Record<string, Field>);
+
   useEffect(() => {
     if (model) fetchRecords();
   }, [query, model]);
 
-  const fetchRecords = async () => {
+  const fetchRecords = useCallback(async () => {
     setLoading(true);
     const data = await getRecordList(datasource, model.name, query);
     setRecords(data);
     setLoading(false);
-  };
+  }, [datasource, model.name, query]);
 
-  const handleEdit = (record: Record) => {
+  const handleEdit = (record: MRecord) => {
     setDialogFormVisible(true);
     setEditMode(true);
-    form.setFieldsValue(record);
+
+    form.setFieldsValue(formatFormFieldsValue(record));
   };
 
-  const handleDelete = async (record: Record) => {
-    if (!model.idField) {
+  const handleDelete = async (record: MRecord) => {
+    if (!idField) {
       message.warning("Can't delete a record without ID!");
       return;
     }
-    await deleteRecord(datasource, model.name, record[model.idField.name]);
-    fetchRecords();
+    await deleteRecord(datasource, model.name, record[idField.name]);
+    await fetchRecords();
   };
+
+  const formatFormFieldsValue = (changedValues: any): Record<string, any> => {
+    const formattedValues: Record<string, any> = {};
+    for (const [key, value] of Object.entries(changedValues)) {
+      const field = fieldMap[key];
+      switch (field.type) {
+        case "date":
+          formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
+          break;
+        case "datetime":
+          formattedValues[key] = dayjs(value as string);
+          break;
+        case "json":
+          formattedValues[key] = JSON.stringify(value);
+          break;
+        default:
+          formattedValues[key] = value;
+      }
+    }
+    return formattedValues;
+  }
+
+  const formatValues = (changedValues: any) => {
+    const formattedValues: Record<string, any> = {};
+    for (const [key, value] of Object.entries(changedValues)) {
+      const field = fieldMap[key];
+      switch (field.type) {
+        case "date":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          formattedValues[key] = value?.format('YYYY-MM-DD');
+          break;
+        case "datetime":
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
+          break;
+        case "json":
+          formattedValues[key] = JSON.parse(value as string);
+          break;
+        default:
+          formattedValues[key] = value;
+      }
+    }
+    return formattedValues;
+  }
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       if (editMode) {
-        const idField = model.fields.filter(f => f.type === 'id')[0];
         if (!idField) {
-          message.warning('Update field, ID field not found!');
+          message.warning("Can't edit a record without ID!");
           return;
         }
-        await updateRecord(datasource, model.name, values[idField.name], values);
+        await updateRecord(datasource, model.name, values[idField.name], formatValues(values));
       } else {
-        await createRecord(datasource, model.name, values);
+        await createRecord(datasource, model.name, formatValues(values));
       }
-      fetchRecords();
+      await fetchRecords();
       setDialogFormVisible(false);
     } catch (errorInfo) {
       console.error('Failed:', errorInfo);
     }
   };
 
-  const renderFieldInput = (field: Field) => {
+  const renderFieldInput = useCallback((field: Field) => {
+    const inputProps = {placeholder: field.comment};
     switch (field.type) {
       case 'id':
         return <Input disabled={editMode}/>;
       case 'string':
+        return <Input {...inputProps} />;
       case 'text':
       case 'json':
-        return field.type === 'text' ? <Input.TextArea placeholder={field.comment}/> :
-          <Input placeholder={field.comment}/>;
+        return <Input.TextArea {...inputProps} />;
       case 'decimal':
       case 'int':
       case 'bigint':
-        return <Input type="number" placeholder={field.comment}/>;
+        return <Input type="number" {...inputProps} />;
       case 'boolean':
         return <Switch/>;
       case 'date':
-        return <DatePicker placeholder={field.comment} style={{width: '100%'}}/>;
+        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
       case 'datetime':
-        return <DatePicker picker="datetime" placeholder={field.comment} style={{width: '100%'}}/>;
+        return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
       default:
         return <Input/>;
     }
-  };
+  }, [editMode]);
 
-  const columns: ColumnsType<Record> = model?.fields.map(field => ({
+  const columns: ColumnsType<MRecord> = model?.fields.map(field => ({
     title: field.name,
     dataIndex: field.name,
     key: field.name,
     render: (text) => {
       const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-      if (field.type === 'text' || field.type == 'json') {
-        return (<Tooltip title={fmtText}>
-          <span
-            style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
-          {fmtText}
-         </span>
-        </Tooltip>);
-      }
-      return fmtText;
+      return (field.type === 'text' || field.type === 'json') ? (
+        <Tooltip title={fmtText}>
+          <span style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
+            {fmtText}
+          </span>
+        </Tooltip>
+      ) : fmtText;
     },
   })) || [];
 
@@ -148,68 +200,69 @@ const RecordList: React.FC<RecordListProps> = ({
     render: (_, record) => (
       <>
         <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>Edit</Button>
-        <Button size="small" type="link" icon={<DeleteOutlined/>} danger onClick={() => handleDelete(record)}
-                style={{marginLeft: 8}}>
-          Delete
-        </Button>
+        <Popconfirm title="Are you sure to delete this record?" onConfirm={() => handleDelete(record)}>
+          <Button size="small" type="link" icon={<DeleteOutlined/>} danger>Delete</Button>
+        </Popconfirm>
       </>
     ),
   });
 
-  return (
-    model ? (
-      <div style={{padding: '20px'}}>
-        <Row justify="space-between">
-          <Col>{model.name} {model.comment}</Col>
-          <Col>
-            <Button type="primary" onClick={() => {
-              setDialogFormVisible(true);
-              setEditMode(false);
-            }}>
-              New Record
-            </Button>
-          </Col>
-        </Row>
+  return model ? (
+    <div style={{padding: '20px'}}>
+      <Row justify="space-between">
+        <Col>{model.name} {model.comment}</Col>
+        <Col>
+          <Button type="primary" onClick={() => {
+            setDialogFormVisible(true);
+            setEditMode(false);
+          }}>
+            New Record
+          </Button>
+        </Col>
+      </Row>
 
-        <Table
-          loading={loading}
-          scroll={{y: 400}}
-          columns={columns}
-          dataSource={records.list}
-          pagination={false}
-          rowKey={(record) => record[model.idField?.name] || 'id'}
-          style={{marginTop: 16}}
-        />
+      <Table
+        loading={loading}
+        scroll={{y: 400}}
+        columns={columns}
+        dataSource={records.list}
+        pagination={false}
+        rowKey={record => record[idField?.name]}
+        style={{marginTop: 16}}
+      />
 
-        <Pagination
-          align="end"
-          current={query.current}
-          pageSize={query.pageSize}
-          total={records.total}
-          showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
-          onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
-          style={{marginTop: 16}}
-        />
+      <Pagination
+        current={query.current}
+        pageSize={query.pageSize}
+        total={records.total}
+        showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+        onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
+        style={{marginTop: 16}}
+      />
 
-        <Modal
-          title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
-          open={dialogFormVisible}
-          onCancel={() => setDialogFormVisible(false)}
-          onOk={handleSubmit}
-          width={600}
-        >
-          <Form form={form} layout="vertical">
-            {model.fields.map(field => (
+      <Modal
+        title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
+        open={dialogFormVisible}
+        onCancel={() => setDialogFormVisible(false)}
+        onOk={handleSubmit}
+        width={600}
+      >
+        <Form form={form} layout="vertical">
+          {model.fields.map(field => (
+            field.type !== 'id'
+            || field.generatedValue === 'BIGINT_NOT_GENERATED'
+            || field.generatedValue === 'STRING_NOT_GENERATED'
+            || editMode ? (
               <Form.Item key={field.name} name={field.name} label={field.name}
                          rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}>
                 {renderFieldInput(field)}
               </Form.Item>
-            ))}
-          </Form>
-        </Modal>
-      </div>
-    ) : <Empty/>
-  );
+            ) : null
+          ))}
+        </Form>
+      </Modal>
+    </div>
+  ) : <Empty/>;
 };
 
 export default RecordList;
