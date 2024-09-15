@@ -222,6 +222,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       </Row>
 
       <Table
+        sticky
         loading={loading}
         scroll={{y: 400}}
         columns={columns}

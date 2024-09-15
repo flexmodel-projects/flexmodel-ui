@@ -149,7 +149,7 @@ const ConnectDatabaseDrawer: React.FC<{
             </Row>
           </>
         )}
-        <Form.Item wrapperCol={{offset: 8, span: 16}}>
+        <Form.Item style={{textAlign:'end'}} wrapperCol={{offset: 8, span: 16}}>
           <Space>
             {active !== 0 && active !== 2 && (
               <Button onClick={handlePrev}>Go back</Button>
