@@ -1,5 +1,5 @@
 import React from 'react';
-import { Descriptions } from 'antd';
+import {Descriptions} from 'antd';
 import HidePassword from "../../../components/HidePassword.tsx";
 
 interface IdpInfoProps {
@@ -14,7 +14,7 @@ interface IdpInfoProps {
   };
 }
 
-const IdpInfo: React.FC<IdpInfoProps> = ({ data }) => {
+const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
   return (
     <Descriptions bordered column={1}>
       {/* Display name */}
@@ -38,7 +38,7 @@ const IdpInfo: React.FC<IdpInfoProps> = ({ data }) => {
 
       {/* Client Secret */}
       <Descriptions.Item label="Client Secret">
-        <HidePassword text={data.provider?.clientSecret} />
+        <HidePassword text={data.provider?.clientSecret}/>
       </Descriptions.Item>
     </Descriptions>
   );

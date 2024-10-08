@@ -1,19 +1,19 @@
 import React from 'react';
-import { Modal, Form, Input, Button } from 'antd';
-import OIdcProvider from "./OIdcProvider.tsx";
+import {Button, Form, Input, Modal} from 'antd';
 
 interface EditProviderProps {
   visible: boolean;
-  form: any;
+  data: any;
   onCancel: () => void;
   onConfirm: (form: any) => void;
 }
 
-const EditProvider: React.FC<EditProviderProps> = ({ visible, form, onCancel, onConfirm }) => {
-  const [currentForm, setCurrentForm] = React.useState(form);
+const EditProvider: React.FC<EditProviderProps> = ({visible, data, onCancel, onConfirm}) => {
+  const [form] = Form.useForm();
 
-  const handleConfirm = () => {
-    onConfirm(currentForm);
+  const handleConfirm = async () => {
+    const values = await form.validateFields();
+    onConfirm(values);
   };
 
   return (
@@ -30,14 +30,47 @@ const EditProvider: React.FC<EditProviderProps> = ({ visible, form, onCancel, on
         </Button>,
       ]}
     >
-      <Form layout="vertical">
+      <Form form={form} layout="vertical" initialValues={data}>
         {/* Connection Name */}
-        <Form.Item label="Connection name">
-          <Input value={currentForm?.name} readOnly disabled />
+        <Form.Item name="name" label="Connection name">
+          <Input disabled/>
         </Form.Item>
 
         {/* OIDC Provider, assuming this is a custom component */}
-        <OIdcProvider provider={currentForm?.provider} setProvider={(provider) => setCurrentForm({ ...currentForm, provider })} />
+        <Form.Item name="type" label="Type">
+          <Input disabled/>
+        </Form.Item>
+        <Form.Item
+          label="Issuer"
+          name="issuer"
+          rules={[{required: true, message: 'Issuer is required'}]}
+        >
+          <Input placeholder="e.g. http://localhost:8080/realms/master"/>
+        </Form.Item>
+
+        {/* Discovery endpoint */}
+        {(form as any)?.issuer && <Form.Item label="Discovery endpoint">
+          {(form as any)?.issuer}/.well-known/openid-configuration
+        </Form.Item>}
+
+
+        {/* Client ID */}
+        <Form.Item
+          label="Client ID"
+          name="clientId"
+          rules={[{required: true, message: 'Client ID is required'}]}
+        >
+          <Input/>
+        </Form.Item>
+
+        {/* Client Secret */}
+        <Form.Item
+          label="Client Secret"
+          name="clientSecret"
+          rules={[{required: true, message: 'Client Secret is required'}]}
+        >
+          <Input/>
+        </Form.Item>
       </Form>
     </Modal>
   );

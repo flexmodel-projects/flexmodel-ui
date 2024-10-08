@@ -1,37 +1,24 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd';
-import OIdcProvider from "./OIdcProvider.tsx";
 import {createIdentityProvider} from "../../../api/identity-provider.ts";
 import IdPInfo from "./IdPInfo.tsx";
 import {css} from "@emotion/css";
 
-interface ProviderForm {
-  name: string;
-  provider: {
-    type: string;
-    issuer: string;
-    clientId: string;
-    clientSecret: string;
-  };
-}
-
 interface CreateProviderProps {
   visible: boolean;
   onClose: () => void;
-  onChange: (provider: any) => void;
+  onConfirm: (provider: any) => void;
 }
 
-const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChange}) => {
+const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConfirm}) => {
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<ProviderForm>({
+  const [formData, setFormData] = useState<any>({
     name: '',
-    provider: {
-      type: 'oidc',
-      issuer: '',
-      clientId: '',
-      clientSecret: ''
-    },
+    type: 'oidc',
+    issuer: '',
+    clientId: '',
+    clientSecret: ''
   });
 
   const next = () => setCurrentStep((prev) => Math.min(prev + 1, 2));
@@ -40,11 +27,12 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
   const handleCreateProvider = async () => {
     try {
       const values = await form.validateFields();
-      const newProvider = {...formData, ...values};
+      const newProvider = {name: values.name, provider: values};
       const res = await createIdentityProvider(newProvider);
+      setFormData(res);
       message.success('Provider created successfully');
       next();
-      onChange(res);
+      onConfirm(res);
     } catch (error) {
       console.log(error)
       message.error('Failed to create provider');
@@ -93,12 +81,15 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
         form={form}
         layout="vertical"
         initialValues={formData}
-        onValuesChange={(changedValues) => setFormData((prev) => ({...prev, ...changedValues}))}
+        onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
         style={{marginTop: 24}}
       >
+        <Form.Item hidden name="type" initialValue="oidc">
+          <Input/>
+        </Form.Item>
         {currentStep === 0 && (
-          <Form.Item label="Please select your IdP to create">
-            <Radio.Group value={formData.provider.type}>
+          <Form.Item name="type" initialValue="oidc" label="Please select your IdP to create">
+            <Radio.Group name="type">
               <div className={segmentTitle}>User-defined</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
               <div className={segmentTitle}>Social</div>
@@ -119,8 +110,37 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
               <Input/>
             </Form.Item>
 
-            {formData.provider.type === 'oidc' && <OIdcProvider provider={formData.provider}
-                                                                setProvider={value => console.log(value)}/>}
+            <Form.Item
+              label="Issuer"
+              name="issuer"
+              rules={[{required: true, message: 'Issuer is required'}]}
+            >
+              <Input placeholder="e.g. http://localhost:8080/realms/master"/>
+            </Form.Item>
+
+            {/* Discovery endpoint */}
+            {formData.issuer && <Form.Item label="Discovery endpoint">
+              {formData.issuer}/.well-known/openid-configuration
+            </Form.Item>}
+
+
+            {/* Client ID */}
+            <Form.Item
+              label="Client ID"
+              name="clientId"
+              rules={[{required: true, message: 'Client ID is required'}]}
+            >
+              <Input/>
+            </Form.Item>
+
+            {/* Client Secret */}
+            <Form.Item
+              label="Client Secret"
+              name="clientSecret"
+              rules={[{required: true, message: 'Client Secret is required'}]}
+            >
+              <Input/>
+            </Form.Item>
           </>
         )}
 
@@ -129,7 +149,10 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onChan
             <Col span={24} style={{textAlign: 'center'}}>
               <p>Created successfully</p>
               <IdPInfo data={formData}/>
-              <Button type="primary" style={{marginTop: 12}} onClick={onClose}>
+              <Button type="primary" style={{marginTop: 12}} onClick={() => {
+                onClose();
+                setCurrentStep(0);
+              }}>
                 Close
               </Button>
             </Col>
