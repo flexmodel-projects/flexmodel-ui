@@ -29,7 +29,9 @@ const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
       {/* Discovery endpoint */}
       {data.provider?.issuer && (
         <Descriptions.Item label="Discovery endpoint">
-          {`${data.provider.issuer}/.well-known/openid-configuration`}
+          <a href={`${data.provider.issuer}/.well-known/openid-configuration`} target="_blank">
+            {`${data.provider.issuer}/.well-known/openid-configuration`}
+          </a>
         </Descriptions.Item>
       )}
 

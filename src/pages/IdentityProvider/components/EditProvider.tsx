@@ -48,12 +48,6 @@ const EditProvider: React.FC<EditProviderProps> = ({visible, data, onCancel, onC
           <Input placeholder="e.g. http://localhost:8080/realms/master"/>
         </Form.Item>
 
-        {/* Discovery endpoint */}
-        {(form as any)?.issuer && <Form.Item label="Discovery endpoint">
-          {(form as any)?.issuer}/.well-known/openid-configuration
-        </Form.Item>}
-
-
         {/* Client ID */}
         <Form.Item
           label="Client ID"
