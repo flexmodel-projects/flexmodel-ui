@@ -6,7 +6,7 @@ import DataSource from "./pages/DataSource";
 import APIManagement from "./pages/APIManagement";
 import APIDocument from "./pages/APIDocument";
 import APILog from "./pages/APILog";
-import IdPManagement from "./pages/IdPManagement";
+import IdentityProvider from "./pages/IdentityProvider";
 import Settings from "./pages/Settings";
 import DataModeling from "./pages/DataModeling";
 
@@ -48,7 +48,7 @@ export const routes = [
   },
   {
     path: "/identity-providers",
-    element: <IdPManagement/>,
+    element: <IdentityProvider/>,
   },
   {
     path: "/settings",
