@@ -32,7 +32,7 @@ const EditProvider: React.FC<EditProviderProps> = ({visible, data, onCancel, onC
     >
       <Form form={form} layout="vertical" initialValues={data}>
         {/* Connection Name */}
-        <Form.Item name="name" label="Connection name">
+        <Form.Item name="name" label="Provider name">
           <Input disabled/>
         </Form.Item>
 

@@ -1,9 +1,8 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
   Card,
   Col,
-  ConfigProvider,
   Drawer,
   Dropdown,
   Flex,
@@ -12,16 +11,18 @@ import {
   message,
   Modal,
   Row,
-  Select, Space,
+  Select,
   Switch,
+  Tabs,
+  TabsProps,
   Tree,
 } from "antd";
-import {DeleteOutlined, MoreOutlined, SaveOutlined, TableOutlined} from "@ant-design/icons";
+import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
 import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
 import "./index.css";
-import {css} from '@emotion/css';
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
+import Authorization from "./components/Authorization.tsx";
 
 const {Search} = Input;
 const {DirectoryTree} = Tree;
@@ -116,32 +117,6 @@ const ApiManagement: React.FC = () => {
       await reqApiList()
     }
   };
-  const {getPrefixCls} = useContext(ConfigProvider.ConfigContext)
-  const rootPrefixCls = getPrefixCls()
-
-  const linearGradientButton = css`
-    &.${rootPrefixCls}-btn-primary:not([disabled]):not(.${rootPrefixCls}-btn-dangerous) {
-      border-width: 0;
-
-      > span {
-        position: relative;
-      }
-
-      &::before {
-        content: '';
-        background: linear-gradient(135deg, #6253E1, #04BEFE)
-        position: absolute;
-        inset: 0;
-        opacity: 1;
-        transition: all 0.3s;
-        border-radius: inherit;
-      }
-
-      &:hover::before {
-        opacity: 0;
-      }
-    }
-  `;
 
   const methodOptions = [
     {value: 'GET', label: 'GET'},
@@ -162,19 +137,19 @@ const ApiManagement: React.FC = () => {
             ) : (
               item.name
             )}
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
-                    <Menu.Item onClick={() => {
-                      setDeleteDialogVisible(true)
-                    }}>Delete</Menu.Item>
-                  </Menu>
-                }
-                trigger={['hover']}
-              >
-                <MoreOutlined className={item.settingVisible ? "" : "invisible"} onClick={(e) => e.stopPropagation()}/>
-              </Dropdown>
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
+                  <Menu.Item onClick={() => {
+                    setDeleteDialogVisible(true)
+                  }}>Delete</Menu.Item>
+                </Menu>
+              }
+              trigger={['hover']}
+            >
+              <MoreOutlined className={item.settingVisible ? "" : "invisible"} onClick={(e) => e.stopPropagation()}/>
+            </Dropdown>
           </div>
 
         </>
@@ -190,6 +165,27 @@ const ApiManagement: React.FC = () => {
     message.success('Saved')
     await reqApiList()
   }
+
+  const onChange = (key: string) => {
+    console.log(key);
+  };
+
+  const items: TabsProps['items'] = [
+    {
+      key: 'graphql',
+      label: 'GraphQL',
+      children: <GraphQL onChange={value => setEditForm({...editForm, meta: {...editForm?.meta, execution: value}})}
+                         data={selectedNode?.data?.meta?.execution}/>,
+    },
+    {
+      key: 'authorization',
+      label: 'Authorization',
+      children: <Authorization data={selectedNode?.data.meta} onChange={data => {
+        console.debug('auth onchange',data);
+        setEditForm({...editForm, meta: {...editForm.meta, ...data}});
+      }}/>,
+    }
+  ];
 
   return (
     <>
@@ -226,21 +222,14 @@ const ApiManagement: React.FC = () => {
                        prefix={<span>/api/v1</span>}
                        style={{width: '85%'}} value={editForm?.path}
                        onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
-                <ConfigProvider
-                  button={{
-                    className: linearGradientButton,
-                  }}
-                >
-                  <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
-                    Save
-                  </Button>
-                  <Switch/>
-                </ConfigProvider>
+                <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
+                  Save
+                </Button>
+                <Switch/>
               </Flex>
             </Col>
             <Col span={24}>
-              <GraphQL onChange={value => setEditForm({...editForm, meta: {...editForm?.meta, execution: value}})}
-                       data={selectedNode?.data?.meta?.execution}/>
+              <Tabs size="small" defaultActiveKey="graphql" items={items} onChange={onChange}/>
             </Col>
           </Row>
         </Col>
@@ -266,28 +255,6 @@ const ApiManagement: React.FC = () => {
           onCancel={() => setApiDialogVisible(false)}
           footer={null}
         >
-          {/*<Row gutter={[10, 10]}>
-          {Endpoints.map((item, index) => (
-            <Col key={index} span={6}>
-              <Card
-                hoverable
-                onClick={() => toApiDesign(item)}
-              >
-                <div className="text-center">
-                  <div className="mb-12px flex items-center">
-                    <item.icon style={{ fontSize: 50, marginRight: 16 }} />
-                    {!item.enable && (
-                      <Tag color="warning" className="dev-tag">
-                        Coming soon...
-                      </Tag>
-                    )}
-                  </div>
-                  <p>{item.name}</p>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>*/}
         </Modal>
         <Modal
           open={deleteDialogVisible}

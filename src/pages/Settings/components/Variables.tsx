@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Col, Collapse, Input, Row, Table} from 'antd';
+import {Card, Col, Input, Row, Table} from 'antd';
 import {getVariables} from "../../../api/environment.ts";
 import HidePassword from "../../../components/HidePassword.tsx";
 
-const {Panel} = Collapse;
 
 const Variables: React.FC = () => {
   const [variables, setVariables] = useState<{
