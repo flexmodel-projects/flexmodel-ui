@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Input } from 'antd';
+import React, {useEffect, useRef, useState} from 'react';
+import {Input} from 'antd';
 
 interface HoverEditInputProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-const HoverEditInput: React.FC<HoverEditInputProps> = ({ value, onChange }) => {
+const HoverEditInput: React.FC<HoverEditInputProps> = ({value, onChange}) => {
   const [val, setVal] = useState<string>(value);
   const inputRef = useRef<any>(null);
 
@@ -15,9 +15,12 @@ const HoverEditInput: React.FC<HoverEditInputProps> = ({ value, onChange }) => {
   };
 
   useEffect(() => {
+    inputRef.current?.select();
+  }, [value]);
+
+  useEffect(() => {
     if (val) {
       inputRef.current?.focus();
-      inputRef.current?.select();
     }
   }, [val]);
 

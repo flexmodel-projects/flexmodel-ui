@@ -12,10 +12,14 @@ interface GraphQLProps {
 const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
 
   useEffect(() => {
-    setOperationName(data?.operationName)
-    setQuery(data?.query)
-    setHeaders(JSON.stringify(data?.headers))
-    setVariables(JSON.stringify(data?.variables))
+    setOperationName(data?.operationName);
+    setQuery(data?.query);
+    if (data?.headers) {
+      setHeaders(JSON.stringify(data?.headers));
+    }
+    if (data?.variables) {
+      setVariables(JSON.stringify(data?.variables));
+    }
   }, [data]);
 
   const [operationName, setOperationName] = useState<string>('MyQuery')

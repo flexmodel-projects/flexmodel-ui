@@ -18,7 +18,7 @@ import {
   Tree,
 } from "antd";
 import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
-import {deleteApi, getApis, updateApi} from "../../api/api-info.ts";
+import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus} from "../../api/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
@@ -37,6 +37,7 @@ interface ApiInfo {
   settingVisible?: boolean;
   data: any;
   meta: any;
+  enabled: boolean;
 }
 
 interface TreeNode {
@@ -50,15 +51,16 @@ interface TreeNode {
 
 const ApiManagement: React.FC = () => {
   // 状态定义
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
-  const [apiList, setApiList] = useState<ApiInfo[]>([])
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false)
-  const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false)
-  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null)
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [apiList, setApiList] = useState<ApiInfo[]>([]);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
+  const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false);
+  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [editNode, setEditNode] = useState<string>("")
   const [editForm, setEditForm] = useState<any>({})
   const treeRef = useRef<any>(null) // 使用 `any` 类型避免过于严格的类型检查
-
+  const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   useEffect(() => {
     setEditForm(selectedNode?.data)
   }, [selectedNode])
@@ -68,13 +70,47 @@ const ApiManagement: React.FC = () => {
 
   // 请求 API 列表数据
   useEffect(() => {
-    reqApiList()
-  }, [])
+    reqApiList().then(apis => {
+      const getDefaultSelectedApi = (apis: any) => {
+        for (const api of apis) {
+          if (api.type === 'API') {
+            return api;
+          }
+          if (api.children) {
+            const child: any = getDefaultSelectedApi(api?.children);
+            if (child) {
+              return child;
+            }
+          }
+        }
+        return null;
+      }
+
+      const defaultSelectedApi = getDefaultSelectedApi(apis);
+      setExpandedKeys([defaultSelectedApi.parentId]); // 展开第一项
+      setSelectedKeys([defaultSelectedApi.id]);
+      setSelectedNode({
+        children: [],
+        data: defaultSelectedApi,
+        isLeaf: false,
+        key: defaultSelectedApi.id,
+        settingVisible: false,
+        title: defaultSelectedApi.name
+      });
+    });
+  }, []);
+
+  // 渲染树节点
+  const onExpand = (expandedKeys: any) => {
+    setExpandedKeys(expandedKeys);
+  };
+
 
   // 请求 API 列表数据
   const reqApiList = async () => {
     const apis = await getApis()
     setApiList(apis)
+    return apis;
   };
 
   // 节点点击处理
@@ -118,6 +154,21 @@ const ApiManagement: React.FC = () => {
     }
   };
 
+  // 编辑 API
+  const renameApi = async (name: string) => {
+    setEditNode('')
+    if (editForm.id) {
+      await updateApiName(editForm.id, name)
+      await reqApiList()
+    }
+  };
+
+  const addApi = async (parentId: string) => {
+    const reqData = {parentId: parentId, name: 'New API', type: 'API', method: 'GET', meta: {}};
+    await createApi(reqData);
+    await reqApiList();
+  }
+
   const methodOptions = [
     {value: 'GET', label: 'GET'},
     {value: 'POST', label: 'POST'},
@@ -133,13 +184,14 @@ const ApiManagement: React.FC = () => {
         <>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
             {editNode === item.id ? (
-              <HoverEditInput onChange={editApi} value={editForm.name || ''}/>
+              <HoverEditInput onChange={renameApi} value={editForm.name || ''}/>
             ) : (
               item.name
             )}
             <Dropdown
               overlay={
                 <Menu>
+                  {item.type == 'FOLDER' && <Menu.Item onClick={() => addApi(item?.id)}>New API</Menu.Item>}
                   <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
                   <Menu.Item onClick={() => {
                     setDeleteDialogVisible(true)
@@ -181,7 +233,7 @@ const ApiManagement: React.FC = () => {
       key: 'authorization',
       label: 'Authorization',
       children: <Authorization data={selectedNode?.data.meta} onChange={data => {
-        console.debug('auth onchange',data);
+        console.debug('auth onchange', data);
         setEditForm({...editForm, meta: {...editForm.meta, ...data}});
       }}/>,
     }
@@ -194,12 +246,18 @@ const ApiManagement: React.FC = () => {
           <Card>
             <Search style={{marginBottom: 8}} placeholder="Search"/>
             <DirectoryTree
+              onExpand={onExpand}
+              expandedKeys={expandedKeys}
+              selectedKeys={selectedKeys}
               ref={treeRef}
               treeData={renderTreeNodes(apiList)}
-              onSelect={(_, {node}) => handleNodeClick(node)}
+              onSelect={(selectedKeys, {node}) => {
+                setSelectedKeys(selectedKeys);
+                handleNodeClick(node);
+              }}
               height={538}
             />
-            <Button
+            {/*<Button
               type="link"
               onClick={() => setApiDialogVisible(true)}
             >New</Button>
@@ -207,7 +265,7 @@ const ApiManagement: React.FC = () => {
             <Button
               type="link"
               onClick={() => setApiDialogVisible(true)}
-            >Batch create</Button>
+            >Batch create</Button>*/}
           </Card>
         </Col>
         <Col span={19} style={{paddingLeft: '10px'}}>
@@ -225,7 +283,14 @@ const ApiManagement: React.FC = () => {
                 <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
                   Save
                 </Button>
-                <Switch/>
+                <Switch value={editForm?.enabled} onChange={val => {
+                  setEditForm({...editForm, enabled: val})
+                  updateApiStatus(editForm.id, val)
+                    .then(() => {
+                      message.success(val ? 'Enabled' : 'Closed');
+                      reqApiList();
+                    });
+                }}/>
               </Flex>
             </Col>
             <Col span={24}>
