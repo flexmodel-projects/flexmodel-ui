@@ -9,12 +9,6 @@ import {css} from "@emotion/css";
 
 const {Step} = Steps;
 
-interface FormConfig {
-  dbKind: string;
-
-  [key: string]: any;
-}
-
 const ConnectDatabaseDrawer: React.FC<{
   visible: boolean;
   onChange: (data: any) => void;

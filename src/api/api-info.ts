@@ -24,6 +24,23 @@ export function updateApi(id: string, data: object) {
   });
 }
 
+export function updateApiStatus(id: string, enabled: boolean) {
+  return request({
+    url: `${BASE_URI}/apis/${id}`,
+    method: 'patch',
+    data: {enabled: enabled}
+  });
+}
+
+export function updateApiName(id: string, name: string) {
+  return request({
+    url: `${BASE_URI}/apis/${id}`,
+    method: 'patch',
+    data: {name: name}
+  });
+}
+
+
 export function deleteApi(id: string) {
   return request({
     url: `${BASE_URI}/apis/${id}`,
