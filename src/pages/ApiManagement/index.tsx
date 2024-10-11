@@ -12,19 +12,19 @@ import {
   Modal,
   Row,
   Select,
+  Space,
   Switch,
   Tabs,
   TabsProps,
   Tree,
 } from "antd";
-import {MoreOutlined, SaveOutlined} from "@ant-design/icons";
+import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus} from "../../api/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import Authorization from "./components/Authorization.tsx";
 
-const {Search} = Input;
 const {DirectoryTree} = Tree;
 
 // 定义 Tree 数据类型
@@ -108,8 +108,9 @@ const ApiManagement: React.FC = () => {
 
   // 请求 API 列表数据
   const reqApiList = async () => {
-    const apis = await getApis()
-    setApiList(apis)
+    const apis = await getApis();
+    setApiList(apis);
+    setFilteredApiList(apis); // 初始时展示完整数据
     return apis;
   };
 
@@ -146,15 +147,6 @@ const ApiManagement: React.FC = () => {
   };
 
   // 编辑 API
-  const editApi = async () => {
-    setEditNode('')
-    if (editForm.id) {
-      await updateApi(editForm.id, editForm)
-      await reqApiList()
-    }
-  };
-
-  // 编辑 API
   const renameApi = async (name: string) => {
     setEditNode('')
     if (editForm.id) {
@@ -163,10 +155,20 @@ const ApiManagement: React.FC = () => {
     }
   };
 
-  const addApi = async (parentId: string) => {
-    const reqData = {parentId: parentId, name: 'New API', type: 'API', method: 'GET', meta: {}};
-    await createApi(reqData);
+  const addApi = async (parentId?: string | null) => {
+    const reqData = {parentId: parentId, name: 'New API', type: 'API', method: 'GET', meta: {auth: false}};
+    const newApi = await createApi(reqData);
     await reqApiList();
+    setExpandedKeys([parentId]);
+    setSelectedKeys([newApi.id]);
+    showEditInput(newApi);
+  }
+
+  const addFolder = async (parentId?: string | null) => {
+    const reqData = {parentId: parentId, name: 'New Folder', type: 'FOLDER'};
+    const newApi = await createApi(reqData);
+    await reqApiList();
+    showEditInput(newApi);
   }
 
   const methodOptions = [
@@ -207,7 +209,7 @@ const ApiManagement: React.FC = () => {
         </>
       ),
       key: item.id,
-      isLeaf: item.children?.length == 0,
+      isLeaf: item.type === 'API',
       children: item.children ? renderTreeNodes(item.children) : [],
       data: item
     }))
@@ -239,18 +241,60 @@ const ApiManagement: React.FC = () => {
     }
   ];
 
+  const [searchText, setSearchText] = useState<string>(""); // 搜索文本状态
+  const [filteredApiList, setFilteredApiList] = useState<ApiInfo[]>([]); // 新增的状态，用于保存过滤后的数据
+  // 搜索 API 列表数据
+  const filterApiList = (apis: ApiInfo[], searchText: string): ApiInfo[] => {
+    if (!searchText) return apis; // 如果没有输入搜索词，返回原始数据
+
+    return apis
+      .map((api) => {
+        // 递归遍历子节点
+        const children = api.children ? filterApiList(api.children, searchText) : [];
+        if (api.name.toLowerCase().includes(searchText.toLowerCase()) || children.length > 0) {
+          return {...api, children};
+        }
+        return null;
+      })
+      .filter(Boolean) as ApiInfo[];
+  };
+
+  // 监听搜索输入框变化
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+    const filteredData = filterApiList(apiList, value);
+    setFilteredApiList(filteredData); // 更新过滤后的数据
+  };
+
   return (
     <>
       <Row>
         <Col span={5}>
           <Card>
-            <Search style={{marginBottom: 8}} placeholder="Search"/>
+            <Space align="baseline">
+              <Dropdown overlay={
+                <Menu>
+                  <Menu.Item onClick={() => addApi()}>New API</Menu.Item>
+                  <Menu.Item onClick={() => addFolder()}>New Folder</Menu.Item>
+                </Menu>
+              }>
+                <Button icon={<PlusOutlined/>}/>
+              </Dropdown>
+              <Input
+                style={{marginBottom: 8}}
+                placeholder="Search"
+                value={searchText} // 绑定搜索框的值
+                onChange={handleSearchChange} // 监听输入框变化
+                allowClear
+              />
+            </Space>
             <DirectoryTree
               onExpand={onExpand}
               expandedKeys={expandedKeys}
               selectedKeys={selectedKeys}
               ref={treeRef}
-              treeData={renderTreeNodes(apiList)}
+              treeData={renderTreeNodes(filteredApiList)} // 使用过滤后的数据
               onSelect={(selectedKeys, {node}) => {
                 setSelectedKeys(selectedKeys);
                 handleNodeClick(node);
