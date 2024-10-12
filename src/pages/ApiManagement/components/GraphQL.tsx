@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import 'graphiql/graphiql.css';
+import '@graphiql/plugin-explorer/dist/style.css';
 import {graphqlExecute} from "../../../api/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
@@ -10,6 +11,8 @@ interface GraphQLProps {
 }
 
 const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
+
+  localStorage.removeItem('graphiql:tabState');
 
   useEffect(() => {
     setOperationName(data?.operationName);
@@ -23,14 +26,14 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   }, [data]);
 
   const [operationName, setOperationName] = useState<string>('MyQuery')
-  const [query, setQuery] = useState<string>('')
+  const [query, setQuery] = useState<string>('{}')
   const [headers, setHeaders] = useState<string>('{}')
   const [variables, setVariables] = useState<string>('{}')
 
   const explorer = explorerPlugin();
 
   return (
-    <div>
+    <div style={{height: 550}}>
       <GraphiQL
         query={query}
         operationName={operationName}
@@ -73,7 +76,9 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
           })
         }}
         fetcher={graphqlExecute}
-        plugins={[explorer]}>
+        plugins={[explorer]}
+        visiblePlugin={explorer}
+      >
       </GraphiQL>
     </div>
   );

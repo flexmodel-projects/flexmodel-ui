@@ -1,11 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Card, Col, Descriptions, Drawer, Input, Row, Space, Table, Tag } from "antd";
-import { ReloadOutlined, SearchOutlined, SettingOutlined } from "@ant-design/icons";
+import React, {useEffect, useRef, useState} from "react";
+import {
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Descriptions,
+  Drawer,
+  FloatButton,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag
+} from "antd";
+import {DownOutlined, ReloadOutlined, SearchOutlined, SettingOutlined, UpOutlined} from "@ant-design/icons";
 import * as echarts from "echarts";
-import { getApiLogs, getApiLogStat } from "../../api/api-log.ts";
-import { css } from "@emotion/css";
-import { FloatButton } from 'antd';
+import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
+import {css} from "@emotion/css";
 
+const {RangePicker} = DatePicker;
 const LogViewer: React.FC = () => {
   const [isOver, setIsOver] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -13,9 +28,10 @@ const LogViewer: React.FC = () => {
   const [index, setIndex] = useState<number>(1);
   const [log, setLog] = useState<any>({});
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [filter, setFilter] = useState<string>("");
   const logStatRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
+  const [expand, setExpand] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   const option: any = {
     tooltip: {
@@ -62,7 +78,8 @@ const LogViewer: React.FC = () => {
   };
 
   const fetchApiLogs = async () => {
-    const res: any[] = await getApiLogs(index, 50, filter);
+    const filter = form.getFieldsValue();
+    const res: any[] = await getApiLogs(index, 50, getFilterQuery(filter));
     if (res.length === 0) {
       setIsOver(true);
     }
@@ -70,13 +87,22 @@ const LogViewer: React.FC = () => {
   };
 
   const fetchApiLogStat = async () => {
-    const statList: any[] = await getApiLogStat(filter);
+    const filter = form.getFieldsValue();
+    const statList: any[] = await getApiLogStat(getFilterQuery(filter));
     option.xAxis.data = statList.map((stat) => stat.date);
     option.series[0].data = statList.map((stat) => stat.total);
     if (chartInstance.current) {
       chartInstance.current.setOption(option);
     }
   };
+
+  const getFilterQuery = (filter: any) => {
+    return {
+      keyword: filter?.keyword,
+      level: filter?.level?.join(","),
+      dateRange: filter?.dateRange?.map((date: any) => date?.format('YYYY-MM-DD HH:mm:ss'))?.join(","),
+    };
+  }
 
   const initializeChart = () => {
     if (logStatRef.current) {
@@ -86,6 +112,7 @@ const LogViewer: React.FC = () => {
   };
 
   useEffect(() => {
+    fetchApiLogs();
     initializeChart();
     // 在窗口大小变化时更新图表大小
     const resizeChart = () => chartInstance.current?.resize();
@@ -98,13 +125,6 @@ const LogViewer: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    fetchApiLogs();
-    if (chartInstance.current) {
-      fetchApiLogStat();
-    }
-  }, [filter]);
-
   const showDetail = (record: any) => {
     setLog(record);
     setDrawerVisible(true);
@@ -112,7 +132,7 @@ const LogViewer: React.FC = () => {
 
   const loadMore = async () => {
     setIsLoading(true);
-    const res: any[] = await getApiLogs(index + 1);
+    const res: any[] = await getApiLogs(index + 1, 50, getFilterQuery(form.getFieldsValue()));
     setIsLoading(false);
     setIsOver(res.length < 50);
     if (res.length !== 0) {
@@ -131,6 +151,19 @@ const LogViewer: React.FC = () => {
     }
     setTableData(res);
     fetchApiLogStat();
+  };
+  const searchLog = async () => {
+    setIsLoading(true);
+    setIndex(1);
+    await fetchApiLogs();
+    fetchApiLogStat();
+    setIsLoading(false);
+  };
+
+  const resetLog = async () => {
+    setIndex(1);
+    form.resetFields();
+    await fetchApiLogs();
   };
 
   const columns = [
@@ -191,19 +224,66 @@ const LogViewer: React.FC = () => {
         </Col>
       </Row>
       <Row style={{margin: "16px 0"}}>
-        <Col span={24}>
-          <Input
-            size="large"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Search keywords"
-            prefix={<SearchOutlined/>}
-          />
+        <Col style={{paddingTop: '20px'}} span={24}>
+          <Form form={form}>
+            {expand &&
+              <Row>
+                <Col span={6}>
+                  <Form.Item name="level" label="Level">
+                    <Select style={{width: '150px'}} mode="multiple" placeholder="Select your log level" allowClear>
+                      <Select.Option value="DEBUG">Debug</Select.Option>
+                      <Select.Option value="INFO">Info</Select.Option>
+                      <Select.Option value="WARN">Warn</Select.Option>
+                      <Select.Option value="ERROR">Error</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={18}>
+                  <Form.Item name="dateRange" label="Date range">
+                    <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+                  </Form.Item>
+                </Col>
+              </Row>}
+            <Row>
+              <Col span={19}>
+                <Form.Item name="keyword" style={{width: '100%'}} label="Search Keywords">
+                  <Input
+                    placeholder="Search keywords"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item>
+                  <Space style={{paddingLeft: '10px'}}>
+                    <Button icon={<SearchOutlined/>} type="primary" onClick={searchLog}>Search</Button>
+                    <Button type="default" onClick={resetLog}>Reset</Button>
+                    <a
+                      onClick={() => {
+                        setExpand(!expand);
+                      }}
+                    >
+                      {expand ? (
+                        <>
+                          Collapse <UpOutlined/>
+                        </>
+                      ) : (
+                        <>
+                          Expand
+                          <DownOutlined/>
+                        </>
+                      )}
+                    </a>
+                  </Space>
+                </Form.Item>
+              </Col>
+            </Row>
+
+          </Form>
         </Col>
       </Row>
       <Row>
         <Col span={24}>
-          <div id="logStat" ref={logStatRef} style={{width: "100%", height: "300px"}}/>
+          <div id="logStat" ref={logStatRef} style={{width: "100%", height: "120px"}}/>
         </Col>
       </Row>
       <Row>
@@ -228,7 +308,7 @@ const LogViewer: React.FC = () => {
           </Button>
         )}
       </Row>
-      <FloatButton.BackTop />
+      <FloatButton.BackTop/>
       <Drawer
         title="Request log"
         width={680}
