@@ -116,7 +116,6 @@ const ApiManagement: React.FC = () => {
 
   // 节点点击处理
   const handleNodeClick = (nodeData: TreeNode) => {
-    console.log(nodeData)
     setSelectedNode(nodeData)
   };
 
@@ -283,7 +282,7 @@ const ApiManagement: React.FC = () => {
               </Dropdown>
               <Input
                 style={{marginBottom: 8}}
-                placeholder="Search"
+                placeholder="Search APIs"
                 value={searchText} // 绑定搜索框的值
                 onChange={handleSearchChange} // 监听输入框变化
                 allowClear
