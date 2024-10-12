@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
+  Breadcrumb,
   Button,
   Card,
   Col,
@@ -18,7 +19,7 @@ import {
   TabsProps,
   Tree,
 } from "antd";
-import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {EyeInvisibleOutlined, EyeOutlined, MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus} from "../../api/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
@@ -61,6 +62,10 @@ const ApiManagement: React.FC = () => {
   const treeRef = useRef<any>(null) // 使用 `any` 类型避免过于严格的类型检查
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
+
+  // 添加树的显示/隐藏状态
+  const [isTreeVisible, setIsTreeVisible] = useState<boolean>(true);
+
   useEffect(() => {
     setEditForm(selectedNode?.data)
   }, [selectedNode])
@@ -116,19 +121,8 @@ const ApiManagement: React.FC = () => {
 
   // 节点点击处理
   const handleNodeClick = (nodeData: TreeNode) => {
-    setSelectedNode(nodeData)
+    setSelectedNode(nodeData);
   };
-
-  // 进入 API 设计界面
-  /*  const toApiDesign = (item: Endpoint) => {
-      if (!item.enable) {
-        message.warning("Not available")
-        return;
-      }
-      setViewType(item.type)
-      setApiDialogVisible(false)
-      setDrawerVisible(true)
-    };*/
 
   // 删除处理
   const handleDelete = async () => {
@@ -269,7 +263,7 @@ const ApiManagement: React.FC = () => {
   return (
     <>
       <Row>
-        <Col span={5}>
+        {isTreeVisible && <Col span={5}>
           <Card>
             <Space align="baseline">
               <Dropdown overlay={
@@ -300,19 +294,23 @@ const ApiManagement: React.FC = () => {
               }}
               height={538}
             />
-            {/*<Button
-              type="link"
-              onClick={() => setApiDialogVisible(true)}
-            >New</Button>
-            or
-            <Button
-              type="link"
-              onClick={() => setApiDialogVisible(true)}
-            >Batch create</Button>*/}
           </Card>
-        </Col>
-        <Col span={19} style={{paddingLeft: '10px'}}>
+        </Col>}
+        <Col span={isTreeVisible ? 19 : 24} style={{paddingLeft: isTreeVisible ? '10px' : '0px'}}>
           <Row>
+            <Col style={{paddingBottom: '10px'}} span={24}>
+              <Space>
+                <Button
+                  icon={isTreeVisible ? <EyeOutlined/> : <EyeInvisibleOutlined/>}
+                  onClick={() => setIsTreeVisible(!isTreeVisible)}
+                >
+                  {isTreeVisible ? 'Hide APIs' : 'Show APIs'}
+                </Button>
+                <span>
+                {editForm?.name}
+                </span>
+              </Space>
+            </Col>
             <Col style={{paddingBottom: '10px'}} span={24}>
               <Flex gap="small" justify="flex-start" wrap>
                 <Input addonBefore={
@@ -323,6 +321,7 @@ const ApiManagement: React.FC = () => {
                        prefix={<span>/api/v1</span>}
                        style={{width: '85%'}} value={editForm?.path}
                        onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
+
                 <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
                   Save
                 </Button>
