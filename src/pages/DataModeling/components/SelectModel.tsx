@@ -1,10 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree } from 'antd';
-import { DeleteOutlined, EditOutlined, MoreOutlined, ReloadOutlined, TableOutlined } from '@ant-design/icons';
-import { getDatasourceList, refreshDatasource as reqRefreshDatasource } from '../../../api/datasource';
-import { dropModel, getModelList } from '../../../api/model';
-import { css } from "@emotion/css";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useRef, useState} from 'react';
+import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree} from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MoreOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  TableOutlined
+} from '@ant-design/icons';
+import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from '../../../api/datasource';
+import {createModel as reqCreateModel, dropModel, getModelList} from '../../../api/model';
+import {css} from "@emotion/css";
+import {useNavigate} from "react-router-dom";
+import CreateModel from "./CreateModel.tsx";
 
 interface Datasource {
   name: string;
@@ -16,12 +24,13 @@ interface Model {
   children?: Model[];
 }
 
-const SelectModel: React.FC<{
-  version: number;
+interface SelectModelProps {
   datasource: string;
   editable: boolean;
   onChange: (ds: string, model: Model) => void;
-}> = ({ version, datasource, editable, onChange }) => {
+}
+
+const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
 
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource);
@@ -32,8 +41,15 @@ const SelectModel: React.FC<{
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
+  const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(''); // 监听搜索框输入
   const treeRef = useRef<any>(null);
+  // 添加模型
+  const addModel = async (item: any) => {
+    await reqCreateModel(activeDs, item);
+    setCreateDrawerVisible(false);
+    await reqModelList();
+  };
 
   // 获取数据源列表
   const reqDatasourceList = async () => {
@@ -93,7 +109,7 @@ const SelectModel: React.FC<{
       .map(model => {
         const filteredChildren = model.children ? filterModelTree(model.children, searchText) : [];
         if (model.name.toLowerCase().includes(searchText.toLowerCase()) || filteredChildren.length > 0) {
-          return { ...model, children: filteredChildren };
+          return {...model, children: filteredChildren};
         }
         return null;
       })
@@ -122,7 +138,7 @@ const SelectModel: React.FC<{
     if (activeDs) {
       reqModelList();
     }
-  }, [activeDs, version]);
+  }, [activeDs]);
 
   return (
     <div>
@@ -130,11 +146,11 @@ const SelectModel: React.FC<{
         value={activeDs}
         onChange={onSelectDatasource}
         placeholder="Data source"
-        style={{ width: 'calc(100% - 50px)' }}
+        style={{width: 'calc(100% - 50px)'}}
       >
         {dsList.map(item => (
           <Select.Option key={item.name} value={item.name}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
               {item.name}
             </div>
           </Select.Option>
@@ -142,8 +158,8 @@ const SelectModel: React.FC<{
         <Select.Option value="manage" disabled>
           <Button
             type="link"
-            icon={<EditOutlined />}
-            style={{ width: '100%' }}
+            icon={<EditOutlined/>}
+            style={{width: '100%'}}
             onClick={() => navigate('/datasource')}
           >
             Management
@@ -151,20 +167,30 @@ const SelectModel: React.FC<{
         </Select.Option>
       </Select>
       <Button
-        icon={<ReloadOutlined />}
+        icon={<ReloadOutlined/>}
         onClick={refreshDatasource}
         loading={dsLoading}
-        style={{ marginLeft: 8 }}
+        style={{marginLeft: 8}}
       />
-      <Divider />
-      <Input
-        placeholder="Search models"
-        value={filterText}
-        onChange={handleSearchChange} // 绑定搜索框变化事件
-        style={{ width: '100%' }}
-        allowClear
-      />
-      <Divider />
+      <Divider/>
+      <Space>
+        <Dropdown overlay={
+          <Menu>
+            <Menu.Item onClick={() => setCreateDrawerVisible(true)}>New Entity</Menu.Item>
+            <Menu.Item onClick={() => null} disabled>New Enum</Menu.Item>
+          </Menu>
+        }>
+          <Button icon={<PlusOutlined/>}/>
+        </Dropdown>
+        <Input
+          placeholder="Search Models"
+          value={filterText}
+          onChange={handleSearchChange} // 绑定搜索框变化事件
+          style={{width: '100%'}}
+          allowClear
+        />
+      </Space>
+      <Divider/>
       <Spin spinning={modelLoading}>
         <Tree
           className={css`
@@ -173,18 +199,18 @@ const SelectModel: React.FC<{
             }
           `}
           ref={treeRef}
-          height={300}
+          height={380}
           treeData={filteredModelList} // 使用过滤后的数据
-          fieldNames={{ key: 'name', title: 'name', children: 'children' }}
+          fieldNames={{key: 'name', title: 'name', children: 'children'}}
           selectedKeys={[activeModel?.name || '']}
-          onSelect={(_, { node }) => handleItemChange(node)}
+          onSelect={(_, {node}) => handleItemChange(node)}
           titleRender={node => (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '220px' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '220px'}}>
+              <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>
-                  <TableOutlined />
+                  <TableOutlined/>
                   <span title={node.name}
-                        style={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block' }}>
+                        style={{textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block'}}>
                     {node.name}
                   </span>
                 </Space>
@@ -193,14 +219,14 @@ const SelectModel: React.FC<{
                 <Dropdown
                   overlay={
                     <Menu onClick={handleMenuClick}>
-                      <Menu.Item key="delete" style={{ color: 'red' }} icon={<DeleteOutlined />}>
+                      <Menu.Item key="delete" style={{color: 'red'}} icon={<DeleteOutlined/>}>
                         Delete
                       </Menu.Item>
                     </Menu>
                   }
                   trigger={['click']}
                 >
-                  <MoreOutlined style={{ cursor: 'pointer' }} />
+                  <MoreOutlined style={{cursor: 'pointer'}}/>
                 </Dropdown>
               )}
             </div>
@@ -215,6 +241,8 @@ const SelectModel: React.FC<{
       >
         <p>Are you sure you want to delete <strong>{activeModel?.name}</strong>?</p>
       </Modal>
+      <CreateModel visible={createDrawerVisible} datasource={activeDs} onConform={addModel}
+                   onCancel={() => setCreateDrawerVisible(false)}/>
     </div>
   );
 };

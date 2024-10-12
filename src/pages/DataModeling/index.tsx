@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Divider, Row, Segmented} from 'antd';
-import {PlusOutlined} from '@ant-design/icons';
+import {Card, Col, Divider, Row, Segmented} from 'antd';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {createModel as reqCreateModel} from '../../api/model';
 import SelectModel from "./components/SelectModel.tsx";
 import FieldList from "./components/FieldList.tsx";
 import IndexList from "./components/IndexList.tsx";
 import RecordList from "./components/RecordList.tsx";
-import CreateModel from "./components/CreateModel.tsx";
 
 const ModelingPage: React.FC = () => {
   const location = useLocation();
@@ -23,27 +20,14 @@ const ModelingPage: React.FC = () => {
     {label: 'Record', value: 'record'},
   ];
 
-  const [selectModelKey, setSelectModelKey] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<string>('field');
   const [activeDs, setActiveDs] = useState<string>(datasource || '');
   const [activeModel, setActiveModel] = useState<any>({});
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
-  const handleRefreshModelList = () => {
-    setSelectModelKey(prevKey => prevKey + 1); // 更新key，导致子组件重新渲染
-  };
 
   // 处理选择的模型变化
   const handleItemChange = (ds: string, item: any) => {
     setActiveDs(ds);
     setActiveModel(item);
-  };
-
-  // 添加模型
-  const addModel = async (item: any) => {
-    await reqCreateModel(activeDs, item);
-    setDrawerVisible(false);
-    handleRefreshModelList();
   };
 
   useEffect(() => {
@@ -77,21 +61,11 @@ const ModelingPage: React.FC = () => {
           <Col span={5}>
             <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
               <SelectModel
-                key={selectModelKey}
                 datasource={activeDs}
                 editable
                 onChange={handleItemChange}
               />
               <Divider/>
-              <Button
-                type="primary"
-                icon={<PlusOutlined/>}
-                onClick={() => setDrawerVisible(true)}
-                block
-                ghost
-              >
-                New model
-              </Button>
             </div>
           </Col>
           <Col span={19}>
@@ -115,8 +89,6 @@ const ModelingPage: React.FC = () => {
           </Col>
         </Row>
       </Card>
-      <CreateModel visible={drawerVisible} datasource={activeDs} onConform={addModel}
-                   onCancel={() => setDrawerVisible(false)}/>
     </>
   );
 };
