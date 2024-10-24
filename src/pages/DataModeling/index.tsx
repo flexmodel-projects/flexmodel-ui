@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Col, Divider, Row, Segmented} from 'antd';
+import {Card, Col, Divider, Row, Segmented, Splitter} from 'antd';
 import {useLocation, useNavigate} from 'react-router-dom';
 import SelectModel from "./components/SelectModel.tsx";
 import FieldList from "./components/FieldList.tsx";
@@ -58,35 +58,37 @@ const ModelingPage: React.FC = () => {
               </Row>
             </div>
           </Col>
-          <Col span={5}>
-            <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
-              <SelectModel
-                datasource={activeDs}
-                editable
-                onChange={handleItemChange}
-              />
-              <Divider/>
-            </div>
-          </Col>
-          <Col span={19}>
-            {selectedItem === 'field' && (
-              <FieldList
-                datasource={activeDs}
-                model={activeModel}
-                /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
-              />
-            )}
-            {selectedItem === 'index' && (
-              <IndexList
-                datasource={activeDs}
-                model={activeModel}
-                /*onIndexesChange={(indexes) => setActiveModel((prev) => ({ ...prev, indexes }))}*/
-              />
-            )}
-            {selectedItem === 'record' && (
-              <RecordList datasource={activeDs} model={activeModel}/>
-            )}
-          </Col>
+          <Splitter>
+            <Splitter.Panel defaultSize="20%" max="40%" collapsible>
+              <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
+                <SelectModel
+                  datasource={activeDs}
+                  editable
+                  onChange={handleItemChange}
+                />
+                <Divider/>
+              </div>
+            </Splitter.Panel>
+            <Splitter.Panel>
+              {selectedItem === 'field' && (
+                <FieldList
+                  datasource={activeDs}
+                  model={activeModel}
+                  /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
+                />
+              )}
+              {selectedItem === 'index' && (
+                <IndexList
+                  datasource={activeDs}
+                  model={activeModel}
+                  /*onIndexesChange={(indexes) => setActiveModel((prev) => ({ ...prev, indexes }))}*/
+                />
+              )}
+              {selectedItem === 'record' && (
+                <RecordList datasource={activeDs} model={activeModel}/>
+              )}
+            </Splitter.Panel>
+          </Splitter>
         </Row>
       </Card>
     </>

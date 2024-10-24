@@ -3,7 +3,7 @@ import {Col, Layout, Row} from "antd";
 
 export const Header: React.FC<unknown> = () => {
   return (
-      <Layout.Header style={{background: "#fff", padding: 0}}>
+      <Layout.Header style={{background: "#fff", padding: 0,height: 55}}>
         <Row justify="end" align="middle">
           <Col span={3}>
             {/*<Menu mode="horizontal">
