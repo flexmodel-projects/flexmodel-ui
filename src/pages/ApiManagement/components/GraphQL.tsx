@@ -33,7 +33,7 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
   const explorer = explorerPlugin();
 
   return (
-    <div style={{height: 550}}>
+    <div style={{height: 540}}>
       <GraphiQL
         query={query}
         operationName={operationName}

@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
-  Breadcrumb,
   Button,
   Card,
   Col,
@@ -14,6 +13,7 @@ import {
   Row,
   Select,
   Space,
+  Splitter,
   Switch,
   Tabs,
   TabsProps,
@@ -263,83 +263,75 @@ const ApiManagement: React.FC = () => {
   return (
     <>
       <Row>
-        {isTreeVisible && <Col span={5}>
-          <Card>
-            <Space align="baseline">
-              <Dropdown overlay={
-                <Menu>
-                  <Menu.Item onClick={() => addApi()}>New API</Menu.Item>
-                  <Menu.Item onClick={() => addFolder()}>New Folder</Menu.Item>
-                </Menu>
-              }>
-                <Button icon={<PlusOutlined/>}/>
-              </Dropdown>
-              <Input
-                style={{marginBottom: 8}}
-                placeholder="Search APIs"
-                value={searchText} // 绑定搜索框的值
-                onChange={handleSearchChange} // 监听输入框变化
-                allowClear
-              />
-            </Space>
-            <DirectoryTree
-              onExpand={onExpand}
-              expandedKeys={expandedKeys}
-              selectedKeys={selectedKeys}
-              ref={treeRef}
-              treeData={renderTreeNodes(filteredApiList)} // 使用过滤后的数据
-              onSelect={(selectedKeys, {node}) => {
-                setSelectedKeys(selectedKeys);
-                handleNodeClick(node);
-              }}
-              height={538}
-            />
-          </Card>
-        </Col>}
-        <Col span={isTreeVisible ? 19 : 24} style={{paddingLeft: isTreeVisible ? '10px' : '0px'}}>
-          <Row>
-            <Col style={{paddingBottom: '10px'}} span={24}>
-              <Space>
-                <Button
-                  icon={isTreeVisible ? <EyeOutlined/> : <EyeInvisibleOutlined/>}
-                  onClick={() => setIsTreeVisible(!isTreeVisible)}
-                >
-                  {isTreeVisible ? 'Hide APIs' : 'Show APIs'}
-                </Button>
-                <span>
-                {editForm?.name}
-                </span>
+        <Splitter>
+          <Splitter.Panel defaultSize="20%" max="40%" collapsible>
+            <Card>
+              <Space align="baseline">
+                <Dropdown overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => addApi()}>New API</Menu.Item>
+                    <Menu.Item onClick={() => addFolder()}>New Folder</Menu.Item>
+                  </Menu>
+                }>
+                  <Button icon={<PlusOutlined/>}/>
+                </Dropdown>
+                <Input
+                  style={{marginBottom: 8}}
+                  placeholder="Search APIs"
+                  value={searchText} // 绑定搜索框的值
+                  onChange={handleSearchChange} // 监听输入框变化
+                  allowClear
+                />
               </Space>
-            </Col>
-            <Col style={{paddingBottom: '10px'}} span={24}>
-              <Flex gap="small" justify="flex-start" wrap>
-                <Input addonBefore={
-                  <Select value={editForm?.method}
-                          onChange={value => setEditForm({...editForm, method: value})}
-                          options={methodOptions}/>
-                }
-                       prefix={<span>/api/v1</span>}
-                       style={{width: '85%'}} value={editForm?.path}
-                       onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
+              <DirectoryTree
+                onExpand={onExpand}
+                expandedKeys={expandedKeys}
+                selectedKeys={selectedKeys}
+                ref={treeRef}
+                treeData={renderTreeNodes(filteredApiList)} // 使用过滤后的数据
+                onSelect={(selectedKeys, {node}) => {
+                  setSelectedKeys(selectedKeys);
+                  handleNodeClick(node);
+                }}
+                height={538}
+              />
+            </Card>
+          </Splitter.Panel>
+          <Splitter.Panel>
+            <Card>
+              <Row>
+                <Col style={{paddingBottom: '10px'}} span={24}>
+                  <Flex gap="small" justify="flex-start" wrap>
+                    <Input addonBefore={
+                      <Select value={editForm?.method}
+                              onChange={value => setEditForm({...editForm, method: value})}
+                              options={methodOptions}/>
+                    }
+                           prefix={<span>/api/v1</span>}
+                           style={{width: '85%'}} value={editForm?.path}
+                           onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
 
-                <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
-                  Save
-                </Button>
-                <Switch value={editForm?.enabled} onChange={val => {
-                  setEditForm({...editForm, enabled: val})
-                  updateApiStatus(editForm.id, val)
-                    .then(() => {
-                      message.success(val ? 'Enabled' : 'Closed');
-                      reqApiList();
-                    });
-                }}/>
-              </Flex>
-            </Col>
-            <Col span={24}>
-              <Tabs size="small" defaultActiveKey="graphql" items={items} onChange={onChange}/>
-            </Col>
-          </Row>
-        </Col>
+                    <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
+                      Save
+                    </Button>
+                    <Switch value={editForm?.enabled} onChange={val => {
+                      setEditForm({...editForm, enabled: val})
+                      updateApiStatus(editForm.id, val)
+                        .then(() => {
+                          message.success(val ? 'Enabled' : 'Closed');
+                          reqApiList();
+                        });
+                    }}/>
+                  </Flex>
+                </Col>
+                <Col span={24}>
+                  <Tabs size="small" defaultActiveKey="graphql" items={items} onChange={onChange}/>
+                </Col>
+              </Row>
+            </Card>
+
+          </Splitter.Panel>
+        </Splitter>
         <Drawer
           open={drawerVisible}
           onClose={() => setDrawerVisible(false)}

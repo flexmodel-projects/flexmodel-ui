@@ -8,7 +8,7 @@ import {
   ReloadOutlined,
   TableOutlined
 } from '@ant-design/icons';
-import {getDatasourceList, refreshDatasource as reqRefreshDatasource} from '../../../api/datasource';
+import {getDatasourceList} from '../../../api/datasource';
 import {createModel as reqCreateModel, dropModel, getModelList} from '../../../api/model';
 import {css} from "@emotion/css";
 import {useNavigate} from "react-router-dom";
@@ -78,7 +78,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   // 刷新数据源
   const refreshDatasource = async () => {
     setDsLoading(true);
-    await reqRefreshDatasource(activeDs);
+    await reqModelList();
     setDsLoading(false);
   };
 

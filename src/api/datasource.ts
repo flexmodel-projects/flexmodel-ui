@@ -8,16 +8,25 @@ export function getDatasourceList() {
   });
 }
 
-export function refreshDatasource(datasourceName: string) {
+export function importModels(datasourceName: string, models: string[]) {
   return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/refresh`,
-    method: 'get'
+    url: `${BASE_URI}/datasources/${datasourceName}/import`,
+    method: 'post',
+    data: models
   });
 }
 
 export function validateDatasource(data: any) {
   return request({
     url: `${BASE_URI}/datasources/validate`,
+    method: 'post',
+    data: data
+  });
+}
+
+export function getPhysicsModelNames(data: any) {
+  return request({
+    url: `${BASE_URI}/datasources/physics/names`,
     method: 'post',
     data: data
   });
