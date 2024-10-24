@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Button, Col, Drawer, Form, Input, message, Radio, Row, Space, Steps} from 'antd';
-import {createDatasource, validateDatasource} from "../../../api/datasource.ts";
+import {Button, Col, Drawer, Form, Input, message, Radio, Row, Space, Spin, Steps, Transfer, TransferProps} from 'antd';
+import {createDatasource, getPhysicsModelNames, importModels, validateDatasource} from "../../../api/datasource.ts";
 import MySQLConfig from "./MySQLConfig.tsx";
 import SQLiteConfig from "./SQLiteConfig.tsx";
 import CommonConfig from "./CommonConfig.tsx";
 import DatabaseInfo from "./DatabaseInfo.tsx";
 import {css} from "@emotion/css";
+import Title from "antd/lib/typography/Title";
 
 const {Step} = Steps;
 
@@ -16,14 +17,20 @@ const ConnectDatabaseDrawer: React.FC<{
 }> = ({visible, onChange, onClose}) => {
   const [active, setActive] = useState<number>(0);
   const [form] = Form.useForm();
+  const [formData, setFormData] = useState<any>({});
   const [currentVal, setCurrentVal] = useState<any>({});
+  const [pLoading, setPLoading] = useState<boolean>(false);
+  const [physicsModelData, setPhysicsModelData] = useState<TransferProps['dataSource']>([]);
+  const [targetKeys, setTargetKeys] = useState<TransferProps['targetKeys']>([]);
+  const [selectedKeys, setSelectedKeys] = useState<TransferProps['targetKeys']>([]);
+
 
   const handlePrev = () => {
     setActive(prev => Math.max(prev - 1, 0));
   };
 
   const handleNext = () => {
-    setActive(prev => Math.min(prev + 1, 2));
+    setActive(prev => Math.min(prev + 1, 3));
   };
 
   const handleTestConnection = async () => {
@@ -41,18 +48,32 @@ const ConnectDatabaseDrawer: React.FC<{
     }
   };
 
+  const handleSelectModels = async () => {
+    // TODO: Implement import models functionality
+    handleNext();
+    const values = await form.validateFields();
+    const data = {name: values.name, config: {...values}};
+    setPLoading(true);
+    const physicsModelNames = await getPhysicsModelNames(data);
+    setFormData(data);
+    setPhysicsModelData(physicsModelNames.map((item: string) => ({
+      key: item,
+      title: item
+    })));
+    setPLoading(false);
+  };
+
   const handleConnectDatabase = async () => {
     try {
-      const values = await form.validateFields();
-      const data = {name: values.name, config: {...values}};
-      const result = await validateDatasource(data);
-      if (result.success) {
-        const res = await createDatasource(data);
-        setCurrentVal(res);
-        handleNext();
-        onChange(res);
-      } else {
-        message.error(`Failed, error msg: ${result.errorMsg}`);
+      const res = await createDatasource(formData);
+      setCurrentVal(res);
+      handleNext();
+      onChange(res);
+      if (targetKeys?.length) {
+        message.success(`Import models in the background form ${formData.name}`);
+        importModels(formData.name, targetKeys as string[]).then(() => {
+          message.success(`The models was imported form ${formData.name}`);
+        });
       }
     } catch (error) {
       console.error(error)
@@ -66,6 +87,17 @@ const ConnectDatabaseDrawer: React.FC<{
     padding-bottom: 10px;
   `;
 
+  const onChangeModel: TransferProps['onChange'] = (nextTargetKeys, direction, moveKeys) => {
+    setTargetKeys(nextTargetKeys);
+  };
+
+  const onSelectChangeModel: TransferProps['onSelectChange'] = (
+    sourceSelectedKeys,
+    targetSelectedKeys,
+  ) => {
+    setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
+  };
+
   return (
     <Drawer
       title="Connect Database"
@@ -78,6 +110,7 @@ const ConnectDatabaseDrawer: React.FC<{
         <Steps current={active} size="small">
           <Step title="Select Database"/>
           <Step title="Connect Database"/>
+          <Step title="Select Models"/>
           <Step title="Completed"/>
         </Steps>
       </div>
@@ -125,7 +158,33 @@ const ConnectDatabaseDrawer: React.FC<{
               <CommonConfig/>}
           </>
         )}
-        {active === 2 && (
+        {
+          active === 2 && (
+            <>
+              <Row>
+                <Col span={24}>
+                  <Title level={5}>{form.getFieldValue('name')}</Title>
+                </Col>
+                <Col span={24} style={{paddingBottom: "15px"}}>
+                  <Spin spinning={pLoading}>
+                    <Transfer
+                      showSearch
+                      pagination
+                      dataSource={physicsModelData}
+                      titles={['Source', 'Target']}
+                      targetKeys={targetKeys}
+                      selectedKeys={selectedKeys}
+                      onChange={onChangeModel}
+                      onSelectChange={onSelectChangeModel}
+                      render={(item) => item.title}
+                    />
+                  </Spin>
+                </Col>
+              </Row>
+            </>
+          )
+        }
+        {active === 3 && (
           <>
             <Row>
               <Col span={24} style={{marginTop: 12, marginBottom: 12, textAlign: 'center'}}>
@@ -143,9 +202,9 @@ const ConnectDatabaseDrawer: React.FC<{
             </Row>
           </>
         )}
-        <Form.Item style={{textAlign:'end'}} wrapperCol={{offset: 8, span: 16}}>
+        <Form.Item style={{textAlign: 'end'}} wrapperCol={{offset: 8, span: 16}}>
           <Space>
-            {active !== 0 && active !== 2 && (
+            {active !== 0 && active !== 3 && (
               <Button onClick={handlePrev}>Go back</Button>
             )}
             {active === 0 && (
@@ -154,6 +213,11 @@ const ConnectDatabaseDrawer: React.FC<{
             {active === 1 && (
               <>
                 <Button onClick={handleTestConnection}>Test Connection</Button>
+                <Button type="primary" onClick={handleSelectModels}>Select Models</Button>
+              </>
+            )}
+            {active === 2 && (
+              <>
                 <Button type="primary" onClick={handleConnectDatabase}>Connect Database</Button>
               </>
             )}

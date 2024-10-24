@@ -7,7 +7,6 @@ import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
 import {
   deleteDatasource,
   getDatasourceList,
-  refreshDatasource as reqRefreshDatasource,
   updateDatasource,
   validateDatasource
 } from "../../api/datasource.ts";
@@ -21,7 +20,6 @@ const DatasourceManagement: React.FC = () => {
   const [dsList, setDsList] = useState<any[]>([]);
   const [activeDs, setActiveDs] = useState<any>({config: {dbKind: ''}, createTime: '', name: '', type: ''});
   const [dsLoading, setDsLoading] = useState<boolean>(false);
-  const [refreshLoading, setRefreshLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
@@ -46,19 +44,6 @@ const DatasourceManagement: React.FC = () => {
   useEffect(() => {
     fetchDatasourceList();
   }, []);
-
-  const handleRefresh = async () => {
-    setRefreshLoading(true);
-    try {
-      await reqRefreshDatasource(activeDs.name);
-      message.success('Refresh succeeded');
-    } catch (error) {
-      console.error(error)
-      message.error('Failed to refresh datasource.');
-    } finally {
-      setRefreshLoading(false);
-    }
-  };
 
   const handleTestConnection = async () => {
     setTestLoading(true);
@@ -174,7 +159,6 @@ const DatasourceManagement: React.FC = () => {
                   <Button onClick={() => {
                     navigate(`/modeling?datasource=${activeDs.name}`)
                   }}>Modeling</Button>
-                  <Button onClick={handleRefresh} loading={refreshLoading}>Refresh</Button>
                   <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>
                   <Button
                     type="primary"
