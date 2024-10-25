@@ -1,7 +1,4 @@
 import {useRoutes} from "react-router-dom";
-import HomePage from "./pages/HomePage.tsx";
-import {TodoPage} from "./pages/TodoPage.tsx";
-import AboutPage from "./pages/AboutPage.tsx";
 import DataSource from "./pages/DataSource";
 import APIManagement from "./pages/APIManagement";
 import APIDocument from "./pages/APIDocument";
@@ -13,19 +10,7 @@ import DataModeling from "./pages/DataModeling";
 export const routes = [
   {
     path: "/",
-    element: <HomePage/>,
-  },
-  {
-    path: "/home",
-    element: <HomePage/>,
-  },
-  {
-    path: "/todo",
-    element: <TodoPage todoItems={[]}/>,
-  },
-  {
-    path: "/about",
-    element: <AboutPage/>,
+    element: <APIManagement/>,
   },
   {
     path: "/datasource",

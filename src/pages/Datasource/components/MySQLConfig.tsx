@@ -12,10 +12,7 @@ interface DatabaseConfigProps {
   onChange?: (changedConfig: Config) => void;
 }
 
-const DatabaseConfig: React.FC<DatabaseConfigProps> = ({config, onChange}) => {
-  const handleFieldChange = (changedValues: any) => {
-    onChange({...config, ...changedValues});
-  };
+const DatabaseConfig: React.FC<DatabaseConfigProps> = () => {
 
   return (
     <>
