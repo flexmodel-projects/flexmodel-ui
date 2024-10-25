@@ -106,7 +106,7 @@ const ValueManager: React.FC<Props> = ({field}) => {
         visible={dialogVisible}
         onCancel={() => setDialogVisible(false)}
         onChange={handleChange}
-        field={field} datasource={''} model={undefined} type={field.type}
+        field={field} datasource={''} model={undefined} type={field?.type}
       />
     </>
   );

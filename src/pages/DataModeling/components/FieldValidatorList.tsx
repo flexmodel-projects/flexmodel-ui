@@ -7,9 +7,7 @@ import FieldValidatorModal from "./FieldValidatorModal.tsx"; // 假设 Validator
 interface FieldProps {
   datasource: any;
   model: any;
-  field: {
-    type: string;
-  };
+  field: any;
 }
 
 const FieldValidatorList: React.FC<FieldProps> = ({datasource, model, field}) => {

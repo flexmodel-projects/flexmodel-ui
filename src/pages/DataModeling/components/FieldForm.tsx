@@ -155,7 +155,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
             <FieldGeneratorList
               datasource={datasource}
               model={model}
-              field={form.getFieldValue('name')}
+              field={form.getFieldsValue()}
             />
           </Form.Item>
         )}
@@ -166,7 +166,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
             <FieldValidatorList
               datasource={datasource}
               model={model}
-              field={form.getFieldValue('name')}
+              field={form.getFieldsValue()}
             />
           </Form.Item>
         )}
