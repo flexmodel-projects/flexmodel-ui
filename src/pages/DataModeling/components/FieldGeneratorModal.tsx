@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Modal, Select} from 'antd';
-import {GenerationTimes} from "../data";
+import {GenerationTimes} from "../common.ts";
 import FieldInput from "./FieldInput.tsx";
 
 interface Props {

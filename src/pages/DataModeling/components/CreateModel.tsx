@@ -4,7 +4,8 @@ import {ColumnsType} from 'antd/es/table';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
-import {FieldInitialValues, Model} from "../data";
+import type {Model} from "../data.d.ts";
+import {FieldInitialValues} from "../common.ts";
 
 interface Props {
   datasource: string;

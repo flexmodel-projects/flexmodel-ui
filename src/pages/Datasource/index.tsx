@@ -4,14 +4,9 @@ import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from '@ant-design/ico
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
-import {
-  deleteDatasource,
-  getDatasourceList,
-  updateDatasource,
-  validateDatasource
-} from "../../api/datasource.ts";
-import {DbsMap} from "../DataModeling/types.ts";
+import {deleteDatasource, getDatasourceList, updateDatasource, validateDatasource} from "../../api/datasource.ts";
 import {useNavigate} from "react-router-dom";
+import {DbsMap} from "./common.ts";
 
 const DatasourceManagement: React.FC = () => {
 
@@ -65,6 +60,8 @@ const DatasourceManagement: React.FC = () => {
   const handleEdit = async (formData: any) => {
     try {
       const res = await updateDatasource(formData.name, {
+        name: formData.name,
+        enabled: activeDs.enabled,
         config: {
           dbKind: formData.dbKind,
           username: formData.username,

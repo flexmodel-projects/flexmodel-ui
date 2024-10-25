@@ -5,6 +5,7 @@ interface EditDatabaseProps {
   visible: boolean;
   datasource: {
     name: string;
+    enabled: boolean;
     config: {
       dbKind: string;
       url: string;
@@ -68,9 +69,9 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
         layout="vertical"
         initialValues={{
           name: datasource.name,
-          url: datasource.url,
-          username: datasource.username,
-          password: datasource.password,
+          url: datasource?.config?.url,
+          username: datasource?.config?.username,
+          password: datasource?.config?.password,
         }}
       >
         <Form.Item name="dbKind" hidden/>

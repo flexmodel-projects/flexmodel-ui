@@ -2,8 +2,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Button, notification, Popconfirm, Table} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
-import {FieldInitialValues} from "../data";
 import FieldForm from "./FieldForm.tsx";
+import {FieldInitialValues} from "../common.ts";
 
 interface Model {
   name: string;

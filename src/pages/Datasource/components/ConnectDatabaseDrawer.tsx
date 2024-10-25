@@ -87,7 +87,7 @@ const ConnectDatabaseDrawer: React.FC<{
     padding-bottom: 10px;
   `;
 
-  const onChangeModel: TransferProps['onChange'] = (nextTargetKeys, direction, moveKeys) => {
+  const onChangeModel: TransferProps['onChange'] = (nextTargetKeys) => {
     setTargetKeys(nextTargetKeys);
   };
 

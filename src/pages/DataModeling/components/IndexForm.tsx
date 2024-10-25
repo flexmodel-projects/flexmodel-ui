@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Form, Input, Modal, Select, Switch} from 'antd';
-import {Index} from "../data";
+import type {Index} from "../data.d.ts";
 
 interface ChangeIndexProps {
   visible: boolean;

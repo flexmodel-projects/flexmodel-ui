@@ -8,8 +8,8 @@ interface Config {
 }
 
 interface DatabaseConfigProps {
-  config: Config;
-  onChange: (changedConfig: Config) => void;
+  config?: Config;
+  onChange?: (changedConfig: Config) => void;
 }
 
 const DatabaseConfig: React.FC<DatabaseConfigProps> = ({config, onChange}) => {

@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, Switch, Radio } from 'antd';
-import { getModelList } from '../../../api/model'; // 替换为你的 API 调用
-import { BasicFieldTypes, FieldInitialValues, IDGeneratedValues, ValidatorTypes, GeneratorTypes } from "../data"; // 替换为你的 types
+import React, {useEffect, useState} from 'react';
+import {Form, Input, Modal, Radio, Select, Switch} from 'antd';
+import {getModelList} from '../../../api/model'; // 替换为你的 API 调用
+import {
+  BasicFieldTypes,
+  FieldInitialValues,
+  GeneratorTypes,
+  IDGeneratedValues,
+  ValidatorTypes
+} from "../common.ts";
 import FieldGeneratorList from './FieldGeneratorList.tsx'; // 替换为你的组件
 import FieldValidatorList from './FieldValidatorList'; // 替换为你的组件
 
@@ -14,7 +20,7 @@ interface FieldFormProps {
   onCancel: () => void;
 }
 
-const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, currentValue, onConfirm, onCancel }) => {
+const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, currentValue, onConfirm, onCancel}) => {
   const [form] = Form.useForm();
   const [modelList, setModelList] = useState<any[]>([]);
   const [hasId, setHasId] = useState<boolean>(false);
@@ -56,7 +62,7 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    form.setFieldsValue({ ...FieldInitialValues[value], type: value });
+    form.setFieldsValue({...FieldInitialValues[value], type: value});
   };
 
   const handleConfirm = () => {
@@ -66,15 +72,16 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
   };
 
   return (
-    <Modal open={visible} onCancel={onCancel} onOk={handleConfirm} title={currentValue?.name ? 'Edit field' : 'New field'}>
-      <Form form={form} labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} layout="horizontal">
-        <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-          <Input disabled={!!currentValue?.name} />
+    <Modal open={visible} onCancel={onCancel} onOk={handleConfirm}
+           title={currentValue?.name ? 'Edit field' : 'New field'}>
+      <Form form={form} labelCol={{span: 6}} wrapperCol={{span: 18}} layout="horizontal">
+        <Form.Item label="Name" name="name" rules={[{required: true}]}>
+          <Input disabled={!!currentValue?.name}/>
         </Form.Item>
         <Form.Item label="Comment" name="comment">
-          <Input />
+          <Input/>
         </Form.Item>
-        <Form.Item label="Type" name="type" rules={[{ required: true }]}>
+        <Form.Item label="Type" name="type" rules={[{required: true}]}>
           <Select value={tmpType} onChange={handleTypeChange} filterOption>
             <Select.OptGroup label="ID">
               <Select.Option value="id" disabled={hasId}>ID</Select.Option>
@@ -105,24 +112,24 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
 
         {form.getFieldValue('type') === 'string' && (
           <Form.Item label="Length" name="length">
-            <Input type="number" />
+            <Input type="number"/>
           </Form.Item>
         )}
 
         {form.getFieldValue('type') === 'decimal' && (
           <>
             <Form.Item label="Precision" name="precision">
-              <Input type="number" />
+              <Input type="number"/>
             </Form.Item>
             <Form.Item label="Scale" name="scale">
-              <Input type="number" />
+              <Input type="number"/>
             </Form.Item>
           </>
         )}
 
         {form.getFieldValue('type')?.startsWith('relation') && (
           <>
-            <Form.Item label="Target field" name="targetField" rules={[{ required: true }]}>
+            <Form.Item label="Target field" name="targetField" rules={[{required: true}]}>
               <Select>
                 {relationModel?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
@@ -137,7 +144,7 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
               </Radio.Group>
             </Form.Item>
             <Form.Item label="Cascade delete" name="cascadeDelete" valuePropName="checked">
-              <Switch />
+              <Switch/>
             </Form.Item>
           </>
         )}
@@ -167,10 +174,10 @@ const FieldForm: React.FC<FieldFormProps> = ({ visible, datasource, model, curre
         {!['id', 'relation'].includes(form.getFieldValue('type')) && (
           <>
             <Form.Item label="Nullable" name="nullable" valuePropName="checked">
-              <Switch />
+              <Switch/>
             </Form.Item>
             <Form.Item label="Unique" name="unique" valuePropName="checked">
-              <Switch />
+              <Switch/>
             </Form.Item>
           </>
         )}
