@@ -24,8 +24,8 @@
         <version>1.15.0</version>
         <configuration>
           <installDirectory>target</installDirectory>
-          <nodeVersion>v18.16.0</nodeVersion>
-          <npmVersion>9.5.1</npmVersion>
+          <nodeVersion>v20.13.1</nodeVersion>
+          <npmVersion>10.5.2</npmVersion>
         </configuration>
         <executions>
           <execution>
