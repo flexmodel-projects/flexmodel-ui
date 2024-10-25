@@ -8,9 +8,9 @@ export function getDatasourceList() {
   });
 }
 
-export function importModels(datasourceName: string, models: string[]) {
+export function syncModels(datasourceName: string, models: string[]) {
   return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/import`,
+    url: `${BASE_URI}/datasources/${datasourceName}/sync`,
     method: 'post',
     data: models
   });
