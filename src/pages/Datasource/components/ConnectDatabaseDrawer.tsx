@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Space, Spin, Steps, Transfer, TransferProps} from 'antd';
-import {createDatasource, getPhysicsModelNames, importModels, validateDatasource} from "../../../api/datasource.ts";
+import {createDatasource, getPhysicsModelNames, syncModels, validateDatasource} from "../../../api/datasource.ts";
 import MySQLConfig from "./MySQLConfig.tsx";
 import SQLiteConfig from "./SQLiteConfig.tsx";
 import CommonConfig from "./CommonConfig.tsx";
@@ -70,9 +70,9 @@ const ConnectDatabaseDrawer: React.FC<{
       handleNext();
       onChange(res);
       if (targetKeys?.length) {
-        message.success(`Import models in the background form ${formData.name}`);
-        importModels(formData.name, targetKeys as string[]).then(() => {
-          message.success(`The models was imported form ${formData.name}`);
+        message.success(`Import models in the background from ${formData.name}`);
+        syncModels(formData.name, targetKeys as string[]).then(() => {
+          message.success(`The models was synchronized from ${formData.name}`);
         });
       }
     } catch (error) {

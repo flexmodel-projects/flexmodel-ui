@@ -223,7 +223,7 @@ const ApiManagement: React.FC = () => {
     },
     {
       key: 'authorization',
-      label: 'Authorization',
+      label: 'Config',
       children: <Authorization data={selectedNode?.data.meta} onChange={data => {
         console.debug('auth onchange', data);
         setEditForm({...editForm, meta: {...editForm.meta, ...data}});

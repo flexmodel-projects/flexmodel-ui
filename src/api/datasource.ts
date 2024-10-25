@@ -16,6 +16,15 @@ export function syncModels(datasourceName: string, models: string[]) {
   });
 }
 
+export function importModels(datasourceName: string, data: any) {
+  return request({
+    url: `${BASE_URI}/datasources/${datasourceName}/import`,
+    method: 'post',
+    data: data
+  });
+}
+
+
 export function validateDatasource(data: any) {
   return request({
     url: `${BASE_URI}/datasources/validate`,
