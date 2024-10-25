@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Drawer, Form, Input, Popconfirm, Table, Tag} from 'antd';
 import {ColumnsType} from 'antd/es/table';
-import {FieldInitialValues, Model} from './types';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
+import {FieldInitialValues, Model} from "../data";
 
 interface Props {
   datasource: string;

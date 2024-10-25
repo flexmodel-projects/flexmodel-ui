@@ -51,7 +51,7 @@ request.interceptors.response.use(
   async (response: AxiosResponse) => {
     const res: ResponseData = response.data
     if (res.code < 200 || res.code >= 300) {
-      // eslint-disable-next-line prefer-promise-reject-errors
+
       return Promise.reject({response, message: 'CustomError'})
     }
 

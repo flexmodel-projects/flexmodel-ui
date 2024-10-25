@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dropdown, Input, Menu} from 'antd';
 import {CloseOutlined, DownOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {ValidatorTypes} from './types';
+import {ValidatorTypes} from "../data";
 import FieldValidatorModal from "./FieldValidatorModal.tsx"; // 假设 ValidatorTypes 是预定义的验证器类型
 
 interface FieldProps {

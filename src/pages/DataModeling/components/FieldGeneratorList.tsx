@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Dropdown, Input, Menu} from 'antd';
 import {CloseOutlined, DownOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {GeneratorTypes} from './types';
+import {GeneratorTypes} from "../data";
 import FieldGeneratorModal from "./FieldGeneratorModal.tsx";
 
 interface Props {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, Switch, Radio } from 'antd';
 import { getModelList } from '../../../api/model'; // 替换为你的 API 调用
-import { BasicFieldTypes, FieldInitialValues, IDGeneratedValues, ValidatorTypes, GeneratorTypes } from './types'; // 替换为你的 types
+import { BasicFieldTypes, FieldInitialValues, IDGeneratedValues, ValidatorTypes, GeneratorTypes } from "../data"; // 替换为你的 types
 import FieldGeneratorList from './FieldGeneratorList.tsx'; // 替换为你的组件
 import FieldValidatorList from './FieldValidatorList'; // 替换为你的组件
 

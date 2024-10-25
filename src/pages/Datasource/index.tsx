@@ -10,7 +10,7 @@ import {
   updateDatasource,
   validateDatasource
 } from "../../api/datasource.ts";
-import {DbsMap} from "../DataModeling/components/types.ts";
+import {DbsMap} from "../DataModeling/types.ts";
 import {useNavigate} from "react-router-dom";
 
 const DatasourceManagement: React.FC = () => {
