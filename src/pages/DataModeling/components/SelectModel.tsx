@@ -241,7 +241,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       >
         <p>Are you sure you want to delete <strong>{activeModel?.name}</strong>?</p>
       </Modal>
-      <CreateModel visible={createDrawerVisible} datasource={activeDs} onConform={addModel}
+      <CreateModel visible={createDrawerVisible} datasource={activeDs} onConfirm={addModel}
                    onCancel={() => setCreateDrawerVisible(false)}/>
     </div>
   );

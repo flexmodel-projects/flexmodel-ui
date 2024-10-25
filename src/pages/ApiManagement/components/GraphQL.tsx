@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import 'graphiql/graphiql.css';
 import '@graphiql/plugin-explorer/dist/style.css';
-import {graphqlExecute} from "../../../api/api-management.ts";
+import {executeQuery} from "../../../api/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
 
@@ -75,7 +75,7 @@ const GraphQL: React.FC<GraphQLProps> = ({data, onChange}: GraphQLProps) => {
             headers: value ? JSON.parse(value) : null
           })
         }}
-        fetcher={graphqlExecute}
+        fetcher={executeQuery}
         plugins={[explorer]}
         visiblePlugin={explorer}
       >

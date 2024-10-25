@@ -104,7 +104,7 @@ const IdPManagement: React.FC = () => {
                           items: [
                             {
                               key: 'delete',
-                              label: <span style={{color: '#f56c6c'}}>Delete</span>,
+                              label: <span style={{color: 'red'}}>Delete</span>,
                               onClick: () => {
                                 setActiveIdP(nodeData);
                                 setDeleteVisible(true);

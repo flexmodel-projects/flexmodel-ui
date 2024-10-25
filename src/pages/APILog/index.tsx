@@ -19,6 +19,7 @@ import {DownOutlined, ReloadOutlined, SearchOutlined, SettingOutlined, UpOutline
 import * as echarts from "echarts";
 import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
 import {css} from "@emotion/css";
+import LogSettings from "./components/LogSettings.tsx";
 
 const {RangePicker} = DatePicker;
 const LogViewer: React.FC = () => {
@@ -32,6 +33,8 @@ const LogViewer: React.FC = () => {
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const [expand, setExpand] = useState<boolean>(false);
   const [form] = Form.useForm();
+
+  const [settingsDialogVisible, setSettingsDialogVisible] = useState<boolean>(false);
 
   const option: any = {
     tooltip: {
@@ -207,130 +210,135 @@ const LogViewer: React.FC = () => {
   ];
 
   return (
-    <Card bordered={false}>
-      <Row justify="space-between" align="middle">
-        <Col span={4}>
-          <span>Logs</span>
-        </Col>
-        <Col span={20} style={{textAlign: "right"}}>
-          <Space>
-            <Button icon={<SettingOutlined/>}/>
-            <Button
-              icon={<ReloadOutlined/>}
-              onClick={refreshLog}
-              loading={isLoading}
-            />
-          </Space>
-        </Col>
-      </Row>
-      <Row style={{margin: "16px 0"}}>
-        <Col style={{paddingTop: '20px'}} span={24}>
-          <Form form={form}>
-            {expand &&
+    <>
+      <Card bordered={false}>
+        <Row justify="space-between" align="middle">
+          <Col span={4}>
+            <span>Logs</span>
+          </Col>
+          <Col span={20} style={{textAlign: "right"}}>
+            <Space>
+              <Button icon={<SettingOutlined/>} onClick={() => setSettingsDialogVisible(true)}/>
+              <Button
+                icon={<ReloadOutlined/>}
+                onClick={refreshLog}
+                loading={isLoading}
+              />
+            </Space>
+          </Col>
+        </Row>
+        <Row style={{margin: "16px 0"}}>
+          <Col style={{paddingTop: '20px'}} span={24}>
+            <Form form={form}>
+              {expand &&
+                <Row>
+                  <Col span={6}>
+                    <Form.Item name="level" label="Level">
+                      <Select style={{width: '150px'}} mode="multiple" placeholder="Select your log level" allowClear>
+                        <Select.Option value="DEBUG">Debug</Select.Option>
+                        <Select.Option value="INFO">Info</Select.Option>
+                        <Select.Option value="WARN">Warn</Select.Option>
+                        <Select.Option value="ERROR">Error</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={18}>
+                    <Form.Item name="dateRange" label="Date range">
+                      <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+                    </Form.Item>
+                  </Col>
+                </Row>}
               <Row>
-                <Col span={6}>
-                  <Form.Item name="level" label="Level">
-                    <Select style={{width: '150px'}} mode="multiple" placeholder="Select your log level" allowClear>
-                      <Select.Option value="DEBUG">Debug</Select.Option>
-                      <Select.Option value="INFO">Info</Select.Option>
-                      <Select.Option value="WARN">Warn</Select.Option>
-                      <Select.Option value="ERROR">Error</Select.Option>
-                    </Select>
+                <Col span={19}>
+                  <Form.Item name="keyword" style={{width: '100%'}} label="Search Keywords">
+                    <Input
+                      placeholder="Search keywords"
+                    />
                   </Form.Item>
                 </Col>
-                <Col span={18}>
-                  <Form.Item name="dateRange" label="Date range">
-                    <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+                <Col span={5}>
+                  <Form.Item>
+                    <Space style={{paddingLeft: '10px'}}>
+                      <Button icon={<SearchOutlined/>} type="primary" onClick={searchLog}>Search</Button>
+                      <Button type="default" onClick={resetLog}>Reset</Button>
+                      <a
+                        onClick={() => {
+                          setExpand(!expand);
+                        }}
+                      >
+                        {expand ? (
+                          <>
+                            Collapse <UpOutlined/>
+                          </>
+                        ) : (
+                          <>
+                            Expand
+                            <DownOutlined/>
+                          </>
+                        )}
+                      </a>
+                    </Space>
                   </Form.Item>
                 </Col>
-              </Row>}
-            <Row>
-              <Col span={19}>
-                <Form.Item name="keyword" style={{width: '100%'}} label="Search Keywords">
-                  <Input
-                    placeholder="Search keywords"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item>
-                  <Space style={{paddingLeft: '10px'}}>
-                    <Button icon={<SearchOutlined/>} type="primary" onClick={searchLog}>Search</Button>
-                    <Button type="default" onClick={resetLog}>Reset</Button>
-                    <a
-                      onClick={() => {
-                        setExpand(!expand);
-                      }}
-                    >
-                      {expand ? (
-                        <>
-                          Collapse <UpOutlined/>
-                        </>
-                      ) : (
-                        <>
-                          Expand
-                          <DownOutlined/>
-                        </>
-                      )}
-                    </a>
-                  </Space>
-                </Form.Item>
-              </Col>
-            </Row>
+              </Row>
 
-          </Form>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <div id="logStat" ref={logStatRef} style={{width: "100%", height: "120px"}}/>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={tableData}
-            rowKey="id"
-            rowClassName={css`cursor: pointer`}
-            onRow={(record) => ({
-              onClick: () => showDetail(record),
-            })}
-            pagination={false}
-          />
-        </Col>
-      </Row>
-      <Row justify="center" style={{marginTop: "16px"}}>
-        {!isOver && (
-          <Button size="large" onClick={loadMore} loading={isLoading}>
-            Load more
-          </Button>
-        )}
-      </Row>
-      <FloatButton.BackTop/>
-      <Drawer
-        title="Request log"
-        width={680}
-        onClose={() => setDrawerVisible(false)}
-        open={drawerVisible}
-      >
-        <Descriptions column={1} bordered>
-          <Descriptions.Item label="id">{log.id}</Descriptions.Item>
-          <Descriptions.Item label="level">{log.level}</Descriptions.Item>
-          <Descriptions.Item label="createdAt">{log.createdAt}</Descriptions.Item>
-          <Descriptions.Item label="data.execTime">{log?.data?.execTime}ms</Descriptions.Item>
-          <Descriptions.Item label="data.status">{log?.data?.status}</Descriptions.Item>
-          <Descriptions.Item label="data.message">{log?.data?.message}</Descriptions.Item>
-          <Descriptions.Item label="data.errors">{log?.data?.errors}</Descriptions.Item>
-          <Descriptions.Item label="data.method">{log?.data?.method}</Descriptions.Item>
-          <Descriptions.Item label="data.path">{log?.data?.path}</Descriptions.Item>
-          <Descriptions.Item label="data.userAgent">{log?.data?.userAgent}</Descriptions.Item>
-          <Descriptions.Item label="data.remoteIp">{log?.data?.remoteIp}</Descriptions.Item>
-          <Descriptions.Item label="data.referer">{log?.data?.referer}</Descriptions.Item>
-        </Descriptions>
-      </Drawer>
-    </Card>
+            </Form>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <div id="logStat" ref={logStatRef} style={{width: "100%", height: "120px"}}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Table
+              size="small"
+              columns={columns}
+              dataSource={tableData}
+              rowKey="id"
+              rowClassName={css`cursor: pointer`}
+              onRow={(record) => ({
+                onClick: () => showDetail(record),
+              })}
+              pagination={false}
+            />
+          </Col>
+        </Row>
+        <Row justify="center" style={{marginTop: "16px"}}>
+          {!isOver && (
+            <Button size="large" onClick={loadMore} loading={isLoading}>
+              Load more
+            </Button>
+          )}
+        </Row>
+        <FloatButton.BackTop/>
+        <Drawer
+          title="Request log"
+          width={680}
+          onClose={() => setDrawerVisible(false)}
+          open={drawerVisible}
+        >
+          <Descriptions column={1} bordered>
+            <Descriptions.Item label="id">{log.id}</Descriptions.Item>
+            <Descriptions.Item label="level">{log.level}</Descriptions.Item>
+            <Descriptions.Item label="createdAt">{log.createdAt}</Descriptions.Item>
+            <Descriptions.Item label="data.execTime">{log?.data?.execTime}ms</Descriptions.Item>
+            <Descriptions.Item label="data.status">{log?.data?.status}</Descriptions.Item>
+            <Descriptions.Item label="data.message">{log?.data?.message}</Descriptions.Item>
+            <Descriptions.Item label="data.errors">{log?.data?.errors}</Descriptions.Item>
+            <Descriptions.Item label="data.method">{log?.data?.method}</Descriptions.Item>
+            <Descriptions.Item label="data.path">{log?.data?.path}</Descriptions.Item>
+            <Descriptions.Item label="data.userAgent">{log?.data?.userAgent}</Descriptions.Item>
+            <Descriptions.Item label="data.remoteIp">{log?.data?.remoteIp}</Descriptions.Item>
+            <Descriptions.Item label="data.referer">{log?.data?.referer}</Descriptions.Item>
+          </Descriptions>
+        </Drawer>
+      </Card>
+      <LogSettings visible={settingsDialogVisible}
+                   onConfirm={() => setSettingsDialogVisible(false)}
+                   onCancel={() => setSettingsDialogVisible(false)}/>
+    </>
   );
 };
 

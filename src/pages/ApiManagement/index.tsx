@@ -188,7 +188,7 @@ const ApiManagement: React.FC = () => {
                 <Menu>
                   {item.type == 'FOLDER' && <Menu.Item onClick={() => addApi(item?.id)}>New API</Menu.Item>}
                   <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
-                  <Menu.Item onClick={() => {
+                  <Menu.Item style={{color: 'red'}} onClick={() => {
                     setDeleteDialogVisible(true)
                   }}>Delete</Menu.Item>
                 </Menu>

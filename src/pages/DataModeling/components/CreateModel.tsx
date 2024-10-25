@@ -8,12 +8,12 @@ import {PlusOutlined} from "@ant-design/icons";
 
 interface Props {
   datasource: string;
-  onConform: (model: Model) => void;
+  onConfirm: (model: Model) => void;
   onCancel: () => void;
   visible: boolean;
 }
 
-const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}) => {
+const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}) => {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState<boolean>(false);
   const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState<boolean>(false);
@@ -176,7 +176,7 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConform, onCancel}
             <Button onClick={() => {
               form.setFieldValue('fields', model.fields);
               form.setFieldValue('indexes', model.indexes);
-              onConform(form.getFieldsValue(true));
+              onConfirm(form.getFieldsValue(true));
             }} type="primary">
               Conform
             </Button>
