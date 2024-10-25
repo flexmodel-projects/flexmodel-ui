@@ -1,17 +1,12 @@
 import React, {useEffect} from 'react';
 import {Form, Input, Modal, Select, Switch} from 'antd';
-
-interface Index {
-  name: string;
-  fields: { fieldName: string; direction: 'ASC' | 'DESC' }[];
-  unique: boolean;
-}
+import {Index} from "../data";
 
 interface ChangeIndexProps {
   visible: boolean;
   datasource: string;
   model: any;
-  currentValue: Index | null;
+  currentValue: Index | undefined;
   onConfirm: (data: Index) => void;
   onCancel: () => void;
 }
@@ -87,18 +82,18 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, on
           rules={[{required: true, message: 'Please select the index fields!'}]}
         >
           <Select mode="multiple" allowClear>
-            {model.fields.map(field => (
+            {model.fields.map((field: any) => (
               <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
             ))}
             <Select.OptGroup label="DESC">
-              {model.fields.map(field => (
+              {model.fields.map((field: any) => (
                 <Select.Option key={`${field.name}:DESC`} value={`${field.name}:DESC`}>
                   {`${field.name} DESC`}
                 </Select.Option>
               ))}
             </Select.OptGroup>
             <Select.OptGroup label="ASC">
-              {model.fields.map(field => (
+              {model.fields.map((field: any) => (
                 <Select.Option key={`${field.name}:ASC`} value={`${field.name}:ASC`}>
                   {`${field.name} ASC`}
                 </Select.Option>

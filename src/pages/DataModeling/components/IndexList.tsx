@@ -3,6 +3,7 @@ import {Button, notification, Popconfirm, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 import IndexForm from "./IndexForm";
+import {Index} from "../data";
 
 interface Model {
   name?: string;
@@ -10,22 +11,16 @@ interface Model {
   indexes: Index[];
 }
 
-interface Index {
-  name: string;
-  fields: { fieldName: string; direction: string }[];
-  unique: boolean;
-}
-
-interface MyComponentProps {
+interface IndexListProps {
   datasource: string;
   model: Model;
 }
 
-const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
+const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
-  const [currentVal, setCurrentVal] = useState<Index>(null);
+  const [currentVal, setCurrentVal] = useState<Index>({fields: [], name: "", unique: false});
 
   const fetchIndexes = useCallback(async () => {
     // Replace this with actual fetch call
@@ -51,10 +46,10 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const addOrEditIndex = async (values: Index) => {
     try {
       if (selectedIndexKey === -1) {
-        await createIndex(datasource, model?.name, values);
+        await createIndex(datasource, model?.name as string, values);
         setIndexList([...indexList, values]);
       } else {
-        await modifyIndex(datasource, model?.name, values.name, values);
+        await modifyIndex(datasource, model?.name as string, values.name, values);
         const updatedIndexes = [...indexList];
         updatedIndexes[selectedIndexKey] = values;
         setIndexList(updatedIndexes);
@@ -62,6 +57,7 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
       setChangeDialogVisible(false);
       notification.success({message: 'Index saved successfully'});
     } catch (error) {
+      console.error(error);
       notification.error({message: 'Failed to save index'});
     }
   };
@@ -69,10 +65,11 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
   const delIndex = async (key: number) => {
     try {
       const index = indexList[key];
-      await dropIndex(datasource, model?.name, index.name);
+      await dropIndex(datasource, model?.name as string, index.name);
       setIndexList(indexList.filter((_, i) => i !== key));
       notification.success({message: 'Index deleted successfully'});
     } catch (error) {
+      console.error(error);
       notification.error({message: 'Failed to delete index'});
     }
   };
@@ -97,7 +94,7 @@ const IndexList: React.FC<MyComponentProps> = ({datasource, model}) => {
     {
       title: 'Operations',
       key: 'operations',
-      render: (_: any, record: Index, index: number) => (
+      render: (_: any, _record: Index, index: number) => (
         <div>
           <Button
             type="link"

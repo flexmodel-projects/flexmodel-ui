@@ -19,7 +19,7 @@ import {
   TabsProps,
   Tree,
 } from "antd";
-import {EyeInvisibleOutlined, EyeOutlined, MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus} from "../../api/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
@@ -62,9 +62,6 @@ const ApiManagement: React.FC = () => {
   const treeRef = useRef<any>(null) // 使用 `any` 类型避免过于严格的类型检查
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
-
-  // 添加树的显示/隐藏状态
-  const [isTreeVisible, setIsTreeVisible] = useState<boolean>(true);
 
   useEffect(() => {
     setEditForm(selectedNode?.data)

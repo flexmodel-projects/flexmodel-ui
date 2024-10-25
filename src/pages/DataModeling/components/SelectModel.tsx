@@ -204,7 +204,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
           fieldNames={{key: 'name', title: 'name', children: 'children'}}
           selectedKeys={[activeModel?.name || '']}
           onSelect={(_, {node}) => handleItemChange(node)}
-          titleRender={node => (
+          titleRender={(node: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '220px'}}>
               <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>

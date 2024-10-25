@@ -184,7 +184,7 @@ const DatasourceManagement: React.FC = () => {
         <EditDSConfig
           visible={editVisible}
           datasource={activeDs}
-          onConform={handleEdit}
+          onConfirm={handleEdit}
           onCancel={() => setEditVisible(false)}
         />
       </Card>

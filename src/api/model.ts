@@ -8,7 +8,7 @@ export function getModelList(datasourceName: string) {
   });
 }
 
-export function createModel(datasourceName: string, data: {}) {
+export function createModel(datasourceName: string, data: any) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models`,
     method: 'post',
@@ -23,7 +23,7 @@ export function dropModel(datasourceName: string, modelName: string) {
   });
 }
 
-export function createField(datasourceName: string, modelName: string, data: {}) {
+export function createField(datasourceName: string, modelName: string, data: any) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields`,
     method: 'post',
@@ -31,7 +31,7 @@ export function createField(datasourceName: string, modelName: string, data: {})
   });
 }
 
-export function modifyField(datasourceName: string, modelName: string, fieldName: string, data: {}) {
+export function modifyField(datasourceName: string, modelName: string, fieldName: string, data: any) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
     method: 'put',
@@ -46,7 +46,7 @@ export function dropField(datasourceName: string, modelName: string, fieldName: 
   });
 }
 
-export function createIndex(datasourceName: string, modelName: string, data: {}) {
+export function createIndex(datasourceName: string, modelName: string, data: any) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes`,
     method: 'post',
@@ -54,7 +54,7 @@ export function createIndex(datasourceName: string, modelName: string, data: {})
   });
 }
 
-export function modifyIndex(datasourceName: string, modelName: string, indexName: string, data: {}) {
+export function modifyIndex(datasourceName: string, modelName: string, indexName: string, data: any) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`,
     method: 'put',

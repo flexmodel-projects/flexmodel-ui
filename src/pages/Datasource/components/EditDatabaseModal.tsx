@@ -12,11 +12,11 @@ interface EditDatabaseProps {
       password: string;
     }
   };
-  onConform: (formData: any) => void;
+  onConfirm: (formData: any) => void;
   onCancel: () => void;
 }
 
-const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, onConform, onCancel}) => {
+const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, onConfirm, onCancel}) => {
   const [form] = Form.useForm();
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -36,11 +36,11 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
     setIsVisible(false);
   };
 
-  const handleConform = () => {
+  const handleConfirm = () => {
     form
       .validateFields()
       .then(values => {
-        onConform(values);
+        onConfirm(values);
         setIsVisible(false);
       })
       .catch(errorInfo => {
@@ -57,8 +57,8 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
         <Button key="cancel" onClick={handleCancel}>
           Cancel
         </Button>,
-        <Button key="conform" type="primary" onClick={handleConform}>
-          Conform
+        <Button key="confirm" type="primary" onClick={handleConfirm}>
+          Confirm
         </Button>,
       ]}
       width={500}

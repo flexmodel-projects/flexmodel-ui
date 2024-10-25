@@ -30,13 +30,6 @@ const FieldValidatorList: React.FC<FieldProps> = ({datasource, model, field}) =>
   // 显示每个验证器的值
   const displayValue = (item: any) => `${item.type}: ${JSON.stringify(item)}`;
 
-  // 添加新项
-  const addItem = () => {
-    setSelectedIndex(null);
-    setForm({});
-    setDialogVisible(true);
-  };
-
   // 删除指定索引的验证器
   const delItem = (index: number) => {
     setList((prevList) => prevList.filter((_, i) => i !== index));

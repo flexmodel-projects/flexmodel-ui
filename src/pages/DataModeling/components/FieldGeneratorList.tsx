@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Dropdown, Menu, Input } from 'antd';
-import { PlusOutlined, EditOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons';
-import { GeneratorTypes } from './types';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Button, Dropdown, Input, Menu} from 'antd';
+import {CloseOutlined, DownOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {GeneratorTypes} from './types';
 import FieldGeneratorModal from "./FieldGeneratorModal.tsx";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   field: any;
 }
 
-const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
+const ValueManager: React.FC<Props> = ({field}) => {
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [form, setForm] = useState<any>({});
   const [list, setList] = useState<any[]>([]);
@@ -19,7 +19,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
   const filteredGeneratorTypes = GeneratorTypes[field?.type] || [];
 
   const handleCommand = useCallback((command: string) => {
-    setForm({ type: command, generationTime: 'INSERT' });
+    setForm({type: command, generationTime: 'INSERT'});
     setDialogVisible(true);
   }, []);
 
@@ -33,12 +33,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
     return `${item.type}: ${JSON.stringify(item)}`;
   };
 
-  const addItem = () => {
-    setForm({});
-    setDialogVisible(true);
-  };
-
-  const delItem = (index: number) => {
+  const delItem = () => {
     setList([]);
     setSelectedItem(null);
   };
@@ -76,7 +71,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
             <>
               <CloseOutlined
                 className="mr-6px cursor-pointer hover:text-primary"
-                onClick={() => delItem(index)}
+                onClick={() => delItem}
               />
               <EditOutlined
                 className="cursor-pointer hover:text-primary"
@@ -91,7 +86,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
         <Dropdown
           overlay={
             <Menu onClick={handleDropdownMenuClick}>
-              {filteredGeneratorTypes.map((item) => (
+              {filteredGeneratorTypes.map((item: any) => (
                 <Menu.Item key={item.name}>
                   {item.label}
                 </Menu.Item>
@@ -100,7 +95,7 @@ const ValueManager: React.FC<Props> = ({ datasource, model, field }) => {
           }
           trigger={['click']}
         >
-          <Button icon={<PlusOutlined />}>
+          <Button icon={<PlusOutlined/>}>
             <DownOutlined/>
           </Button>
         </Dropdown>
