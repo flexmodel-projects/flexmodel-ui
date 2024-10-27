@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Divider, Dropdown, Menu, message, Modal, Space, Spin, Tree} from 'antd';
+import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree} from 'antd';
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from '@ant-design/icons';
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
-import {deleteDatasource, getDatasourceList, updateDatasource, validateDatasource} from "../../api/datasource.ts";
+import {
+  deleteDatasource,
+  getDatasourceList,
+  importModels as reqImportModels,
+  updateDatasource,
+  validateDatasource
+} from "../../api/datasource.ts";
 import {useNavigate} from "react-router-dom";
 import {DbsMap} from "./common.ts";
+import {getModelList} from "../../api/model.ts";
 
 const DatasourceManagement: React.FC = () => {
 
@@ -19,6 +26,10 @@ const DatasourceManagement: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
+  const [importVisible, setImportVisible] = useState<boolean>(false);
+  const [exportVisible, setExportVisible] = useState<boolean>(false);
+
+  const [scriptForm] = Form.useForm();
 
   const fetchDatasourceList = async () => {
     try {
@@ -90,6 +101,27 @@ const DatasourceManagement: React.FC = () => {
     setActiveDs(item);
   };
 
+  const handleExport = async () => {
+    const models = await getModelList(activeDs.name);
+    const script = {
+      schema: models,
+      data: []
+    };
+    scriptForm.setFieldValue("script", JSON.stringify(script));
+    setExportVisible(true);
+  };
+
+  const handleImport = () => {
+    scriptForm.resetFields();
+    setImportVisible(true);
+  };
+  const importModels = async () => {
+    const values = await scriptForm.validateFields();
+    reqImportModels(activeDs.name, values)
+      .then(() => message.success('Models import successfully'))
+    setImportVisible(false);
+  }
+
   return (
     <>
       <Card>
@@ -153,6 +185,8 @@ const DatasourceManagement: React.FC = () => {
               <div>{activeDs.name}</div>
               <div>
                 <Space>
+                  <Button onClick={handleImport}>Import</Button>
+                  <Button onClick={handleExport}>Export</Button>
                   <Button onClick={() => {
                     navigate(`/modeling?datasource=${activeDs.name}`)
                   }}>Modeling</Button>
@@ -194,6 +228,32 @@ const DatasourceManagement: React.FC = () => {
         cancelText="Cancel"
       >
         <p>Are you sure you want to delete <strong>{activeDs?.name}</strong>?</p>
+      </Modal>
+      <Modal
+        width={600}
+        open={exportVisible}
+        onOk={() => setExportVisible(false)}
+        onCancel={() => setExportVisible(false)}
+        title={`Export ${activeDs.name} models`}
+      >
+        <Form form={scriptForm}>
+          <Form.Item name="script">
+            <Input.TextArea rows={10}/>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        width={600}
+        open={importVisible}
+        onOk={importModels}
+        onCancel={() => setImportVisible(false)}
+        title={`Import ${activeDs.name} models`}
+      >
+        <Form form={scriptForm}>
+          <Form.Item name="script" required>
+            <Input.TextArea rows={10}/>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

@@ -43,7 +43,7 @@ const LogSettings: React.FC<LogSettingsProps> = ({visible, onConfirm, onCancel})
           <InputNumber min={1} max={30}/>
         </Form.Item>
         <Form.Item
-          name="enableConsoleLogging"
+          name="consoleLoggingEnabled"
           label="Enable console logging">
           <Switch/>
         </Form.Item>

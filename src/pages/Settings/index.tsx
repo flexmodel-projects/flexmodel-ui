@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {css} from "@emotion/css";
-import {Menu} from "antd";
+import {Menu, message} from "antd";
 import About from "./components/About.tsx";
-import Variables from "./components/Variables.tsx";
+import Base from "./components/Base.tsx";
+import {getSettings, saveSettings as reqSaveSettings} from "../../api/settings.ts";
+import Security from "./components/Security.tsx";
 
 const Settings: React.FC = () => {
-  type SettingsStateKeys = 'base' | 'variables' | 'about';
+  type SettingsStateKeys = 'base' | 'security' | 'about';
 
   type SettingsState = {
     mode: 'inline' | 'horizontal';
@@ -14,7 +16,8 @@ const Settings: React.FC = () => {
 
   const menuMap: Record<string, React.ReactNode> = {
     base: 'Basic Settings',
-    variables: 'Variables',
+    /*variables: 'Variables',*/
+    security: 'Security',
     about: 'About',
   };
 
@@ -22,9 +25,11 @@ const Settings: React.FC = () => {
     const {selectKey} = initConfig;
     switch (selectKey) {
       case 'base':
-        return <About/>;
-      case 'variables':
-        return <Variables/>;
+        return <Base settings={settings} onChange={data => saveSettings(data)}/>;
+      case 'security':
+        return <Security settings={settings} onChange={data => saveSettings(data)}/>;
+      /*case 'variables':
+        return <Variables/>;*/
       case 'about':
         return <About/>;
       default:
@@ -39,6 +44,18 @@ const Settings: React.FC = () => {
 
   const getMenu = () => {
     return Object.keys(menuMap).map((item) => ({key: item, label: menuMap[item]}));
+  };
+
+  const [settings, setSettings] = useState<any>();
+
+  useEffect(() => {
+    getSettings().then(res => setSettings(res));
+  }, []);
+
+  const saveSettings = (data: object) => {
+    reqSaveSettings(data)
+      .then(() => message.success('Saved successfully'));
+    setSettings({...settings, ...data});
   };
 
   return (
@@ -78,7 +95,7 @@ const Settings: React.FC = () => {
         <div className={css`
         margin-bottom: 12px;
         color: rgba(0, 0, 0, 0.88);
-        font-weight: 500;
+        font-weight: 400;
         font-size: 20px;
         line-height: 28px;
         `}>{menuMap[initConfig.selectKey]}</div>

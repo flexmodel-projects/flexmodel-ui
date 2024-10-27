@@ -16,8 +16,8 @@ const About: React.FC = () => {
         <div style={{ width: '100%', padding: '16px', textAlign: 'center' }}>
           <Paragraph>
             See{' '}
-            <a href="https://github.com/flexmodel-project" target="_blank" rel="noopener noreferrer">
-              flexmodel project
+            <a href="https://github.com/flexmodel-projects" target="_blank" rel="noopener noreferrer">
+              flexmodel projects
             </a>{' '}
             for more information.
           </Paragraph>
