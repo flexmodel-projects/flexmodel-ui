@@ -38,14 +38,14 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
             layout="vertical"
             onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
       >
-        <Form.Item name="apiRateLimitingEnabled" label="Global API Rate Limiting">
+        <Form.Item name="apiRateLimitingEnabled" label="Global API rate limiting">
           <Switch/>
         </Form.Item>
         {formData?.apiRateLimitingEnabled && <>
-          <Form.Item name="limitRefreshPeriod" label="Limit Refresh Period" required>
+          <Form.Item name="limitRefreshPeriod" label="Global limit refresh period" required>
             <InputNumber min={1} addonAfter={"sec"}/>
           </Form.Item>
-          <Form.Item name="maxRequests" label="Max Requests" required>
+          <Form.Item name="maxRequests" label="Global max requests of limit" required>
             <InputNumber min={1} addonAfter={"times"}/>
           </Form.Item>
         </>}

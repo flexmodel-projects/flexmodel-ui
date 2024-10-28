@@ -8,8 +8,8 @@ interface AuthProps {
     auth: boolean;
     rateLimitingEnabled: boolean;
     identityProvider: string;
-    duration: number;
-    limit: number;
+    limitRefreshPeriod: number;
+    maxRequests: number;
   }
   onChange: (data: any) => void;
 }
@@ -39,8 +39,8 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
       auth: formData?.auth,
       identityProvider: formData?.auth ? formData.identityProvider : undefined,
       rateLimitingEnabled: formData?.rateLimitingEnabled,
-      interval: formData?.duration ? formData.duration : undefined,
-      limit: formData?.limit ? formData.limit : undefined,
+      limitRefreshPeriod: formData?.limitRefreshPeriod ? formData.limitRefreshPeriod : undefined,
+      maxRequests: formData?.maxRequests ? formData.maxRequests : undefined,
     });
   }, [formData]);
 
@@ -60,14 +60,14 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
         {formData?.auth && <Form.Item name="identityProvider" label="Identity Provider" required>
           <Select options={options} placeholder="Select a provider"/>
         </Form.Item>}
-        <Form.Item name="rateLimitingEnabled" label="API Rate Limiting">
+        <Form.Item name="rateLimitingEnabled" label="API rate limiting">
           <Switch/>
         </Form.Item>
         {formData?.rateLimitingEnabled && <>
-          <Form.Item name="duration" label="Duration" required>
+          <Form.Item name="limitRefreshPeriod" label="Limit refresh period" required>
             <InputNumber defaultValue={60} addonAfter={"sec"}/>
           </Form.Item>
-          <Form.Item name="limit" label="Limit" required>
+          <Form.Item name="maxRequests" label="max requests of limit" required>
             <InputNumber defaultValue={500} addonAfter={"times"}/>
           </Form.Item>
         </>}
