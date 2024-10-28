@@ -1,11 +1,11 @@
 import {useRoutes} from "react-router-dom";
-import DataSource from "./pages/DataSource";
-import APIManagement from "./pages/APIManagement";
 import APIDocument from "./pages/APIDocument";
 import APILog from "./pages/APILog";
 import IdentityProvider from "./pages/IdentityProvider";
 import Settings from "./pages/Settings";
 import DataModeling from "./pages/DataModeling";
+import APIManagement from "./pages/APIManagement";
+import DataSource from "./pages/DataSource";
 
 export const routes = [
   {
