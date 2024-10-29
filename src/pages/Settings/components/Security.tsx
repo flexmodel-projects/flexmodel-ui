@@ -7,18 +7,18 @@ interface SecurityProps {
 }
 
 interface SecurityData {
-  apiRateLimitingEnabled: boolean;
-  limitRefreshPeriod: number;
-  maxRequests: number;
+  rateLimitingEnabled: boolean;
+  intervalInSeconds: number;
+  maxRequestCount: number;
 }
 
 const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
 
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<SecurityData>({
-    apiRateLimitingEnabled: false,
-    limitRefreshPeriod: 60,
-    maxRequests: 500
+    rateLimitingEnabled: false,
+    intervalInSeconds: 60,
+    maxRequestCount: 500
   })
 
   useEffect(() => {
@@ -38,14 +38,14 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
             layout="vertical"
             onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
       >
-        <Form.Item name="apiRateLimitingEnabled" label="Global API rate limiting">
+        <Form.Item name="rateLimitingEnabled" label="Global API rate limiting">
           <Switch/>
         </Form.Item>
-        {formData?.apiRateLimitingEnabled && <>
-          <Form.Item name="limitRefreshPeriod" label="Global limit refresh period" required>
+        {formData?.rateLimitingEnabled && <>
+          <Form.Item name="intervalInSeconds" label="Global interval in seconds" required>
             <InputNumber min={1} addonAfter={"sec"}/>
           </Form.Item>
-          <Form.Item name="maxRequests" label="Global max requests of limit" required>
+          <Form.Item name="maxRequestCount" label="Global max request count" required>
             <InputNumber min={1} addonAfter={"times"}/>
           </Form.Item>
         </>}
