@@ -5,6 +5,7 @@ import {createField, dropField, modifyField} from '../../../api/model';
 import FieldForm from "./FieldForm.tsx";
 import {FieldInitialValues, FieldTypeMap} from "../common.ts";
 import {Field, Model} from "../data";
+import {useTranslation} from "react-i18next";
 
 interface FieldListProps {
   datasource: string;
@@ -12,6 +13,7 @@ interface FieldListProps {
 }
 
 const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
+  const {t} = useTranslation();
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
@@ -51,10 +53,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);
-      notification.success({message: 'Field saved successfully'});
+      notification.success({message: t('field_form_save_success_text')});
     } catch (error) {
       console.log(error)
-      notification.error({message: 'Failed to save field'});
+      notification.error({message: t('field_form_save_fail_text')});
     }
   };
 
@@ -71,9 +73,9 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   };
 
   const columns = [
-    {title: 'Name', dataIndex: 'name', key: 'name'},
+    {title: t('name'), dataIndex: 'name', key: 'name'},
     {
-      title: 'Type',
+      title: t('type'),
       dataIndex: 'type',
       key: 'type',
       render: (type: string, f: Field) => {
@@ -87,14 +89,20 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       },
     },
     {
-      title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')
+      title: t('unique'),
+      dataIndex: 'unique',
+      key: 'unique',
+      render: (unique: boolean) => (unique ? t('yes') : t('no'))
     },
     {
-      title: 'Nullable', dataIndex: 'nullable', key: 'nullable', render: (unique: boolean) => (unique ? 'Yes' : 'No')
+      title: t('nullable'),
+      dataIndex: 'nullable',
+      key: 'nullable',
+      render: (unique: boolean) => (unique ? t('yes') : t('no'))
     },
-    {title: 'Comment', dataIndex: 'comment', key: 'comment'},
+    {title: t('comment'), dataIndex: 'comment', key: 'comment'},
     {
-      title: 'Operations',
+      title: t('operations'),
       key: 'operations',
       render: (_: any, _record: Field, index: number) => (
         <div>
@@ -103,10 +111,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
             icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
           >
-            Edit
+            {t('edit')}
           </Button>
           <Popconfirm
-            title="Are you sure to delete this field?"
+            title={t('table_selection_delete_text')}
             onConfirm={() => delField(index)}
           >
             <Button
@@ -114,7 +122,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
               danger
               icon={<DeleteOutlined/>}
             >
-              Delete
+              {t('delete')}
             </Button>
           </Popconfirm>
         </div>
@@ -133,7 +141,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           icon={<PlusOutlined/>}
           onClick={handleNewField}
         >
-          New Field
+          {t('new_field')}
         </Button>
       </div>
       <div style={{marginTop: 16}}>

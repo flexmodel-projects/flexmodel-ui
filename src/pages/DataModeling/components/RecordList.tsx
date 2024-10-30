@@ -20,6 +20,7 @@ import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 import dayjs from "dayjs";
 import {Model} from "../data";
+import {useTranslation} from "react-i18next";
 
 interface Field {
   name: string;
@@ -39,6 +40,7 @@ interface RecordListProps {
 }
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
+  const {t} = useTranslation();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -187,15 +189,15 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   })) || [];
 
   columns.push({
-    title: 'Operations',
+    title: t('operations'),
     key: 'operations',
     fixed: 'right',
     width: 180,
     render: (_, record) => (
       <>
-        <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>Edit</Button>
-        <Popconfirm title="Are you sure to delete this record?" onConfirm={() => handleDelete(record)}>
-          <Button size="small" type="link" icon={<DeleteOutlined/>} danger>Delete</Button>
+        <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>{t('edit')}</Button>
+        <Popconfirm title={t('table_selection_delete_text')} onConfirm={() => handleDelete(record)}>
+          <Button size="small" type="link" icon={<DeleteOutlined/>} danger>{t('delete')}</Button>
         </Popconfirm>
       </>
     ),
@@ -210,7 +212,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
             setDialogFormVisible(true);
             setEditMode(false);
           }}>
-            New Record
+            {t('new_record')}
           </Button>
         </Col>
       </Row>
@@ -250,7 +252,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
             || field.generatedValue === 'STRING_NOT_GENERATED'
             || editMode ? (
               <Form.Item key={field.name} name={field.name} label={field.name}
-                         rules={[{required: !field.nullable, message: `Please input ${field.name}`}]}>
+                         rules={[{required: !field.nullable, message: `${t('input_valid_msg', {name: field.name})}`}]}>
                 {renderFieldInput(field)}
               </Form.Item>
             ) : null

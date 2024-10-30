@@ -1,6 +1,7 @@
 import React from 'react';
 import {Descriptions} from 'antd';
 import HidePassword from "../../../components/HidePassword.tsx";
+import {useTranslation} from "react-i18next";
 
 interface IdpInfoProps {
   data: {
@@ -15,20 +16,23 @@ interface IdpInfoProps {
 }
 
 const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
+
+  const {t} = useTranslation();
+
   return (
     <Descriptions bordered column={1}>
       {/* Display name */}
-      <Descriptions.Item label="Display name">{data.name}</Descriptions.Item>
+      <Descriptions.Item label={t('idp_provider_name')}>{data.name}</Descriptions.Item>
 
       {/* Provider type */}
-      <Descriptions.Item label="Provider type">{data.provider?.type}</Descriptions.Item>
+      <Descriptions.Item label={t('idp_provider_type')}>{data.provider?.type}</Descriptions.Item>
 
       {/* Issuer */}
-      <Descriptions.Item label="Issuer">{data.provider?.issuer}</Descriptions.Item>
+      <Descriptions.Item label={t('idp_issuer')}>{data.provider?.issuer}</Descriptions.Item>
 
       {/* Discovery endpoint */}
       {data.provider?.issuer && (
-        <Descriptions.Item label="Discovery endpoint">
+        <Descriptions.Item label={t('idp_discovery_endpoint')}>
           <a href={`${data.provider.issuer}/.well-known/openid-configuration`} target="_blank">
             {`${data.provider.issuer}/.well-known/openid-configuration`}
           </a>
@@ -36,10 +40,10 @@ const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
       )}
 
       {/* Client ID */}
-      <Descriptions.Item label="Client ID">{data.provider?.clientId}</Descriptions.Item>
+      <Descriptions.Item label={t('idp_client_id')}>{data.provider?.clientId}</Descriptions.Item>
 
       {/* Client Secret */}
-      <Descriptions.Item label="Client Secret">
+      <Descriptions.Item label={t('idp_client_secret')}>
         <HidePassword text={data.provider?.clientSecret}/>
       </Descriptions.Item>
     </Descriptions>

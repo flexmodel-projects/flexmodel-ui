@@ -14,6 +14,7 @@ import {css} from "@emotion/css";
 import {useNavigate} from "react-router-dom";
 import CreateModel from "./CreateModel.tsx";
 import {Datasource} from "../data";
+import {useTranslation} from "react-i18next";
 
 interface ModelTree {
   name: string;
@@ -28,6 +29,7 @@ interface SelectModelProps {
 
 const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
 
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource);
   const [dsList, setDsList] = useState<Datasource[]>([]);
@@ -141,7 +143,6 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       <Select
         value={activeDs}
         onChange={onSelectDatasource}
-        placeholder="Data source"
         style={{width: 'calc(100% - 50px)'}}
       >
         {dsList.map(item => (
@@ -158,7 +159,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
             style={{width: '100%'}}
             onClick={() => navigate('/datasource')}
           >
-            Management
+            {t('management')}
           </Button>
         </Select.Option>
       </Select>
@@ -172,14 +173,14 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       <Space>
         <Dropdown overlay={
           <Menu>
-            <Menu.Item onClick={() => setCreateDrawerVisible(true)}>New Entity</Menu.Item>
-            <Menu.Item onClick={() => null} disabled>New Enum</Menu.Item>
+            <Menu.Item onClick={() => setCreateDrawerVisible(true)}>{t('new_entity')}</Menu.Item>
+            <Menu.Item onClick={() => null} disabled>{t('new_enum')}</Menu.Item>
           </Menu>
         }>
           <Button icon={<PlusOutlined/>}/>
         </Dropdown>
         <Input
-          placeholder="Search Models"
+          placeholder={t('search_models')}
           value={filterText}
           onChange={handleSearchChange} // 绑定搜索框变化事件
           style={{width: '100%'}}
@@ -216,11 +217,10 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
                   overlay={
                     <Menu onClick={handleMenuClick}>
                       <Menu.Item key="delete" style={{color: 'red'}} icon={<DeleteOutlined/>}>
-                        Delete
+                        {t('delete')}
                       </Menu.Item>
                     </Menu>
                   }
-                  trigger={['click']}
                 >
                   <MoreOutlined style={{cursor: 'pointer'}}/>
                 </Dropdown>
@@ -230,12 +230,12 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
         />
       </Spin>
       <Modal
-        title={`Delete '${activeModel?.name}'?`}
+        title={`${t('delete')} '${activeModel?.name}'?`}
         open={deleteDialogVisible}
         onCancel={() => setDeleteDialogVisible(false)}
         onOk={handleDelete}
       >
-        <p>Are you sure you want to delete <strong>{activeModel?.name}</strong>?</p>
+        {t('delete_dialog_text', {name: activeModel?.name})}
       </Modal>
       <CreateModel visible={createDrawerVisible} datasource={activeDs} onConfirm={addModel}
                    onCancel={() => setCreateDrawerVisible(false)}/>

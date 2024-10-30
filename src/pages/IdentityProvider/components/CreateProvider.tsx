@@ -3,6 +3,7 @@ import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd
 import {createIdentityProvider} from "../../../api/identity-provider.ts";
 import IdPInfo from "./IdPInfo.tsx";
 import {css} from "@emotion/css";
+import {useTranslation} from "react-i18next";
 
 interface CreateProviderProps {
   visible: boolean;
@@ -11,6 +12,9 @@ interface CreateProviderProps {
 }
 
 const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConfirm}) => {
+
+  const {t} = useTranslation();
+
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<any>({
@@ -47,7 +51,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
 
   return (
     <Drawer
-      title="New provider"
+      title={t('idp_new_provider')}
       width="50%"
       visible={visible}
       onClose={onClose}
@@ -55,26 +59,26 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
         <>
           {currentStep !== 0 && currentStep !== 2 && (
             <Button onClick={prev} style={{marginRight: 8}}>
-              Go back
+              {t('idp_btn_go_back')}
             </Button>
           )}
           {currentStep === 0 && (
             <Button type="primary" onClick={next}>
-              Select provider
+              {t('idp_btn_select_provider')}
             </Button>
           )}
           {currentStep === 1 && (
             <Button type="primary" onClick={handleCreateProvider}>
-              Create provider
+              {t('idp_btn_create_provider')}
             </Button>
           )}
         </>
       }
     >
       <Steps current={currentStep} size="small">
-        <Steps.Step title="Select provider"/>
-        <Steps.Step title="Create provider"/>
-        <Steps.Step title="Success"/>
+        <Steps.Step title={t('idp_step_select_provider')}/>
+        <Steps.Step title={t('idp_step_create_provider')}/>
+        <Steps.Step title={t('idp_step_success')}/>
       </Steps>
 
       <Form
@@ -88,13 +92,16 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
           <Input/>
         </Form.Item>
         {currentStep === 0 && (
-          <Form.Item name="type" initialValue="oidc" label="Please select your IdP to create">
+          <Form.Item name="type" initialValue="oidc" label={t('idp_create_tips')}>
             <Radio.Group name="type">
-              <div className={segmentTitle}>User-defined</div>
+              <div className={segmentTitle}>{t('idp_user_defined')}</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
-              <div className={segmentTitle}>Social</div>
+              <div className={segmentTitle}>{t('idp_social')}</div>
               <Radio value="github" disabled>
                 Github (github)
+              </Radio>
+              <Radio value="google" disabled>
+                Google (google)
               </Radio>
             </Radio.Group>
           </Form.Item>
@@ -104,16 +111,16 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
           <>
             <Form.Item
               name="name"
-              label="Display name"
-              rules={[{required: true, message: 'Please enter the display name'}]}
+              label={t('idp_provider_name')}
+              rules={[{required: true}]}
             >
               <Input/>
             </Form.Item>
 
             <Form.Item
-              label="Issuer"
+              label={t('idp_issuer')}
               name="issuer"
-              rules={[{required: true, message: 'Issuer is required'}]}
+              rules={[{required: true}]}
             >
               <Input placeholder="e.g. http://localhost:8080/realms/master"/>
             </Form.Item>
@@ -126,18 +133,18 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
 
             {/* Client ID */}
             <Form.Item
-              label="Client ID"
+              label={t('idp_client_id')}
               name="clientId"
-              rules={[{required: true, message: 'Client ID is required'}]}
+              rules={[{required: true}]}
             >
               <Input/>
             </Form.Item>
 
             {/* Client Secret */}
             <Form.Item
-              label="Client Secret"
+              label={t('idp_client_secret')}
               name="clientSecret"
-              rules={[{required: true, message: 'Client Secret is required'}]}
+              rules={[{required: true}]}
             >
               <Input/>
             </Form.Item>

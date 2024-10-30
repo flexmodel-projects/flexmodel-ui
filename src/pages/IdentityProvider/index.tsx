@@ -5,6 +5,7 @@ import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider} fr
 import IdPInfo from "./components/IdPInfo.tsx";
 import EditProvider from "./components/EditProvider.tsx";
 import CreateProvider from "./components/CreateProvider.tsx";
+import {useTranslation} from "react-i18next";
 
 interface IdentityProvider {
   name: string;
@@ -25,6 +26,7 @@ const treeProps = {
 };
 
 const IdPManagement: React.FC = () => {
+  const {t} = useTranslation();
   const [idPList, setIdPList] = useState<IdentityProvider[]>([]);
   const [activeIdP, setActiveIdP] = useState<IdentityProvider | null>(null);
   const [idPLoading, setIdPLoading] = useState<boolean>(false);
@@ -70,9 +72,9 @@ const IdPManagement: React.FC = () => {
       setEditVisible(false);
       await fetchIdentityProviders();
       setActiveIdP(reqData)
-      message.success('Updated successfully');
+      message.success(t('form_save_success'));
     } catch {
-      message.error('Failed to update provider');
+      message.error(t('form_save_fail'));
     }
   };
 
@@ -83,7 +85,7 @@ const IdPManagement: React.FC = () => {
           <div style={{width: '20%', borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
             <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
               <span style={{fontWeight: 600, fontSize: '16px'}}>
-              IdP management
+              {t('idp_management')}
               </span>
             </div>
             <Divider/>
@@ -122,7 +124,7 @@ const IdPManagement: React.FC = () => {
             </Spin>
             <Divider/>
             <Button type="primary" icon={<PlusOutlined/>} onClick={() => setDrawerVisible(true)} block ghost>
-              New provider
+              {t('idp_new_provider')}
             </Button>
           </div>
           <div style={{width: '80%', padding: '8px 20px'}}>
@@ -141,7 +143,7 @@ const IdPManagement: React.FC = () => {
                           setEditVisible(true);
                         }}
                       >
-                        Edit
+                        {t('edit')}
                       </Button>
                     </Col>
                   </Row>

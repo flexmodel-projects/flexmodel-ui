@@ -6,6 +6,7 @@ import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
 import type {Model} from "../data.d.ts";
 import {FieldInitialValues} from "../common.ts";
+import {useTranslation} from "react-i18next";
 
 interface Props {
   datasource: string;
@@ -15,6 +16,8 @@ interface Props {
 }
 
 const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}) => {
+  const {t} = useTranslation();
+
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState<boolean>(false);
   const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState<boolean>(false);
@@ -101,18 +104,18 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
   };
 
   const fieldColumns: ColumnsType<any> = [
-    {title: 'Name', dataIndex: 'name', key: 'name'},
-    {title: 'Type', dataIndex: 'type', key: 'type', render: (text) => text},
-    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
+    {title: t('name'), dataIndex: 'name', key: 'name'},
+    {title: t('type'), dataIndex: 'type', key: 'type', render: (text) => text},
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
     {
-      title: 'Nullable',
+      title: t('nullable'),
       dataIndex: 'nullable',
       key: 'nullable',
       render: (nullable: boolean) => (nullable ? 'Yes' : 'No')
     },
-    {title: 'Comment', dataIndex: 'comment', key: 'comment'},
+    {title: t('comment'), dataIndex: 'comment', key: 'comment'},
     {
-      title: 'Operations',
+      title: t('operations'),
       key: 'operations',
       render: (_, __, index) => (
         <>
@@ -126,9 +129,9 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
   ];
 
   const indexColumns: ColumnsType<any> = [
-    {title: 'Name', dataIndex: 'name', key: 'name'},
+    {title: t('name'), dataIndex: 'name', key: 'name'},
     {
-      title: 'Fields',
+      title: t('fields'),
       key: 'fields',
       render: (text) => (
         <div className="flex gap-1">
@@ -140,15 +143,15 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
         </div>
       )
     },
-    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique) => unique ? 'Yes' : 'No'},
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique) => unique ? 'Yes' : 'No'},
     {
-      title: 'Operations',
+      title: t('operations'),
       key: 'operations',
       render: (_, __, index) => (
         <>
-          <Button type="link" size="small" onClick={() => handleEditIndex(index)}>Edit</Button>
-          <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteIndex(index)}>
-            <Button type="link" size="small" danger style={{marginLeft: 8}}>Delete</Button>
+          <Button type="link" size="small" onClick={() => handleEditIndex(index)}>{t('edit')}</Button>
+          <Popconfirm title={t('table_selection_delete_text')} onConfirm={() => handleDeleteIndex(index)}>
+            <Button type="link" size="small" danger style={{marginLeft: 8}}>{t('delete')}</Button>
           </Popconfirm>
         </>
       )
@@ -158,7 +161,7 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
   return (
     <>
       <Drawer
-        title="Create Model"
+        title={t('new_entity')}
         placement="right"
         onClose={() => {
           setDrawerVisible(false);
@@ -172,26 +175,26 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
               setDrawerVisible(false);
               onCancel();
             }} style={{marginRight: 8}}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button onClick={() => {
               form.setFieldValue('fields', model.fields);
               form.setFieldValue('indexes', model.indexes);
               onConfirm(form.getFieldsValue(true));
             }} type="primary">
-              Conform
+              {t('conform')}
             </Button>
           </div>
         }
       >
         <Form form={form} layout="vertical">
-          <Form.Item label="Name" name="name" rules={[{required: true, message: 'Please input the name!'}]}>
+          <Form.Item label={t('name')} name="name" rules={[{required: true, message: 'Please input the name!'}]}>
             <Input/>
           </Form.Item>
-          <Form.Item label="Comment" name="comment">
+          <Form.Item label={t('comment')} name="comment">
             <Input/>
           </Form.Item>
-          <Form.Item label="Fields">
+          <Form.Item label={t('fields')}>
             <Table
               size="small"
               columns={fieldColumns}
@@ -199,12 +202,13 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddField} ghost>Add
-                  Field</Button>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddField} ghost>
+                  {t('new_field')}
+                </Button>
               )}
             />
           </Form.Item>
-          <Form.Item label="Indexes">
+          <Form.Item label={t('indexes')}>
             <Table
               size="small"
               columns={indexColumns}
@@ -212,8 +216,9 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
               pagination={false}
               rowKey={(record) => record.name}
               footer={() => (
-                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>Add
-                  Index</Button>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>
+                  {t('new_index')}
+                </Button>
               )}
             />
           </Form.Item>

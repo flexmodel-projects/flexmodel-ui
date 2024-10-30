@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {Button, Form, Input} from 'antd';
+import {useTranslation} from "react-i18next";
 
 interface BaseProps {
   settings: any;
@@ -7,6 +8,8 @@ interface BaseProps {
 }
 
 const Base: React.FC<BaseProps> = ({settings, onChange}) => {
+
+  const {t} = useTranslation();
 
   const [form] = Form.useForm();
 
@@ -23,11 +26,11 @@ const Base: React.FC<BaseProps> = ({settings, onChange}) => {
   return (
     <div style={{width: 600, marginTop: 20}}>
       <Form form={form} layout="vertical">
-        <Form.Item name="appName" label="Application Name">
+        <Form.Item name="appName" label={t('settings_app_name')}>
           <Input/>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" onClick={submit}>Save</Button>
+          <Button type="primary" onClick={submit}>{t('save')}</Button>
         </Form.Item>
       </Form>
     </div>

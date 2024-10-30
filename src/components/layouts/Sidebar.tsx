@@ -33,51 +33,51 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey 
     {
       key: "api",
       icon: <ApiOutlined/>,
-      label: t('menu_api'),
+      label: t('api'),
       children: [
         {
           key: "/api-management",
           icon: <DeploymentUnitOutlined/>,
-          label: <Link to="/api-management">{t('menu_api_management')}</Link>,
+          label: <Link to="/api-management">{t('api_management')}</Link>,
         },
         {
           key: "/api-document",
           icon: <FileTextOutlined/>,
-          label: <Link to="/api-document">{t('menu_api_document')}</Link>,
+          label: <Link to="/api-document">{t('api_document')}</Link>,
         },
         {
           key: "/api-log",
           icon: <LineChartOutlined/>,
-          label: <Link to="/api-log">{t('menu_api_log')}</Link>,
+          label: <Link to="/api-log">{t('api_log')}</Link>,
         },
       ],
     },
     {
       key: "data",
       icon: <DatabaseOutlined/>,
-      label: t('menu_data'),
+      label: t('data'),
       children: [
         {
           key: "/datasource",
           icon: <FileTextOutlined/>,
-          label: <Link to="/datasource">{t('menu_data_source')}</Link>,
+          label: <Link to="/datasource">{t('data_source')}</Link>,
         },
         {
           key: "/modeling",
           icon: <FileTextOutlined/>,
-          label: <Link to="/modeling">{t('menu_data_modeling')}</Link>,
+          label: <Link to="/modeling">{t('data_modeling')}</Link>,
         },
       ],
     },
     {
       key: "/identity-providers",
       icon: <UserOutlined/>,
-      label: <Link to="/identity-providers">{t('menu_identity_providers')}</Link>,
+      label: <Link to="/identity-providers">{t('identity_providers')}</Link>,
     },
     {
       key: "/settings",
       icon: <SettingOutlined/>,
-      label: <Link to="/settings">{t('menu_settings')}</Link>,
+      label: <Link to="/settings">{t('settings')}</Link>,
     },
   ];
 

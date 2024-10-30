@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Modal, Radio, Select, Switch} from 'antd';
 import {getModelList} from '../../../api/model'; // 替换为你的 API 调用
-import {
-  BasicFieldTypes,
-  FieldInitialValues,
-  GeneratorTypes,
-  IDGeneratedValues,
-  ValidatorTypes
-} from "../common.ts";
+import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "../common.ts";
 import FieldGeneratorList from './FieldGeneratorList.tsx'; // 替换为你的组件
-import FieldValidatorList from './FieldValidatorList'; // 替换为你的组件
+import FieldValidatorList from './FieldValidatorList';
+import {useTranslation} from "react-i18next"; // 替换为你的组件
 
 interface FieldFormProps {
   visible: boolean;
@@ -21,6 +16,7 @@ interface FieldFormProps {
 }
 
 const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, currentValue, onConfirm, onCancel}) => {
+  const {t} = useTranslation();
   const [form] = Form.useForm();
   const [modelList, setModelList] = useState<any[]>([]);
   const [hasId, setHasId] = useState<boolean>(false);
@@ -73,15 +69,15 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   return (
     <Modal open={visible} onCancel={onCancel} onOk={handleConfirm}
-           title={currentValue?.name ? 'Edit field' : 'New field'}>
+           title={currentValue?.name ? t('edit_field') : t('new_field')}>
       <Form form={form} labelCol={{span: 6}} wrapperCol={{span: 18}} layout="horizontal">
-        <Form.Item label="Name" name="name" rules={[{required: true}]}>
+        <Form.Item label={t('name')} name="name" rules={[{required: true}]}>
           <Input disabled={!!currentValue?.name}/>
         </Form.Item>
-        <Form.Item label="Comment" name="comment">
+        <Form.Item label={t('comment')} name="comment">
           <Input/>
         </Form.Item>
-        <Form.Item label="Type" name="type" rules={[{required: true}]}>
+        <Form.Item label={t('type')} name="type" rules={[{required: true}]}>
           <Select value={tmpType} onChange={handleTypeChange} filterOption>
             <Select.OptGroup label="ID">
               <Select.Option value="id" disabled={hasId}>ID</Select.Option>
@@ -111,17 +107,17 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
         )}
 
         {form.getFieldValue('type') === 'string' && (
-          <Form.Item label="Length" name="length">
+          <Form.Item label={t('length')} name="length">
             <Input type="number"/>
           </Form.Item>
         )}
 
         {form.getFieldValue('type') === 'decimal' && (
           <>
-            <Form.Item label="Precision" name="precision">
+            <Form.Item label={t('precision')} name="precision">
               <Input type="number"/>
             </Form.Item>
-            <Form.Item label="Scale" name="scale">
+            <Form.Item label={t('scale')} name="scale">
               <Input type="number"/>
             </Form.Item>
           </>
@@ -129,21 +125,21 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
         {form.getFieldValue('type')?.startsWith('relation') && (
           <>
-            <Form.Item label="Target field" name="targetField" rules={[{required: true}]}>
+            <Form.Item label={t('target_field')} name="targetField" rules={[{required: true}]}>
               <Select>
                 {relationModel?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item label="Cardinality" name="cardinality">
+            <Form.Item label={t('cardinality')} name="cardinality">
               <Radio.Group>
-                <Radio value="ONE_TO_ONE">One to one</Radio>
-                <Radio value="ONE_TO_MANY">One to many</Radio>
-                <Radio value="MANY_TO_MANY">Many to many</Radio>
+                <Radio value="ONE_TO_ONE">{t('one_to_one')}</Radio>
+                <Radio value="ONE_TO_MANY">{t('one_to_many')}</Radio>
+                <Radio value="MANY_TO_MANY">{t('many_to_many')}</Radio>
               </Radio.Group>
             </Form.Item>
-            <Form.Item label="Cascade delete" name="cascadeDelete" valuePropName="checked">
+            <Form.Item label={t('cascade_delete')} name="cascadeDelete" valuePropName="checked">
               <Switch/>
             </Form.Item>
           </>
@@ -151,7 +147,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
         {/* Value generator */}
         {GeneratorTypes[form.getFieldValue('type')]?.length > 0 && (
-          <Form.Item label="Default value" name="generator">
+          <Form.Item label={t('default_value')} name="generator">
             <FieldGeneratorList
               datasource={datasource}
               model={model}
@@ -162,7 +158,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
         {/* Value validators */}
         {ValidatorTypes[form.getFieldValue('type')]?.length > 0 && (
-          <Form.Item label="Value validators" name="validators">
+          <Form.Item label={t('value_validators')} name="validators">
             <FieldValidatorList
               datasource={datasource}
               model={model}
@@ -173,10 +169,10 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
         {!['id', 'relation'].includes(form.getFieldValue('type')) && (
           <>
-            <Form.Item label="Nullable" name="nullable" valuePropName="checked">
+            <Form.Item label={t('nullable')} name="nullable" valuePropName="checked">
               <Switch/>
             </Form.Item>
-            <Form.Item label="Unique" name="unique" valuePropName="checked">
+            <Form.Item label={t('unique')} name="unique" valuePropName="checked">
               <Switch/>
             </Form.Item>
           </>

@@ -216,7 +216,7 @@ const LogViewer: React.FC = () => {
       <Card bordered={false}>
         <Row justify="space-between" align="middle">
           <Col span={4}>
-            <span>{t('logs')}</span>
+            <span style={{fontWeight: 'bold', fontSize: '16px'}}>{t('logs')}</span>
           </Col>
           <Col span={20} style={{textAlign: "right"}}>
             <Space>
@@ -229,8 +229,8 @@ const LogViewer: React.FC = () => {
             </Space>
           </Col>
         </Row>
-        <Row style={{margin: "16px 0"}}>
-          <Col style={{paddingTop: '20px'}} span={24}>
+        <Row style={{margin: "12px 0"}}>
+          <Col style={{paddingTop: '10px'}} span={24}>
             <Form form={form}>
               {expand &&
                 <Row>
@@ -290,12 +290,15 @@ const LogViewer: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <div id="logStat" ref={logStatRef} style={{width: "100%", height: "120px"}}/>
+            <div id="logStat" ref={logStatRef} style={{width: "100%", height: "100px"}}/>
           </Col>
         </Row>
         <Row>
           <Col span={24}>
             <Table
+              bordered={false}
+              virtual
+              scroll={{y: expand ? 270 : 325}}
               size="small"
               columns={columns}
               dataSource={tableData}

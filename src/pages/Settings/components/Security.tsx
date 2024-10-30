@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, InputNumber, Switch} from 'antd';
+import {useTranslation} from "react-i18next";
 
 interface SecurityProps {
   settings: any;
@@ -13,7 +14,7 @@ interface SecurityData {
 }
 
 const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
-
+  const {t} = useTranslation();
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<SecurityData>({
     rateLimitingEnabled: false,
@@ -38,19 +39,19 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
             layout="vertical"
             onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
       >
-        <Form.Item name="rateLimitingEnabled" label="Global API rate limiting">
+        <Form.Item name="rateLimitingEnabled" label={t('settings_global_api_rate_limiting')}>
           <Switch/>
         </Form.Item>
         {formData?.rateLimitingEnabled && <>
-          <Form.Item name="intervalInSeconds" label="Global interval in seconds" required>
-            <InputNumber min={1} addonAfter={"sec"}/>
+          <Form.Item name="intervalInSeconds" label={t('interval_in_seconds')} required>
+            <InputNumber min={1} addonAfter={t('sec')}/>
           </Form.Item>
-          <Form.Item name="maxRequestCount" label="Global max request count" required>
-            <InputNumber min={1} addonAfter={"times"}/>
+          <Form.Item name="maxRequestCount" label={t('max_request_count')} required>
+            <InputNumber min={1} addonAfter={t('times')}/>
           </Form.Item>
         </>}
         <Form.Item>
-          <Button type="primary" onClick={submit}>Save</Button>
+          <Button type="primary" onClick={submit}>{t('save')}</Button>
         </Form.Item>
       </Form>
     </div>

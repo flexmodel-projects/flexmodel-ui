@@ -5,8 +5,10 @@ import About from "./components/About.tsx";
 import Base from "./components/Base.tsx";
 import {getSettings, saveSettings as reqSaveSettings} from "../../api/settings.ts";
 import Security from "./components/Security.tsx";
+import {useTranslation} from "react-i18next";
 
 const Settings: React.FC = () => {
+  const {t} = useTranslation();
   type SettingsStateKeys = 'base' | 'security' | 'about';
 
   type SettingsState = {
@@ -15,10 +17,10 @@ const Settings: React.FC = () => {
   };
 
   const menuMap: Record<string, React.ReactNode> = {
-    base: 'Basic Settings',
+    base: t('settings_basic_settings'),
     /*variables: 'Variables',*/
-    security: 'Security',
-    about: 'About',
+    security: t('settings_security'),
+    about: t('settings_about'),
   };
 
   const renderChildren = () => {
@@ -54,7 +56,7 @@ const Settings: React.FC = () => {
 
   const saveSettings = (data: object) => {
     reqSaveSettings(data)
-      .then(() => message.success('Saved successfully'));
+      .then(() => message.success(t('form_save_success')));
     setSettings({...settings, ...data});
   };
 

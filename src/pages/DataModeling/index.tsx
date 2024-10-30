@@ -5,8 +5,10 @@ import SelectModel from "./components/SelectModel.tsx";
 import FieldList from "./components/FieldList.tsx";
 import IndexList from "./components/IndexList.tsx";
 import RecordList from "./components/RecordList.tsx";
+import {useTranslation} from "react-i18next";
 
 const ModelingPage: React.FC = () => {
+  const {t} = useTranslation();
   const location = useLocation();
   const navigate = useNavigate(); // 替代 useHistory
 
@@ -15,9 +17,9 @@ const ModelingPage: React.FC = () => {
 
   // 选项设置
   const options = [
-    {label: 'Field', value: 'field'},
-    {label: 'Index', value: 'index'},
-    {label: 'Record', value: 'record'},
+    {label: t('field'), value: 'field'},
+    {label: t('index'), value: 'index'},
+    {label: t('record'), value: 'record'},
   ];
 
   const [selectedItem, setSelectedItem] = useState<string>('field');
@@ -45,7 +47,7 @@ const ModelingPage: React.FC = () => {
               <Row>
                 <Col span={12}>
                   <span style={{fontWeight: 600, fontSize: '16px'}}>
-                  Data modeling
+                  {t('data_modeling')}
                   </span>
                 </Col>
                 <Col span={12} style={{textAlign: 'right'}}>

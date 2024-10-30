@@ -4,6 +4,7 @@ import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 import IndexForm from "./IndexForm";
 import type {Index, Model} from "../data.d.ts";
+import {useTranslation} from "react-i18next";
 
 interface IndexListProps {
   datasource: string;
@@ -11,6 +12,7 @@ interface IndexListProps {
 }
 
 const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
+  const {t} = useTranslation();
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
@@ -69,9 +71,9 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   };
 
   const columns = [
-    {title: 'Name', dataIndex: 'name', key: 'name'},
+    {title: t('name'), dataIndex: 'name', key: 'name'},
     {
-      title: 'Fields',
+      title: t('fields'),
       dataIndex: 'fields',
       key: 'fields',
       render: (fields: { fieldName: string; direction: string }[]) => (
@@ -84,9 +86,9 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         </div>
       ),
     },
-    {title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
     {
-      title: 'Operations',
+      title: t('operations'),
       key: 'operations',
       render: (_: any, _record: Index, index: number) => (
         <div>
@@ -95,10 +97,10 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
             icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
           >
-            Edit
+            {t('edit')}
           </Button>
           <Popconfirm
-            title="Are you sure to delete this index?"
+            title={t('table_selection_delete_text')}
             onConfirm={() => delIndex(index)}
           >
             <Button
@@ -106,7 +108,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
               danger
               icon={<DeleteOutlined/>}
             >
-              Delete
+              {t('delete')}
             </Button>
           </Popconfirm>
         </div>
@@ -126,7 +128,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
             icon={<PlusOutlined/>}
             onClick={handleAdd}
           >
-            New Index
+            {t('new_index')}
           </Button>
         </div>
       </div>

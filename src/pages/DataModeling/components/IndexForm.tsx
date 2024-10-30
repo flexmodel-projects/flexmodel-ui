@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {Form, Input, Modal, Select, Switch} from 'antd';
 import type {Index} from "../data.d.ts";
+import {useTranslation} from "react-i18next";
 
 interface ChangeIndexProps {
   visible: boolean;
@@ -12,6 +13,7 @@ interface ChangeIndexProps {
 }
 
 const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, onConfirm, onCancel}) => {
+  const {t} = useTranslation();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, on
 
   return (
     <Modal
-      title={currentValue?.name ? 'Edit Index' : 'New Index'}
+      title={currentValue?.name ? t('edit_index') : t('new_index')}
       open={visible}
       onCancel={onCancel}
       onOk={handleSubmit}
@@ -71,28 +73,28 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, on
       >
         <Form.Item
           name="name"
-          label="Name"
-          rules={[{required: true, message: 'Please input the index name!'}]}
+          label={t('name')}
+          rules={[{required: true}]}
         >
           <Input/>
         </Form.Item>
         <Form.Item
           name="fields"
-          label="Fields"
-          rules={[{required: true, message: 'Please select the index fields!'}]}
+          label={t('fields')}
+          rules={[{required: true}]}
         >
           <Select mode="multiple" allowClear>
             {model.fields.map((field: any) => (
               <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
             ))}
-            <Select.OptGroup label="DESC">
+            <Select.OptGroup label={t('field_desc')}>
               {model.fields.map((field: any) => (
                 <Select.Option key={`${field.name}:DESC`} value={`${field.name}:DESC`}>
                   {`${field.name} DESC`}
                 </Select.Option>
               ))}
             </Select.OptGroup>
-            <Select.OptGroup label="ASC">
+            <Select.OptGroup label={t('field_asc')}>
               {model.fields.map((field: any) => (
                 <Select.Option key={`${field.name}:ASC`} value={`${field.name}:ASC`}>
                   {`${field.name} ASC`}
@@ -101,7 +103,7 @@ const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, on
             </Select.OptGroup>
           </Select>
         </Form.Item>
-        <Form.Item name="unique" label="Unique" valuePropName="checked">
+        <Form.Item name="unique" label={t('unique')} valuePropName="checked">
           <Switch/>
         </Form.Item>
       </Form>
