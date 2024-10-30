@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Form, Input, Modal} from 'antd';
+import {Form, Input, Modal} from 'antd';
 
 interface EditProviderProps {
   visible: boolean;
@@ -20,15 +20,8 @@ const EditProvider: React.FC<EditProviderProps> = ({visible, data, onCancel, onC
     <Modal
       title="Edit provider"
       open={visible}
+      onOk={handleConfirm}
       onCancel={onCancel}
-      footer={[
-        <Button key="cancel" onClick={onCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleConfirm}>
-          Confirm
-        </Button>,
-      ]}
     >
       <Form form={form} layout="vertical" initialValues={data}>
         {/* Connection Name */}

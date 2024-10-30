@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, Modal} from 'antd';
+import {Form, Input, Modal} from 'antd';
 
 interface EditDatabaseProps {
   visible: boolean;
@@ -54,14 +54,7 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
       title="Edit Database"
       open={isVisible}
       onCancel={handleCancel}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button key="confirm" type="primary" onClick={handleConfirm}>
-          Confirm
-        </Button>,
-      ]}
+      onOk={handleConfirm}
       width={500}
     >
       <Form

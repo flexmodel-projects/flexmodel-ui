@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, Modal} from 'antd';
+import {Form, Input, Modal} from 'antd';
 import FieldInput from './FieldInput';
 
 interface FieldProps {
@@ -138,15 +138,8 @@ const FieldValidatorModal: React.FC<FieldProps> = ({
     <Modal
       title={formValues.type}
       open={visible}
+      onOk={handleOk}
       onCancel={onCancel}
-      footer={[
-        <Button key="cancel" onClick={onCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleOk}>
-          Confirm
-        </Button>,
-      ]}
     >
       <Form form={form} labelCol={{span: 6}} wrapperCol={{span: 18}}>
         {renderFormItems()}

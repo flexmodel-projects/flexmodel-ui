@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Modal, Select} from 'antd';
+import {Form, Modal, Select} from 'antd';
 import {GenerationTimes} from "../common.ts";
 import FieldInput from "./FieldInput.tsx";
 
@@ -45,15 +45,8 @@ const FieldGeneratorModal: React.FC<Props> = ({
     <Modal
       title={type}
       open={visible}
+      onOk={handleSubmit}
       onCancel={handleCancel}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>
-          Confirm
-        </Button>,
-      ]}
       width={500}
     >
       <Form
