@@ -145,5 +145,6 @@
   "form_delete_success": "Deleted successfully",
   "form_delete_fail": "Failed to delete",
   "app_description": "All-in-one API design platform",
+  "pagination_total_text": "{{start}}-{{end}} of {{total}} items",
   "welcome": "Welcome to our application"
 }

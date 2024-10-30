@@ -145,5 +145,6 @@
   "form_delete_success": "删除成功",
   "form_delete_fail": "删除成功",
   "app_description": "多场景接口设计平台",
+  "pagination_total_text": "显示{{start}}-{{end}}条 总共{{total}}条",
   "welcome": "欢迎来到我们的应用程序"
 }

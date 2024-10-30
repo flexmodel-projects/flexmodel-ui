@@ -1,13 +1,11 @@
 import {BASE_URI} from "./base.ts";
 import request from "../utils/request.ts";
 
-export function getApiLogs(current: number = 1, pageSize: number = 50, filter?: object) {
+export function getApiLogs(filter?: object) {
   return request({
     url: `${BASE_URI}/logs`,
     method: 'get',
     params: {
-      current,
-      pageSize,
       ...filter,
     }
   });

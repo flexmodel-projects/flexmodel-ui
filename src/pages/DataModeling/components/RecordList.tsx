@@ -233,7 +233,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         current={query.current}
         pageSize={query.pageSize}
         total={records.total}
-        showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+        showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
         onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
         style={{marginTop: 16}}
       />

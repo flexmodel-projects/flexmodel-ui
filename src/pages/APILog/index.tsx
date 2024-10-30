@@ -9,13 +9,14 @@ import {
   FloatButton,
   Form,
   Input,
+  Pagination,
   Row,
   Select,
   Space,
   Table,
   Tag
 } from "antd";
-import {DownOutlined, ReloadOutlined, SearchOutlined, SettingOutlined, UpOutlined} from "@ant-design/icons";
+import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined} from "@ant-design/icons";
 import * as echarts from "echarts";
 import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
 import {css} from "@emotion/css";
@@ -25,17 +26,14 @@ import {useTranslation} from "react-i18next";
 const {RangePicker} = DatePicker;
 const LogViewer: React.FC = () => {
   const {t} = useTranslation();
-  const [isOver, setIsOver] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [tableData, setTableData] = useState<any[]>([]);
-  const [index, setIndex] = useState<number>(1);
+  const [tableData, setTableData] = useState<any>({list: [], total: 0});
   const [log, setLog] = useState<any>({});
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const logStatRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const [expand, setExpand] = useState<boolean>(false);
   const [form] = Form.useForm();
-
+  const [query, setQuery] = useState({current: 1, pageSize: 100});
   const [settingsDialogVisible, setSettingsDialogVisible] = useState<boolean>(false);
 
   const option: any = {
@@ -84,10 +82,7 @@ const LogViewer: React.FC = () => {
 
   const fetchApiLogs = async () => {
     const filter = form.getFieldsValue();
-    const res: any[] = await getApiLogs(index, 50, getFilterQuery(filter));
-    if (res.length === 0) {
-      setIsOver(true);
-    }
+    const res: any[] = await getApiLogs(getFilterQuery(filter));
     setTableData(res);
   };
 
@@ -103,6 +98,7 @@ const LogViewer: React.FC = () => {
 
   const getFilterQuery = (filter: any) => {
     return {
+      ...query,
       keyword: filter?.keyword,
       level: filter?.level?.join(","),
       dateRange: filter?.dateRange?.map((date: any) => date?.format('YYYY-MM-DD HH:mm:ss'))?.join(","),
@@ -130,43 +126,22 @@ const LogViewer: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    fetchApiLogs();
+  }, [query]);
+
   const showDetail = (record: any) => {
     setLog(record);
     setDrawerVisible(true);
   };
 
-  const loadMore = async () => {
-    setIsLoading(true);
-    const res: any[] = await getApiLogs(index + 1, 50, getFilterQuery(form.getFieldsValue()));
-    setIsLoading(false);
-    setIsOver(res.length < 50);
-    if (res.length !== 0) {
-      setTableData((prevData) => [...prevData, ...res]);
-      setIndex((prevIndex) => prevIndex + 1);
-    }
-  };
-
-  const refreshLog = async () => {
-    setIsLoading(true);
-    setIndex(1);
-    const res: any[] = await getApiLogs(1);
-    setIsLoading(false);
-    if (res.length === 0) {
-      setIsOver(true);
-    }
-    setTableData(res);
-    fetchApiLogStat();
-  };
   const searchLog = async () => {
-    setIsLoading(true);
-    setIndex(1);
+    setQuery({current: 1, pageSize: 100});
     await fetchApiLogs();
-    fetchApiLogStat();
-    setIsLoading(false);
+    await fetchApiLogStat();
   };
 
   const resetLog = async () => {
-    setIndex(1);
     form.resetFields();
     await fetchApiLogs();
   };
@@ -221,11 +196,6 @@ const LogViewer: React.FC = () => {
           <Col span={20} style={{textAlign: "right"}}>
             <Space>
               <Button icon={<SettingOutlined/>} onClick={() => setSettingsDialogVisible(true)}/>
-              <Button
-                icon={<ReloadOutlined/>}
-                onClick={refreshLog}
-                loading={isLoading}
-              />
             </Space>
           </Col>
         </Row>
@@ -301,7 +271,7 @@ const LogViewer: React.FC = () => {
               scroll={{y: expand ? 270 : 325}}
               size="small"
               columns={columns}
-              dataSource={tableData}
+              dataSource={tableData?.list}
               rowKey="id"
               rowClassName={css`cursor: pointer`}
               onRow={(record) => ({
@@ -311,12 +281,16 @@ const LogViewer: React.FC = () => {
             />
           </Col>
         </Row>
-        <Row justify="center" style={{marginTop: "16px"}}>
-          {!isOver && (
-            <Button onClick={loadMore} loading={isLoading}>
-              {t('load_more')}
-            </Button>
-          )}
+        <Row justify="end">
+          <Pagination
+            align="end"
+            current={query.current}
+            pageSize={query.pageSize}
+            total={tableData.total}
+            showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
+            onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
+            style={{marginTop: 16}}
+          />
         </Row>
         <FloatButton.BackTop/>
         <Drawer
