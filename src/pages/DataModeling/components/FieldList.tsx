@@ -3,23 +3,8 @@ import {Button, notification, Popconfirm, Table} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import FieldForm from "./FieldForm.tsx";
-import {FieldInitialValues} from "../common.ts";
-
-interface Model {
-  name: string;
-  comment?: string;
-  fields: Field[]
-}
-
-interface Field {
-  name: string;
-  type: string;
-  unique: boolean;
-  nullable: boolean;
-  comment: string;
-  validators: [];
-  generator: object | undefined;
-}
+import {FieldInitialValues, FieldTypeMap} from "../common.ts";
+import {Field, Model} from "../data";
 
 interface FieldListProps {
   datasource: string;
@@ -91,6 +76,15 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
+      render: (type: string, f: Field) => {
+        if (type === 'id') {
+          return 'ID';
+        }
+        if (type === 'relation') {
+          return f?.targetEntity;
+        }
+        return FieldTypeMap[type]
+      },
     },
     {
       title: 'Unique', dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')

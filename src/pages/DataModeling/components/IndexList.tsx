@@ -3,13 +3,7 @@ import {Button, notification, Popconfirm, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 import IndexForm from "./IndexForm";
-import type {Index} from "../data.d.ts";
-
-interface Model {
-  name?: string;
-  comment?: string;
-  indexes: Index[];
-}
+import type {Index, Model} from "../data.d.ts";
 
 interface IndexListProps {
   datasource: string;

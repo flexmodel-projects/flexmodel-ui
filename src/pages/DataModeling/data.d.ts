@@ -1,5 +1,3 @@
-
-
 export interface Datasource {
   name: string;
   type: string;
@@ -17,6 +15,16 @@ export interface Model {
   comment: string,
   fields: any[],
   indexes: any[]
+}
+
+interface Field extends Record<string, object> {
+  name: string;
+  type: string;
+  unique: boolean;
+  nullable: boolean;
+  comment: string;
+  validators: [];
+  generator: object | undefined;
 }
 
 

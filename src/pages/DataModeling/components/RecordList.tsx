@@ -19,6 +19,7 @@ import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 import dayjs from "dayjs";
+import {Model} from "../data";
 
 interface Field {
   name: string;
@@ -30,13 +31,6 @@ interface Field {
 
 interface MRecord {
   [key: string]: any;
-}
-
-interface Model {
-  name: string;
-  comment?: string;
-  fields: Field[];
-  idField?: Field;
 }
 
 interface RecordListProps {

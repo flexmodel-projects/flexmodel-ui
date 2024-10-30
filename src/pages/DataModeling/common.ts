@@ -46,7 +46,7 @@ export const BasicFieldTypes: FieldType[] = [
   },
   {
     name: 'bigint',
-    label: 'Bigint',
+    label: 'BigInt',
   },
   {
     name: 'decimal',
@@ -58,7 +58,7 @@ export const BasicFieldTypes: FieldType[] = [
   },
   {
     name: 'datetime',
-    label: 'Datetime',
+    label: 'DateTime',
   },
   {
     name: 'date',
@@ -69,6 +69,11 @@ export const BasicFieldTypes: FieldType[] = [
     label: 'JSON',
   },
 ]
+
+export const FieldTypeMap: Record<string, string> = BasicFieldTypes.reduce((p, c) => {
+  p[c.name] = c.label
+  return p
+}, {} as Record<string, string>);
 
 export const IDGeneratedValues: any[] = [
   {

@@ -13,21 +13,17 @@ import {createModel as reqCreateModel, dropModel, getModelList} from '../../../a
 import {css} from "@emotion/css";
 import {useNavigate} from "react-router-dom";
 import CreateModel from "./CreateModel.tsx";
+import {Datasource} from "../data";
 
-interface Datasource {
+interface ModelTree {
   name: string;
-  config?: { dbKind?: string };
-}
-
-interface Model {
-  name: string;
-  children?: Model[];
+  children?: ModelTree[];
 }
 
 interface SelectModelProps {
   datasource: string;
   editable: boolean;
-  onChange: (ds: string, model: Model) => void;
+  onChange: (ds: string, model: ModelTree) => void;
 }
 
 const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
@@ -35,9 +31,9 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource);
   const [dsList, setDsList] = useState<Datasource[]>([]);
-  const [modelList, setModelList] = useState<Model[]>([]);
-  const [filteredModelList, setFilteredModelList] = useState<Model[]>([]); // 增加状态来保存过滤后的数据
-  const [activeModel, setActiveModel] = useState<Model | null>(null);
+  const [modelList, setModelList] = useState<ModelTree[]>([]);
+  const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
+  const [activeModel, setActiveModel] = useState<ModelTree | null>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
@@ -61,7 +57,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   // 获取模型列表
   const reqModelList = async () => {
     setModelLoading(true);
-    const res: Model[] = await getModelList(activeDs);
+    const res: ModelTree[] = await getModelList(activeDs);
     setModelLoading(false);
     setModelList(res);
     setFilteredModelList(res); // 初始化时未过滤
@@ -70,7 +66,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   };
 
   // 处理模型选择
-  const handleItemChange = (item: Model) => {
+  const handleItemChange = (item: ModelTree) => {
     setActiveModel(item);
     onChange(activeDs, item);
   };
@@ -104,7 +100,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   };
 
   // 过滤树形结构数据
-  const filterModelTree = (models: Model[], searchText: string): Model[] => {
+  const filterModelTree = (models: ModelTree[], searchText: string): ModelTree[] => {
     return models
       .map(model => {
         const filteredChildren = model.children ? filterModelTree(model.children, searchText) : [];
@@ -113,7 +109,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
         }
         return null;
       })
-      .filter(Boolean) as Model[];
+      .filter(Boolean) as ModelTree[];
   };
 
   // 搜索框变化时，更新过滤的树数据
