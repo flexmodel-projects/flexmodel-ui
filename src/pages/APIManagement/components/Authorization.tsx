@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Card, Form, InputNumber, Select, Switch} from "antd";
 import {SelectProps} from "rc-select/lib/Select";
 import {getIdentityProviders} from "../../../api/identity-provider.ts";
+import {useTranslation} from "react-i18next";
 
 interface AuthProps {
   data: {
@@ -20,6 +21,7 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
   const [form] = Form.useForm();
 
   const [options, setOptions] = useState<SelectProps['options']>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     getIdentityProviders()
@@ -54,21 +56,21 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
         layout="horizontal"
         onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
       >
-        <Form.Item name="auth" label="API Auth">
+        <Form.Item name="auth" label={t('api_auth')}>
           <Switch/>
         </Form.Item>
-        {formData?.auth && <Form.Item name="identityProvider" label="Identity Provider" required>
-          <Select options={options} placeholder="Select a provider"/>
+        {formData?.auth && <Form.Item name="identityProvider" label={t('identity_provider')} required>
+          <Select options={options} placeholder={t('select_a_provider')}/>
         </Form.Item>}
-        <Form.Item name="rateLimitingEnabled" label="API rate limiting">
+        <Form.Item name="rateLimitingEnabled" label={t('api_rate_limiting')}>
           <Switch/>
         </Form.Item>
         {formData?.rateLimitingEnabled && <>
-          <Form.Item name="intervalInSeconds" label="Interval in seconds" required>
-            <InputNumber defaultValue={60} addonAfter={"sec"}/>
+          <Form.Item name="intervalInSeconds" label={t('interval_in_seconds')} required>
+            <InputNumber defaultValue={60} addonAfter={t('sec')}/>
           </Form.Item>
-          <Form.Item name="maxRequestCount" label="Max request count" required>
-            <InputNumber defaultValue={500} addonAfter={"times"}/>
+          <Form.Item name="maxRequestCount" label={t('max_request_count')} required>
+            <InputNumber defaultValue={500} addonAfter={t('times')}/>
           </Form.Item>
         </>}
       </Form>

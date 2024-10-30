@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Modal} from 'antd';
+import {useTranslation} from "react-i18next";
 
 interface EditDatabaseProps {
   visible: boolean;
@@ -18,6 +19,8 @@ interface EditDatabaseProps {
 }
 
 const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, onConfirm, onCancel}) => {
+  const {t} = useTranslation();
+
   const [form] = Form.useForm();
   const [isVisible, setIsVisible] = useState(visible);
 
@@ -51,7 +54,7 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
 
   return (
     <Modal
-      title="Edit Database"
+      title={t('connect_edit_database')}
       open={isVisible}
       onCancel={handleCancel}
       onOk={handleConfirm}
@@ -68,20 +71,20 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
         }}
       >
         <Form.Item name="dbKind" hidden/>
-        <Form.Item label="Connection name" name="name">
+        <Form.Item label={t('connection_name')} name="name">
           <Input readOnly/>
         </Form.Item>
         <Form.Item
           name="url"
-          label="Database URL"
-          rules={[{required: true, message: 'Please input the database URL!'}]}
+          label={t('database_url')}
+          rules={[{required: true}]}
         >
           <Input/>
         </Form.Item>
-        <Form.Item name="username" label="Username">
+        <Form.Item name="username" label={t('username')}>
           <Input/>
         </Form.Item>
-        <Form.Item name="password" label="Password">
+        <Form.Item name="password" label={t('password')}>
           <Input placeholder="password"/>
         </Form.Item>
       </Form>

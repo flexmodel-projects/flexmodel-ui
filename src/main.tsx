@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client'
 import App from './App.tsx'
 import store from "./store/configStore.ts";
 import {Provider} from "react-redux";
+import './i18n';
 
 createRoot(document.getElementById('app')!).render(
   <StrictMode>

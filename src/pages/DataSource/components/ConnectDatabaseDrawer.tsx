@@ -7,6 +7,7 @@ import CommonConfig from "./CommonConfig.tsx";
 import DatabaseInfo from "./DatabaseInfo.tsx";
 import {css} from "@emotion/css";
 import Title from "antd/lib/typography/Title";
+import {useTranslation} from "react-i18next";
 
 const {Step} = Steps;
 
@@ -15,6 +16,7 @@ const ConnectDatabaseDrawer: React.FC<{
   onChange: (data: any) => void;
   onClose: () => void;
 }> = ({visible, onChange, onClose}) => {
+  const {t} = useTranslation();
   const [active, setActive] = useState<number>(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<any>({});
@@ -38,12 +40,12 @@ const ConnectDatabaseDrawer: React.FC<{
       const values = await form.validateFields();
       const result = await validateDatasource({name: values.name, config: {...values}});
       if (result.success) {
-        message.success(`Succeed, ping: ${result.time}ms`);
+        message.success(t('test_connection_success_message', {time: result.time}));
       } else {
-        message.error(`Failed, error msg: ${result.errorMsg}`);
+        message.error(t('test_connection_fail_message', {msg: result.errorMsg}));
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
       // Handle validation or network errors
     }
   };
@@ -70,9 +72,9 @@ const ConnectDatabaseDrawer: React.FC<{
       handleNext();
       onChange(res);
       if (targetKeys?.length) {
-        message.success(`Import models in the background from ${formData.name}`);
+        message.success(t('connect_sync_models_tips', {name: formData.name}));
         syncModels(formData.name, targetKeys as string[]).then(() => {
-          message.success(`The models was synchronized from ${formData.name}`);
+          message.success(t('connect_sync_models_done_tips', {name: formData.name}));
         });
       }
     } catch (error) {
@@ -100,7 +102,7 @@ const ConnectDatabaseDrawer: React.FC<{
 
   return (
     <Drawer
-      title="Connect Database"
+      title={t('connect_datasource')}
       width="50%"
       placement="right"
       onClose={onClose}
@@ -108,10 +110,10 @@ const ConnectDatabaseDrawer: React.FC<{
     >
       <div style={{paddingBottom: 20}}>
         <Steps current={active} size="small">
-          <Step title="Select Database"/>
-          <Step title="Connect Database"/>
-          <Step title="Select Models"/>
-          <Step title="Completed"/>
+          <Step title={t('connect_step_select_database')}/>
+          <Step title={t('connect_step_connect_database')}/>
+          <Step title={t('connect_step_select_models')}/>
+          <Step title={t('connect_step_completed')}/>
         </Steps>
       </div>
       <Form
@@ -126,9 +128,9 @@ const ConnectDatabaseDrawer: React.FC<{
         }}
       >
         {active === 0 && (
-          <Form.Item label="Please select your database to connect." name="dbKind">
+          <Form.Item label={t('connect_database_tips')} name="dbKind">
             <Radio.Group name="dbKind">
-              <div className={segmentTitle}>Relational</div>
+              <div className={segmentTitle}>{t('connect_relational')}</div>
               <Radio value="mysql">MySQL</Radio>
               <Radio value="mariadb">MariaDB</Radio>
               <Radio value="oracle">Oracle</Radio>
@@ -139,17 +141,17 @@ const ConnectDatabaseDrawer: React.FC<{
               <Radio value="gbase">GBase</Radio>
               <Radio value="dm">DM8</Radio>
               <Radio value="tidb">TiDB</Radio>
-              <div className={segmentTitle}>Document</div>
+              <div className={segmentTitle}>{t('connect_document')}</div>
               <Radio value="mongodb">MongoDB</Radio>
-              <div className={segmentTitle}>Other</div>
+              <div className={segmentTitle}>{t('connect_other')}</div>
               <Radio value="graphql" disabled>GraphQL</Radio>
             </Radio.Group>
           </Form.Item>
         )}
         {active === 1 && (
           <>
-            <Form.Item name="name" label="Connection name"
-                       rules={[{required: true, message: 'Please input connection name!'}]}>
+            <Form.Item name="name" label={t('connection_name')}
+                       rules={[{required: true}]}>
               <Input name="name"/>
             </Form.Item>
             {form.getFieldValue('dbKind') === 'mysql' && <MySQLConfig/>}
@@ -171,7 +173,7 @@ const ConnectDatabaseDrawer: React.FC<{
                       showSearch
                       pagination
                       dataSource={physicsModelData}
-                      titles={['Source', 'Target']}
+                      titles={[t('connect_transfer_source'), t('connect_transfer_target')]}
                       targetKeys={targetKeys}
                       selectedKeys={selectedKeys}
                       onChange={onChangeModel}
@@ -188,7 +190,7 @@ const ConnectDatabaseDrawer: React.FC<{
           <>
             <Row>
               <Col span={24} style={{marginTop: 12, marginBottom: 12, textAlign: 'center'}}>
-                <span>Connected successfully</span>
+                <span>{t('connect_success_tips')}</span>
               </Col>
               <Col span={24}>
                 <DatabaseInfo datasource={currentVal}/>
@@ -197,7 +199,7 @@ const ConnectDatabaseDrawer: React.FC<{
                 <Button style={{marginTop: 12}} onClick={() => {
                   onClose();
                   setActive((0));
-                }}>Close</Button>
+                }}>{t('close')}</Button>
               </Col>
             </Row>
           </>
@@ -205,20 +207,20 @@ const ConnectDatabaseDrawer: React.FC<{
         <Form.Item style={{textAlign: 'end'}} wrapperCol={{offset: 8, span: 16}}>
           <Space>
             {active !== 0 && active !== 3 && (
-              <Button onClick={handlePrev}>Go back</Button>
+              <Button onClick={handlePrev}>{t('connect_go_back')}</Button>
             )}
             {active === 0 && (
-              <Button type="primary" onClick={handleNext}>Select Database</Button>
+              <Button type="primary" onClick={handleNext}>{t('connect_select_database')}</Button>
             )}
             {active === 1 && (
               <>
-                <Button onClick={handleTestConnection}>Test Connection</Button>
-                <Button type="primary" onClick={handleSelectModels}>Select Models</Button>
+                <Button onClick={handleTestConnection}>{t('connect_test_connection')}</Button>
+                <Button type="primary" onClick={handleSelectModels}>{t('connect_select_models')}</Button>
               </>
             )}
             {active === 2 && (
               <>
-                <Button type="primary" onClick={handleConnectDatabase}>Connect Database</Button>
+                <Button type="primary" onClick={handleConnectDatabase}>{t('connect_datasource')}</Button>
               </>
             )}
           </Space>

@@ -25,6 +25,7 @@ import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import Authorization from "./components/Authorization.tsx";
+import {useTranslation} from "react-i18next";
 
 const {DirectoryTree} = Tree;
 
@@ -51,6 +52,7 @@ interface TreeNode {
 }
 
 const ApiManagement: React.FC = () => {
+  const { t } = useTranslation();
   // 状态定义
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [apiList, setApiList] = useState<ApiInfo[]>([]);
@@ -62,6 +64,7 @@ const ApiManagement: React.FC = () => {
   const treeRef = useRef<any>(null) // 使用 `any` 类型避免过于严格的类型检查
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
+
 
   useEffect(() => {
     setEditForm(selectedNode?.data)
@@ -146,7 +149,7 @@ const ApiManagement: React.FC = () => {
   };
 
   const addApi = async (parentId?: string | null) => {
-    const reqData = {parentId: parentId, name: 'New API', type: 'API', method: 'GET', meta: {auth: false}};
+    const reqData = {parentId: parentId, name: t('new_api'), type: 'API', method: 'GET', meta: {auth: false}};
     const newApi = await createApi(reqData);
     await reqApiList();
     setExpandedKeys([parentId]);
@@ -155,7 +158,7 @@ const ApiManagement: React.FC = () => {
   }
 
   const addFolder = async (parentId?: string | null) => {
-    const reqData = {parentId: parentId, name: 'New Folder', type: 'FOLDER'};
+    const reqData = {parentId: parentId, name: t('new_folder'), type: 'FOLDER'};
     const newApi = await createApi(reqData);
     await reqApiList();
     showEditInput(newApi);
@@ -183,11 +186,11 @@ const ApiManagement: React.FC = () => {
             <Dropdown
               overlay={
                 <Menu>
-                  {item.type == 'FOLDER' && <Menu.Item onClick={() => addApi(item?.id)}>New API</Menu.Item>}
-                  <Menu.Item onClick={() => showEditInput(item)}>Rename</Menu.Item>
+                  {item.type == 'FOLDER' && <Menu.Item onClick={() => addApi(item?.id)}>{t('new_api')}</Menu.Item>}
+                  <Menu.Item onClick={() => showEditInput(item)}>{t('rename')}</Menu.Item>
                   <Menu.Item style={{color: 'red'}} onClick={() => {
                     setDeleteDialogVisible(true)
-                  }}>Delete</Menu.Item>
+                  }}>{t('delete')}</Menu.Item>
                 </Menu>
               }
               trigger={['hover']}
@@ -206,7 +209,7 @@ const ApiManagement: React.FC = () => {
 
   const handleSaveApi = async () => {
     await updateApi(editForm.id, editForm)
-    message.success('Saved')
+    message.success(t('saved'))
     await reqApiList()
   }
 
@@ -223,7 +226,7 @@ const ApiManagement: React.FC = () => {
     },
     {
       key: 'authorization',
-      label: 'Config',
+      label: t('config'),
       children: <Authorization data={selectedNode?.data.meta} onChange={data => {
         console.debug('auth onchange', data);
         setEditForm({...editForm, meta: {...editForm.meta, ...data}});
@@ -266,15 +269,15 @@ const ApiManagement: React.FC = () => {
               <Space align="baseline">
                 <Dropdown overlay={
                   <Menu>
-                    <Menu.Item onClick={() => addApi()}>New API</Menu.Item>
-                    <Menu.Item onClick={() => addFolder()}>New Folder</Menu.Item>
+                    <Menu.Item onClick={() => addApi()}>{t('new_api')}</Menu.Item>
+                    <Menu.Item onClick={() => addFolder()}>{t('new_folder')}</Menu.Item>
                   </Menu>
                 }>
                   <Button icon={<PlusOutlined/>}/>
                 </Dropdown>
                 <Input
                   style={{marginBottom: 8}}
-                  placeholder="Search APIs"
+                  placeholder={t('search_apis')}
                   value={searchText} // 绑定搜索框的值
                   onChange={handleSearchChange} // 监听输入框变化
                   allowClear
@@ -309,13 +312,13 @@ const ApiManagement: React.FC = () => {
                            onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
 
                     <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
-                      Save
+                      {t('save')}
                     </Button>
                     <Switch value={editForm?.enabled} onChange={val => {
                       setEditForm({...editForm, enabled: val})
                       updateApiStatus(editForm.id, val)
                         .then(() => {
-                          message.success(val ? 'Enabled' : 'Closed');
+                          message.success(val ? t('enabled') : t('closed'));
                           reqApiList();
                         });
                     }}/>
@@ -356,12 +359,10 @@ const ApiManagement: React.FC = () => {
           open={deleteDialogVisible}
           onOk={handleDelete}
           onCancel={() => setDeleteDialogVisible(false)}
-          title={`Delete '${selectedNode?.data?.name}?'`}
-          okText="Delete"
-          okButtonProps={{danger: true}}
+          title={`${t('delete')} '${selectedNode?.data?.name}?'`}
         >
         <span>
-          Are you sure you want to delete <strong>{selectedNode?.data?.name}</strong>?
+          {t('delete_dialog_text')}
         </span>
         </Modal>
       </Row>

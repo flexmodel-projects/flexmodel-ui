@@ -6,13 +6,16 @@ import dayjs from "dayjs";
 import {setLocale} from "../../actions/langAction.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/configStore.ts";
+import {useTranslation} from "react-i18next";
 
 export const Header: React.FC<unknown> = () => {
   const dispatch = useDispatch();
   const {locale} = useSelector((state: RootState) => state.locale);
+  const {i18n} = useTranslation();
   const changeLocale = (e: RadioChangeEvent) => {
     const localeValue = e.target.value;
     dispatch(setLocale(localeValue));
+    i18n.changeLanguage(localeValue == zhCN ? 'zh' : 'en');
     if (!localeValue) {
       dayjs.locale('en');
     } else {

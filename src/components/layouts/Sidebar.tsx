@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import {useTranslation} from "react-i18next";
 
 // 定义菜单项的类型
 interface MenuItem {
@@ -19,63 +20,66 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-// 菜单数据
-const menuData: MenuItem[] = [
-  {
-    key: "api",
-    icon: <ApiOutlined/>,
-    label: "API",
-    children: [
-      {
-        key: "/api-management",
-        icon: <DeploymentUnitOutlined/>,
-        label: <Link to="/api-management">API Management</Link>,
-      },
-      {
-        key: "/api-document",
-        icon: <FileTextOutlined/>,
-        label: <Link to="/api-document">API Document</Link>,
-      },
-      {
-        key: "/api-log",
-        icon: <LineChartOutlined/>,
-        label: <Link to="/api-log">API Log</Link>,
-      },
-    ],
-  },
-  {
-    key: "data",
-    icon: <DatabaseOutlined/>,
-    label: "Data",
-    children: [
-      {
-        key: "/datasource",
-        icon: <FileTextOutlined/>,
-        label: <Link to="/datasource">Data source</Link>,
-      },
-      {
-        key: "/modeling",
-        icon: <FileTextOutlined/>,
-        label: <Link to="/modeling">Data modeling</Link>,
-      },
-    ],
-  },
-  {
-    key: "/identity-providers",
-    icon: <UserOutlined/>,
-    label: <Link to="/identity-providers">Identity Providers</Link>,
-  },
-  {
-    key: "/settings",
-    icon: <SettingOutlined/>,
-    label: <Link to="/settings">Settings</Link>,
-  },
-];
+
 
 const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey = "1"}) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
+  const { t } = useTranslation();
+
+  // 菜单数据
+  const menuData: MenuItem[] = [
+    {
+      key: "api",
+      icon: <ApiOutlined/>,
+      label: t('menu_api'),
+      children: [
+        {
+          key: "/api-management",
+          icon: <DeploymentUnitOutlined/>,
+          label: <Link to="/api-management">{t('menu_api_management')}</Link>,
+        },
+        {
+          key: "/api-document",
+          icon: <FileTextOutlined/>,
+          label: <Link to="/api-document">{t('menu_api_document')}</Link>,
+        },
+        {
+          key: "/api-log",
+          icon: <LineChartOutlined/>,
+          label: <Link to="/api-log">{t('menu_api_log')}</Link>,
+        },
+      ],
+    },
+    {
+      key: "data",
+      icon: <DatabaseOutlined/>,
+      label: t('menu_data'),
+      children: [
+        {
+          key: "/datasource",
+          icon: <FileTextOutlined/>,
+          label: <Link to="/datasource">{t('menu_data_source')}</Link>,
+        },
+        {
+          key: "/modeling",
+          icon: <FileTextOutlined/>,
+          label: <Link to="/modeling">{t('menu_data_modeling')}</Link>,
+        },
+      ],
+    },
+    {
+      key: "/identity-providers",
+      icon: <UserOutlined/>,
+      label: <Link to="/identity-providers">{t('menu_identity_providers')}</Link>,
+    },
+    {
+      key: "/settings",
+      icon: <SettingOutlined/>,
+      label: <Link to="/settings">{t('menu_settings')}</Link>,
+    },
+  ];
 
   // 获取当前路径
   const currentPath = location.pathname;

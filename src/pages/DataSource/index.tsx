@@ -14,9 +14,10 @@ import {
 import {useNavigate} from "react-router-dom";
 import {DbsMap} from "./common.ts";
 import {getModelList} from "../../api/model.ts";
+import {useTranslation} from "react-i18next";
 
 const DatasourceManagement: React.FC = () => {
-
+  const {t} = useTranslation();
   const navigate = useNavigate();
 
   const [dsList, setDsList] = useState<any[]>([]);
@@ -56,13 +57,13 @@ const DatasourceManagement: React.FC = () => {
     try {
       const result = await validateDatasource(activeDs);
       if (result.success) {
-        message.success(`Succeed, ping: ${result.time}ms`);
+        message.success(t('test_connection_success_message', {time: result.time}));
       } else {
-        message.error(`Failed, error msg: ${result.errorMsg}`);
+        message.error(t('test_connection_fail_message', {msg: result.errorMsg}));
       }
     } catch (error) {
-      console.log(error)
-      message.error('Failed to test connection.');
+      console.log(error);
+      message.error(t('test_connection_fail_message_2'));
     } finally {
       setTestLoading(false);
     }
@@ -129,7 +130,7 @@ const DatasourceManagement: React.FC = () => {
           <div style={{width: '25%', borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
             <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
               <span style={{fontWeight: 600, fontSize: '16px'}}>
-              DS management
+                {t('datasource_management')}
               </span>
             </div>
             <Divider/>
@@ -150,12 +151,12 @@ const DatasourceManagement: React.FC = () => {
                           <Menu.Item
                             style={{color: 'red'}}
                             icon={<DeleteOutlined/>}
-                            disabled={activeDs.type === 'system'}
+                            disabled={node.type === 'system'}
                             onClick={() => {
                               setDeleteVisible(true);
                             }}
                           >
-                            Delete
+                            {t('delete')}
                           </Menu.Item>
                         </Menu>
                       }
@@ -177,7 +178,7 @@ const DatasourceManagement: React.FC = () => {
               style={{width: '100%'}}
               ghost
             >
-              Connect Database
+              {t('connect_datasource')}
             </Button>
           </div>
           <div style={{width: '75%', padding: '8px 20px'}}>
@@ -185,18 +186,18 @@ const DatasourceManagement: React.FC = () => {
               <div>{activeDs.name}</div>
               <div>
                 <Space>
-                  <Button onClick={handleImport}>Import</Button>
-                  <Button onClick={handleExport}>Export</Button>
+                  <Button onClick={handleImport}>{t('import')}</Button>
+                  <Button onClick={handleExport}>{t('export')}</Button>
                   <Button onClick={() => {
                     navigate(`/modeling?datasource=${activeDs.name}`)
-                  }}>Modeling</Button>
-                  <Button onClick={handleTestConnection} loading={testLoading}>Test</Button>
+                  }}>{t('modeling')}</Button>
+                  <Button onClick={handleTestConnection} loading={testLoading}>{t('test')}</Button>
                   <Button
                     type="primary"
                     disabled={activeDs.type === 'system'}
                     onClick={() => setEditVisible(true)}
                   >
-                    Edit
+                    {t('edit')}
                   </Button>
                 </Space>
               </div>
@@ -221,13 +222,11 @@ const DatasourceManagement: React.FC = () => {
       </Card>
       <Modal
         open={deleteVisible}
-        title={`Delete '${activeDs?.name}?'`}
+        title={`${t('delete')} '${activeDs?.name}?'`}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
-        okText="Delete"
-        cancelText="Cancel"
       >
-        <p>Are you sure you want to delete <strong>{activeDs?.name}</strong>?</p>
+        {t('delete_dialog_text', {name: activeDs?.name})}
       </Modal>
       <Modal
         width={600}

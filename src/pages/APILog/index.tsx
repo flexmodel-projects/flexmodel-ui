@@ -20,9 +20,11 @@ import * as echarts from "echarts";
 import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
 import {css} from "@emotion/css";
 import LogSettings from "./components/LogSettings.tsx";
+import {useTranslation} from "react-i18next";
 
 const {RangePicker} = DatePicker;
 const LogViewer: React.FC = () => {
+  const {t} = useTranslation();
   const [isOver, setIsOver] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any[]>([]);
@@ -214,7 +216,7 @@ const LogViewer: React.FC = () => {
       <Card bordered={false}>
         <Row justify="space-between" align="middle">
           <Col span={4}>
-            <span>Logs</span>
+            <span>{t('logs')}</span>
           </Col>
           <Col span={20} style={{textAlign: "right"}}>
             <Space>
@@ -233,8 +235,9 @@ const LogViewer: React.FC = () => {
               {expand &&
                 <Row>
                   <Col span={6}>
-                    <Form.Item name="level" label="Level">
-                      <Select style={{width: '150px'}} mode="multiple" placeholder="Select your log level" allowClear>
+                    <Form.Item name="level" label={t('level')}>
+                      <Select style={{width: '150px'}} mode="multiple" placeholder={t('select_your_log_level')}
+                              allowClear>
                         <Select.Option value="DEBUG">Debug</Select.Option>
                         <Select.Option value="INFO">Info</Select.Option>
                         <Select.Option value="WARN">Warn</Select.Option>
@@ -243,24 +246,24 @@ const LogViewer: React.FC = () => {
                     </Form.Item>
                   </Col>
                   <Col span={18}>
-                    <Form.Item name="dateRange" label="Date range">
+                    <Form.Item name="dateRange" label={t('date_range')}>
                       <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                   </Col>
                 </Row>}
               <Row>
                 <Col span={19}>
-                  <Form.Item name="keyword" style={{width: '100%'}} label="Search Keywords">
+                  <Form.Item name="keyword" style={{width: '100%'}} label={t('search_keywords')}>
                     <Input
-                      placeholder="Search keywords"
+                      placeholder={t('search_keywords')}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={5}>
                   <Form.Item>
                     <Space style={{paddingLeft: '10px'}}>
-                      <Button icon={<SearchOutlined/>} type="primary" onClick={searchLog}>Search</Button>
-                      <Button type="default" onClick={resetLog}>Reset</Button>
+                      <Button icon={<SearchOutlined/>} type="primary" onClick={searchLog}>{t('search')}</Button>
+                      <Button type="default" onClick={resetLog}>{t('reset')}</Button>
                       <a
                         onClick={() => {
                           setExpand(!expand);
@@ -268,11 +271,11 @@ const LogViewer: React.FC = () => {
                       >
                         {expand ? (
                           <>
-                            Collapse <UpOutlined/>
+                            {t('collapse')} <UpOutlined/>
                           </>
                         ) : (
                           <>
-                            Expand
+                            {t('expand')}
                             <DownOutlined/>
                           </>
                         )}
@@ -307,8 +310,8 @@ const LogViewer: React.FC = () => {
         </Row>
         <Row justify="center" style={{marginTop: "16px"}}>
           {!isOver && (
-            <Button size="large" onClick={loadMore} loading={isLoading}>
-              Load more
+            <Button onClick={loadMore} loading={isLoading}>
+              {t('load_more')}
             </Button>
           )}
         </Row>
