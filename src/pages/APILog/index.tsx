@@ -143,6 +143,7 @@ const LogViewer: React.FC = () => {
 
   const resetLog = async () => {
     form.resetFields();
+    setQuery({current: 1, pageSize: 100});
     await fetchApiLogs();
   };
 
