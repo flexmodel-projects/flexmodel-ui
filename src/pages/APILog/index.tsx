@@ -183,7 +183,7 @@ const LogViewer: React.FC = () => {
     {
       title: "Created At",
       dataIndex: "createdAt",
-      width: 200,
+      width: 250,
     },
   ];
 
