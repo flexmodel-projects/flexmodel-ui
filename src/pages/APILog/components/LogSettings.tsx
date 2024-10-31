@@ -1,6 +1,7 @@
 import {Form, InputNumber, Modal, Switch} from "antd";
 import React, {useEffect, useState} from "react";
 import {getSettings, saveSettings} from "../../../api/settings.ts";
+import {useTranslation} from "react-i18next";
 
 interface LogSettingsProps {
   onConfirm?: (data: any) => void;
@@ -9,6 +10,7 @@ interface LogSettingsProps {
 }
 
 const LogSettings: React.FC<LogSettingsProps> = ({visible, onConfirm, onCancel}) => {
+  const {t} = useTranslation();
   const [settings, setSettings] = useState<any>();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const LogSettings: React.FC<LogSettingsProps> = ({visible, onConfirm, onCancel})
   }
 
   return (
-    <Modal title="Logs settings" open={visible} onOk={handleSubmit} onCancel={onCancel}>
+    <Modal title={t('logs_settings')} open={visible} onOk={handleSubmit} onCancel={onCancel}>
       <Form
         layout="vertical"
         form={form}
@@ -38,13 +40,13 @@ const LogSettings: React.FC<LogSettingsProps> = ({visible, onConfirm, onCancel})
       >
         <Form.Item
           name="maxDays"
-          label="Max days retention"
+          label={t('logs_max_days_retention')}
         >
           <InputNumber min={1} max={30}/>
         </Form.Item>
         <Form.Item
           name="consoleLoggingEnabled"
-          label="Enable console logging">
+          label={t('logs_enable_console_Logging')}>
           <Switch/>
         </Form.Item>
       </Form>

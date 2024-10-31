@@ -1,7 +1,8 @@
 import zhCN from "antd/locale/zh_CN";
+import enUS from "antd/locale/en_US";
 
 const initState = {
-  locale: zhCN,
+  locale: localStorage.getItem("i18nextLng") === "zh" ? zhCN : enUS,
 }
 
 const langReducer = (state = initState, action: any) => {

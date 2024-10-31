@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import {initReactI18next} from 'react-i18next';
 import en from './locales/en.json'
 import zh from './locales/zh.json'
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -13,8 +13,8 @@ const resources = {
   }
 }
 
-const currentLocale = localStorage.getItem('lan') || 'zh';
-
+const currentLocale = localStorage.getItem('i18nextLng') || 'zh';
+debugger
 i18n
   // 将 i18n 实例传递给 react-i18next
   .use(LanguageDetector)
