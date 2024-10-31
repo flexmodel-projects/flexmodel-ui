@@ -34,7 +34,7 @@ export const Header: React.FC<unknown> = () => {
             {locale == enUS ? '中文' : 'English'}
           </Button>
           <Tooltip title={t('help')}>
-            <a href="https://flexmodel.metacode.tech" target="_blank">
+            <a href="https://flexmodel.wetech.tech" target="_blank">
               <Button type="text" shape="circle" icon={<QuestionCircleOutlined/>}/>
             </a>
           </Tooltip>
