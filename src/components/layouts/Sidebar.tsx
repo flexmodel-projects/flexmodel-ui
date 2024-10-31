@@ -3,6 +3,8 @@ import {Layout, Menu} from 'antd';
 import {Link, useLocation} from 'react-router-dom';
 import {
   ApiOutlined,
+  CloudServerOutlined,
+  ContainerOutlined,
   DatabaseOutlined,
   DeploymentUnitOutlined,
   FileTextOutlined,
@@ -21,12 +23,11 @@ interface MenuItem {
 }
 
 
-
 const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey = "1"}) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
-  const { t } = useTranslation();
+  const {t} = useTranslation();
 
   // 菜单数据
   const menuData: MenuItem[] = [
@@ -54,17 +55,17 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey 
     },
     {
       key: "data",
-      icon: <DatabaseOutlined/>,
+      icon: <CloudServerOutlined/>,
       label: t('data'),
       children: [
         {
           key: "/datasource",
-          icon: <FileTextOutlined/>,
+          icon: <DatabaseOutlined/>,
           label: <Link to="/datasource">{t('data_source')}</Link>,
         },
         {
           key: "/modeling",
-          icon: <FileTextOutlined/>,
+          icon: <ContainerOutlined />,
           label: <Link to="/modeling">{t('data_modeling')}</Link>,
         },
       ],
