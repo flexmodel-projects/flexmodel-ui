@@ -52,7 +52,7 @@ interface TreeNode {
 }
 
 const ApiManagement: React.FC = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   // 状态定义
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [apiList, setApiList] = useState<ApiInfo[]>([]);
@@ -362,7 +362,7 @@ const ApiManagement: React.FC = () => {
           title={`${t('delete')} '${selectedNode?.data?.name}?'`}
         >
         <span>
-          {t('delete_dialog_text')}
+          {t('delete_dialog_text', selectedNode?.data?.name || '')}
         </span>
         </Modal>
       </Row>
