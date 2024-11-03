@@ -145,6 +145,7 @@ const ConnectDatabaseDrawer: React.FC<{
               <Radio value="mongodb">MongoDB</Radio>
               <div className={segmentTitle}>{t('connect_other')}</div>
               <Radio value="graphql" disabled>GraphQL</Radio>
+              <Radio value="restAPI" disabled>HTTP API</Radio>
             </Radio.Group>
           </Form.Item>
         )}

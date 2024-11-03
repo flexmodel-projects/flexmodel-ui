@@ -6,16 +6,17 @@ import Settings from "./pages/Settings";
 import DataModeling from "./pages/DataModeling";
 import APIManagement from "./pages/APIManagement";
 import DataSource from "./pages/DataSource";
+import Overview from "./pages/Overview";
 
 export const routes = [
   {
     path: "/",
-    element: <APIManagement/>,
+    element: <Overview/>,
   },
   {
     path: "/datasource",
     element: <DataSource/>,
-  },{
+  }, {
     path: "/modeling",
     element: <DataModeling/>,
   },

@@ -150,5 +150,18 @@
   "app_description": "多场景接口设计平台",
   "pagination_total_text": "显示{{start}}-{{end}}条 总共{{total}}条",
   "help": "帮助",
+  "overview": "概述",
+  "query": "查询",
+  "mutation": "变更",
+  "subscription": "订阅",
+  "datasource": "数据源",
+  "today": "今日",
+  "week": "本周",
+  "month": "本月",
+  "year": "本年",
+  "trend_analysis": "趋势分析",
+  "api_ranking": "接口访问排名",
+  "message": "消息",
+  "created_at": "创建时间",
   "welcome": "欢迎来到我们的应用程序"
 }

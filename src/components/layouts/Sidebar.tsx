@@ -8,6 +8,7 @@ import {
   DatabaseOutlined,
   DeploymentUnitOutlined,
   FileTextOutlined,
+  HomeOutlined,
   LineChartOutlined,
   SettingOutlined,
   UserOutlined,
@@ -31,6 +32,11 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey 
 
   // 菜单数据
   const menuData: MenuItem[] = [
+    {
+      key: "/",
+      icon: <HomeOutlined />,
+      label: <Link to="/">{t('overview')}</Link>,
+    },
     {
       key: "api",
       icon: <ApiOutlined/>,

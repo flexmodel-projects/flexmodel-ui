@@ -149,7 +149,7 @@ const LogViewer: React.FC = () => {
 
   const columns = [
     {
-      title: "Level",
+      title: t('level'),
       dataIndex: "level",
       width: 100,
       render: (level: string) => {
@@ -160,7 +160,7 @@ const LogViewer: React.FC = () => {
       },
     },
     {
-      title: "Message",
+      title: t('message'),
       dataIndex: "uri",
       render: (uri: string, record: any) => (
         <Row style={{fontSize: "12px", padding: "10px 0"}}>
@@ -181,7 +181,7 @@ const LogViewer: React.FC = () => {
       ),
     },
     {
-      title: "Created At",
+      title: t('created_at'),
       dataIndex: "createdAt",
       width: 250,
     },

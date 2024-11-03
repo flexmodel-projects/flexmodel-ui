@@ -150,5 +150,18 @@
   "app_description": "All-in-one API design platform",
   "pagination_total_text": "{{start}}-{{end}} of {{total}} items",
   "help": "Help",
+  "overview": "Overview",
+  "query": "Query",
+  "mutation": "Mutation",
+  "subscription": "Subscription",
+  "datasource": "Data Source",
+  "today": "Today",
+  "week": "Week",
+  "month": "Month",
+  "year": "Year",
+  "trend_analysis": "Trend Analysis",
+  "api_ranking": "API ranking",
+  "message": "Message",
+  "created_at": "Created At",
   "welcome": "Welcome to our application"
 }
