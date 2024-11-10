@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/configStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
-import {QuestionCircleOutlined} from "@ant-design/icons";
+import {FileSearchOutlined, QuestionCircleOutlined} from "@ant-design/icons";
 
 export const Header: React.FC<unknown> = () => {
   const {t} = useTranslation();
@@ -33,6 +33,11 @@ export const Header: React.FC<unknown> = () => {
                   onClick={() => changeLocale(locale == enUS ? zhCN : enUS)}>
             {locale == enUS ? '中文' : 'English'}
           </Button>
+          <Tooltip title={t('api_document')}>
+            <a href="/rapi-doc/index.html" target="_blank">
+              <Button type="text" shape="circle" icon={<FileSearchOutlined />}/>
+            </a>
+          </Tooltip>
           <Tooltip title={t('help')}>
             <a href="https://flexmodel.wetech.tech" target="_blank">
               <Button type="text" shape="circle" icon={<QuestionCircleOutlined/>}/>
