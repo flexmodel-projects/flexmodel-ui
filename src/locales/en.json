@@ -164,7 +164,7 @@
   "api_ranking": "API ranking",
   "message": "Message",
   "created_at": "Created At",
-  "graphql_endpoint_enabled": "GraphQL endpoint",
+  "graphql_endpoint_enabled": "GraphQL endpoint to public",
   "graphql_endpoint_path": "GraphQL endpoint path",
   "graphql_identity_provider": "GraphQL identity provider",
   "settings_add_route": "Add route",
