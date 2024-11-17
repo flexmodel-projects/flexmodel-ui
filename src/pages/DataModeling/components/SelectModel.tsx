@@ -13,7 +13,7 @@ import {createModel as reqCreateModel, dropModel, getModelList} from '../../../a
 import {css} from "@emotion/css";
 import {useNavigate} from "react-router-dom";
 import CreateModel from "./CreateModel.tsx";
-import {Datasource} from "../data";
+import {Datasource, Model} from "../data";
 import {useTranslation} from "react-i18next";
 
 interface ModelTree {
@@ -22,16 +22,16 @@ interface ModelTree {
 }
 
 interface SelectModelProps {
-  datasource: string;
+  datasource?: string;
   editable: boolean;
-  onChange: (ds: string, model: ModelTree) => void;
+  onChange: (ds: string, model: Model) => void;
 }
 
 const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
 
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const [activeDs, setActiveDs] = useState<string>(datasource);
+  const [activeDs, setActiveDs] = useState<string>(datasource || "system");
   const [dsList, setDsList] = useState<Datasource[]>([]);
   const [modelList, setModelList] = useState<ModelTree[]>([]);
   const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
@@ -59,7 +59,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   // 获取模型列表
   const reqModelList = async () => {
     setModelLoading(true);
-    const res: ModelTree[] = await getModelList(activeDs);
+    const res: Model[] = await getModelList(activeDs);
     setModelLoading(false);
     setModelList(res);
     setFilteredModelList(res); // 初始化时未过滤
@@ -68,7 +68,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   };
 
   // 处理模型选择
-  const handleItemChange = (item: ModelTree) => {
+  const handleItemChange = (item: Model) => {
     setActiveModel(item);
     onChange(activeDs, item);
   };
@@ -171,14 +171,16 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       />
       <Divider/>
       <Space>
-        <Dropdown overlay={
-          <Menu>
-            <Menu.Item onClick={() => setCreateDrawerVisible(true)}>{t('new_entity')}</Menu.Item>
-            <Menu.Item onClick={() => null} disabled>{t('new_enum')}</Menu.Item>
-          </Menu>
-        }>
-          <Button icon={<PlusOutlined/>}/>
-        </Dropdown>
+        {editable &&
+          <Dropdown overlay={
+            <Menu>
+              <Menu.Item onClick={() => setCreateDrawerVisible(true)}>{t('new_entity')}</Menu.Item>
+              <Menu.Item onClick={() => null} disabled>{t('new_enum')}</Menu.Item>
+            </Menu>
+          }>
+            <Button icon={<PlusOutlined/>}/>
+          </Dropdown>
+        }
         <Input
           placeholder={t('search_models')}
           value={filterText}

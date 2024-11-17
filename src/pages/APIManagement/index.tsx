@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   Col,
-  Drawer,
   Dropdown,
   Flex,
   Input,
@@ -26,38 +25,18 @@ import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
+import {ApiInfo, TreeNode} from "./data";
+import BatchCreate from "./components/BatchCreate.tsx";
 
 const {DirectoryTree} = Tree;
-
-// 定义 Tree 数据类型
-interface ApiInfo {
-  id: string;
-  name: string;
-  type?: string;
-  method?: string;
-  children?: ApiInfo[];
-  settingVisible?: boolean;
-  data: any;
-  meta: any;
-  enabled: boolean;
-}
-
-interface TreeNode {
-  title: string;
-  key: string;
-  isLeaf?: boolean;
-  children?: TreeNode[];
-  settingVisible?: boolean;
-  data: ApiInfo;
-}
 
 const ApiManagement: React.FC = () => {
   const {t} = useTranslation();
   // 状态定义
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [apiList, setApiList] = useState<ApiInfo[]>([]);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
-  const [apiDialogVisible, setApiDialogVisible] = useState<boolean>(false);
+  const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] = useState<boolean>(false);
+
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [editNode, setEditNode] = useState<string>("")
   const [editForm, setEditForm] = useState<any>({})
@@ -65,6 +44,13 @@ const ApiManagement: React.FC = () => {
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
 
+  const methodOptions = [
+    {value: 'GET', label: 'GET'},
+    {value: 'POST', label: 'POST'},
+    {value: 'PUT', label: 'PUT'},
+    {value: 'PATCH', label: 'PATCH'},
+    {value: 'DELETE', label: 'DELETE'},
+  ];
 
   useEffect(() => {
     setEditForm(selectedNode?.data)
@@ -163,14 +149,6 @@ const ApiManagement: React.FC = () => {
     await reqApiList();
     showEditInput(newApi);
   }
-
-  const methodOptions = [
-    {value: 'GET', label: 'GET'},
-    {value: 'POST', label: 'POST'},
-    {value: 'PUT', label: 'PUT'},
-    {value: 'PATCH', label: 'PATCH'},
-    {value: 'DELETE', label: 'DELETE'},
-  ];
 
   // 渲染树节点
   const renderTreeNodes = (data: ApiInfo[]): any[] =>
@@ -271,6 +249,7 @@ const ApiManagement: React.FC = () => {
                   <Menu>
                     <Menu.Item onClick={() => addApi()}>{t('new_api')}</Menu.Item>
                     <Menu.Item onClick={() => addFolder()}>{t('new_folder')}</Menu.Item>
+                    <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>{t('batch_new_api')}</Menu.Item>
                   </Menu>
                 }>
                   <Button icon={<PlusOutlined/>}/>
@@ -299,62 +278,48 @@ const ApiManagement: React.FC = () => {
           </Splitter.Panel>
           <Splitter.Panel>
             <Card>
-              <Row>
-                <Col style={{paddingBottom: '10px'}} span={24}>
-                  <Flex gap="small" justify="flex-start" wrap>
-                    <Input addonBefore={
-                      <Select value={editForm?.method}
-                              onChange={value => setEditForm({...editForm, method: value})}
-                              options={methodOptions}/>
-                    }
-                           prefix={<span>/api/v1</span>}
-                           style={{width: '85%'}} value={editForm?.path}
-                           onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
+              {
+                editForm?.type == 'API' ?
+                  <Row>
+                    <Col style={{paddingBottom: '10px'}} span={24}>
+                      <Flex gap="small" justify="flex-start" wrap>
+                        <Input addonBefore={
+                          <Select value={editForm?.method}
+                                  onChange={value => setEditForm({...editForm, method: value})}
+                                  options={methodOptions}/>
+                        }
+                               prefix={<span>/api/v1</span>}
+                               style={{width: '85%'}} value={editForm?.path}
+                               onChange={e => setEditForm({...editForm, path: e?.target?.value})}/>
 
-                    <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
-                      {t('save')}
-                    </Button>
-                    <Switch value={editForm?.enabled} onChange={val => {
-                      setEditForm({...editForm, enabled: val})
-                      updateApiStatus(editForm.id, val)
-                        .then(() => {
-                          message.success(val ? t('enabled') : t('closed'));
-                          reqApiList();
-                        });
-                    }}/>
-                  </Flex>
-                </Col>
-                <Col span={24}>
-                  <Tabs size="small" defaultActiveKey="graphql" items={items} onChange={onChange}/>
-                </Col>
-              </Row>
+                        <Button type="primary" onClick={handleSaveApi} icon={<SaveOutlined/>}>
+                          {t('save')}
+                        </Button>
+                        <Switch value={editForm?.enabled} onChange={val => {
+                          setEditForm({...editForm, enabled: val})
+                          updateApiStatus(editForm.id, val)
+                            .then(() => {
+                              message.success(val ? t('enabled') : t('closed'));
+                              reqApiList();
+                            });
+                        }}/>
+                      </Flex>
+                    </Col>
+                    <Col span={24}>
+                      <Tabs size="small" defaultActiveKey="graphql" items={items} onChange={onChange}/>
+                    </Col>
+                  </Row> :
+                  <div>
+                    <div>
+                      {t('folder_name')}: {editForm?.name}
+                    </div>
+                  </div>
+              }
+
             </Card>
 
           </Splitter.Panel>
         </Splitter>
-        <Drawer
-          open={drawerVisible}
-          onClose={() => setDrawerVisible(false)}
-          width="95%"
-          title="API design"
-          footer={
-            <div style={{textAlign: 'center'}}>
-              <Button onClick={() => setDrawerVisible(false)}>Cancel</Button>
-              <Button type="primary">
-                Create
-              </Button>
-            </div>
-          }
-        >
-          {/*{viewType === 'GRAPH_QL' && <GraphQL/>}*/}
-        </Drawer>
-        <Modal
-          open={apiDialogVisible}
-          width={600}
-          onCancel={() => setApiDialogVisible(false)}
-          footer={null}
-        >
-        </Modal>
         <Modal
           open={deleteDialogVisible}
           onOk={handleDelete}
@@ -366,6 +331,14 @@ const ApiManagement: React.FC = () => {
         </span>
         </Modal>
       </Row>
+      <BatchCreate
+        onConfirm={(data: any) => {
+          console.log(data);
+          reqApiList();
+          setBatchCreateDrawerVisible(false);
+        }}
+        onCancel={() => setBatchCreateDrawerVisible(false)}
+        visible={batchCreateDialogDrawer}/>
     </>
   )
 };

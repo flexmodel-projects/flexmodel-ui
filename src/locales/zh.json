@@ -169,5 +169,10 @@
   "graphql_identity_provider": "GraphQL身份源",
   "settings_add_route": "添加路由",
   "settings_routes": "路由配置",
+  "batch_new_api": "批量新建接口",
+  "folder_name": "文件夹名称",
+  "api_folder": "接口文件夹",
+  "path_id_field": "路径ID字段",
+  "generate_apis": "生成接口",
   "welcome": "欢迎来到我们的应用程序"
 }

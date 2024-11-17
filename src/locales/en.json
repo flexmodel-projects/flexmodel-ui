@@ -169,5 +169,10 @@
   "graphql_identity_provider": "GraphQL identity provider",
   "settings_add_route": "Add route",
   "settings_routes": "Routes config",
+  "batch_new_api": "Batch create API",
+  "folder_name": "Folder name",
+  "api_folder": "API folder",
+  "path_id_field": "Path id field",
+  "generate_apis": "Generate APIs",
   "welcome": "Welcome to our application"
 }
