@@ -3,13 +3,14 @@ import {css} from "@emotion/css";
 import {Menu, message} from "antd";
 import About from "./components/About.tsx";
 import Base from "./components/Base.tsx";
+import Proxy from "./components/Proxy.tsx";
 import {getSettings, saveSettings as reqSaveSettings} from "../../api/settings.ts";
 import Security from "./components/Security.tsx";
 import {useTranslation} from "react-i18next";
 
 const Settings: React.FC = () => {
   const {t} = useTranslation();
-  type SettingsStateKeys = 'base' | 'security' | 'about';
+  type SettingsStateKeys = 'base' | 'security' | 'proxy' | 'about';
 
   type SettingsState = {
     mode: 'inline' | 'horizontal';
@@ -20,6 +21,7 @@ const Settings: React.FC = () => {
     base: t('settings_basic_settings'),
     /*variables: 'Variables',*/
     security: t('settings_security'),
+    proxy: t('settings_proxy'),
     about: t('settings_about'),
   };
 
@@ -30,6 +32,8 @@ const Settings: React.FC = () => {
         return <Base settings={settings} onChange={data => saveSettings(data)}/>;
       case 'security':
         return <Security settings={settings} onChange={data => saveSettings(data)}/>;
+      case 'proxy':
+        return <Proxy settings={settings} onChange={data => saveSettings(data)}/>;
       /*case 'variables':
         return <Variables/>;*/
       case 'about':

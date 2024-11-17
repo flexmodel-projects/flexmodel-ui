@@ -141,6 +141,7 @@
   "settings_basic_settings": "基础设置",
   "settings_security": "安全",
   "settings_about": "关于",
+  "settings_proxy": "代理",
   "settings_app_name": "应用名称",
   "settings_global_api_rate_limiting": "全局接口限流",
   "form_save_success": "保存成功",
@@ -163,8 +164,10 @@
   "api_ranking": "接口访问排名",
   "message": "消息",
   "created_at": "创建时间",
-  "welcome": "欢迎来到我们的应用程序",
-  "graphql_endpoint_enabled": "开启GraphQL端点",
+  "graphql_endpoint_enabled": "GraphQL端点",
   "graphql_endpoint_path": "GraphQL端点路径",
-  "graphql_identity_provider": "GraphQL身份源"
+  "graphql_identity_provider": "GraphQL身份源",
+  "settings_add_route": "添加路由",
+  "settings_routes": "路由配置",
+  "welcome": "欢迎来到我们的应用程序"
 }

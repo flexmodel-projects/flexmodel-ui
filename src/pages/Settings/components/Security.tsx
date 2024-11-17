@@ -28,7 +28,7 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
     graphqlEndpointEnabled: false,
     graphqlEndpointPath: '/graphql',
     graphqlEndpointIdentityProvider: null
-  })
+  });
   const [options, setOptions] = useState<SelectProps['options']>([]);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
           <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
             <Input addonBefore='/api/v1'/>
           </Form.Item>
-          <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')} required>
+          <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
             <Select options={options} placeholder={t('select_a_provider')} allowClear/>
           </Form.Item>
         </>}

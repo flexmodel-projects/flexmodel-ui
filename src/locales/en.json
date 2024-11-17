@@ -143,6 +143,7 @@
   "settings_about": "About",
   "settings_app_name": "Application Name",
   "settings_global_api_rate_limiting": "Global API rate limiting",
+  "settings_proxy": "Proxy",
   "form_save_success": "Saved successfully",
   "form_save_fail": "Failed to save",
   "form_delete_success": "Deleted successfully",
@@ -163,5 +164,10 @@
   "api_ranking": "API ranking",
   "message": "Message",
   "created_at": "Created At",
+  "graphql_endpoint_enabled": "GraphQL endpoint",
+  "graphql_endpoint_path": "GraphQL endpoint path",
+  "graphql_identity_provider": "GraphQL identity provider",
+  "settings_add_route": "Add route",
+  "settings_routes": "Routes config",
   "welcome": "Welcome to our application"
 }
