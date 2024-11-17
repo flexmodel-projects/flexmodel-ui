@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, InputNumber, Switch} from 'antd';
+import {Button, Form, Input, InputNumber, Select, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
+import {SelectProps} from "rc-select/lib/Select";
+import {getIdentityProviders} from "../../../api/identity-provider.ts";
 
 interface SecurityProps {
   settings: any;
@@ -11,6 +13,9 @@ interface SecurityData {
   rateLimitingEnabled: boolean;
   intervalInSeconds: number;
   maxRequestCount: number;
+  graphqlEndpointEnabled: boolean;
+  graphqlEndpointPath?: string;
+  graphqlEndpointIdentityProvider?: string | null;
 }
 
 const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
@@ -19,8 +24,20 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
   const [formData, setFormData] = useState<SecurityData>({
     rateLimitingEnabled: false,
     intervalInSeconds: 60,
-    maxRequestCount: 500
+    maxRequestCount: 500,
+    graphqlEndpointEnabled: false,
+    graphqlEndpointPath: '/graphql',
+    graphqlEndpointIdentityProvider: null
   })
+  const [options, setOptions] = useState<SelectProps['options']>([]);
+
+  useEffect(() => {
+    getIdentityProviders()
+      .then(res => setOptions(res.map((d: { name: string }) => ({
+        value: d.name,
+        label: d.name,
+      }))));
+  }, []);
 
   useEffect(() => {
     form.setFieldsValue(settings.security);
@@ -48,6 +65,17 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
           </Form.Item>
           <Form.Item name="maxRequestCount" label={t('max_request_count')} required>
             <InputNumber min={1} addonAfter={t('times')}/>
+          </Form.Item>
+        </>}
+        <Form.Item name="graphqlEndpointEnabled" label={t('graphql_endpoint_enabled')}>
+          <Switch/>
+        </Form.Item>
+        {formData?.graphqlEndpointEnabled && <>
+          <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
+            <Input addonBefore='/api/v1'/>
+          </Form.Item>
+          <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')} required>
+            <Select options={options} placeholder={t('select_a_provider')} allowClear/>
           </Form.Item>
         </>}
         <Form.Item>

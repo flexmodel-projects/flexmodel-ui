@@ -163,5 +163,8 @@
   "api_ranking": "接口访问排名",
   "message": "消息",
   "created_at": "创建时间",
-  "welcome": "欢迎来到我们的应用程序"
+  "welcome": "欢迎来到我们的应用程序",
+  "graphql_endpoint_enabled": "开启GraphQL端点",
+  "graphql_endpoint_path": "GraphQL端点路径",
+  "graphql_identity_provider": "GraphQL身份源"
 }

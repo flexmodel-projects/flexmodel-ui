@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Layout, Menu} from 'antd';
+import {Layout, Menu, Space} from 'antd';
 import {Link, useLocation} from 'react-router-dom';
 import {
   ApiOutlined,
@@ -14,6 +14,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
+import {css} from "@emotion/css";
 
 // 定义菜单项的类型
 interface MenuItem {
@@ -118,12 +119,17 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = ({defaultSelectedKey 
     setOpenKeys(getOpenKeys(menuData)); // 获取当前选中路径的父菜单并展开
   };
 
+  const logo = css`
+    padding-top: 15px;
+    padding-left: 15px;
+  `;
+
   return (
     <Layout.Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
-      <div className="logo">
-        <img src="/logo.svg" width={40} alt="logo"/>
+      <Space className={logo}>
+        <img src="/logo.png" width={40} alt="logo"/>
         {!collapsed && <span style={{fontSize: 20, color: '#fff', marginLeft: 10}}>Flexmodel</span>}
-      </div>
+      </Space>
       <Menu
         theme="dark"
         mode="inline"

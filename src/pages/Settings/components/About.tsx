@@ -9,7 +9,7 @@ const About: React.FC = () => {
   return (
     <div style={{textAlign: 'center', marginTop: '20px'}}>
       <div className="logo" style={{justifySelf: 'center'}}>
-        <img style={{width: '80px'}} src="/logo.svg" alt="Flexmodel Logo"/>
+        <img style={{width: '80px'}} src="/logo.png" alt="Flexmodel Logo"/>
       </div>
       <Title level={3} className="description">
         Flexmodel | {t('app_description')}
