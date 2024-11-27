@@ -16,7 +16,7 @@ import {
   Tooltip
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 import dayjs from "dayjs";
 import {Model} from "../data";
@@ -208,7 +208,9 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       <Row justify="space-between">
         <Col>{model.name} {model.comment}</Col>
         <Col>
-          <Button type="primary" onClick={() => {
+          <Button type="primary"
+                  icon={<PlusOutlined/>}
+                  onClick={() => {
             setDialogFormVisible(true);
             setEditMode(false);
           }}>
