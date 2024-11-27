@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Button, Checkbox, Divider, Drawer, Form, Input, message, Select, Splitter} from "antd";
 import SelectModel from "../../DataModeling/components/SelectModel.tsx";
+import {generateAPIs} from "../../../api/api-info.ts";
 
 interface Props {
   onConfirm: (data: any) => void;
@@ -21,8 +22,8 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
   useEffect(() => {
     setFieldOptions(model?.fields.map(f => ({value: f.name, label: f.name})));
     form.setFieldsValue({
-      datasource: datasource,
-      model: model?.name,
+      datasourceName: datasource,
+      modelName: model?.name,
       apiFolder: model?.name,
       idFieldOfPath: model?.fields?.find(f => f.type === 'id')?.name,
       generateAPIs: ['list', 'view', 'create', 'update', 'delete', 'pagination']
@@ -43,7 +44,7 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
           </Button>
           <Button onClick={async () => {
             form.validateFields().then((values) => {
-              message.success(JSON.stringify(values));
+              generateAPIs(values).then(() => message.success(t('form_save_success')));
               onConfirm(values);
             });
           }} type="primary">
@@ -69,10 +70,10 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
         <Splitter.Panel>
           <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 10px 10px'}}>
             <Form form={form} layout="vertical">
-              <Form.Item name="datasource" hidden>
+              <Form.Item name="datasourceName" hidden>
                 <Input/>
               </Form.Item>
-              <Form.Item name="model" hidden>
+              <Form.Item name="modelName" hidden>
                 <Input/>
               </Form.Item>
               <Form.Item label={t('api_folder')} name="apiFolder" required>

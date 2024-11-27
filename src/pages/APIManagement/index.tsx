@@ -327,7 +327,7 @@ const ApiManagement: React.FC = () => {
           title={`${t('delete')} '${selectedNode?.data?.name}?'`}
         >
         <span>
-          {t('delete_dialog_text', selectedNode?.data?.name || '')}
+          {t('delete_dialog_text', {name: selectedNode?.data?.name || ''})}
         </span>
         </Modal>
       </Row>

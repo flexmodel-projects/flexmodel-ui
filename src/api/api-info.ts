@@ -16,6 +16,14 @@ export function createApi(data: object) {
   });
 }
 
+export function generateAPIs(data: object) {
+  return request({
+    url: `${BASE_URI}/apis/generate`,
+    method: 'post',
+    data: data
+  });
+}
+
 export function updateApi(id: string, data: object) {
   return request({
     url: `${BASE_URI}/apis/${id}`,
