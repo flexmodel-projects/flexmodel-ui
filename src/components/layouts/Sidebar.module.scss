@@ -1,9 +1,19 @@
 .root {
   :global {
-    .logo-wrapper {
-      padding: 12px 0;
-      border-bottom: 1px solid #dee2e6;
-      border-right: 1px solid #dee2e6;
+    .menu-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 7px;
+      border-radius: 5px;
+      padding: 5px 0;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .menu-item-selected {
+      color: #1677ff;
+      background-color: #e6f4ff;
     }
   }
 }

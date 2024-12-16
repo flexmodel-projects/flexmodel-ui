@@ -1,45 +1,44 @@
-import {useRoutes} from "react-router-dom";
-import APIDocument from "./pages/APIDocument";
-import APILog from "./pages/APILog";
+import { useRoutes } from "react-router-dom";
 import IdentityProvider from "./pages/IdentityProvider";
 import Settings from "./pages/Settings";
-import DataModeling from "./pages/DataModeling";
-import APIManagement from "./pages/APIManagement";
-import DataSource from "./pages/DataSource";
 import Overview from "./pages/Overview";
+import DataView from "./pages/DataView";
+import ApiView from "./pages/ApiView";
 
 export const routes = [
   {
     path: "/",
-    element: <Overview/>,
+    element: <Overview />,
   },
   {
-    path: "/datasource",
-    element: <DataSource/>,
-  }, {
-    path: "/modeling",
-    element: <DataModeling/>,
+    path: "/data",
+    element: <DataView />,
   },
+
   {
-    path: "/api-management",
-    element: <APIManagement/>
+    path: "/api",
+    element: <ApiView />,
   },
-  {
-    path: "/api-document",
-    element: <APIDocument/>
-  },
-  {
-    path: "/api-log",
-    element: <APILog/>,
-  },
+  // {
+  //   path: "/api-management",
+  //   element: <APIManagement />,
+  // },
+  // {
+  //   path: "/api-document",
+  //   element: <APIDocument />,
+  // },
+  // {
+  //   path: "/api-log",
+  //   element: <APILog />,
+  // },
   {
     path: "/identity-providers",
-    element: <IdentityProvider/>,
+    element: <IdentityProvider />,
   },
   {
     path: "/settings",
-    element: <Settings/>,
+    element: <Settings />,
   },
 ];
 
-export const RenderRoutes = () => useRoutes(routes)
+export const RenderRoutes = () => useRoutes(routes);
