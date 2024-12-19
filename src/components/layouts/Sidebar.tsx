@@ -1,14 +1,8 @@
-import React, { useState } from "react";
-import { Layout } from "antd";
-import { Link } from "react-router-dom";
-import {
-  ApiOutlined,
-  CloudServerOutlined,
-  HomeOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
+import React, {useState} from "react";
+import {Layout} from "antd";
+import {Link} from "react-router-dom";
+import {ApiOutlined, CloudServerOutlined, HomeOutlined, SettingOutlined, UserOutlined,} from "@ant-design/icons";
+import {useTranslation} from "react-i18next";
 import styles from "./Sidebar.module.scss";
 
 // 定义菜单项的类型
@@ -43,7 +37,7 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = () => {
     {
       key: "/identity-providers",
       icon: <UserOutlined />,
-      label: <Link to="/identity-providers">{t("IdP")}</Link>,
+      label: <Link to="/identity-providers">{t("identity_providers")}</Link>,
     },
     {
       key: "/settings",

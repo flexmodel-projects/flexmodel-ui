@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Card, Col, Divider, Row, Segmented, Splitter} from 'antd';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import SelectModel from "./components/SelectModel.tsx";
 import FieldList from "./components/FieldList.tsx";
 import IndexList from "./components/IndexList.tsx";
@@ -10,7 +10,6 @@ import {useTranslation} from "react-i18next";
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate(); // 替代 useHistory
 
   // 从URL中获取datasource参数
   const {datasource} = location.state as { datasource: string } || {};
@@ -31,12 +30,6 @@ const ModelingPage: React.FC = () => {
     setActiveDs(ds);
     setActiveModel(item);
   };
-
-  useEffect(() => {
-    if (activeDs) {
-      navigate(`/modeling`, {state: {datasource: activeDs}});
-    }
-  }, [activeDs, navigate]);
 
   return (
     <>
