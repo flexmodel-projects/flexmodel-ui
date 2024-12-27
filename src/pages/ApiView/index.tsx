@@ -9,6 +9,7 @@ import {
 import APIDocument from "../APIDocument";
 import APILog from "../APILog";
 import APIManagement from "../APIManagement";
+import styles from "./index.module.scss";
 
 // 标签页切换的logic处理
 const onChange = (key: string) => {
@@ -42,6 +43,8 @@ const ApiView: React.FC = () => {
 
   return (
     <Tabs
+      className={styles.root}
+      style={{ flex: 1 }}
       onChange={onChange}
       type="card"
       items={tabContent.map((content) => {

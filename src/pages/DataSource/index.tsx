@@ -1,6 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree} from 'antd';
-import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Divider,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  message,
+  Modal,
+  Space,
+  Spin,
+  Tree,
+} from "antd";
+import Icon, {
+  BlockOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
@@ -9,19 +26,25 @@ import {
   getDatasourceList,
   importModels as reqImportModels,
   updateDatasource,
-  validateDatasource
+  validateDatasource,
 } from "../../api/datasource.ts";
-import {useNavigate} from "react-router-dom";
-import {DbsMap} from "./common.ts";
-import {getModelList} from "../../api/model.ts";
-import {useTranslation} from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { DbsMap } from "./common.ts";
+import { getModelList } from "../../api/model.ts";
+import { useTranslation } from "react-i18next";
+import styles from "./index.module.scss";
 
 const DatasourceManagement: React.FC = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [dsList, setDsList] = useState<any[]>([]);
-  const [activeDs, setActiveDs] = useState<any>({config: {dbKind: ''}, createTime: '', name: '', type: ''});
+  const [activeDs, setActiveDs] = useState<any>({
+    config: { dbKind: "" },
+    createTime: "",
+    name: "",
+    type: "",
+  });
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
@@ -41,7 +64,7 @@ const DatasourceManagement: React.FC = () => {
         setActiveDs(list[0]);
       }
     } catch (error) {
-      message.error('Failed to load datasource list.');
+      message.error("Failed to load datasource list.");
       console.error(error);
     } finally {
       setDsLoading(false);
@@ -57,13 +80,17 @@ const DatasourceManagement: React.FC = () => {
     try {
       const result = await validateDatasource(activeDs);
       if (result.success) {
-        message.success(t('test_connection_success_message', {time: result.time}));
+        message.success(
+          t("test_connection_success_message", { time: result.time })
+        );
       } else {
-        message.error(t('test_connection_fail_message', {msg: result.errorMsg}));
+        message.error(
+          t("test_connection_fail_message", { msg: result.errorMsg })
+        );
       }
     } catch (error) {
       console.log(error);
-      message.error(t('test_connection_fail_message_2'));
+      message.error(t("test_connection_fail_message_2"));
     } finally {
       setTestLoading(false);
     }
@@ -79,14 +106,14 @@ const DatasourceManagement: React.FC = () => {
           username: formData.username,
           password: formData.password,
           url: formData.url,
-        }
+        },
       });
       setEditVisible(false);
       setActiveDs(res);
       fetchDatasourceList();
     } catch (error) {
-      console.error(error)
-      message.error('Failed to update datasource.');
+      console.error(error);
+      message.error("Failed to update datasource.");
     }
   };
 
@@ -98,7 +125,7 @@ const DatasourceManagement: React.FC = () => {
   };
 
   const handleTreeClick = (item: any) => {
-    console.log(item)
+    console.log(item);
     setActiveDs(item);
   };
 
@@ -106,7 +133,7 @@ const DatasourceManagement: React.FC = () => {
     const models = await getModelList(activeDs.name);
     const script = {
       schema: models,
-      data: []
+      data: [],
     };
     scriptForm.setFieldValue("script", JSON.stringify(script));
     setExportVisible(true);
@@ -118,101 +145,139 @@ const DatasourceManagement: React.FC = () => {
   };
   const importModels = async () => {
     const values = await scriptForm.validateFields();
-    reqImportModels(activeDs.name, values)
-      .then(() => message.success('Models import successfully'))
+    reqImportModels(activeDs.name, values).then(() =>
+      message.success("Models import successfully")
+    );
     setImportVisible(false);
-  }
+  };
 
   return (
     <>
-      <Card>
-        <div style={{display: 'flex', backgroundColor: '#fff'}}>
-          <div style={{width: '25%', borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: '10px 10px 0px 0px'}}>
-            <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-              <span style={{fontWeight: 600, fontSize: '16px'}}>
-                {t('datasource_management')}
+      <Card style={{ height: "100%" }} className={styles.root}>
+        <div style={{ display: "flex", backgroundColor: "#fff", flex: 1 }}>
+          <div
+            style={{
+              width: "25%",
+              borderRight: "1px solid rgba(5, 5, 5, 0.06)",
+              padding: "10px 10px 0px 0px",
+            }}
+          >
+            <div
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              <span style={{ fontWeight: 600, fontSize: "16px" }}>
+                {t("datasource_management")}
               </span>
             </div>
-            <Divider/>
+            <Divider />
             <Spin spinning={dsLoading}>
               <Tree
-                treeData={dsList.map(ds => ({
+                treeData={dsList.map((ds) => ({
                   ...ds,
                   title: ds.name,
                   key: ds.name,
                 }))}
                 selectedKeys={[activeDs.name]}
                 titleRender={(node) => (
-                  <div style={{display: 'flex', alignItems: 'center', width: '250px'}}>
-                    {<Icon component={DbsMap[node.config?.dbKind]}/>}&nbsp;<span>{node.title}</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "250px",
+                    }}
+                  >
+                    {<Icon component={DbsMap[node.config?.dbKind]} />}&nbsp;
+                    <span>{node.title}</span>
                     <Dropdown
                       overlay={
                         <Menu>
                           <Menu.Item
-                            style={{color: 'red'}}
-                            icon={<DeleteOutlined/>}
-                            disabled={node.type === 'system'}
+                            style={{ color: "red" }}
+                            icon={<DeleteOutlined />}
+                            disabled={node.type === "system"}
                             onClick={() => {
                               setDeleteVisible(true);
                             }}
                           >
-                            {t('delete')}
+                            {t("delete")}
                           </Menu.Item>
                         </Menu>
                       }
-                      trigger={['hover']}
+                      trigger={["hover"]}
                       placement="bottomRight"
                     >
-                      <MoreOutlined style={{marginLeft: 'auto', cursor: 'pointer'}}/>
+                      <MoreOutlined
+                        style={{ marginLeft: "auto", cursor: "pointer" }}
+                      />
                     </Dropdown>
                   </div>
                 )}
-                onSelect={(_, {node}) => handleTreeClick(node)}
+                onSelect={(_, { node }) => handleTreeClick(node)}
               />
             </Spin>
-            <Divider/>
+            <Divider />
             <Button
               type="primary"
-              icon={<BlockOutlined/>}
+              icon={<BlockOutlined />}
               onClick={() => setDrawerVisible(true)}
-              style={{width: '100%'}}
+              style={{ width: "100%" }}
               ghost
             >
-              {t('connect_datasource')}
+              {t("connect_datasource")}
             </Button>
           </div>
-          <div style={{width: '75%', padding: '8px 20px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', paddingBottom: '10px'}}>
+          <div style={{ width: "75%", padding: "8px 20px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                paddingBottom: "10px",
+              }}
+            >
               <div>{activeDs.name}</div>
               <div>
                 <Space>
-                  <Button onClick={handleImport}>{t('import')}</Button>
-                  <Button onClick={handleExport}>{t('export')}</Button>
-                  <Button onClick={() => {
-                    navigate(`/modeling?datasource=${activeDs.name}`)
-                  }}>{t('modeling')}</Button>
-                  <Button onClick={handleTestConnection} loading={testLoading}>{t('test')}</Button>
+                  <Button onClick={handleImport}>{t("import")}</Button>
+                  <Button onClick={handleExport}>{t("export")}</Button>
+                  <Button
+                    onClick={() => {
+                      navigate(`/modeling?datasource=${activeDs.name}`);
+                    }}
+                  >
+                    {t("modeling")}
+                  </Button>
+                  <Button onClick={handleTestConnection} loading={testLoading}>
+                    {t("test")}
+                  </Button>
                   <Button
                     type="primary"
-                    disabled={activeDs.type === 'system'}
+                    disabled={activeDs.type === "system"}
                     onClick={() => setEditVisible(true)}
                   >
-                    {t('edit')}
+                    {t("edit")}
                   </Button>
                 </Space>
               </div>
             </div>
             <div>
-              <DatabaseInfo datasource={activeDs}/>
+              <DatabaseInfo datasource={activeDs} />
             </div>
           </div>
         </div>
-        <ConnectDatabaseDrawer visible={drawerVisible} onChange={(data) => {
-          fetchDatasourceList();
-          setActiveDs(data);
-        }} onClose={() => {
-          setDrawerVisible(false);
-        }}/>
+        <ConnectDatabaseDrawer
+          visible={drawerVisible}
+          onChange={(data) => {
+            fetchDatasourceList();
+            setActiveDs(data);
+          }}
+          onClose={() => {
+            setDrawerVisible(false);
+          }}
+        />
         <EditDSConfig
           visible={editVisible}
           datasource={activeDs}
@@ -222,11 +287,11 @@ const DatasourceManagement: React.FC = () => {
       </Card>
       <Modal
         open={deleteVisible}
-        title={`${t('delete')} '${activeDs?.name}?'`}
+        title={`${t("delete")} '${activeDs?.name}?'`}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
       >
-        {t('delete_dialog_text', {name: activeDs?.name})}
+        {t("delete_dialog_text", { name: activeDs?.name })}
       </Modal>
       <Modal
         width={600}
@@ -237,7 +302,7 @@ const DatasourceManagement: React.FC = () => {
       >
         <Form form={scriptForm}>
           <Form.Item name="script">
-            <Input.TextArea rows={10}/>
+            <Input.TextArea rows={10} />
           </Form.Item>
         </Form>
       </Modal>
@@ -250,7 +315,7 @@ const DatasourceManagement: React.FC = () => {
       >
         <Form form={scriptForm}>
           <Form.Item name="script" required>
-            <Input.TextArea rows={10}/>
+            <Input.TextArea rows={10} />
           </Form.Item>
         </Form>
       </Modal>

@@ -42,20 +42,12 @@ export const Header: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           </Button>
           <Tooltip title={t("api_document")}>
             <a href="/rapi-doc/index.html" target="_blank">
-              <Button
-                type="text"
-                shape="circle"
-                icon={<FileSearchOutlined />}
-              />
+              <FileSearchOutlined style={{ fontSize: "18px" }} />
             </a>
           </Tooltip>
           <Tooltip title={t("help")}>
             <a href="https://flexmodel.wetech.tech" target="_blank">
-              <Button
-                type="text"
-                shape="circle"
-                icon={<QuestionCircleOutlined />}
-              />
+              <QuestionCircleOutlined style={{ fontSize: "18px" }} />
             </a>
           </Tooltip>
         </Space>

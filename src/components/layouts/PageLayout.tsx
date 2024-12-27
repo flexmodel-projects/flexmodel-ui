@@ -17,7 +17,13 @@ const PageLayout = () => {
       <Layout>
         <Sidebar defaultSelectedKey={location.pathname} />
         <Layout.Content style={{ overflowX: "auto" }}>
-          <div style={{ padding: "15px", height: "calc(100vh - 64px)" }}>
+          <div
+            style={{
+              padding: "15px",
+              height: "calc(100vh - 64px)",
+              display: "flex",
+            }}
+          >
             <RenderRoutes />
           </div>
         </Layout.Content>

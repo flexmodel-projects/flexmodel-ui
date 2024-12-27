@@ -1,8 +1,14 @@
-import React, {useState} from "react";
-import {Layout} from "antd";
-import {Link} from "react-router-dom";
-import {ApiOutlined, CloudServerOutlined, HomeOutlined, SettingOutlined, UserOutlined,} from "@ant-design/icons";
-import {useTranslation} from "react-i18next";
+import React, { useState } from "react";
+import { Layout } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ApiOutlined,
+  CloudServerOutlined,
+  HomeOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import styles from "./Sidebar.module.scss";
 
 // 定义菜单项的类型
@@ -22,34 +28,35 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = () => {
     {
       key: "/",
       icon: <HomeOutlined />,
-      label: <Link to="/">{t("overview")}</Link>,
+      label: t("overview"),
     },
     {
-      key: "api",
+      key: "/api",
       icon: <ApiOutlined />,
-      label: <Link to="/api">{t("api")}</Link>,
+      label: t("api"),
     },
     {
-      key: "data",
+      key: "/data",
       icon: <CloudServerOutlined />,
-      label: <Link to="/data">{t("data")}</Link>,
+      label: t("data"),
     },
     {
       key: "/identity-providers",
       icon: <UserOutlined />,
-      label: <Link to="/identity-providers">{t("identity_providers")}</Link>,
+      label: t("identity_providers"),
     },
     {
       key: "/settings",
       icon: <SettingOutlined />,
-      label: <Link to="/settings">{t("settings")}</Link>,
+      label: t("settings"),
     },
   ];
 
+  const history = useNavigate();
   // 处理菜单项的点击
   const handleMenuClick = (key: string) => {
-    console.log("handle menu click: ", key);
     setCurrKey(key);
+    history(key);
   };
 
   // css-in-js vs css modules 当运行时css-in-js性能不足时，考虑编译时css-in-js

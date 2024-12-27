@@ -1,0 +1,18 @@
+.root {
+  :global {
+    .ant-spin-nested-loading {
+      display: flex;
+      flex: 1;
+
+      .ant-spin-container {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+
+        .ant-card-body {
+          flex: 1;
+        }
+      }
+    }
+  }
+}
