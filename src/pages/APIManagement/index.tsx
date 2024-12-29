@@ -298,7 +298,7 @@ const ApiManagement: React.FC = () => {
 
   return (
     <>
-      <Row style={{ flex: 1 }}>
+      <Row className="h-full">
         <Splitter>
           <Splitter.Panel
             defaultSize="20%"
@@ -349,11 +349,14 @@ const ApiManagement: React.FC = () => {
             </Card>
           </Splitter.Panel>
           <Splitter.Panel style={{ display: "flex" }}>
-            <Card style={{ flex: 1, width: "100%" }}>
+            <Card
+              style={{ flex: 1, width: "100%" }}
+              className="api-management-card"
+            >
               {editForm?.type == "API" ? (
-                <Row>
-                  <Col style={{ paddingBottom: "10px" }} span={24}>
-                    <Flex gap="small" justify="flex-start" wrap>
+                <Row className="flex flex-col">
+                  <Col style={{ paddingBottom: "10px", height: "42px" }}>
+                    <Flex gap="small" justify="flex-start" align="center" wrap>
                       <Input
                         addonBefore={
                           <Select
@@ -391,7 +394,7 @@ const ApiManagement: React.FC = () => {
                       />
                     </Flex>
                   </Col>
-                  <Col span={24}>
+                  <Col className="flex-1">
                     <Tabs
                       size="small"
                       defaultActiveKey="graphql"

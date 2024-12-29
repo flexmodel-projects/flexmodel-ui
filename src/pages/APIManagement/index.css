@@ -9,3 +9,7 @@
 .graphiql-session-header {
   height: 2px;
 }
+
+.api-management-card .ant-card-body {
+  height: 100%;
+}

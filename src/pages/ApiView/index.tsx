@@ -11,32 +11,27 @@ import APILog from "../APILog";
 import APIManagement from "../APIManagement";
 import styles from "./index.module.scss";
 
-// 标签页切换的logic处理
-const onChange = (key: string) => {
-  console.log(key);
-};
-
 const ApiView: React.FC = () => {
   const { t } = useTranslation();
 
   // 标签页渲染内容
-  const tabContent = [
+  const items = [
     {
       key: "management",
       label: t("api_management"),
-      element: APIManagement,
+      children: <APIManagement />,
       icon: <DeploymentUnitOutlined />,
     },
     {
       key: "document",
       label: t("api_document"),
-      element: APIDocument,
+      children: <APIDocument />,
       icon: <FileTextOutlined />,
     },
     {
       key: "log",
       label: t("api_log"),
-      element: APILog,
+      children: <APILog />,
       icon: <LineChartOutlined />,
     },
   ];
@@ -45,18 +40,9 @@ const ApiView: React.FC = () => {
     <Tabs
       className={styles.root}
       style={{ flex: 1 }}
-      onChange={onChange}
       type="card"
-      items={tabContent.map((content) => {
-        const { label, key, icon } = content;
-
-        return {
-          label,
-          key,
-          children: <content.element />,
-          icon,
-        };
-      })}
+      defaultActiveKey="management"
+      items={items}
     />
   );
 };
