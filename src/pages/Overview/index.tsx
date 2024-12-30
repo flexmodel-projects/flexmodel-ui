@@ -148,7 +148,7 @@ const StatisticsPage: React.FC = () => {
       style={{ flex: 1, width: "100%", display: "flex" }}
       className={styles.root}
     >
-      <Spin spinning={false}>
+      <Spin spinning={loading}>
         <Row gutter={16}>
           <Col span={6}>
             <Card>
