@@ -31,7 +31,7 @@ export const Header: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     <Layout.Header className={styles.root}>
       <Row justify="space-between" align="middle">
         {children}
-        <Space style={{ paddingRight: "15px" }}>
+        <Space className="pr-[15px]">
           <Button
             size="small"
             color="primary"
@@ -42,12 +42,12 @@ export const Header: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           </Button>
           <Tooltip title={t("api_document")}>
             <a href="/rapi-doc/index.html" target="_blank">
-              <FileSearchOutlined style={{ fontSize: "18px" }} />
+              <FileSearchOutlined className="text-lg" />
             </a>
           </Tooltip>
           <Tooltip title={t("help")}>
             <a href="https://flexmodel.wetech.tech" target="_blank">
-              <QuestionCircleOutlined style={{ fontSize: "18px" }} />
+              <QuestionCircleOutlined className="text-lg" />
             </a>
           </Tooltip>
         </Space>

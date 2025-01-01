@@ -17,6 +17,7 @@ import {
   Tabs,
   TabsProps,
   Tree,
+  Tooltip,
 } from "antd";
 import { MoreOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons";
 import {
@@ -177,16 +178,29 @@ const ApiManagement: React.FC = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              overflow: "hidden",
+              paddingLeft: "4px",
             }}
           >
-            {editNode === item.id ? (
-              <HoverEditInput
-                onChange={renameApi}
-                value={editForm.name || ""}
-              />
-            ) : (
-              item.name
-            )}
+            <Tooltip title={item.name}>
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {editNode === item.id ? (
+                  <HoverEditInput
+                    onChange={renameApi}
+                    value={editForm.name || ""}
+                  />
+                ) : (
+                  item.name
+                )}
+              </span>
+            </Tooltip>
+
             <Dropdown
               overlay={
                 <Menu>
@@ -210,10 +224,7 @@ const ApiManagement: React.FC = () => {
               }
               trigger={["hover"]}
             >
-              <MoreOutlined
-                className={item.settingVisible ? "" : "invisible"}
-                onClick={(e) => e.stopPropagation()}
-              />
+              <MoreOutlined onClick={(e) => e.stopPropagation()} />
             </Dropdown>
           </div>
         </>
@@ -335,6 +346,7 @@ const ApiManagement: React.FC = () => {
                 />
               </Space>
               <DirectoryTree
+                className="api-tree"
                 onExpand={onExpand}
                 expandedKeys={expandedKeys}
                 selectedKeys={selectedKeys}

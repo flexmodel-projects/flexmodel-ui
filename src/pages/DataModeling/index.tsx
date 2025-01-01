@@ -34,8 +34,8 @@ const ModelingPage: React.FC = () => {
 
   return (
     <>
-      <Card style={{ height: "100%" }} className={styles.root}>
-        <Row style={{ flex: 1 }}>
+      <Card className={[styles.root, "h-full"].join(" ")}>
+        <Row className="flex-1">
           <Col span={24}>
             <div>
               <Row>
@@ -44,7 +44,7 @@ const ModelingPage: React.FC = () => {
                     {t("data_modeling")}
                   </span>
                 </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
+                <Col span={12} className="text-right">
                   <Segmented
                     value={selectedItem}
                     onChange={(val) => setSelectedItem(val as string)}
