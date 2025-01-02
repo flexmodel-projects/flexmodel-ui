@@ -43,6 +43,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
     if (tmpType.startsWith('relation')) {
       const relationName = tmpType.replace('relation:', '');
       const relatedModel = modelList.find(m => m.name === relationName);
+      form.setFieldValue('cardinality', 'ONE_TO_ONE');
       setRelationModel(relatedModel);
     } else {
       setRelationModel(null);
