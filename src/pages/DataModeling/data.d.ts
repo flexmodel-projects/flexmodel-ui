@@ -23,8 +23,6 @@ interface Field extends Record<string, object> {
   unique: boolean;
   nullable: boolean;
   comment: string;
-  validators: [];
-  generator: object | undefined;
 }
 
 

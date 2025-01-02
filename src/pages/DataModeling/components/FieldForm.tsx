@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, Modal, Radio, Select, Switch} from 'antd';
 import {getModelList} from '../../../api/model'; // 替换为你的 API 调用
-import {BasicFieldTypes, FieldInitialValues, GeneratorTypes, IDGeneratedValues, ValidatorTypes} from "../common.ts";
-import FieldGeneratorList from './FieldGeneratorList.tsx'; // 替换为你的组件
-import FieldValidatorList from './FieldValidatorList';
-import {useTranslation} from "react-i18next"; // 替换为你的组件
+import {BasicFieldTypes, FieldInitialValues, IDGeneratedValues} from "../common.ts";
+import {useTranslation} from "react-i18next";
+import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
 
 interface FieldFormProps {
   visible: boolean;
@@ -145,27 +144,11 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {/* Value generator */}
-        {GeneratorTypes[form.getFieldValue('type')]?.length > 0 && (
-          <Form.Item label={t('default_value')} name="generator">
-            <FieldGeneratorList
-              datasource={datasource}
-              model={model}
-              field={form.getFieldsValue()}
-            />
-          </Form.Item>
-        )}
-
-        {/* Value validators */}
-        {ValidatorTypes[form.getFieldValue('type')]?.length > 0 && (
-          <Form.Item label={t('value_validators')} name="validators">
-            <FieldValidatorList
-              datasource={datasource}
-              model={model}
-              field={form.getFieldsValue()}
-            />
-          </Form.Item>
-        )}
+        <Form.Item label={t('default_value')} name="defaultValue">
+          <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {
+            console.log(val)
+          }}/>
+        </Form.Item>
 
         {!['id', 'relation'].includes(form.getFieldValue('type')) && (
           <>

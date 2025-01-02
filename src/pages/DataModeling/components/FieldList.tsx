@@ -89,16 +89,22 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       },
     },
     {
+      title: t('default_value'),
+      dataIndex: 'defaultValue',
+      key: 'defaultValue',
+      render: (value: boolean) => value?.toString(),
+    },
+    {
       title: t('unique'),
       dataIndex: 'unique',
       key: 'unique',
-      render: (unique: boolean) => (unique ? t('yes') : t('no'))
+      render: (value: boolean) => (value ? t('yes') : t('no'))
     },
     {
       title: t('nullable'),
       dataIndex: 'nullable',
       key: 'nullable',
-      render: (unique: boolean) => (unique ? t('yes') : t('no'))
+      render: (value: boolean) => (value ? t('yes') : t('no'))
     },
     {title: t('comment'), dataIndex: 'comment', key: 'comment'},
     {

@@ -105,7 +105,6 @@
   "indexes": "Indexes",
   "length": "Length",
   "default_value": "Default value",
-  "value_validators": "Value validators",
   "precision": "Precision",
   "scale": "Scale",
   "cardinality": "Cardinality",

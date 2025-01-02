@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, InputNumber, Switch, DatePicker } from 'antd';
+import {DatePicker, Input, InputNumber, Switch} from 'antd';
 import dayjs from 'dayjs';
 
 interface FieldInputProps {
@@ -22,11 +22,9 @@ const FieldInput: React.FC<FieldInputProps> = ({ field, editMode = false, value,
       case 'text':
         return <Input.TextArea placeholder={field.comment} value={value} onChange={(e) => onChange(e.target.value)} />;
       case 'decimal':
-        return <InputNumber placeholder={field.comment} value={value} onChange={(val) => onChange(val)} style={{ width: '100%' }} />;
       case 'int':
-        return <InputNumber placeholder={field.comment} value={value} onChange={(val) => onChange(val)} style={{ width: '100%' }} />;
       case 'bigint':
-        return <Input placeholder={field.comment} value={value} onChange={(e) => onChange(e.target.value)} />;
+        return <InputNumber placeholder={field.comment} value={value} onChange={(val) => onChange(val)} style={{ width: '100%' }} />;
       case 'boolean':
         return <Switch checked={value} onChange={(val) => onChange(val)} />;
       case 'date':
