@@ -197,12 +197,7 @@ const StatisticsPage: React.FC = () => {
         <Row style={{ marginTop: 16, flex: 1 }} gutter={16}>
           <Col span={24}>
             <Card
-              style={{
-                flex: 1,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-              }}
+              className="flex flex-1 h-full flex-col overflow-hidden"
               title={t("trend_analysis")}
               extra={
                 <Space>
@@ -232,28 +227,23 @@ const StatisticsPage: React.FC = () => {
                 </Space>
               }
             >
-              <Row gutter={16} style={{ height: "100%" }}>
+              <Row gutter={16} className="h-full">
                 <Col span={18}>
                   <ReactECharts
                     option={chartConfig}
                     style={{ height: "100%" }}
                   />
                 </Col>
-                <Col span={6}>
+                <Col span={6} className="flex flex-col">
                   <Title level={5}>{t("api_ranking")}</Title>
                   <List
-                    style={{ overflowY: "scroll", height: 280 }}
+                    style={{ overflowY: "scroll", maxHeight: "56vh" }}
+                    className="flex flex-1 relative"
                     dataSource={rankingData}
                     renderItem={(item, index) => (
                       <List.Item style={{ padding: "10px 16px" }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            width: "100%",
-                          }}
-                        >
-                          <Space style={{ overflow: "hidden" }}>
+                        <div className="flex w-full justify-between">
+                          <Space className="overflow-hidden">
                             <Badge count={index + 1} showZero color="green" />{" "}
                             {item.name}
                           </Space>

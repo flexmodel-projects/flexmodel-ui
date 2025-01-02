@@ -13,3 +13,17 @@
 .api-management-card .ant-card-body {
   height: 100%;
 }
+
+.api-tree .ant-tree-treenode {
+  gap: 4px;
+}
+
+.api-tree.ant-tree-block-node .ant-tree-treenode .ant-tree-node-content-wrapper {
+  overflow: hidden;
+  flex: 1;
+  gap: 4px;
+}
+
+.api-tree.ant-tree-block-node .ant-tree-treenode .ant-tree-title {
+  width: calc(100% - 14px);
+}
