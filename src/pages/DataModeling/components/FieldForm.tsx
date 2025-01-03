@@ -79,15 +79,15 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
         </Form.Item>
         <Form.Item label={t('type')} name="type" rules={[{required: true}]}>
           <Select value={tmpType} onChange={handleTypeChange} filterOption>
-            <Select.OptGroup label="ID">
+            <Select.OptGroup label={t('select_group_id')}>
               <Select.Option value="id" disabled={hasId}>ID</Select.Option>
             </Select.OptGroup>
-            <Select.OptGroup label="Basic field">
+            <Select.OptGroup label={t('select_group_basic_field')}>
               {BasicFieldTypes.map(item => (
                 <Select.Option key={item.name} value={item.name}>{item.label}</Select.Option>
               ))}
             </Select.OptGroup>
-            <Select.OptGroup label="Relation">
+            <Select.OptGroup label={t('select_group_relation')}>
               {modelList.map(item => (
                 <Select.Option key={item.name} value={`relation:${item.name}`}>{item.name}</Select.Option>
               ))}
@@ -145,14 +145,13 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        <Form.Item label={t('default_value')} name="defaultValue">
-          <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {
-            console.log(val)
-          }}/>
-        </Form.Item>
-
-        {!['id', 'relation'].includes(form.getFieldValue('type')) && (
+        {!(['id', 'relation'].includes(form.getFieldValue('type')) || form.getFieldValue('type')?.startsWith('relation')) && (
           <>
+            <Form.Item label={t('default_value')} name="defaultValue">
+              <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {
+                console.log(val)
+              }}/>
+            </Form.Item>
             <Form.Item label={t('nullable')} name="nullable" valuePropName="checked">
               <Switch/>
             </Form.Item>
