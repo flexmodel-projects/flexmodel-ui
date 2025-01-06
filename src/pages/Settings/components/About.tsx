@@ -8,7 +8,7 @@ const About: React.FC = () => {
   const {t} = useTranslation();
   return (
     <div style={{textAlign: 'center', marginTop: '20px'}}>
-      <div className="logo" style={{justifySelf: 'center'}}>
+      <div className="logo" style={{justifySelf: 'center',padding: '60px'}}>
         <img style={{width: '80px'}} src="/logo.png" alt="Flexmodel Logo"/>
       </div>
       <Title level={3} className="description">

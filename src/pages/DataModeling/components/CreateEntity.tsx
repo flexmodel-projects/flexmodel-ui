@@ -15,7 +15,7 @@ interface Props {
   visible: boolean;
 }
 
-const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}) => {
+const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}) => {
   const {t} = useTranslation();
 
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
@@ -244,4 +244,4 @@ const CreateModel: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}
   );
 };
 
-export default CreateModel;
+export default CreateEntity;

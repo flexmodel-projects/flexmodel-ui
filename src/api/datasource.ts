@@ -63,3 +63,12 @@ export function deleteDatasource(datasourceName: string) {
     method: 'delete'
   });
 }
+
+
+export function executeNativeQuery(datasourceName: string, data: any) {
+  return request({
+    url: `${BASE_URI}/datasources/${datasourceName}/native-query`,
+    method: 'post',
+    data: data
+  });
+}

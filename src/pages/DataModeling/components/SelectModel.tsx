@@ -1,20 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree} from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  MoreOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  TableOutlined
-} from '@ant-design/icons';
+import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined} from '@ant-design/icons';
 import {getDatasourceList} from '../../../api/datasource';
 import {createModel as reqCreateModel, dropModel, getModelList} from '../../../api/model';
-import {css} from "@emotion/css";
 import {useNavigate} from "react-router-dom";
-import CreateModel from "./CreateModel.tsx";
+import CreateEntity from "./CreateEntity.tsx";
 import {Datasource, Model} from "../data";
 import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../store/configStore.ts";
 
 interface ModelTree {
   name: string;
@@ -30,10 +24,12 @@ interface SelectModelProps {
 const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
 
   const {t} = useTranslation();
+  const {locale} = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
   const [dsList, setDsList] = useState<Datasource[]>([]);
   const [modelList, setModelList] = useState<ModelTree[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
   const [activeModel, setActiveModel] = useState<ModelTree | null>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
@@ -61,9 +57,11 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
     setModelLoading(true);
     const res: Model[] = await getModelList(activeDs);
     setModelLoading(false);
-    setModelList(res);
-    setFilteredModelList(res); // 初始化时未过滤
-    setActiveModel(res[0] || null);
+    const groupData = groupByType(res);
+    setModelList(groupData);
+    setFilteredModelList(groupData); // 初始化时未过滤
+    setExpandedKeys([groupData[0]?.key]);
+    setActiveModel(activeModel || res[0] || null);
     onChange(activeDs, res[0] || null);
   };
 
@@ -138,6 +136,43 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
     }
   }, [activeDs]);
 
+  useEffect(() => {
+    reqModelList();
+  }, [locale]);
+
+  const onExpand = (expandedKeys: any) => {
+    setExpandedKeys(expandedKeys);
+  };
+
+  /**
+   * 按照 type 分组并生成特定结构
+   * @param {Array} data - 输入的数据数组
+   * @returns {Array} - 转换后的分组结构
+   */
+  const groupByType = (data: any): any[] => {
+    const r = Object.values(
+      data.reduce((acc: any, item: any) => {
+        const {type, name, ...rest} = item;
+
+        // 如果分组不存在，则创建分组
+        if (!acc[type]) {
+          acc[type] = {
+            type: type === "entity" ? "entity_group" : type === "native_query" ? "native_query_group" : "other",
+            key: type,
+            name: type === "entity" ? t('entities') : type === "native_query" ? t('native_queries') : "Other",
+            children: [],
+            isLeaf: false
+          };
+        }
+
+        // 将当前对象放入对应的 children 数组中
+        acc[type].children.push({name, type, key: name, isLeaf: true, ...rest});
+        return acc;
+      }, {})
+    );
+    return r;
+  }
+
   return (
     <div>
       <Select
@@ -175,7 +210,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
           <Dropdown overlay={
             <Menu>
               <Menu.Item onClick={() => setCreateDrawerVisible(true)}>{t('new_entity')}</Menu.Item>
-              <Menu.Item onClick={() => null} disabled>{t('new_enum')}</Menu.Item>
+              <Menu.Item onClick={() => null} disabled>{t('new_native_query')}</Menu.Item>
             </Menu>
           }>
             <Button icon={<PlusOutlined/>}/>
@@ -192,29 +227,25 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       <Divider/>
       <Spin spinning={modelLoading}>
         <Tree
-          className={css`
-            .ant-tree-switcher {
-              display: none;
-            }
-          `}
           ref={treeRef}
           height={380}
           treeData={filteredModelList} // 使用过滤后的数据
-          fieldNames={{key: 'name', title: 'name', children: 'children'}}
+          expandedKeys={expandedKeys}
+          onExpand={onExpand}
+          fieldNames={{key: 'key', title: 'name', children: 'children'}}
           selectedKeys={[activeModel?.name || '']}
           onSelect={(_, {node}) => handleItemChange(node)}
           titleRender={(node: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '220px'}}>
               <div style={{display: 'flex', alignItems: 'center'}}>
                 <Space>
-                  <TableOutlined/>
                   <span title={node.name}
                         style={{textOverflow: 'ellipsis', overflow: 'hidden', width: '180px', display: 'block'}}>
                     {node.name}
                   </span>
                 </Space>
               </div>
-              {editable && (
+              {editable && node?.isLeaf && (
                 <Dropdown
                   overlay={
                     <Menu onClick={handleMenuClick}>
@@ -239,8 +270,8 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       >
         {t('delete_dialog_text', {name: activeModel?.name})}
       </Modal>
-      <CreateModel visible={createDrawerVisible} datasource={activeDs} onConfirm={addModel}
-                   onCancel={() => setCreateDrawerVisible(false)}/>
+      <CreateEntity visible={createDrawerVisible} datasource={activeDs} onConfirm={addModel}
+                    onCancel={() => setCreateDrawerVisible(false)}/>
     </div>
   );
 };
