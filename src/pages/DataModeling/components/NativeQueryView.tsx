@@ -1,14 +1,20 @@
 import TextArea from "antd/es/input/TextArea";
-import {Button, Form, Space, Table} from "antd";
+import {Button, Form, notification, Space, Table} from "antd";
 import {useEffect, useState} from "react";
 import {executeNativeQuery} from "../../../api/datasource.ts";
+import type {NativeQueryModel} from "../data";
+import {modifyModel} from "../../../api/model.ts";
+import {useTranslation} from "react-i18next";
 
 interface NativeQueryViewProps {
   datasource: string;
   model: any;
+  onConfirm?: (model: NativeQueryModel) => void;
 }
 
-const NativeQueryView = ({datasource, model}: NativeQueryViewProps) => {
+const NativeQueryView = ({datasource, model, onConfirm}: NativeQueryViewProps) => {
+  const {t} = useTranslation();
+
   const [form] = Form.useForm();
   const [execResult, setExecResult]: any = useState({});
   const [columns, setColumns]: any = useState([{
@@ -34,16 +40,32 @@ const NativeQueryView = ({datasource, model}: NativeQueryViewProps) => {
         key: key,
         title: key,
         dataIndex: key,
-        width: 200,
+        width: 100,
         ellipsis: true,
         render: (text: any) => {
           return text + '';
         }
       })
     }
-    console.log(cols);
     setColumns(cols);
     setExecResult(res);
+  }
+
+  const handleNativeQuerySave = async () => {
+    await modifyModel(datasource, {
+      name: model.name,
+      statement: form.getFieldValue('statement'),
+      type: 'native_query'
+    });
+    notification.success({message: t('form_save_success')});
+    if (onConfirm) {
+      onConfirm({
+        name: model.name,
+        fields: [],
+        statement: form.getFieldValue('statement'),
+        type: 'native_query'
+      });
+    }
   }
 
   return (
@@ -60,7 +82,7 @@ const NativeQueryView = ({datasource, model}: NativeQueryViewProps) => {
           <Space align="end" style={{float: "right"}}>
             Time: {execResult?.time} ms
             <Button type="default" onClick={handleNativeQueryExecute}>Execute</Button>
-            <Button type="primary">Save</Button>
+            <Button type="primary" onClick={handleNativeQuerySave}>Save</Button>
           </Space>
         </Form.Item>
       </Form>

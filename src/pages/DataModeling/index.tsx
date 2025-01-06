@@ -14,6 +14,7 @@ const ModelingPage: React.FC = () => {
   const {datasource} = (location.state as { datasource?: string }) || {};
   const [activeDs, setActiveDs] = useState(datasource || "");
   const [activeModel, setActiveModel] = useState<any>({});
+  const [selectModelVersion, setSelectModelVersion] = useState(0);
 
   // 处理选择的模型变化
   const handleItemChange = (ds: string, item: any) => {
@@ -27,11 +28,15 @@ const ModelingPage: React.FC = () => {
       case activeModel?.type === "entity":
         return <EntityView datasource={activeDs} model={activeModel}/>;
       case activeModel?.type === "native_query":
-        return <NativeQueryView datasource={activeDs} model={{statement: activeModel.statement}}/>;
+        return <NativeQueryView
+          datasource={activeDs}
+          model={{name: activeModel.name, statement: activeModel.statement}}
+          onConfirm={() => setSelectModelVersion(selectModelVersion + 1)}
+        />;
       case activeModel?.type?.endsWith("_group"):
         return <ModelGroupView datasource={activeDs} model={activeModel}/>;
       default:
-        return <div style={{padding: "20px", color: "gray"}}>请选择模型进行操作</div>;
+        return <div style={{padding: "20px", color: "gray"}}>Please select a model to operate.</div>;
     }
   };
 
@@ -45,6 +50,7 @@ const ModelingPage: React.FC = () => {
                 datasource={activeDs}
                 editable
                 onChange={handleItemChange}
+                version={selectModelVersion}
               />
               <Divider/>
             </div>

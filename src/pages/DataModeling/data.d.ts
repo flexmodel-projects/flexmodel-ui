@@ -12,9 +12,17 @@ export interface Datasource {
 
 export interface Model {
   name: string,
-  comment: string,
   fields: any[],
-  indexes: any[]
+  type: 'entity'|'native_query',
+}
+
+export interface Entity extends Model {
+  indexes: any[],
+  comment: string,
+}
+
+export interface NativeQueryModel extends Model {
+  statement: string,
 }
 
 interface Field extends Record<string, object> {

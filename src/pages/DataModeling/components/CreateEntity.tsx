@@ -4,13 +4,13 @@ import {ColumnsType} from 'antd/es/table';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
-import type {Model} from "../data.d.ts";
+import type {Entity} from "../data.d.ts";
 import {FieldInitialValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
 
 interface Props {
   datasource: string;
-  onConfirm: (model: Model) => void;
+  onConfirm: (model: Entity) => void;
   onCancel: () => void;
   visible: boolean;
 }
@@ -31,7 +31,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
     setDrawerVisible(visible);
   }, [visible]);
 
-  const [model, setModel] = useState<Model>({
+  const [model, setModel] = useState<Entity>({
     name: '',
     comment: '',
     fields: [
@@ -44,7 +44,8 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
         comment: 'ID',
       }
     ],
-    indexes: []
+    indexes: [],
+    type: 'entity'
   });
 
   const handleAddField = () => {

@@ -41,14 +41,12 @@ const EntityView = ({model, datasource}: Props) => {
         <FieldList
             datasource={datasource}
             model={model}
-            /* onFieldsChange={(fields) => setActiveModel((prev) => ({ ...prev, fields }))}*/
         />
     )}
     {selectedItem === "index" && (
         <IndexList
             datasource={datasource}
             model={model}
-            /*onIndexesChange={(indexes) => setActiveModel((prev) => ({ ...prev, indexes }))}*/
         />
     )}
     {selectedItem === "record" && (

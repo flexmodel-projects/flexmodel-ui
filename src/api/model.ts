@@ -1,5 +1,6 @@
 import {BASE_URI} from "./base.ts";
 import request from "../utils/request.ts";
+import {Model} from "../pages/DataModeling/data";
 
 export function getModelList(datasourceName: string) {
   return request({
@@ -8,11 +9,19 @@ export function getModelList(datasourceName: string) {
   });
 }
 
-export function createModel(datasourceName: string, data: any) {
+export function createModel(datasourceName: string, data: Model) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models`,
     method: 'post',
     data: {...data, type: 'entity'}
+  });
+}
+
+export function modifyModel(datasourceName: string, data: { name: string, statement: any, type: string }) {
+  return request({
+    url: `${BASE_URI}/datasources/${datasourceName}/models/${data.name}`,
+    method: 'put',
+    data: data,
   });
 }
 

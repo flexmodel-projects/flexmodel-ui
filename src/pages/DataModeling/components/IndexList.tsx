@@ -3,12 +3,12 @@ import {Button, notification, Popconfirm, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 import IndexForm from "./IndexForm";
-import type {Index, Model} from "../data.d.ts";
+import type {Entity, Index} from "../data.d.ts";
 import {useTranslation} from "react-i18next";
 
 interface IndexListProps {
   datasource: string;
-  model: Model;
+  model: Entity;
 }
 
 const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {

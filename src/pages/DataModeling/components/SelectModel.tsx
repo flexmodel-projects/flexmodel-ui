@@ -19,9 +19,10 @@ interface SelectModelProps {
   datasource?: string;
   editable: boolean;
   onChange: (ds: string, model: Model) => void;
+  version?: number;
 }
 
-const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange}) => {
+const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange, version}) => {
 
   const {t} = useTranslation();
   const {locale} = useSelector((state: RootState) => state.locale);
@@ -31,7 +32,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   const [modelList, setModelList] = useState<ModelTree[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
-  const [activeModel, setActiveModel] = useState<ModelTree | null>(null);
+  const [activeModel, setActiveModel] = useState<any>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   const [filterText, setFilterText] = useState<string>(''); // 监听搜索框输入
   const treeRef = useRef<any>(null);
   // 添加模型
-  const addModel = async (item: any) => {
+  const addEntity = async (item: any) => {
     await reqCreateModel(activeDs, item);
     setCreateDrawerVisible(false);
     await reqModelList();
@@ -60,9 +61,10 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
     const groupData = groupByType(res);
     setModelList(groupData);
     setFilteredModelList(groupData); // 初始化时未过滤
-    setExpandedKeys([groupData[0]?.key]);
-    setActiveModel(activeModel || res[0] || null);
-    onChange(activeDs, res[0] || null);
+    setExpandedKeys(expandedKeys || [groupData[0]?.key]);
+    const m = activeModel || res[0] || null;
+    setActiveModel(m);
+    onChange(activeDs, m);
   };
 
   // 处理模型选择
@@ -137,8 +139,16 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
   }, [activeDs]);
 
   useEffect(() => {
-    reqModelList();
+    if (locale) {
+      reqModelList();
+    }
   }, [locale]);
+
+  useEffect(() => {
+    if (version) {
+      reqModelList();
+    }
+  }, [version]);
 
   const onExpand = (expandedKeys: any) => {
     setExpandedKeys(expandedKeys);
@@ -270,7 +280,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
       >
         {t('delete_dialog_text', {name: activeModel?.name})}
       </Modal>
-      <CreateEntity visible={createDrawerVisible} datasource={activeDs} onConfirm={addModel}
+      <CreateEntity visible={createDrawerVisible} datasource={activeDs} onConfirm={addEntity}
                     onCancel={() => setCreateDrawerVisible(false)}/>
     </div>
   );

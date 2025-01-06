@@ -4,12 +4,12 @@ import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import FieldForm from "./FieldForm.tsx";
 import {FieldInitialValues, FieldTypeMap} from "../common.ts";
-import {Field, Model} from "../data";
+import {Entity, Field} from "../data";
 import {useTranslation} from "react-i18next";
 
 interface FieldListProps {
   datasource: string;
-  model: Model;
+  model: Entity;
 }
 
 const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
