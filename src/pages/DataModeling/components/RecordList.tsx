@@ -19,7 +19,7 @@ import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 import dayjs from "dayjs";
-import {Model} from "../data";
+import {Entity} from "../data";
 import {useTranslation} from "react-i18next";
 
 interface Field {
@@ -36,7 +36,7 @@ interface MRecord {
 
 interface RecordListProps {
   datasource: string;
-  model: Model;
+  model: Entity;
 }
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
@@ -211,9 +211,9 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
           <Button type="primary"
                   icon={<PlusOutlined/>}
                   onClick={() => {
-            setDialogFormVisible(true);
-            setEditMode(false);
-          }}>
+                    setDialogFormVisible(true);
+                    setEditMode(false);
+                  }}>
             {t('new_record')}
           </Button>
         </Col>
