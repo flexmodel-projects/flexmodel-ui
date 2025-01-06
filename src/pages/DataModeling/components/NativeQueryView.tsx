@@ -1,6 +1,6 @@
 import TextArea from "antd/es/input/TextArea";
 import {Button, Form, Space, Table} from "antd";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {executeNativeQuery} from "../../../api/datasource.ts";
 
 interface NativeQueryViewProps {
@@ -26,7 +26,8 @@ const NativeQueryView = ({datasource, model}: NativeQueryViewProps) => {
       result: [],
       time: number
     } = await executeNativeQuery(datasource, {statement: form.getFieldValue('statement'), parameters: {}});
-    const first = res?.result[0] || {};
+    const result: any[] = res?.result || [];
+    const first = result.length ? result[0] : {};
     const cols = [];
     for (const key in first) {
       cols.push({
