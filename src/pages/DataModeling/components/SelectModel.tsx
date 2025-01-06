@@ -61,7 +61,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
     const groupData = groupByType(res);
     setModelList(groupData);
     setFilteredModelList(groupData); // 初始化时未过滤
-    setExpandedKeys(expandedKeys || [groupData[0]?.key]);
+    setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
     const m = activeModel || res[0] || null;
     setActiveModel(m);
     onChange(activeDs, m);
