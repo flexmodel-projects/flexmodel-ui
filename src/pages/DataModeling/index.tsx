@@ -31,7 +31,9 @@ const ModelingPage: React.FC = () => {
         return <NativeQueryView
           datasource={activeDs}
           model={{name: activeModel.name, statement: activeModel.statement}}
-          onConfirm={() => setSelectModelVersion(selectModelVersion + 1)}
+          onConfirm={() => {
+            setSelectModelVersion(selectModelVersion + 1);
+          }}
         />;
       case activeModel?.type?.endsWith("_group"):
         return <ModelGroupView datasource={activeDs} model={activeModel}/>;
