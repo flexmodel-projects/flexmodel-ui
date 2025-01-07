@@ -32,10 +32,8 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
     }
   }, [model, form]);
 
-  const extractParameters = (text: string): string[] => {
-    const regex = /\${(.*?)}/g;
-    return Array.from(text.matchAll(regex), (match) => match[1]);
-  };
+  const extractParameters = (text: string): string[] =>
+    [...new Set([...text.matchAll(/\${(.*?)}/g)].map(match => match[1]))];
 
   const handleNativeQueryExecute = async () => {
     const statement = form.getFieldValue("statement");
