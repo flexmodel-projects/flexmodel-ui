@@ -53,10 +53,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);
-      notification.success({message: t('field_form_save_success_text')});
+      notification.success({message: t('form_save_success')});
     } catch (error) {
       console.log(error)
-      notification.error({message: t('field_form_save_fail_text')});
+      notification.error({message: t('form_save_failed')});
     }
   };
 

@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Dropdown,
-  Empty,
-  message,
-  Modal,
-  Row,
-  Spin,
-  Tree,
-} from "antd";
-import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
-import {
-  deleteIdentityProvider,
-  getIdentityProviders,
-  updateIdentityProvider,
-} from "../../api/identity-provider";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Col, Divider, Dropdown, Empty, message, Modal, Row, Spin, Tree,} from "antd";
+import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
+import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider,} from "../../api/identity-provider";
 import IdPInfo from "./components/IdPInfo.tsx";
 import EditProvider from "./components/EditProvider.tsx";
 import CreateProvider from "./components/CreateProvider.tsx";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 
 interface IdentityProvider {
@@ -96,7 +80,7 @@ const IdPManagement: React.FC = () => {
       setActiveIdP(reqData);
       message.success(t("form_save_success"));
     } catch {
-      message.error(t("form_save_fail"));
+      message.error(t("form_save_failed"));
     }
   };
 
