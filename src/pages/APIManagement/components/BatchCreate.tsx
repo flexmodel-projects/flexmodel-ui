@@ -59,7 +59,7 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
             <SelectModel
               datasource={datasource}
               editable={false}
-              onChange={(ds: string, model: Model) => {
+              onSelect={(ds: string, model: Model) => {
                 setDatasource(ds);
                 setModel(model);
               }}

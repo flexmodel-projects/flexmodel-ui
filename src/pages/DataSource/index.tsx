@@ -1,23 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Divider,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  message,
-  Modal,
-  Space,
-  Spin,
-  Tree,
-} from "antd";
-import Icon, {
-  BlockOutlined,
-  DeleteOutlined,
-  MoreOutlined,
-} from "@ant-design/icons";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree,} from "antd";
+import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
@@ -28,10 +11,10 @@ import {
   updateDatasource,
   validateDatasource,
 } from "../../api/datasource.ts";
-import { useNavigate } from "react-router-dom";
-import { DbsMap } from "./common.ts";
-import { getModelList } from "../../api/model.ts";
-import { useTranslation } from "react-i18next";
+import {useNavigate} from "react-router-dom";
+import {DbsMap} from "./common.ts";
+import {getModelList} from "../../api/model.ts";
+import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 
 const DatasourceManagement: React.FC = () => {
@@ -125,7 +108,6 @@ const DatasourceManagement: React.FC = () => {
   };
 
   const handleTreeClick = (item: any) => {
-    console.log(item);
     setActiveDs(item);
   };
 

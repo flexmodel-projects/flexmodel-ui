@@ -18,11 +18,11 @@ interface ModelTree {
 interface SelectModelProps {
   datasource?: string;
   editable: boolean;
-  onChange: (ds: string, model: Model) => void;
+  onSelect: (ds: string, model: Model) => void;
   version?: number;
 }
 
-const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange, version}) => {
+const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect, version}) => {
 
   const {t} = useTranslation();
   const {locale} = useSelector((state: RootState) => state.locale);
@@ -64,13 +64,14 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
     setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
     const m = activeModel || res[0] || null;
     setActiveModel(m);
-    onChange(activeDs, m);
+    onSelect(activeDs, m);
   };
 
   // 处理模型选择
   const handleItemChange = (item: Model) => {
     setActiveModel(item);
-    onChange(activeDs, item);
+    console.log(item);
+    onSelect(activeDs, item);
   };
 
   // 刷新数据源
@@ -171,12 +172,13 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onChange
             key: type,
             name: type === "entity" ? t('entities') : type === "native_query" ? t('native_queries') : "Other",
             children: [],
-            isLeaf: false
+            isLeaf: false,
+            data: item
           };
         }
 
         // 将当前对象放入对应的 children 数组中
-        acc[type].children.push({name, type, key: name, isLeaf: true, ...rest});
+        acc[type].children.push({name, type, key: name, isLeaf: true, ...rest, data: item});
         return acc;
       }, {})
     );

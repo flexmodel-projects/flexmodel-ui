@@ -30,7 +30,7 @@ const ModelingPage: React.FC = () => {
       case activeModel?.type === "native_query":
         return <NativeQueryView
           datasource={activeDs}
-          model={{name: activeModel.name, statement: activeModel.statement}}
+          model={activeModel.data}
           onConfirm={() => {
             setSelectModelVersion(selectModelVersion + 1);
           }}
@@ -48,12 +48,7 @@ const ModelingPage: React.FC = () => {
         <Splitter>
           <Splitter.Panel defaultSize="20%" max="40%" collapsible>
             <div className={styles.panelContainer}>
-              <SelectModel
-                datasource={activeDs}
-                editable
-                onChange={handleItemChange}
-                version={selectModelVersion}
-              />
+              <SelectModel datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
               <Divider/>
             </div>
           </Splitter.Panel>
