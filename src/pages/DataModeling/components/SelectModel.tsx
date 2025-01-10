@@ -31,6 +31,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
   const [dsList, setDsList] = useState<Datasource[]>([]);
   const [modelList, setModelList] = useState<ModelTree[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
+  const [selectKeys, setSelectKeys] = useState<any[]>([]);
   const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
   const [activeModel, setActiveModel] = useState<any>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
@@ -63,13 +64,15 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
     setFilteredModelList(groupData); // 初始化时未过滤
     setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
     const m = activeModel || res[0] || null;
+    setSelectKeys(activeModel?.name ? [activeModel.name] : [res[0].name]);
     setActiveModel(m);
     onSelect(activeDs, m);
   };
 
   // 处理模型选择
-  const handleItemChange = (item: Model) => {
+  const handleItemChange = (item: any) => {
     setActiveModel(item);
+    setSelectKeys([item?.key]);
     console.log(item);
     onSelect(activeDs, item);
   };
@@ -161,20 +164,33 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
    * @returns {Array} - 转换后的分组结构
    */
   const groupByType = (data: any): any[] => {
-    const r = Object.values(
+    return Object.values(
       data.reduce((acc: any, item: any) => {
         const {type, name, ...rest} = item;
 
         // 如果分组不存在，则创建分组
         if (!acc[type]) {
-          acc[type] = {
-            type: type === "entity" ? "entity_group" : type === "native_query" ? "native_query_group" : "other",
-            key: type,
-            name: type === "entity" ? t('entities') : type === "native_query" ? t('native_queries') : "Other",
-            children: [],
-            isLeaf: false,
-            data: item
-          };
+          switch (type) {
+            case "entity":
+              acc[type] = {
+                type: "__entity_group",
+                key: "__entity_group",
+                name: t('entities'),
+                children: [],
+                isLeaf: false,
+                data: item
+              };
+              break;
+            case "native_query":
+              acc[type] = {
+                type: "__native_query_group",
+                key: "__native_query_group",
+                name: t('native_queries'),
+                children: [],
+                isLeaf: false,
+                data: item
+              };
+          }
         }
 
         // 将当前对象放入对应的 children 数组中
@@ -182,7 +198,6 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
         return acc;
       }, {})
     );
-    return r;
   }
 
   return (
@@ -245,7 +260,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
           expandedKeys={expandedKeys}
           onExpand={onExpand}
           fieldNames={{key: 'key', title: 'name', children: 'children'}}
-          selectedKeys={[activeModel?.name || '']}
+          selectedKeys={selectKeys}
           onSelect={(_, {node}) => handleItemChange(node)}
           titleRender={(node: any) => (
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '180px'}}>

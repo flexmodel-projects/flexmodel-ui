@@ -100,7 +100,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
         </Form.Item>
         <Form.Item>
           <Space align="end" style={{float: "right"}}>
-            time_taken: {execResult.time}ms
+            <div>time_taken: {execResult.time}ms; total_results: {execResult?.result?.length}</div>
             <Button type="default" onClick={handleNativeQueryExecute}>
               {t("execute")}
             </Button>
@@ -110,19 +110,12 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
           </Space>
         </Form.Item>
       </Form>
-
       <Table
-        virtual
-        scroll={{y: 220}}
         size="small"
-        pagination={false}
         columns={columns}
         dataSource={execResult.result}
         rowKey="id"
       />
-
-      <div>total_results: {execResult?.result?.length}</div>
-
       <Modal
         title={t("parameters")}
         open={paramsDialogVisible}
