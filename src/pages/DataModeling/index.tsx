@@ -1,13 +1,16 @@
 import React, {useState} from "react";
-import {Card, Divider, Row, Splitter} from "antd";
+import {Card, Divider, notification, Row, Splitter} from "antd";
 import {useLocation} from "react-router-dom";
 import SelectModel from "./components/SelectModel.tsx";
 import styles from "./index.module.scss";
 import EntityView from "./components/EntityView.tsx";
 import NativeQueryView from "./components/NativeQueryView.tsx";
 import ModelGroupView from "./components/ModelGroupView.tsx";
+import {modifyModel} from "../../api/model.ts";
+import {useTranslation} from "react-i18next";
 
 const ModelingPage: React.FC = () => {
+  const {t} = useTranslation();
   const location = useLocation();
 
   // 从 URL 中获取 datasource 参数
@@ -31,9 +34,16 @@ const ModelingPage: React.FC = () => {
         return <NativeQueryView
           datasource={activeDs}
           model={activeModel.data}
-          onConfirm={() => {
-            setSelectModelVersion(selectModelVersion + 1);
-          }}
+        onConfirm={async data => {
+          try {
+            await modifyModel(activeDs, data);
+            notification.success({message: t("form_save_success")});
+            setSelectModelVersion(selectModelVersion + 1)
+          } catch (error) {
+            console.error(error);
+            notification.error({message: t("form_save_failed")});
+          }
+        }}
         />;
       case activeModel?.type?.endsWith("_group"):
         return <ModelGroupView datasource={activeDs} model={activeModel}/>;

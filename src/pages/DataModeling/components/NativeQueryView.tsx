@@ -1,19 +1,18 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Modal, notification, Space, Table,} from "antd";
+import {Button, Form, Input, Modal, notification, Space, Table} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
 import {executeNativeQuery} from "../../../api/datasource.ts";
-import {modifyModel} from "../../../api/model.ts";
 import type {NativeQueryModel} from "../data";
 
 interface NativeQueryViewProps {
   datasource: string;
-  model: Partial<NativeQueryModel>;
+  model?: Partial<NativeQueryModel>;
   onConfirm: (model: NativeQueryModel) => void;
 }
 
-const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onConfirm,}) => {
-  const {t} = useTranslation();
+const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, onConfirm }) => {
+  const { t } = useTranslation();
 
   const [form] = Form.useForm();
   const [paramsForm] = Form.useForm();
@@ -29,21 +28,36 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
   useEffect(() => {
     if (model) {
       form.setFieldsValue(model);
+      resetExecutionState();
     }
   }, [model, form]);
 
-  const extractParameters = (text: string): string[] =>
-    [...new Set([...text.matchAll(/\${(.*?)}/g)].map(match => match[1]))];
+  const resetExecutionState = () => {
+    setColumns([]);
+    setExecResult({
+      result: [],
+      time: 0,
+    });
+  };
+
+  const extractParameters = (text: string): string[] => {
+    return [...new Set([...text.matchAll(/\${(.*?)}/g)].map((match) => match[1]))];
+  };
 
   const handleNativeQueryExecute = async () => {
-    const statement = form.getFieldValue("statement");
-    const extractedParams = extractParameters(statement);
+    try {
+      await form.validateFields();
+      const statement = form.getFieldValue("statement");
+      const extractedParams = extractParameters(statement);
 
-    if (extractedParams.length) {
-      setParams(extractedParams);
-      setParamsDialogVisible(true);
-    } else {
-      await executeQuery();
+      if (extractedParams.length > 0) {
+        setParams(extractedParams);
+        setParamsDialogVisible(true);
+      } else {
+        await executeQuery();
+      }
+    } catch (error) {
+      console.error("Validation failed", error);
     }
   };
 
@@ -68,54 +82,51 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
           : []
       );
     } catch (error) {
-      console.error(error);
-      notification.error({message: t("query_execution_failed")});
+      console.error("Query execution failed", error);
+      notification.error({ message: t("query_execution_failed") });
     }
   };
 
-  const handleNativeQuerySave = async () => {
+  const handleSave = async () => {
     try {
-      const updatedModel = await modifyModel(datasource, {
-        name: model.name as string,
+      await form.validateFields();
+      onConfirm({
+        name: form.getFieldValue("name"),
         statement: form.getFieldValue("statement"),
         type: "native_query",
+        fields: [],
       });
-
-      notification.success({message: t("form_save_success")});
-      onConfirm(updatedModel);
     } catch (error) {
-      console.error(error);
-      notification.error({message: t("form_save_failed")});
+      console.error("Validation failed", error);
     }
   };
 
   return (
     <>
       <Form form={form} initialValues={model} layout="vertical">
-        <Form.Item name="statement">
-          <TextArea
-            rows={4}
-            placeholder={t("execute_query_placeholder")}
-          />
+        <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
+          <Input disabled={!!model} />
+        </Form.Item>
+        <Form.Item name="statement" label={t("statement")} rules={[{ required: true }]}>
+          <TextArea rows={4} />
         </Form.Item>
         <Form.Item>
-          <Space align="end" style={{float: "right"}}>
-            <div>time_taken: {execResult.time}ms; total_results: {execResult?.result?.length}</div>
+          <Space align="end" style={{ float: "right" }}>
+            <div>
+              {t("time_taken")}: {execResult.time}ms; {t("total_results")}: {execResult.result.length}
+            </div>
             <Button type="default" onClick={handleNativeQueryExecute}>
               {t("execute")}
             </Button>
-            <Button type="primary" onClick={handleNativeQuerySave}>
+            <Button type="primary" onClick={handleSave}>
               {t("save")}
             </Button>
           </Space>
         </Form.Item>
       </Form>
-      <Table
-        size="small"
-        columns={columns}
-        dataSource={execResult.result}
-        rowKey="id"
-      />
+
+      <Table size="small" columns={columns} dataSource={execResult.result} rowKey="id" />
+
       <Modal
         title={t("parameters")}
         open={paramsDialogVisible}
@@ -128,7 +139,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({datasource, model, onC
         <Form form={paramsForm} layout="vertical">
           {params.map((param) => (
             <Form.Item key={param} name={param} label={param}>
-              <Input/>
+              <Input />
             </Form.Item>
           ))}
         </Form>

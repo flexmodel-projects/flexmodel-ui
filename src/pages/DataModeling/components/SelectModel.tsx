@@ -9,6 +9,7 @@ import {Datasource, Model} from "../data";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../store/configStore.ts";
+import CreateNativeQueryModel from "./CreateNativeQueryModel.tsx";
 
 interface ModelTree {
   name: string;
@@ -38,6 +39,7 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
   const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
+  const [createNativeQueryModelDrawerVisible, setCreateNativeQueryModelDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(''); // 监听搜索框输入
   const treeRef = useRef<any>(null);
   // 添加模型
@@ -237,7 +239,8 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
           <Dropdown overlay={
             <Menu>
               <Menu.Item onClick={() => setCreateDrawerVisible(true)}>{t('new_entity')}</Menu.Item>
-              <Menu.Item onClick={() => null} disabled>{t('new_native_query')}</Menu.Item>
+              <Menu.Item
+                onClick={() => setCreateNativeQueryModelDrawerVisible(true)}>{t('new_native_query')}</Menu.Item>
             </Menu>
           }>
             <Button icon={<PlusOutlined/>}/>
@@ -299,6 +302,14 @@ const SelectModel: React.FC<SelectModelProps> = ({datasource, editable, onSelect
       </Modal>
       <CreateEntity visible={createDrawerVisible} datasource={activeDs} onConfirm={addEntity}
                     onCancel={() => setCreateDrawerVisible(false)}/>
+      <CreateNativeQueryModel
+        visible={createNativeQueryModelDrawerVisible}
+        datasource={activeDs}
+        onConfirm={async () => {
+          setCreateNativeQueryModelDrawerVisible(false);
+          await reqModelList();
+        }}
+        onCancel={() => setCreateNativeQueryModelDrawerVisible(false)}/>
     </div>
   );
 };

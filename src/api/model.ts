@@ -13,7 +13,7 @@ export function createModel(datasourceName: string, data: Model) {
   return request({
     url: `${BASE_URI}/datasources/${datasourceName}/models`,
     method: 'post',
-    data: {...data, type: 'entity'}
+    data: data
   });
 }
 

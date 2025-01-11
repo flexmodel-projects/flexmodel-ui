@@ -177,5 +177,10 @@
   "api_folder": "接口文件夹",
   "path_id_field": "路径ID字段",
   "generate_apis": "生成接口",
+  "statement": "语句",
+  "parameters": "参数",
+  "query_execution_failed": "查询执行失败",
+  "time_taken": "耗时",
+  "total_results": "总结果数",
   "welcome": "欢迎来到我们的应用程序"
 }

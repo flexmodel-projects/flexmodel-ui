@@ -83,7 +83,7 @@
   "management": "Management",
   "search_models": "Search Models",
   "new_entity": "New Entity",
-  "new_native_query": "New Native Query",
+  "new_native_query": "New Native query",
   "entities": "Entities",
   "native_queries": "Native queries",
   "field": "Field",
@@ -177,5 +177,10 @@
   "api_folder": "API folder",
   "path_id_field": "Path id field",
   "generate_apis": "Generate APIs",
+  "statement": "Statement",
+  "parameters": "Parameters",
+  "query_execution_failed": "Query execution failed",
+  "time_taken": "Time taken",
+  "total_results": "Total results",
   "welcome": "Welcome to our application"
 }

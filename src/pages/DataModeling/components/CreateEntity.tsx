@@ -73,7 +73,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteField = (index: number) => {
     const newFields = model.fields.filter((_, i) => i !== index);
-    setModel({...model, fields: newFields});
+    setModel({...model, fields: newFields, type: 'entity'});
   };
 
   const handleAddIndex = () => {
@@ -101,7 +101,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteIndex = (index: number) => {
     const newIndexes = model.indexes.filter((_, i) => i !== index);
-    setModel({...model, indexes: newIndexes});
+    setModel({...model, indexes: newIndexes, type: "entity"});
   };
 
   const fieldColumns: ColumnsType<any> = [
