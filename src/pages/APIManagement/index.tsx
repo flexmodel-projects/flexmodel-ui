@@ -308,66 +308,61 @@ const ApiManagement: React.FC = () => {
   };
 
   return (
-    <>
+    <Card>
       <Row className="h-full">
         <Splitter>
           <Splitter.Panel
             defaultSize="20%"
             max="40%"
             collapsible
-            style={{ display: "flex" }}
+            className="flex w-1/5 flex-col"
           >
-            <Card style={{ flex: 1, width: "100%" }}>
-              <Space align="center">
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item onClick={() => addApi()}>
-                        {t("new_api")}
-                      </Menu.Item>
-                      <Menu.Item onClick={() => addFolder()}>
-                        {t("new_folder")}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => setBatchCreateDrawerVisible(true)}
-                      >
-                        {t("batch_new_api")}
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <Button icon={<PlusOutlined />} />
-                </Dropdown>
-                <Input
-                  placeholder={t("search_apis")}
-                  value={searchText} // 绑定搜索框的值
-                  onChange={handleSearchChange} // 监听输入框变化
-                  allowClear
-                />
-              </Space>
-              <DirectoryTree
-                className="api-tree"
-                onExpand={onExpand}
-                expandedKeys={expandedKeys}
-                selectedKeys={selectedKeys}
-                ref={treeRef}
-                treeData={renderTreeNodes(filteredApiList)} // 使用过滤后的数据
-                onSelect={(selectedKeys, { node }) => {
-                  setSelectedKeys(selectedKeys);
-                  handleNodeClick(node);
-                }}
-                height={538}
+            <Space align="center">
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => addApi()}>
+                      {t("new_api")}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => addFolder()}>
+                      {t("new_folder")}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => setBatchCreateDrawerVisible(true)}
+                    >
+                      {t("batch_new_api")}
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button icon={<PlusOutlined />} />
+              </Dropdown>
+              <Input
+                placeholder={t("search_apis")}
+                value={searchText} // 绑定搜索框的值
+                onChange={handleSearchChange} // 监听输入框变化
+                allowClear
               />
-            </Card>
+            </Space>
+            <DirectoryTree
+              className="api-tree"
+              onExpand={onExpand}
+              expandedKeys={expandedKeys}
+              selectedKeys={selectedKeys}
+              ref={treeRef}
+              treeData={renderTreeNodes(filteredApiList)} // 使用过滤后的数据
+              onSelect={(selectedKeys, { node }) => {
+                setSelectedKeys(selectedKeys);
+                handleNodeClick(node);
+              }}
+              height={538}
+            />
           </Splitter.Panel>
-          <Splitter.Panel style={{ display: "flex" }}>
-            <Card
-              style={{ flex: 1, width: "100%" }}
-              className="api-management-card"
-            >
+          <Splitter.Panel className="flex">
+            <Card className="api-management-card flex-1 w-full">
               {editForm?.type == "API" ? (
                 <Row className="flex flex-col">
-                  <Col style={{ paddingBottom: "10px", height: "42px" }}>
+                  <Col className="pb-[10px] h-[42px]">
                     <Flex gap="small" justify="flex-start" align="center" wrap>
                       <Input
                         addonBefore={
@@ -445,7 +440,7 @@ const ApiManagement: React.FC = () => {
         onCancel={() => setBatchCreateDrawerVisible(false)}
         visible={batchCreateDialogDrawer}
       />
-    </>
+    </Card>
   );
 };
 

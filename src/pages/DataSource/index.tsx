@@ -1,6 +1,23 @@
-import React, {useEffect, useState} from "react";
-import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree,} from "antd";
-import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Divider,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  message,
+  Modal,
+  Space,
+  Spin,
+  Tree,
+} from "antd";
+import Icon, {
+  BlockOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import DatabaseInfo from "./components/DatabaseInfo.tsx";
 import EditDSConfig from "./components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
@@ -11,9 +28,9 @@ import {
   updateDatasource,
   validateDatasource,
 } from "../../api/datasource.ts";
-import {DbsMap} from "./common.ts";
-import {getModelList} from "../../api/model.ts";
-import {useTranslation} from "react-i18next";
+import { DbsMap } from "./common.ts";
+import { getModelList } from "../../api/model.ts";
+import { useTranslation } from "react-i18next";
 import styles from "./index.module.scss";
 
 const DatasourceManagement: React.FC = () => {
@@ -133,29 +150,22 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <Card style={{ height: "100%" }} className={styles.root}>
-        <div style={{ display: "flex", backgroundColor: "#fff", flex: 1 }}>
+      <Card className={[styles.root, "h-full"].join(" ")}>
+        <div className="flex flex-1 bg-white">
           <div
+            className="w-1/5 pt-2.5 pr-2.5"
             style={{
-              width: "25%",
               borderRight: "1px solid rgba(5, 5, 5, 0.06)",
-              padding: "10px 10px 0px 0px",
             }}
           >
-            <div
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              <span style={{ fontWeight: 600, fontSize: "16px" }}>
+            <div className="truncate">
+              <span className="text-base font-semibold">
                 {t("datasource_management")}
               </span>
             </div>
             <Divider />
             <Spin spinning={dsLoading}>
-              <Tree
+              <Tree.DirectoryTree
                 treeData={dsList.map((ds) => ({
                   ...ds,
                   title: ds.name,
@@ -163,20 +173,14 @@ const DatasourceManagement: React.FC = () => {
                 }))}
                 selectedKeys={[activeDs.name]}
                 titleRender={(node) => (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      width: "250px",
-                    }}
-                  >
+                  <div className="flex items-center">
                     {<Icon component={DbsMap[node.config?.dbKind]} />}&nbsp;
                     <span>{node.title}</span>
                     <Dropdown
                       overlay={
                         <Menu>
                           <Menu.Item
-                            style={{ color: "red" }}
+                            className="text-red"
                             icon={<DeleteOutlined />}
                             disabled={node.type === "system"}
                             onClick={() => {
@@ -190,9 +194,7 @@ const DatasourceManagement: React.FC = () => {
                       trigger={["hover"]}
                       placement="bottomRight"
                     >
-                      <MoreOutlined
-                        style={{ marginLeft: "auto", cursor: "pointer" }}
-                      />
+                      <MoreOutlined className="ml-auto cursor-pointer" />
                     </Dropdown>
                   </div>
                 )}
@@ -204,20 +206,14 @@ const DatasourceManagement: React.FC = () => {
               type="primary"
               icon={<BlockOutlined />}
               onClick={() => setDrawerVisible(true)}
-              style={{ width: "100%" }}
+              className="w-full"
               ghost
             >
               {t("connect_datasource")}
             </Button>
           </div>
-          <div style={{ width: "75%", padding: "8px 20px" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingBottom: "10px",
-              }}
-            >
+          <div className="px-2 py-5 w-4/5">
+            <div className="flex justify-between pb-[10px]">
               <div>{activeDs.name}</div>
               <div>
                 <Space>

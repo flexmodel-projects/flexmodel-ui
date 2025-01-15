@@ -1,14 +1,13 @@
 import { Layout, Space } from "antd";
 import Sidebar from "./Sidebar";
 import { Header } from "./Header";
-import styles from "./PageLayout.module.scss";
 import { RenderRoutes } from "../../routes.tsx";
 import { useLocation } from "react-router-dom";
 
 const PageLayout = () => {
   const location = useLocation();
   return (
-    <Layout className={styles.root}>
+    <Layout>
       <Header>
         <Space className="logo-wrapper flex justify-center">
           <img src="/logo.png" width={40} alt="logo" />

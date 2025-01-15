@@ -3,6 +3,18 @@
     .ant-card-body {
       height: 100%;
       display: flex;
+
+      .ant-tree-treenode {
+        width: 100%;
+
+        .ant-tree-node-content-wrapper {
+          flex: 1;
+
+          .ant-tree-title {
+            width: 100%;
+          }
+        }
+      }
     }
   }
 }
