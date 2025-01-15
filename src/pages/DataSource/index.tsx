@@ -11,7 +11,6 @@ import {
   updateDatasource,
   validateDatasource,
 } from "../../api/datasource.ts";
-import {useNavigate} from "react-router-dom";
 import {DbsMap} from "./common.ts";
 import {getModelList} from "../../api/model.ts";
 import {useTranslation} from "react-i18next";
@@ -19,7 +18,6 @@ import styles from "./index.module.scss";
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [dsList, setDsList] = useState<any[]>([]);
   const [activeDs, setActiveDs] = useState<any>({
@@ -225,13 +223,6 @@ const DatasourceManagement: React.FC = () => {
                 <Space>
                   <Button onClick={handleImport}>{t("import")}</Button>
                   <Button onClick={handleExport}>{t("export")}</Button>
-                  <Button
-                    onClick={() => {
-                      navigate(`/modeling?datasource=${activeDs.name}`);
-                    }}
-                  >
-                    {t("modeling")}
-                  </Button>
                   <Button onClick={handleTestConnection} loading={testLoading}>
                     {t("test")}
                   </Button>

@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Card, Divider, notification, Row, Splitter} from "antd";
-import {useLocation} from "react-router-dom";
 import SelectModel from "./components/SelectModel.tsx";
 import styles from "./index.module.scss";
 import EntityView from "./components/EntityView.tsx";
@@ -11,11 +10,8 @@ import {useTranslation} from "react-i18next";
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
-  const location = useLocation();
 
-  // 从 URL 中获取 datasource 参数
-  const {datasource} = (location.state as { datasource?: string }) || {};
-  const [activeDs, setActiveDs] = useState(datasource || "");
+  const [activeDs, setActiveDs] = useState("");
   const [activeModel, setActiveModel] = useState<any>({});
   const [selectModelVersion, setSelectModelVersion] = useState(0);
 
