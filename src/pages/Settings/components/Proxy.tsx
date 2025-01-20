@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, Space, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../store/configStore.ts";
 
 interface BaseProps {
   settings: any;
@@ -16,6 +18,8 @@ interface FormData {
 const Proxy: React.FC<BaseProps> = ({settings, onChange}) => {
 
   const {t} = useTranslation();
+
+  const { config } = useSelector((state: RootState) => state.config);
 
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<FormData>({
@@ -60,7 +64,7 @@ const Proxy: React.FC<BaseProps> = ({settings, onChange}) => {
                       name={[name, 'path']}
                       rules={[{required: true}]}
                     >
-                      <Input placeholder="path， e.g. /hello/**" prefix='/api/v1'/>
+                      <Input placeholder="path， e.g. /hello/**" prefix={config?.application['flexmodel.context-path']}/>
                     </Form.Item>
                     <Form.Item
                       {...restField}
