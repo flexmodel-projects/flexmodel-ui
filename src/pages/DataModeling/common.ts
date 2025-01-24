@@ -150,9 +150,11 @@ export const FieldInitialValues: any = {
   },
   relation: {
     type: 'relation',
-    cardinality: 'ONE_TO_ONE',
-    targetField: null,
+    multiple: true,
+    localField: null,
+    foreignField: null,
     unique: false,
     nullable: true,
+    cascadeDelete: false
   },
 }

@@ -83,7 +83,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           return 'ID';
         }
         if (type === 'relation') {
-          return f?.targetEntity;
+          if(f?.multiple) {
+            return f?.from+"[]";
+          }
+          return f?.from;
         }
         return FieldTypeMap[type]
       },
