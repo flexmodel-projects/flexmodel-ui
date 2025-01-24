@@ -112,7 +112,7 @@
   "scale": "Scale",
   "multiple": "Multiple",
   "local_field": "Local field",
-  "foreign_field": "Target field",
+  "foreign_field": "Foreign field",
   "cascade_delete": "Cascade delete",
   "select_group_id": "ID",
   "select_group_basic_field": "Basic field",
