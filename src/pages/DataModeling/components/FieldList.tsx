@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table} from 'antd';
+import {Button, notification, Popconfirm, Table, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import FieldForm from "./FieldForm.tsx";
@@ -83,10 +83,17 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           return 'ID';
         }
         if (type === 'relation') {
-          if(f?.multiple) {
-            return f?.from+"[]";
-          }
-          return f?.from;
+          return <Tooltip title={
+            <span>
+                {t('local_field')}: {f?.localField + ''}
+              <br/>
+              {t('foreign_field')}: {f?.foreignField + ''}
+              <br/>
+              {t('cascade_delete')}: {f?.cascadeDelete + ''}
+              </span>
+          }>
+            {f?.showType}
+          </Tooltip>;
         }
         return FieldTypeMap[type]
       },

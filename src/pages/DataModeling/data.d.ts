@@ -28,6 +28,7 @@ export interface NativeQueryModel extends Model {
 interface Field extends Record<string, object> {
   name: string;
   type: string;
+  showType: string;
   unique: boolean;
   nullable: boolean;
   comment: string;
