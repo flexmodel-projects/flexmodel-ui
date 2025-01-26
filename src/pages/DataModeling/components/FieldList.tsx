@@ -47,9 +47,9 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
         await createField(datasource, model?.name, values);
         setFieldList([...fieldList, values]);
       } else {
-        await modifyField(datasource, model?.name, values.name, values);
+        const res = await modifyField(datasource, model?.name, values.name, values);
         const updatedFields = [...fieldList];
-        updatedFields[selectedFieldIndex] = values;
+        updatedFields[selectedFieldIndex] = res;
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);

@@ -66,7 +66,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    form.setFieldsValue({...FieldInitialValues[value], type: value});
+    form.setFieldsValue({...FieldInitialValues[value], type: value.startsWith("relation") ? "relation" : value});
   };
 
   const handleConfirm = () => {
@@ -97,6 +97,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
         <Form.Item label={t('comment')} name="comment">
           <Input/>
         </Form.Item>
+        <Form.Item name="type" hidden><Input/></Form.Item>
         <Form.Item label={t('type')} name="tmpType" rules={[{required: true}]}>
           <Select value={tmpType} onChange={handleTypeChange} filterOption>
             <Select.OptGroup label={t('select_group_id')}>
