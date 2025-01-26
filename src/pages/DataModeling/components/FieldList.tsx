@@ -92,7 +92,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
               {t('cascade_delete')}: {f?.cascadeDelete + ''}
               </span>
           }>
-            {f?.showType}
+            {f?.concreteType}
           </Tooltip>;
         }
         return FieldTypeMap[type]
