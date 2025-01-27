@@ -7,6 +7,8 @@ import NativeQueryView from "./components/NativeQueryView.tsx";
 import ModelGroupView from "./components/ModelGroupView.tsx";
 import {modifyModel} from "../../api/model.ts";
 import {useTranslation} from "react-i18next";
+import EnumView from "./components/EnumView.tsx";
+import {Enum} from "./data";
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
@@ -26,20 +28,31 @@ const ModelingPage: React.FC = () => {
     switch (true) {
       case activeModel?.type === "entity":
         return <EntityView datasource={activeDs} model={activeModel}/>;
-      case activeModel?.type === "native_query":
-        return <NativeQueryView
-          datasource={activeDs}
-          model={activeModel.data}
-        onConfirm={async data => {
+      case activeModel?.type === "enum":
+        return <EnumView datasource={activeDs} model={activeModel.data} onConfirm={async (anEnum: Enum) => {
           try {
-            await modifyModel(activeDs, data);
+            await modifyModel(activeDs, anEnum);
             notification.success({message: t("form_save_success")});
             setSelectModelVersion(selectModelVersion + 1)
           } catch (error) {
             console.error(error);
             notification.error({message: t("form_save_failed")});
           }
-        }}
+        }}/>;
+      case activeModel?.type === "native_query":
+        return <NativeQueryView
+          datasource={activeDs}
+          model={activeModel.data}
+          onConfirm={async data => {
+            try {
+              await modifyModel(activeDs, data);
+              notification.success({message: t("form_save_success")});
+              setSelectModelVersion(selectModelVersion + 1)
+            } catch (error) {
+              console.error(error);
+              notification.error({message: t("form_save_failed")});
+            }
+          }}
         />;
       case activeModel?.type?.endsWith("_group"):
         return <ModelGroupView datasource={activeDs} model={activeModel}/>;

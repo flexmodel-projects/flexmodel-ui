@@ -10,18 +10,26 @@ export interface Datasource {
   }
 }
 
-export interface Model {
-  name: string,
+export interface Model extends TypeWrapper {
   fields: any[],
-  type: 'entity'|'native_query',
+}
+
+export interface TypeWrapper {
+  name: string,
+  type: 'entity' | 'native_query' | 'enum',
 }
 
 export interface Entity extends Model {
   indexes: any[],
-  comment: string,
+  comment?: string,
 }
 
-export interface NativeQueryModel extends Model {
+export interface Enum extends TypeWrapper {
+  elements: string[],
+  comment?: string,
+}
+
+export interface NativeQueryModel extends TypeWrapper {
   statement: string,
 }
 
@@ -31,7 +39,7 @@ interface Field extends Record<string, object> {
   concreteType: string;
   unique: boolean;
   nullable: boolean;
-  comment: string;
+  comment?: string;
 }
 
 

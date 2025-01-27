@@ -94,7 +94,6 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
         name: form.getFieldValue("name"),
         statement: form.getFieldValue("statement"),
         type: "native_query",
-        fields: [],
       });
     } catch (error) {
       console.error("Validation failed", error);
