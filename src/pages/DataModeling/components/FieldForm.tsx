@@ -30,18 +30,22 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   useEffect(() => {
     if (currentValue) {
-      form.setFieldsValue({
-        ...currentValue,
-        tmpType: currentValue.type === 'relation' ? 'relation:' + currentValue.from : currentValue.type
-      });
+      let tmpType = currentValue.type;
       if (currentValue.type === 'relation') {
+        tmpType = `relation:${currentValue.from}`;
         setTmpType(`relation:${currentValue.from}`);
         if (!currentValue.localField) {
           form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'id')[0]?.name);
         }
+      } else if (currentValue.type === 'enum') {
+        tmpType = `enum:${currentValue.from}`;
       } else {
         setTmpType(currentValue.type);
       }
+      form.setFieldsValue({
+        ...currentValue,
+        tmpType: tmpType
+      });
     }
   }, [currentValue]);
 
@@ -77,6 +81,12 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           type: 'relation',
           from: values.tmpType.replace('relation:', '')
         });
+      } else if (values.tmpType.startsWith('enum:')) {
+        onConfirm({
+          ...values,
+          type: 'enum',
+          from: values.tmpType.replace('enum:', '')
+        });
       } else {
         onConfirm({
           ...values,
@@ -109,8 +119,13 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
               ))}
             </Select.OptGroup>
             <Select.OptGroup label={t('select_group_relation')}>
-              {modelList.map(item => (
+              {modelList.filter(item => item.type === 'entity').map(item => (
                 <Select.Option key={item.name} value={`relation:${item.name}`}>{item.name}</Select.Option>
+              ))}
+            </Select.OptGroup>
+            <Select.OptGroup label={t('select_group_enumeration')}>
+              {modelList.filter(item => item.type === 'enum').map(item => (
+                <Select.Option key={item.name} value={`enum:${item.name}`}>{item.name}</Select.Option>
               ))}
             </Select.OptGroup>
           </Select>
@@ -169,7 +184,17 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {!(['id', 'relation'].includes(form.getFieldValue('tmpType')) || form.getFieldValue('tmpType')?.startsWith('relation')) && (
+        {form.getFieldValue('tmpType')?.startsWith('enum') && (
+          <>
+            <Form.Item label={t('selection_multiple')} name="multiple" valuePropName="checked">
+              <Switch/>
+            </Form.Item>
+          </>
+        )}
+
+        {!(['id', 'relation', 'enum'].includes(form.getFieldValue('tmpType'))
+          || form.getFieldValue('tmpType')?.startsWith('relation')
+          || form.getFieldValue('tmpType')?.startsWith('enum')) && (
           <>
             <Form.Item label={t('default_value')} name="defaultValue">
               <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {

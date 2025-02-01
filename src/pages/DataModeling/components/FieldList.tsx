@@ -44,8 +44,8 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const addOrEditField = async (values: Field) => {
     try {
       if (selectedFieldIndex === -1) {
-        await createField(datasource, model?.name, values);
-        setFieldList([...fieldList, values]);
+        const res = await createField(datasource, model?.name, values);
+        setFieldList([...fieldList, res]);
       } else {
         const res = await modifyField(datasource, model?.name, values.name, values);
         const updatedFields = [...fieldList];
@@ -94,6 +94,9 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           }>
             {f?.concreteType}
           </Tooltip>;
+        }
+        if (type === 'enum') {
+          return f?.concreteType;
         }
         return FieldTypeMap[type]
       },

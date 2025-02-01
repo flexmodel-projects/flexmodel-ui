@@ -120,6 +120,7 @@
   "select_group_id": "ID",
   "select_group_basic_field": "Basic field",
   "select_group_relation": "Relation",
+  "select_group_enumeration": "Enumeration",
   "field_asc": "ASC",
   "field_desc": "DESC",
   "input_valid_msg": "Please input {{name}}",
