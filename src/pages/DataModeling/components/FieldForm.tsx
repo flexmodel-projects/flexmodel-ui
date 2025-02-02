@@ -70,30 +70,18 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    form.setFieldsValue({...FieldInitialValues[value], type: value.startsWith("relation") ? "relation" : value});
+    if (value.startsWith("relation")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "relation", from: value.replace('relation:', '')});
+    } else if (value.startsWith("enum")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "enum", from: value.replace('enum:', '')});
+    } else {
+      form.setFieldsValue({...FieldInitialValues[value], type: value});
+    }
   };
 
   const handleConfirm = () => {
     form.validateFields().then(values => {
-      if (values.tmpType.startsWith('relation:')) {
-        onConfirm({
-          ...values,
-          type: 'relation',
-          from: values.tmpType.replace('relation:', '')
-        });
-      } else if (values.tmpType.startsWith('enum:')) {
-        onConfirm({
-          ...values,
-          type: 'enum',
-          from: values.tmpType.replace('enum:', '')
-        });
-      } else {
-        onConfirm({
-          ...values,
-          type: values.tmpType
-        });
-      }
-
+      onConfirm(values);
     });
   };
 
@@ -108,8 +96,9 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           <Input/>
         </Form.Item>
         <Form.Item name="type" hidden><Input/></Form.Item>
+        <Form.Item name="from" hidden><Input/></Form.Item>
         <Form.Item label={t('type')} name="tmpType" rules={[{required: true}]}>
-          <Select value={tmpType} onChange={handleTypeChange} filterOption>
+          <Select value={tmpType} onChange={handleTypeChange}>
             <Select.OptGroup label={t('select_group_id')}>
               <Select.Option value="id" disabled={hasId}>ID</Select.Option>
             </Select.OptGroup>
@@ -192,14 +181,14 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {!(['id', 'relation', 'enum'].includes(form.getFieldValue('tmpType'))
-          || form.getFieldValue('tmpType')?.startsWith('relation')
-          || form.getFieldValue('tmpType')?.startsWith('enum')) && (
+        {!(['id', 'relation'].includes(form.getFieldValue('tmpType'))
+          || form.getFieldValue('tmpType')?.startsWith('relation')) && (
           <>
             <Form.Item label={t('default_value')} name="defaultValue">
-              <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {
-                console.log(val)
-              }}/>
+              <FieldInput field={form.getFieldsValue()} modelList={modelList} value={undefined}
+                          onChange={function (val: any): void {
+                            console.log(val)
+                          }}/>
             </Form.Item>
             <Form.Item label={t('nullable')} name="nullable" valuePropName="checked">
               <Switch/>
