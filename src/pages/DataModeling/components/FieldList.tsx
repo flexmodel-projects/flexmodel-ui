@@ -96,7 +96,13 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           </Tooltip>;
         }
         if (type === 'enum') {
-          return f?.concreteType;
+          return <Tooltip title={
+            <span>
+                {t('enums')}
+              </span>
+          }>
+            {f?.concreteType}
+          </Tooltip>;
         }
         return FieldTypeMap[type]
       },
