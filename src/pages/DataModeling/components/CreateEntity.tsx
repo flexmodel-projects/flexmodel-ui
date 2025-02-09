@@ -120,9 +120,9 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
       key: 'operations',
       render: (_, __, index) => (
         <>
-          <Button type="link" onClick={() => handleEditField(index)}>Edit</Button>
+          <Button type="link" onClick={() => handleEditField(index)}>{t('edit')}</Button>
           <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteField(index)}>
-            <Button type="link" danger style={{marginLeft: 8}}>Delete</Button>
+            <Button type="link" danger style={{marginLeft: 8}}>{t('delete')}</Button>
           </Popconfirm>
         </>
       )
