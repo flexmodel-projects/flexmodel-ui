@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
   Card,
@@ -16,30 +16,27 @@ import {
   Switch,
   Tabs,
   TabsProps,
-  Tree,
   Tooltip,
+  Tree,
 } from "antd";
-import { MoreOutlined, PlusOutlined, SaveOutlined } from "@ant-design/icons";
-import {
-  createApi,
-  deleteApi,
-  getApis,
-  updateApi,
-  updateApiName,
-  updateApiStatus,
-} from "../../api/api-info.ts";
+import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../api/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import Authorization from "./components/Authorization.tsx";
-import { useTranslation } from "react-i18next";
-import { ApiInfo, TreeNode } from "./data";
+import {useTranslation} from "react-i18next";
+import {ApiInfo, TreeNode} from "./data";
 import BatchCreate from "./components/BatchCreate.tsx";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/configStore.ts";
 
 const { DirectoryTree } = Tree;
 
 const ApiManagement: React.FC = () => {
   const { t } = useTranslation();
+  const { config } = useSelector((state: RootState) => state.config);
+
   // 状态定义
   const [apiList, setApiList] = useState<ApiInfo[]>([]);
   const [deleteDialogVisible, setDeleteDialogVisible] =
@@ -374,7 +371,7 @@ const ApiManagement: React.FC = () => {
                             options={methodOptions}
                           />
                         }
-                        prefix={<span>/api/v1</span>}
+                        prefix={<span>{config?.application['flexmodel.context-path']}</span>}
                         style={{ width: "85%" }}
                         value={editForm?.path}
                         onChange={(e) =>

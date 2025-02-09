@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Modal, Radio, Select, Switch} from 'antd';
+import {Form, Input, Modal, Select, Switch} from 'antd';
 import {getModelList} from '../../../api/model'; // 替换为你的 API 调用
 import {BasicFieldTypes, FieldInitialValues, IDGeneratedValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
@@ -30,25 +30,37 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   useEffect(() => {
     if (currentValue) {
-      form.setFieldsValue(currentValue);
+      let tmpType = currentValue.type;
       if (currentValue.type === 'relation') {
-        setTmpType(`relation:${currentValue.targetEntity}`);
+        tmpType = `relation:${currentValue.from}`;
+        setTmpType(`relation:${currentValue.from}`);
+        if (!currentValue.localField) {
+          form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'id')[0]?.name);
+        }
+      } else if (currentValue.type === 'enum') {
+        tmpType = `enum:${currentValue.from}`;
       } else {
         setTmpType(currentValue.type);
       }
+      form.setFieldsValue({
+        ...currentValue,
+        tmpType: tmpType
+      });
     }
   }, [currentValue]);
 
   useEffect(() => {
     if (tmpType.startsWith('relation')) {
-      const relationName = tmpType.replace('relation:', '');
+      const relationName = tmpType.replace('relation:', '').replace('[]', '');
       const relatedModel = modelList.find(m => m.name === relationName);
-      form.setFieldValue('cardinality', 'ONE_TO_ONE');
       setRelationModel(relatedModel);
+      if (!currentValue.localField) {
+        form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'id')[0]?.name);
+      }
     } else {
       setRelationModel(null);
     }
-  }, [tmpType]);
+  }, [modelList, tmpType]);
 
   const reqModelList = async () => {
     const data = await getModelList(datasource);
@@ -58,7 +70,13 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    form.setFieldsValue({...FieldInitialValues[value], type: value});
+    if (value.startsWith("relation")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "relation", from: value.replace('relation:', '')});
+    } else if (value.startsWith("enum")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "enum", from: value.replace('enum:', '')});
+    } else {
+      form.setFieldsValue({...FieldInitialValues[value], type: value});
+    }
   };
 
   const handleConfirm = () => {
@@ -77,8 +95,10 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
         <Form.Item label={t('comment')} name="comment">
           <Input/>
         </Form.Item>
-        <Form.Item label={t('type')} name="type" rules={[{required: true}]}>
-          <Select value={tmpType} onChange={handleTypeChange} filterOption>
+        <Form.Item name="type" hidden><Input/></Form.Item>
+        <Form.Item name="from" hidden><Input/></Form.Item>
+        <Form.Item label={t('type')} name="tmpType" rules={[{required: true}]}>
+          <Select value={tmpType} onChange={handleTypeChange}>
             <Select.OptGroup label={t('select_group_id')}>
               <Select.Option value="id" disabled={hasId}>ID</Select.Option>
             </Select.OptGroup>
@@ -88,15 +108,20 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
               ))}
             </Select.OptGroup>
             <Select.OptGroup label={t('select_group_relation')}>
-              {modelList.map(item => (
+              {modelList.filter(item => item.type === 'entity').map(item => (
                 <Select.Option key={item.name} value={`relation:${item.name}`}>{item.name}</Select.Option>
+              ))}
+            </Select.OptGroup>
+            <Select.OptGroup label={t('select_group_enumeration')}>
+              {modelList.filter(item => item.type === 'enum').map(item => (
+                <Select.Option key={item.name} value={`enum:${item.name}`}>{item.name}</Select.Option>
               ))}
             </Select.OptGroup>
           </Select>
         </Form.Item>
 
         {/* 以下是根据类型动态渲染的部分 */}
-        {form.getFieldValue('type') === 'id' && (
+        {form.getFieldValue('tmpType') === 'id' && (
           <Form.Item label="Generated value" name="generatedValue">
             <Select>
               {IDGeneratedValues.map(item => (
@@ -106,13 +131,13 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </Form.Item>
         )}
 
-        {form.getFieldValue('type') === 'string' && (
+        {form.getFieldValue('tmpType') === 'string' && (
           <Form.Item label={t('length')} name="length">
             <Input type="number"/>
           </Form.Item>
         )}
 
-        {form.getFieldValue('type') === 'decimal' && (
+        {form.getFieldValue('tmpType') === 'decimal' && (
           <>
             <Form.Item label={t('precision')} name="precision">
               <Input type="number"/>
@@ -123,21 +148,24 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {form.getFieldValue('type')?.startsWith('relation') && (
+        {form.getFieldValue('tmpType')?.startsWith('relation') && (
           <>
-            <Form.Item label={t('target_field')} name="targetField" rules={[{required: true}]}>
+            <Form.Item label={t('local_field')} name="localField" rules={[{required: true}]}>
+              <Select>
+                {model?.fields?.map((field: any) => (
+                  <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item label={t('foreign_field')} name="foreignField" rules={[{required: true}]}>
               <Select>
                 {relationModel?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item label={t('cardinality')} name="cardinality">
-              <Radio.Group>
-                <Radio value="ONE_TO_ONE">{t('one_to_one')}</Radio>
-                <Radio value="ONE_TO_MANY">{t('one_to_many')}</Radio>
-                <Radio value="MANY_TO_MANY">{t('many_to_many')}</Radio>
-              </Radio.Group>
+            <Form.Item label={t('selection_multiple')} name="multiple" valuePropName="checked">
+              <Switch/>
             </Form.Item>
             <Form.Item label={t('cascade_delete')} name="cascadeDelete" valuePropName="checked">
               <Switch/>
@@ -145,12 +173,22 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {!(['id', 'relation'].includes(form.getFieldValue('type')) || form.getFieldValue('type')?.startsWith('relation')) && (
+        {form.getFieldValue('tmpType')?.startsWith('enum') && (
+          <>
+            <Form.Item label={t('selection_multiple')} name="multiple" valuePropName="checked">
+              <Switch/>
+            </Form.Item>
+          </>
+        )}
+
+        {!(['id', 'relation'].includes(form.getFieldValue('tmpType'))
+          || form.getFieldValue('tmpType')?.startsWith('relation')) && (
           <>
             <Form.Item label={t('default_value')} name="defaultValue">
-              <FieldInput field={form.getFieldsValue()} value={undefined} onChange={function (val: any): void {
-                console.log(val)
-              }}/>
+              <FieldInput field={form.getFieldsValue()} modelList={modelList} value={undefined}
+                          onChange={function (val: any): void {
+                            console.log(val)
+                          }}/>
             </Form.Item>
             <Form.Item label={t('nullable')} name="nullable" valuePropName="checked">
               <Switch/>

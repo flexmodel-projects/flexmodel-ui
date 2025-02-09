@@ -3,6 +3,8 @@ import {Button, Form, Input, InputNumber, Select, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
 import {SelectProps} from "rc-select/lib/Select";
 import {getIdentityProviders} from "../../../api/identity-provider.ts";
+import {RootState} from "../../../store/configStore.ts";
+import {useSelector} from "react-redux";
 
 interface SecurityProps {
   settings: any;
@@ -20,6 +22,9 @@ interface SecurityData {
 
 const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
   const {t} = useTranslation();
+
+  const { config } = useSelector((state: RootState) => state.config);
+
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<SecurityData>({
     rateLimitingEnabled: false,
@@ -72,7 +77,7 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
         </Form.Item>
         {formData?.graphqlEndpointEnabled && <>
           <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
-            <Input addonBefore='/api/v1'/>
+            <Input addonBefore={config?.application['flexmodel.context-path']}/>
           </Form.Item>
           <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
             <Select options={options} placeholder={t('select_a_provider')} allowClear/>

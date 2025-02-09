@@ -1,1 +1,1 @@
-export const BASE_URI = '/api'
+export const BASE_URI = '/fm-api'
