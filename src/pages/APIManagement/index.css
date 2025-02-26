@@ -39,3 +39,7 @@
 .ant-tree-title div span:first-child {
   max-width: 130px;
 }
+
+.api-management-wrapper .ant-card-body {
+  height: 100%;
+}

@@ -305,7 +305,7 @@ const ApiManagement: React.FC = () => {
   };
 
   return (
-    <Card>
+    <Card className="h-full api-management-wrapper">
       <Row className="h-full">
         <Splitter>
           <Splitter.Panel
