@@ -20,7 +20,7 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
   const [fieldOptions, setFieldOptions] = useState<any[]>();
 
   useEffect(() => {
-    setFieldOptions(model?.fields.map(f => ({value: f.name, label: f.name})));
+    setFieldOptions(model?.fields?.map(f => ({value: f.name, label: f.name})));
     form.setFieldsValue({
       datasourceName: datasource,
       modelName: model?.name,

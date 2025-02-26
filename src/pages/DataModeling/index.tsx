@@ -25,11 +25,12 @@ const ModelingPage: React.FC = () => {
 
   // 渲染模型视图
   const renderModelView = () => {
+    console.log('active:',activeModel);
     switch (true) {
       case activeModel?.type === "entity":
         return <EntityView datasource={activeDs} model={activeModel}/>;
       case activeModel?.type === "enum":
-        return <EnumView datasource={activeDs} model={activeModel.data} onConfirm={async (anEnum: Enum) => {
+        return <EnumView datasource={activeDs} model={activeModel} onConfirm={async (anEnum: Enum) => {
           try {
             await modifyModel(activeDs, anEnum);
             notification.success({message: t("form_save_success")});
@@ -42,7 +43,7 @@ const ModelingPage: React.FC = () => {
       case activeModel?.type === "native_query":
         return <NativeQueryView
           datasource={activeDs}
-          model={activeModel.data}
+          model={activeModel}
           onConfirm={async data => {
             try {
               await modifyModel(activeDs, data);

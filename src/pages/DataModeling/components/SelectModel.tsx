@@ -42,8 +42,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const [activeModel, setActiveModel] = useState<any>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] =
-    useState<boolean>(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
   const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
   const [createNativeQueryModelDrawerVisible, setCreateNativeQueryModelDrawerVisible] = useState(false);
   const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
@@ -83,7 +82,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
     setActiveModel(item);
     setSelectKeys([item?.key]);
     console.log(item);
-    onSelect(activeDs, item);
+    onSelect(activeDs, item?.data);
   };
 
   // 刷新数据源
