@@ -71,8 +71,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
     setModelList(groupData);
     setFilteredModelList(groupData); // 初始化时未过滤
     setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
-    const m = activeModel || res[0] || null;
-    setSelectKeys(activeModel?.name ? [activeModel.name] : [res[0].name]);
+    const m = activeModel || groupData[0]?.children[0] || null;
+    setSelectKeys(activeModel?.name ? [activeModel.name] : [m.name]);
     setActiveModel(m);
     onSelect(activeDs, m);
   };
@@ -180,58 +180,60 @@ const SelectModel: React.FC<SelectModelProps> = ({
    * @returns {Array} - 转换后的分组结构
    */
   const groupByType = (data: any): any[] => {
-    return Object.values(
-      data.reduce((acc: any, item: any) => {
-        const {type, name, ...rest} = item;
-
-        // 如果分组不存在，则创建分组
-        if (!acc[type]) {
-          switch (type) {
-            case "ENTITY":
-              acc[type] = {
-                type: "__entity_group",
-                key: "__entity_group",
-                name: t("entities"),
-                children: [],
-                isLeaf: false,
-                data: item,
-              };
-              break;
-            case "ENUM":
-              acc[type] = {
-                type: "__enum_group",
-                key: "__enum_group",
-                name: t("enums"),
-                children: [],
-                isLeaf: false,
-                data: item,
-              };
-              break;
-            case "NATIVE_QUERY":
-              acc[type] = {
-                type: "__native_query_group",
-                key: "__native_query_group",
-                name: t("native_queries"),
-                children: [],
-                isLeaf: false,
-                data: item,
-              };
-          }
+    const groups = data.reduce((acc: any, item: any) => {
+      const { type, name, ...rest } = item;
+      if (!acc[type]) {
+        switch (type) {
+          case "ENTITY":
+            acc[type] = {
+              type: "__entity_group",
+              key: "__entity_group",
+              name: t("entities"),
+              children: [],
+              isLeaf: false,
+              data: item,
+            };
+            break;
+          case "ENUM":
+            acc[type] = {
+              type: "__enum_group",
+              key: "__enum_group",
+              name: t("enums"),
+              children: [],
+              isLeaf: false,
+              data: item,
+            };
+            break;
+          case "NATIVE_QUERY":
+            acc[type] = {
+              type: "__native_query_group",
+              key: "__native_query_group",
+              name: t("native_queries"),
+              children: [],
+              isLeaf: false,
+              data: item,
+            };
+            break;
+          default:
+            break;
         }
+      }
+      acc[type]?.children.push({
+        name,
+        type,
+        key: name,
+        isLeaf: true,
+        ...rest,
+        data: item,
+      });
+      return acc;
+    }, {});
 
-        // 将当前对象放入对应的 children 数组中
-        acc[type]?.children.push({
-          name,
-          type,
-          key: name,
-          isLeaf: true,
-          ...rest,
-          data: item,
-        });
-        return acc;
-      }, {})
-    );
+    // 自定义排序：先 ENTITY，再 ENUM，最后 NATIVE_QUERY
+    const order = ["ENTITY", "ENUM", "NATIVE_QUERY"];
+    return order.map(type => groups[type]).filter(Boolean);
   };
+
 
   return (
     <div>

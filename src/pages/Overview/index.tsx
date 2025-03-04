@@ -1,30 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Badge,
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  List,
-  Row,
-  Space,
-  Spin,
-  Statistic,
-} from "antd";
+import React, {useEffect, useState} from "react";
+import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic,} from "antd";
 import ReactECharts from "echarts-for-react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import Title from "antd/lib/typography/Title";
-import {
-  DatabaseTwoTone,
-  FlagTwoTone,
-  HourglassTwoTone,
-  RocketTwoTone,
-} from "@ant-design/icons";
-import { fetchOverview } from "../../api/overview.ts";
-import { useTranslation } from "react-i18next";
+import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone,} from "@ant-design/icons";
+import {fetchOverview} from "../../api/overview.ts";
+import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 
-const { RangePicker } = DatePicker;
+const {RangePicker} = DatePicker;
 
 // 定义统计数据类型
 interface Statistics {
@@ -48,7 +32,7 @@ interface RankingData {
 
 // 主页面组件
 const StatisticsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [stats, setStats] = useState<Statistics>({
     queryCount: 0,
@@ -145,17 +129,17 @@ const StatisticsPage: React.FC = () => {
 
   return (
     <div
-      style={{ flex: 1, width: "100%", display: "flex" }}
+      style={{flex: 1, width: "100%", display: "flex"}}
       className={styles.root}
     >
       <Spin spinning={loading}>
-        <Row gutter={16}>
+        <Row gutter={12}>
           <Col span={6}>
             <Card>
               <Statistic
                 title={t("query")}
                 value={stats.queryCount}
-                prefix={<HourglassTwoTone />}
+                prefix={<HourglassTwoTone/>}
                 precision={0}
               />
             </Card>
@@ -166,7 +150,7 @@ const StatisticsPage: React.FC = () => {
               <Statistic
                 title={t("mutation")}
                 value={stats.mutationCount}
-                prefix={<FlagTwoTone />}
+                prefix={<FlagTwoTone/>}
                 precision={0}
               />
             </Card>
@@ -177,7 +161,7 @@ const StatisticsPage: React.FC = () => {
               <Statistic
                 title={t("subscription")}
                 value={stats.subscribeCount}
-                prefix={<RocketTwoTone />}
+                prefix={<RocketTwoTone/>}
                 precision={0}
               />
             </Card>
@@ -188,13 +172,13 @@ const StatisticsPage: React.FC = () => {
               <Statistic
                 title={t("datasource")}
                 value={stats.dataSourceCount}
-                prefix={<DatabaseTwoTone />}
+                prefix={<DatabaseTwoTone/>}
                 precision={0}
               />
             </Card>
           </Col>
         </Row>
-        <Row style={{ marginTop: 16, flex: 1 }} gutter={16}>
+        <Row style={{ marginTop: 10, flex: 1 }} gutter={16}>
           <Col span={24}>
             <Card
               className="flex flex-1 h-full flex-col overflow-hidden"
@@ -222,7 +206,6 @@ const StatisticsPage: React.FC = () => {
                   <RangePicker
                     value={dateRange}
                     onChange={handleDateChange}
-                    style={{ marginRight: 8 }}
                   />
                 </Space>
               }
@@ -231,20 +214,20 @@ const StatisticsPage: React.FC = () => {
                 <Col span={18}>
                   <ReactECharts
                     option={chartConfig}
-                    style={{ height: "100%" }}
+                    style={{height: "100%"}}
                   />
                 </Col>
                 <Col span={6} className="flex flex-col">
                   <Title level={5}>{t("api_ranking")}</Title>
                   <List
-                    style={{ overflowY: "scroll", maxHeight: "56vh" }}
+                    style={{overflowY: "scroll", maxHeight: "56vh"}}
                     className="flex flex-1 relative"
                     dataSource={rankingData}
                     renderItem={(item, index) => (
-                      <List.Item style={{ padding: "10px 16px" }}>
+                      <List.Item style={{padding: "10px 16px"}}>
                         <div className="flex w-full justify-between">
                           <Space className="overflow-hidden">
-                            <Badge count={index + 1} showZero color="green" />{" "}
+                            <Badge count={index + 1} showZero color="green"/>{" "}
                             {item.name}
                           </Space>
                           <span>{item.total}</span>

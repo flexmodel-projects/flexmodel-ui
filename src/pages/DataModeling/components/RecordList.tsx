@@ -249,7 +249,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       >
         <Form form={form} layout="vertical">
           {model.fields.map(field => (
-            field.type !== 'id'
+            field.type !== 'ID'
             || field.generatedValue === 'BIGINT_NOT_GENERATED'
             || field.generatedValue === 'STRING_NOT_GENERATED'
             || editMode ? (
