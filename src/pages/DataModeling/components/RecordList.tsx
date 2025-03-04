@@ -87,13 +87,13 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "date":
+        case "DATE":
           formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
           break;
-        case "datetime":
+        case "DATETIME":
           formattedValues[key] = dayjs(value as string);
           break;
-        case "json":
+        case "JSON":
           formattedValues[key] = JSON.stringify(value);
           break;
         default:
@@ -108,17 +108,17 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "date":
+        case "DATE":
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           formattedValues[key] = value?.format('YYYY-MM-DD');
           break;
-        case "datetime":
+        case "DATETIME":
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
           break;
-        case "json":
+        case "JSON":
           formattedValues[key] = JSON.parse(value as string);
           break;
         default:
@@ -150,22 +150,22 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const renderFieldInput = useCallback((field: Field) => {
     const inputProps = {placeholder: field.comment};
     switch (field.type) {
-      case 'id':
+      case 'ID':
         return <Input disabled={editMode}/>;
-      case 'string':
+      case 'STRING':
         return <Input {...inputProps} />;
-      case 'text':
-      case 'json':
+      case 'TEXT':
+      case 'JSON':
         return <Input.TextArea {...inputProps} />;
-      case 'decimal':
-      case 'int':
-      case 'bigint':
+      case 'DECIMAL':
+      case 'INT':
+      case 'BIGINT':
         return <Input type="number" {...inputProps} />;
-      case 'boolean':
+      case 'BOOLEAN':
         return <Switch/>;
-      case 'date':
+      case 'DATE':
         return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
-      case 'datetime':
+      case 'DATETIME':
         return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
       default:
         return <Input/>;
@@ -178,7 +178,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     key: field.name,
     render: (text) => {
       const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-      return (field.type === 'text' || field.type === 'json') ? (
+      return (field.type === 'TEXT' || field.type === 'JSON') ? (
         <Tooltip title={fmtText}>
           <span style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
             {fmtText}

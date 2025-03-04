@@ -24,7 +24,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
   const [form] = Form.useForm();
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
   const [selectedIndexIndex, setSelectedIndexIndex] = useState<number>(-1);
-  const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues['string']);
+  const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues['STRING']);
   const [indexForm, setIndexForm] = useState<any>({});
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
     fields: [
       {
         name: 'id',
-        type: 'id',
+        type: 'ID',
         unique: true,
         nullable: false,
         generatedValue: 'AUTO_INCREMENT',
@@ -45,11 +45,11 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
       }
     ],
     indexes: [],
-    type: 'entity'
+    type: 'ENTITY'
   });
 
   const handleAddField = () => {
-    setFieldForm(FieldInitialValues['string']);
+    setFieldForm(FieldInitialValues['STRING']);
     setSelectedFieldIndex(-1);
     setChangeFieldDialogVisible(true);
   };
@@ -73,7 +73,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteField = (index: number) => {
     const newFields = model.fields.filter((_, i) => i !== index);
-    setModel({...model, fields: newFields, type: 'entity'});
+    setModel({...model, fields: newFields, type: 'ENTITY'});
   };
 
   const handleAddIndex = () => {
@@ -101,7 +101,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteIndex = (index: number) => {
     const newIndexes = model.indexes.filter((_, i) => i !== index);
-    setModel({...model, indexes: newIndexes, type: "entity"});
+    setModel({...model, indexes: newIndexes, type: "ENTITY"});
   };
 
   const fieldColumns: ColumnsType<any> = [

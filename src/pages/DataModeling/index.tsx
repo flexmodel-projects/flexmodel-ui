@@ -27,9 +27,9 @@ const ModelingPage: React.FC = () => {
   const renderModelView = () => {
     console.log('active:',activeModel);
     switch (true) {
-      case activeModel?.type === "entity":
+      case activeModel?.type === "ENTITY":
         return <EntityView datasource={activeDs} model={activeModel}/>;
-      case activeModel?.type === "enum":
+      case activeModel?.type === "ENUM":
         return <EnumView datasource={activeDs} model={activeModel} onConfirm={async (anEnum: Enum) => {
           try {
             await modifyModel(activeDs, anEnum);
@@ -40,7 +40,7 @@ const ModelingPage: React.FC = () => {
             notification.error({message: t("form_save_failed")});
           }
         }}/>;
-      case activeModel?.type === "native_query":
+      case activeModel?.type === "NATIVE_QUERY":
         return <NativeQueryView
           datasource={activeDs}
           model={activeModel}

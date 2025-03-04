@@ -16,7 +16,7 @@ export interface Model extends TypeWrapper {
 
 export interface TypeWrapper {
   name: string,
-  type: 'entity' | 'native_query' | 'enum',
+  type: 'ENTITY' | 'NATIVE_QUERY' | 'ENUM',
 }
 
 export interface Entity extends Model {

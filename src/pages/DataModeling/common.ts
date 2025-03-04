@@ -1,19 +1,6 @@
-import {Endpoint, FieldType} from "./data";
-import REST_API from "../../assets/icons/design_restapi.svg?react";
-import GraphQL from "../../assets/icons/design_graphql.svg?react";
-import gRPC from "../../assets/icons/design_grpc.svg?react";
-import WebSocket from "../../assets/icons/design_websocket.svg?react";
-import MQTT from "../../assets/icons/design_mqtt.svg?react";
+import {FieldType} from "./data";
 
 import OIDC from "../../assets/icons/svg/idp_ocid.svg?react";
-
-export const Endpoints: Endpoint[] = [
-  {name: 'REST API', type: 'REST_API', icon: REST_API, enable: true},
-  {name: 'GraphQL', type: 'GRAPH_QL', icon: GraphQL, enable: true},
-  {name: 'gRPC', type: 'GRPC', icon: gRPC, enable: false},
-  {name: 'WebSocket', type: 'WEB_SOCKET', icon: WebSocket, enable: false},
-  {name: 'MQTT', type: 'MQTT', icon: MQTT, enable: false},
-]
 
 export type IdP = { name: string; icon: any; }
 
@@ -32,40 +19,40 @@ export const IdpMap: Record<string, string> = IdPs.reduce((p, c) => {
 
 export const BasicFieldTypes: FieldType[] = [
   {
-    name: 'string',
-    label: 'String',
+    name: 'STRING',
+    label: 'STRING',
   },
   {
-    name: 'text',
-    label: 'Text',
+    name: 'TEXT',
+    label: 'TEXT',
   },
 
   {
-    name: 'int',
-    label: 'Int',
+    name: 'INT',
+    label: 'INT',
   },
   {
-    name: 'bigint',
-    label: 'BigInt',
+    name: 'BIGINT',
+    label: 'BIGINT',
   },
   {
-    name: 'decimal',
-    label: 'Decimal',
+    name: 'DECIMAL',
+    label: 'DECIMAL',
   },
   {
-    name: 'boolean',
-    label: 'Boolean',
+    name: 'BOOLEAN',
+    label: 'BOOLEAN',
   },
   {
-    name: 'datetime',
-    label: 'DateTime',
+    name: 'DATETIME',
+    label: 'DATETIME',
   },
   {
-    name: 'date',
-    label: 'Date',
+    name: 'DATE',
+    label: 'DATE',
   },
   {
-    name: 'json',
+    name: 'JSON',
     label: 'JSON',
   },
 ]
@@ -99,57 +86,57 @@ export const IDGeneratedValues: any[] = [
 ]
 
 export const FieldInitialValues: any = {
-  string: {
-    type: 'string',
+  STRING: {
+    type: 'STRING',
     length: 255,
     unique: false,
     nullable: true,
   },
-  text: {
-    type: 'text',
+  TEXT: {
+    type: 'TEXT',
     unique: false,
     nullable: true,
   },
-  int: {
-    type: 'int',
+  INT: {
+    type: 'INT',
     unique: false,
     nullable: true,
   },
-  bigint: {
-    type: 'bigint',
+  BIGINT: {
+    type: 'BIGINT',
     unique: false,
     nullable: true,
   },
-  decimal: {
-    type: 'decimal',
+  DECIMAL: {
+    type: 'DECIMAL',
     precision: 20,
     scale: 2,
     unique: false,
     nullable: true,
   },
-  boolean: {
-    type: 'boolean',
+  BOOLEAN: {
+    type: 'BOOLEAN',
     unique: false,
     nullable: true,
   },
-  date: {
-    type: 'date',
+  DATE: {
+    type: 'DATE',
     unique: false,
     nullable: true,
   },
-  json: {
-    type: 'json',
+  JSON: {
+    type: 'JSON',
     unique: false,
     nullable: true,
   },
-  id: {
-    type: 'id',
+  ID: {
+    type: 'ID',
     generatedValue: 'AUTO_INCREMENT',
     unique: true,
     nullable: true,
   },
-  relation: {
-    type: 'relation',
+  RELATION: {
+    type: 'RELATION',
     multiple: true,
     localField: null,
     foreignField: null,

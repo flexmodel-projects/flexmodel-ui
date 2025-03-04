@@ -14,20 +14,20 @@ interface FieldInputProps {
 const FieldInput: React.FC<FieldInputProps> = ({field, editMode = false, value, onChange, modelList = []}) => {
   const renderInput = () => {
     switch (field.type) {
-      case 'id':
+      case 'ID':
         return <Input disabled={editMode} value={value} onChange={(e) => onChange(e.target.value)}/>;
-      case 'string':
+      case 'STRING':
         return <Input placeholder={field.comment} value={value} onChange={(e) => onChange(e.target.value)}/>;
-      case 'text':
+      case 'TEXT':
         return <Input.TextArea placeholder={field.comment} value={value} onChange={(e) => onChange(e.target.value)}/>;
-      case 'decimal':
-      case 'int':
-      case 'bigint':
+      case 'DECIMAL':
+      case 'INT':
+      case 'BIGINT':
         return <InputNumber placeholder={field.comment} value={value} onChange={(val) => onChange(val)}
                             style={{width: '100%'}}/>;
-      case 'boolean':
+      case 'BOOLEAN':
         return <Switch checked={value} onChange={(val) => onChange(val)}/>;
-      case 'date':
+      case 'DATE':
         return (
           <DatePicker
             placeholder={field.comment}
@@ -36,7 +36,7 @@ const FieldInput: React.FC<FieldInputProps> = ({field, editMode = false, value, 
             style={{width: '100%'}}
           />
         );
-      case 'datetime':
+      case 'DATETIME':
         return (
           <DatePicker
             showTime
@@ -46,9 +46,9 @@ const FieldInput: React.FC<FieldInputProps> = ({field, editMode = false, value, 
             style={{width: '100%'}}
           />
         );
-      case 'json':
+      case 'JSON':
         return <Input.TextArea placeholder={field.comment} value={value} onChange={(e) => onChange(e.target.value)}/>;
-      case 'enum': {
+      case 'ENUM': {
         const fromEnum = modelList.find(m => m.name === field.from);
         return <Select
           mode={field?.multiple ? 'multiple' : undefined}

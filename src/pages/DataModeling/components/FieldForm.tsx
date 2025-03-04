@@ -31,14 +31,14 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
   useEffect(() => {
     if (currentValue) {
       let tmpType = currentValue.type;
-      if (currentValue.type === 'relation') {
-        tmpType = `relation:${currentValue.from}`;
-        setTmpType(`relation:${currentValue.from}`);
+      if (currentValue.type === 'RELATION') {
+        tmpType = `RELATION:${currentValue.from}`;
+        setTmpType(`RELATION:${currentValue.from}`);
         if (!currentValue.localField) {
           form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'id')[0]?.name);
         }
-      } else if (currentValue.type === 'enum') {
-        tmpType = `enum:${currentValue.from}`;
+      } else if (currentValue.type === 'ENUM') {
+        tmpType = `ENUM:${currentValue.from}`;
       } else {
         setTmpType(currentValue.type);
       }
@@ -50,12 +50,12 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
   }, [currentValue]);
 
   useEffect(() => {
-    if (tmpType.startsWith('relation')) {
-      const relationName = tmpType.replace('relation:', '').replace('[]', '');
+    if (tmpType.startsWith('RELATION')) {
+      const relationName = tmpType.replace('RELATION:', '').replace('[]', '');
       const relatedModel = modelList.find(m => m.name === relationName);
       setRelationModel(relatedModel);
       if (!currentValue.localField) {
-        form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'id')[0]?.name);
+        form.setFieldValue('localField', model.fields.filter((f: any) => f.type === 'ID')[0]?.name);
       }
     } else {
       setRelationModel(null);
@@ -65,15 +65,15 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
   const reqModelList = async () => {
     const data = await getModelList(datasource);
     setModelList(data);
-    setHasId(model.fields?.some((f: any) => f.type === 'id'));
+    setHasId(model.fields?.some((f: any) => f.type === 'ID'));
   };
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    if (value.startsWith("relation")) {
-      form.setFieldsValue({...FieldInitialValues[value], type: "relation", from: value.replace('relation:', '')});
-    } else if (value.startsWith("enum")) {
-      form.setFieldsValue({...FieldInitialValues[value], type: "enum", from: value.replace('enum:', '')});
+    if (value.startsWith("RELATION")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "RELATION", from: value.replace('RELATION:', '')});
+    } else if (value.startsWith("ENUM")) {
+      form.setFieldsValue({...FieldInitialValues[value], type: "ENUM", from: value.replace('ENUM:', '')});
     } else {
       form.setFieldsValue({...FieldInitialValues[value], type: value});
     }
@@ -100,7 +100,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
         <Form.Item label={t('type')} name="tmpType" rules={[{required: true}]}>
           <Select value={tmpType} onChange={handleTypeChange}>
             <Select.OptGroup label={t('select_group_id')}>
-              <Select.Option value="id" disabled={hasId}>ID</Select.Option>
+              <Select.Option value="ID" disabled={hasId}>ID</Select.Option>
             </Select.OptGroup>
             <Select.OptGroup label={t('select_group_basic_field')}>
               {BasicFieldTypes.map(item => (
@@ -108,20 +108,20 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
               ))}
             </Select.OptGroup>
             <Select.OptGroup label={t('select_group_relation')}>
-              {modelList.filter(item => item.type === 'entity').map(item => (
-                <Select.Option key={item.name} value={`relation:${item.name}`}>{item.name}</Select.Option>
+              {modelList.filter(item => item.type === 'ENTITY').map(item => (
+                <Select.Option key={item.name} value={`RELATION:${item.name}`}>{item.name}</Select.Option>
               ))}
             </Select.OptGroup>
             <Select.OptGroup label={t('select_group_enumeration')}>
-              {modelList.filter(item => item.type === 'enum').map(item => (
-                <Select.Option key={item.name} value={`enum:${item.name}`}>{item.name}</Select.Option>
+              {modelList.filter(item => item.type === 'ENUM').map(item => (
+                <Select.Option key={item.name} value={`ENUM:${item.name}`}>{item.name}</Select.Option>
               ))}
             </Select.OptGroup>
           </Select>
         </Form.Item>
 
         {/* 以下是根据类型动态渲染的部分 */}
-        {form.getFieldValue('tmpType') === 'id' && (
+        {form.getFieldValue('tmpType') === 'ID' && (
           <Form.Item label="Generated value" name="generatedValue">
             <Select>
               {IDGeneratedValues.map(item => (
@@ -131,13 +131,13 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </Form.Item>
         )}
 
-        {form.getFieldValue('tmpType') === 'string' && (
+        {form.getFieldValue('tmpType') === 'STRING' && (
           <Form.Item label={t('length')} name="length">
             <Input type="number"/>
           </Form.Item>
         )}
 
-        {form.getFieldValue('tmpType') === 'decimal' && (
+        {form.getFieldValue('tmpType') === 'DECIMAL' && (
           <>
             <Form.Item label={t('precision')} name="precision">
               <Input type="number"/>
@@ -148,7 +148,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {form.getFieldValue('tmpType')?.startsWith('relation') && (
+        {form.getFieldValue('tmpType')?.startsWith('RELATION') && (
           <>
             <Form.Item label={t('local_field')} name="localField" rules={[{required: true}]}>
               <Select>
@@ -173,7 +173,7 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {form.getFieldValue('tmpType')?.startsWith('enum') && (
+        {form.getFieldValue('tmpType')?.startsWith('ENUM') && (
           <>
             <Form.Item label={t('selection_multiple')} name="multiple" valuePropName="checked">
               <Switch/>
@@ -181,8 +181,8 @@ const FieldForm: React.FC<FieldFormProps> = ({visible, datasource, model, curren
           </>
         )}
 
-        {!(['id', 'relation'].includes(form.getFieldValue('tmpType'))
-          || form.getFieldValue('tmpType')?.startsWith('relation')) && (
+        {!(['ID', 'RELATION'].includes(form.getFieldValue('tmpType'))
+          || form.getFieldValue('tmpType')?.startsWith('RELATION')) && (
           <>
             <Form.Item label={t('default_value')} name="defaultValue">
               <FieldInput field={form.getFieldsValue()} modelList={modelList} value={undefined}

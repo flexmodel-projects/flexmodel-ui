@@ -187,7 +187,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
         // 如果分组不存在，则创建分组
         if (!acc[type]) {
           switch (type) {
-            case "entity":
+            case "ENTITY":
               acc[type] = {
                 type: "__entity_group",
                 key: "__entity_group",
@@ -197,7 +197,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
                 data: item,
               };
               break;
-            case "enum":
+            case "ENUM":
               acc[type] = {
                 type: "__enum_group",
                 key: "__enum_group",
@@ -207,7 +207,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
                 data: item,
               };
               break;
-            case "native_query":
+            case "NATIVE_QUERY":
               acc[type] = {
                 type: "__native_query_group",
                 key: "__native_query_group",

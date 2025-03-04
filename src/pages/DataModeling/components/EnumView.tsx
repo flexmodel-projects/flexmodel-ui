@@ -26,7 +26,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
       await form.validateFields();
       onConfirm({
         name: form.getFieldValue("name"),
-        type: "enum",
+        type: "ENUM",
         elements: form.getFieldValue("elements"),
         comment: form.getFieldValue("comment"),
       });

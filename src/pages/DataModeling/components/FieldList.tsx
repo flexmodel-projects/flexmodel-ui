@@ -17,7 +17,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
-  const [currentVal, setCurrentVal] = useState<Field>(FieldInitialValues['string']);
+  const [currentVal, setCurrentVal] = useState<Field>(FieldInitialValues['STRING']);
 
   const fetchFields = useCallback(async () => {
     // Replace this with actual fetch call
@@ -32,7 +32,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const handleNewField = () => {
     setChangeDialogVisible(true);
     setSelectedFieldIndex(-1);
-    setCurrentVal(FieldInitialValues['string']);
+    setCurrentVal(FieldInitialValues['STRING']);
   };
 
   const handleEdit = (index: number) => {
@@ -79,10 +79,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       dataIndex: 'type',
       key: 'type',
       render: (type: string, f: Field) => {
-        if (type === 'id') {
+        if (type === 'ID') {
           return 'ID';
         }
-        if (type === 'relation') {
+        if (type === 'RELATION') {
           return <Tooltip title={
             <span>
                 {t('local_field')}: {f?.localField + ''}
@@ -95,7 +95,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
             {f?.concreteType}
           </Tooltip>;
         }
-        if (type === 'enum') {
+        if (type === 'ENUM') {
           return <Tooltip title={
             <span>
                 {t('enums')}
