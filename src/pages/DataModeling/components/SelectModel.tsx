@@ -181,7 +181,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
    */
   const groupByType = (data: any): any[] => {
     const groups = data.reduce((acc: any, item: any) => {
-      const { type, name, ...rest } = item;
+      const {type, name, ...rest} = item;
       if (!acc[type]) {
         switch (type) {
           case "ENTITY":
@@ -191,7 +191,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
               name: t("entities"),
               children: [],
               isLeaf: false,
-              data: item,
             };
             break;
           case "ENUM":
@@ -201,7 +200,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
               name: t("enums"),
               children: [],
               isLeaf: false,
-              data: item,
             };
             break;
           case "NATIVE_QUERY":
@@ -211,12 +209,12 @@ const SelectModel: React.FC<SelectModelProps> = ({
               name: t("native_queries"),
               children: [],
               isLeaf: false,
-              data: item,
             };
             break;
           default:
             break;
         }
+        acc[type].data = {...acc[type]};
       }
       acc[type]?.children.push({
         name,

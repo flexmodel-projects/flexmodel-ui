@@ -226,7 +226,7 @@ const StatisticsPage: React.FC = () => {
                     renderItem={(item, index) => (
                       <List.Item style={{padding: "10px 16px"}}>
                         <div className="flex w-full justify-between">
-                          <Space className="overflow-hidden">
+                          <Space className="overflow-hidden w-65">
                             <Badge count={index + 1} showZero color="green"/>{" "}
                             {item.name}
                           </Space>
