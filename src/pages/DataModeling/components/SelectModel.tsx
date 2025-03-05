@@ -1,14 +1,35 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree,} from "antd";
-import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined,} from "@ant-design/icons";
-import {getDatasourceList} from "../../../api/datasource";
-import {createModel as reqCreateModel, dropModel, getModelList,} from "../../../api/model";
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Input,
+  Menu,
+  Modal,
+  Select,
+  Space,
+  Spin,
+  Tree,
+} from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MoreOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+import { getDatasourceList } from "../../../api/datasource";
+import {
+  createModel as reqCreateModel,
+  dropModel,
+  getModelList,
+} from "../../../api/model";
+import { useNavigate } from "react-router-dom";
 import CreateEntity from "./CreateEntity.tsx";
-import {Datasource, Model} from "../data";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../store/configStore.ts";
+import { Datasource, Model } from "../data";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/configStore.ts";
 import CreateNativeQueryModel from "./CreateNativeQueryModel.tsx";
 import CreateEnum from "./CreateEnum.tsx";
 
@@ -25,13 +46,13 @@ interface SelectModelProps {
 }
 
 const SelectModel: React.FC<SelectModelProps> = ({
-                                                   datasource,
-                                                   editable,
-                                                   onSelect,
-                                                   version,
-                                                 }) => {
-  const {t} = useTranslation();
-  const {locale} = useSelector((state: RootState) => state.locale);
+  datasource,
+  editable,
+  onSelect,
+  version,
+}) => {
+  const { t } = useTranslation();
+  const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
   const [dsList, setDsList] = useState<Datasource[]>([]);
@@ -42,9 +63,13 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const [activeModel, setActiveModel] = useState<any>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] =
+    useState<boolean>(false);
   const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
-  const [createNativeQueryModelDrawerVisible, setCreateNativeQueryModelDrawerVisible] = useState(false);
+  const [
+    createNativeQueryModelDrawerVisible,
+    setCreateNativeQueryModelDrawerVisible,
+  ] = useState(false);
   const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
   const treeRef = useRef<any>(null);
@@ -127,7 +152,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
           model.name.toLowerCase().includes(searchText.toLowerCase()) ||
           filteredChildren.length > 0
         ) {
-          return {...model, children: filteredChildren};
+          return { ...model, children: filteredChildren };
         }
         return null;
       })
@@ -181,7 +206,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
    */
   const groupByType = (data: any): any[] => {
     const groups = data.reduce((acc: any, item: any) => {
-      const {type, name, ...rest} = item;
+      const { type, name, ...rest } = item;
       if (!acc[type]) {
         switch (type) {
           case "ENTITY":
@@ -214,7 +239,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
           default:
             break;
         }
-        acc[type].data = {...acc[type]};
+        acc[type].data = { ...acc[type] };
       }
       acc[type]?.children.push({
         name,
@@ -229,9 +254,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
 
     // 自定义排序：先 ENTITY，再 ENUM，最后 NATIVE_QUERY
     const order = ["ENTITY", "ENUM", "NATIVE_QUERY"];
-    return order.map(type => groups[type]).filter(Boolean);
+    return order.map((type) => groups[type]).filter(Boolean);
   };
-
 
   return (
     <div>
@@ -239,11 +263,11 @@ const SelectModel: React.FC<SelectModelProps> = ({
         <Select
           value={activeDs}
           onChange={onSelectDatasource}
-          style={{width: "calc(100% - 50px)"}}
+          style={{ width: "calc(100% - 50px)" }}
         >
           {dsList.map((item) => (
             <Select.Option key={item.name} value={item.name}>
-              <div style={{display: "flex", alignItems: "center"}}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 {item.name}
               </div>
             </Select.Option>
@@ -251,8 +275,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
           <Select.Option value="manage" disabled>
             <Button
               type="link"
-              icon={<EditOutlined/>}
-              style={{width: "100%"}}
+              icon={<EditOutlined />}
+              style={{ width: "100%" }}
               onClick={() => navigate("/datasource")}
             >
               {t("management")}
@@ -260,13 +284,13 @@ const SelectModel: React.FC<SelectModelProps> = ({
           </Select.Option>
         </Select>
         <Button
-          icon={<ReloadOutlined/>}
+          icon={<ReloadOutlined />}
           onClick={refreshDatasource}
           loading={dsLoading}
-          style={{marginLeft: 8}}
+          style={{ marginLeft: 8 }}
         />
       </div>
-      <Divider/>
+      <Divider />
       <Space>
         {editable && (
           <Dropdown
@@ -286,18 +310,18 @@ const SelectModel: React.FC<SelectModelProps> = ({
               </Menu>
             }
           >
-            <Button icon={<PlusOutlined/>}/>
+            <Button icon={<PlusOutlined />} />
           </Dropdown>
         )}
         <Input
           placeholder={t("search_models")}
           value={filterText}
           onChange={handleSearchChange} // 绑定搜索框变化事件
-          style={{width: "100%"}}
+          style={{ width: "100%" }}
           allowClear
         />
       </Space>
-      <Divider/>
+      <Divider />
       <Spin spinning={modelLoading}>
         <Tree.DirectoryTree
           ref={treeRef}
@@ -305,9 +329,9 @@ const SelectModel: React.FC<SelectModelProps> = ({
           treeData={filteredModelList} // 使用过滤后的数据
           expandedKeys={expandedKeys}
           onExpand={onExpand}
-          fieldNames={{key: "key", title: "name", children: "children"}}
+          fieldNames={{ key: "key", title: "name", children: "children" }}
           selectedKeys={selectKeys}
-          onSelect={(_, {node}) => handleItemChange(node)}
+          onSelect={(_, { node }) => handleItemChange(node)}
           titleRender={(node: any) => (
             <div className="flex items-center">
               <Space>
@@ -321,15 +345,15 @@ const SelectModel: React.FC<SelectModelProps> = ({
                     <Menu onClick={handleMenuClick}>
                       <Menu.Item
                         key="delete"
-                        style={{color: "red"}}
-                        icon={<DeleteOutlined/>}
+                        style={{ color: "red" }}
+                        icon={<DeleteOutlined />}
                       >
                         {t("delete")}
                       </Menu.Item>
                     </Menu>
                   }
                 >
-                  <MoreOutlined style={{cursor: "pointer"}}/>
+                  <MoreOutlined style={{ cursor: "pointer" }} />
                 </Dropdown>
               )}
             </div>
@@ -342,7 +366,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
         onCancel={() => setDeleteDialogVisible(false)}
         onOk={handleDelete}
       >
-        {t("delete_dialog_text", {name: activeModel?.name})}
+        {t("delete_dialog_text", { name: activeModel?.name })}
       </Modal>
       <CreateEntity
         visible={createDrawerVisible}
