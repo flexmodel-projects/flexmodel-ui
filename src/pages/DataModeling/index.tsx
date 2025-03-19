@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import EnumView from "./components/EnumView.tsx";
 import {Enum} from "./data";
 import ERDiagram from "./components/ERDiagramView.tsx";
+import {ObjectType} from "../../utils/type.ts";
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
@@ -27,9 +28,9 @@ const ModelingPage: React.FC = () => {
   const renderModelView = () => {
     console.log('active:',activeModel);
     switch (true) {
-      case activeModel?.type === "ENTITY":
+      case activeModel?.type === ObjectType.ENTITY:
         return <EntityView datasource={activeDs} model={activeModel}/>;
-      case activeModel?.type === "ENUM":
+      case activeModel?.type === ObjectType.ENUM:
         return <EnumView datasource={activeDs} model={activeModel} onConfirm={async (anEnum: Enum) => {
           try {
             await modifyModel(activeDs, anEnum);
@@ -40,7 +41,7 @@ const ModelingPage: React.FC = () => {
             notification.error({message: t("form_save_failed")});
           }
         }}/>;
-      case activeModel?.type === "NATIVE_QUERY":
+      case activeModel?.type === ObjectType.NATIVE_QUERY:
         return <NativeQueryView
           datasource={activeDs}
           model={activeModel}

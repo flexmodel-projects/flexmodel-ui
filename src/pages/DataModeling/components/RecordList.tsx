@@ -21,6 +21,7 @@ import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../
 import dayjs from "dayjs";
 import {Entity} from "../data";
 import {useTranslation} from "react-i18next";
+import {ScalarType} from "../../../utils/type.ts";
 
 interface Field {
   name: string;
@@ -87,13 +88,13 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "DATE":
+        case ScalarType.DATE:
           formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
           break;
-        case "DATETIME":
+        case ScalarType.DATETIME:
           formattedValues[key] = dayjs(value as string);
           break;
-        case "JSON":
+        case ScalarType.JSON:
           formattedValues[key] = JSON.stringify(value);
           break;
         default:
@@ -108,17 +109,17 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "DATE":
+        case ScalarType.DATE:
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           formattedValues[key] = value?.format('YYYY-MM-DD');
           break;
-        case "DATETIME":
+        case ScalarType.DATETIME:
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
           break;
-        case "JSON":
+        case ScalarType.JSON:
           formattedValues[key] = JSON.parse(value as string);
           break;
         default:
@@ -150,22 +151,22 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const renderFieldInput = useCallback((field: Field) => {
     const inputProps = {placeholder: field.comment};
     switch (field.type) {
-      case 'ID':
+      case ScalarType.ID:
         return <Input disabled={editMode}/>;
-      case 'STRING':
+      case ScalarType.STRING:
         return <Input {...inputProps} />;
-      case 'TEXT':
-      case 'JSON':
+      case ScalarType.TEXT:
+      case ScalarType.JSON:
         return <Input.TextArea {...inputProps} />;
-      case 'DECIMAL':
-      case 'INT':
-      case 'BIGINT':
+      case ScalarType.DECIMAL:
+      case ScalarType.INT:
+      case ScalarType.LONG:
         return <Input type="number" {...inputProps} />;
-      case 'BOOLEAN':
+      case ScalarType.BOOLEAN:
         return <Switch/>;
-      case 'DATE':
+      case ScalarType.DATE:
         return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
-      case 'DATETIME':
+      case ScalarType.DATETIME:
         return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
       default:
         return <Input/>;
@@ -178,7 +179,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     key: field.name,
     render: (text) => {
       const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-      return (field.type === 'TEXT' || field.type === 'JSON') ? (
+      return (field.type === ScalarType.TEXT || field.type === ScalarType.JSON) ? (
         <Tooltip title={fmtText}>
           <span style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
             {fmtText}
@@ -249,7 +250,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       >
         <Form form={form} layout="vertical">
           {model.fields.map(field => (
-            field.type !== 'ID'
+            field.type !== ScalarType.ID
             || field.generatedValue === 'BIGINT_NOT_GENERATED'
             || field.generatedValue === 'STRING_NOT_GENERATED'
             || editMode ? (

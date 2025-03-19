@@ -6,6 +6,7 @@ import FieldForm from "./FieldForm.tsx";
 import {FieldInitialValues, FieldTypeMap} from "../common.ts";
 import {Entity, Field} from "../data";
 import {useTranslation} from "react-i18next";
+import {ScalarType} from "../../../utils/type.ts";
 
 interface FieldListProps {
   datasource: string;
@@ -17,7 +18,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
-  const [currentVal, setCurrentVal] = useState<Field>(FieldInitialValues['STRING']);
+  const [currentVal, setCurrentVal] = useState<Field>(FieldInitialValues[ScalarType.STRING]);
 
   const fetchFields = useCallback(async () => {
     // Replace this with actual fetch call
@@ -32,7 +33,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const handleNewField = () => {
     setChangeDialogVisible(true);
     setSelectedFieldIndex(-1);
-    setCurrentVal(FieldInitialValues['STRING']);
+    setCurrentVal(FieldInitialValues[ScalarType.STRING]);
   };
 
   const handleEdit = (index: number) => {
@@ -79,10 +80,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       dataIndex: 'type',
       key: 'type',
       render: (type: string, f: Field) => {
-        if (type === 'ID') {
-          return 'ID';
+        if (type === ScalarType.ID) {
+          return ScalarType.ID;
         }
-        if (type === 'RELATION') {
+        if (type === ScalarType.RELATION) {
           return <Tooltip title={
             <span>
                 {t('local_field')}: {f?.localField + ''}
@@ -95,7 +96,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
             {f?.concreteType}
           </Tooltip>;
         }
-        if (type === 'ENUM') {
+        if (type === ScalarType.ENUM) {
           return <Tooltip title={
             <span>
                 {t('enums')}

@@ -1,37 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-  Divider,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Select,
-  Space,
-  Spin,
-  Tree,
-} from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  MoreOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { getDatasourceList } from "../../../api/datasource";
-import {
-  createModel as reqCreateModel,
-  dropModel,
-  getModelList,
-} from "../../../api/model";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useRef, useState} from "react";
+import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree,} from "antd";
+import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined,} from "@ant-design/icons";
+import {getDatasourceList} from "../../../api/datasource";
+import {createModel as reqCreateModel, dropModel, getModelList,} from "../../../api/model";
+import {useNavigate} from "react-router-dom";
 import CreateEntity from "./CreateEntity.tsx";
-import { Datasource, Model } from "../data";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/configStore.ts";
+import {Datasource, Model} from "../data";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../store/configStore.ts";
 import CreateNativeQueryModel from "./CreateNativeQueryModel.tsx";
 import CreateEnum from "./CreateEnum.tsx";
+import {ObjectType} from "../../../utils/type.ts";
 
 interface ModelTree {
   name: string;
@@ -209,7 +189,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
       const { type, name, ...rest } = item;
       if (!acc[type]) {
         switch (type) {
-          case "ENTITY":
+          case ObjectType.ENTITY:
             acc[type] = {
               type: "__entity_group",
               key: "__entity_group",
@@ -218,7 +198,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
               isLeaf: false,
             };
             break;
-          case "ENUM":
+          case ObjectType.ENUM:
             acc[type] = {
               type: "__enum_group",
               key: "__enum_group",
@@ -227,7 +207,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
               isLeaf: false,
             };
             break;
-          case "NATIVE_QUERY":
+          case ObjectType.NATIVE_QUERY:
             acc[type] = {
               type: "__native_query_group",
               key: "__native_query_group",
@@ -253,7 +233,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
     }, {});
 
     // 自定义排序：先 ENTITY，再 ENUM，最后 NATIVE_QUERY
-    const order = ["ENTITY", "ENUM", "NATIVE_QUERY"];
+    const order = [ObjectType.ENTITY, ObjectType.ENUM, ObjectType.NATIVE_QUERY];
     return order.map((type) => groups[type]).filter(Boolean);
   };
 

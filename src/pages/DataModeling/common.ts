@@ -1,6 +1,7 @@
 import {FieldType} from "./data";
 
 import OIDC from "../../assets/icons/svg/idp_ocid.svg?react";
+import {ScalarType} from "../../utils/type.ts";
 
 export type IdP = { name: string; icon: any; }
 
@@ -19,40 +20,40 @@ export const IdpMap: Record<string, string> = IdPs.reduce((p, c) => {
 
 export const BasicFieldTypes: FieldType[] = [
   {
-    name: 'STRING',
-    label: 'STRING',
+    name: ScalarType.STRING,
+    label: 'String',
   },
   {
-    name: 'TEXT',
-    label: 'TEXT',
+    name: ScalarType.TEXT,
+    label: 'Text',
   },
 
   {
-    name: 'INT',
-    label: 'INT',
+    name: ScalarType.INT,
+    label: 'Int',
   },
   {
-    name: 'BIGINT',
-    label: 'BIGINT',
+    name: ScalarType.LONG,
+    label: 'Long',
   },
   {
-    name: 'DECIMAL',
-    label: 'DECIMAL',
+    name: ScalarType.DECIMAL,
+    label: 'Decimal',
   },
   {
-    name: 'BOOLEAN',
-    label: 'BOOLEAN',
+    name: ScalarType.BOOLEAN,
+    label: 'Boolean',
   },
   {
-    name: 'DATETIME',
-    label: 'DATETIME',
+    name: ScalarType.DATETIME,
+    label: 'DateTime',
   },
   {
-    name: 'DATE',
-    label: 'DATE',
+    name: ScalarType.DATE,
+    label: 'Date',
   },
   {
-    name: 'JSON',
+    name: ScalarType.JSON,
     label: 'JSON',
   },
 ]
@@ -86,57 +87,62 @@ export const IDGeneratedValues: any[] = [
 ]
 
 export const FieldInitialValues: any = {
-  STRING: {
-    type: 'STRING',
+  String: {
+    type: ScalarType.STRING,
     length: 255,
     unique: false,
     nullable: true,
   },
-  TEXT: {
-    type: 'TEXT',
+  Text: {
+    type: ScalarType.TEXT,
     unique: false,
     nullable: true,
   },
-  INT: {
-    type: 'INT',
+  Int: {
+    type: ScalarType.INT,
     unique: false,
     nullable: true,
   },
-  BIGINT: {
-    type: 'BIGINT',
+  Long: {
+    type: ScalarType.LONG,
     unique: false,
     nullable: true,
   },
-  DECIMAL: {
-    type: 'DECIMAL',
+  Decimal: {
+    type: ScalarType.DECIMAL,
     precision: 20,
     scale: 2,
     unique: false,
     nullable: true,
   },
-  BOOLEAN: {
-    type: 'BOOLEAN',
+  Boolean: {
+    type: ScalarType.BOOLEAN,
     unique: false,
     nullable: true,
   },
-  DATE: {
-    type: 'DATE',
+  DateTime: {
+    type: ScalarType.DATE,
+    unique: false,
+    nullable: true,
+  },
+  Date: {
+    type: ScalarType.DATE,
     unique: false,
     nullable: true,
   },
   JSON: {
-    type: 'JSON',
+    type: ScalarType.JSON,
     unique: false,
     nullable: true,
   },
   ID: {
-    type: 'ID',
+    type: ScalarType.ID,
     generatedValue: 'AUTO_INCREMENT',
     unique: true,
     nullable: true,
   },
-  RELATION: {
-    type: 'RELATION',
+  Relation: {
+    type: ScalarType.RELATION,
     multiple: true,
     localField: null,
     foreignField: null,

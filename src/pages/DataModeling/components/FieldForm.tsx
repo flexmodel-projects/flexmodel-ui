@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Modal, Select, Switch } from "antd";
-import { getModelList } from "../../../api/model"; // 替换为你的 API 调用
-import {
-  BasicFieldTypes,
-  FieldInitialValues,
-  IDGeneratedValues,
-} from "../common.ts";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {Form, Input, Modal, Select, Switch} from "antd";
+import {getModelList} from "../../../api/model"; // 替换为你的 API 调用
+import {BasicFieldTypes, FieldInitialValues, IDGeneratedValues,} from "../common.ts";
+import {useTranslation} from "react-i18next";
 import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
-import { Field } from "../data";
+import {Field} from "../data";
+import {ObjectType, ScalarType} from "../../../utils/type.ts";
 
 interface FieldFormProps {
   visible: boolean;
@@ -20,14 +17,14 @@ interface FieldFormProps {
 }
 
 const FieldForm: React.FC<FieldFormProps> = ({
-  visible,
-  datasource,
-  model,
-  currentValue,
-  onConfirm,
-  onCancel,
-}) => {
-  const { t } = useTranslation();
+                                               visible,
+                                               datasource,
+                                               model,
+                                               currentValue,
+                                               onConfirm,
+                                               onCancel,
+                                             }) => {
+  const {t} = useTranslation();
   const [form] = Form.useForm();
   const [modelList, setModelList] = useState<any[]>([]);
   const [hasId, setHasId] = useState<boolean>(false);
@@ -44,7 +41,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     multiple: false,
     defaultValue: null,
     from: "",
-    tmpType: "STRING",
+    tmpType: ScalarType.STRING,
     length: 255,
   };
 
@@ -59,7 +56,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
   useEffect(() => {
     if (currentValue) {
       let tmpType = currentValue.type;
-      if (currentValue.type === "RELATION") {
+      if (currentValue.type === ScalarType.RELATION) {
         tmpType = `RELATION:${currentValue.from}`;
         setTmpType(`RELATION:${currentValue.from}`);
         if (!currentValue.localField) {
@@ -68,7 +65,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             model.fields.filter((f: any) => f.type === "id")[0]?.name
           );
         }
-      } else if (currentValue.type === "ENUM") {
+      } else if (currentValue.type === ScalarType.ENUM) {
         tmpType = `ENUM:${currentValue.from}`;
       } else {
         setTmpType(currentValue.type);
@@ -99,7 +96,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const reqModelList = async () => {
     const data = await getModelList(datasource);
     setModelList(data);
-    setHasId(model.fields?.some((f: any) => f.type === "ID"));
+    setHasId(model.fields?.some((f: any) => f.type === ScalarType.ID));
   };
 
   const handleTypeChange = (value: string) => {
@@ -108,7 +105,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     if (value.startsWith("RELATION")) {
       form.setFieldsValue({
         ...FieldInitialValues[value],
-        type: "RELATION",
+        type: ScalarType.RELATION,
         from: value.replace("RELATION:", ""),
         multiple: false,
         defaultValue: undefined, // 清空默认值
@@ -116,7 +113,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     } else if (value.startsWith("ENUM")) {
       form.setFieldsValue({
         ...FieldInitialValues[value],
-        type: "ENUM",
+        type: ScalarType.ENUM,
         from: value.replace("ENUM:", ""),
         multiple: false,
         defaultValue: undefined, // 清空默认值
@@ -185,31 +182,31 @@ const FieldForm: React.FC<FieldFormProps> = ({
       <Form
         form={form}
         onValuesChange={handleFormChange}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
+        labelCol={{span: 6}}
+        wrapperCol={{span: 18}}
         layout="horizontal"
         initialValues={initialValues}
       >
-        <Form.Item label={t("name")} name="name" rules={[{ required: true }]}>
-          <Input disabled={!!currentValue?.name} />
+        <Form.Item label={t("name")} name="name" rules={[{required: true}]}>
+          <Input disabled={!!currentValue?.name}/>
         </Form.Item>
         <Form.Item label={t("comment")} name="comment">
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item name="type" hidden>
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item name="from" hidden>
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           label={t("type")}
           name="tmpType"
-          rules={[{ required: true }]}
+          rules={[{required: true}]}
         >
           <Select value={tmpType} onChange={handleTypeChange}>
             <Select.OptGroup label={t("select_group_id")}>
-              <Select.Option value="ID" disabled={hasId}>
+              <Select.Option value={ScalarType.ID} disabled={hasId}>
                 ID
               </Select.Option>
             </Select.OptGroup>
@@ -222,7 +219,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </Select.OptGroup>
             <Select.OptGroup label={t("select_group_relation")}>
               {modelList
-                .filter((item) => item.type === "ENTITY")
+                .filter((item) => item.type === ObjectType.ENTITY)
                 .map((item) => (
                   <Select.Option
                     key={item.name}
@@ -234,7 +231,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </Select.OptGroup>
             <Select.OptGroup label={t("select_group_enumeration")}>
               {modelList
-                .filter((item) => item.type === "ENUM")
+                .filter((item) => item.type === ObjectType.ENUM)
                 .map((item) => (
                   <Select.Option key={item.name} value={`ENUM:${item.name}`}>
                     {item.name}
@@ -245,7 +242,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         </Form.Item>
 
         {/* 以下是根据类型动态渲染的部分 */}
-        {form.getFieldValue("tmpType") === "ID" && (
+        {form.getFieldValue("tmpType") === ScalarType.ID && (
           <Form.Item label="Generated value" name="generatedValue">
             <Select>
               {IDGeneratedValues.map((item) => (
@@ -257,29 +254,29 @@ const FieldForm: React.FC<FieldFormProps> = ({
           </Form.Item>
         )}
 
-        {form.getFieldValue("tmpType") === "STRING" && (
+        {form.getFieldValue("tmpType") === ScalarType.STRING && (
           <Form.Item label={t("length")} name="length">
-            <Input type="number" />
+            <Input type="number"/>
           </Form.Item>
         )}
 
-        {form.getFieldValue("tmpType") === "DECIMAL" && (
+        {form.getFieldValue("tmpType") === ScalarType.DECIMAL && (
           <>
             <Form.Item label={t("precision")} name="precision">
-              <Input type="number" />
+              <Input type="number"/>
             </Form.Item>
             <Form.Item label={t("scale")} name="scale">
-              <Input type="number" />
+              <Input type="number"/>
             </Form.Item>
           </>
         )}
 
-        {form.getFieldValue("tmpType")?.startsWith("RELATION") && (
+        {(form.getFieldValue("tmpType")?.startsWith("RELATION") || form.getFieldValue("tmpType") === ScalarType.RELATION) && (
           <>
             <Form.Item
               label={t("local_field")}
               name="localField"
-              rules={[{ required: true }]}
+              rules={[{required: true}]}
             >
               <Select>
                 {model?.fields?.map((field: any) => (
@@ -292,7 +289,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             <Form.Item
               label={t("foreign_field")}
               name="foreignField"
-              rules={[{ required: true }]}
+              rules={[{required: true}]}
             >
               <Select>
                 {relationModel?.fields?.map((field: any) => (
@@ -307,30 +304,30 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="multiple"
               valuePropName="checked"
             >
-              <Switch />
+              <Switch/>
             </Form.Item>
             <Form.Item
               label={t("cascade_delete")}
               name="cascadeDelete"
               valuePropName="checked"
             >
-              <Switch />
+              <Switch/>
             </Form.Item>
           </>
         )}
 
         <Form.Item dependencies={["tmpType"]} noStyle>
-          {({ getFieldValue }) => {
+          {({getFieldValue}) => {
             const tmpType = getFieldValue("tmpType");
 
-            if (tmpType.startsWith("ENUM")) {
+            if (tmpType.startsWith("ENUM") || tmpType === ScalarType.ENUM) {
               return (
                 <Form.Item
                   label={t("selection_multiple")}
                   name="multiple"
                   valuePropName="checked"
                 >
-                  <Switch />
+                  <Switch/>
                 </Form.Item>
               );
             }
@@ -338,7 +335,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         </Form.Item>
 
         {!(
-          ["ID", "RELATION"].includes(form.getFieldValue("tmpType")) ||
+          [ScalarType.ID, ScalarType.RELATION].includes(form.getFieldValue("tmpType")) ||
           form.getFieldValue("tmpType")?.startsWith("RELATION")
         ) && (
           <>
@@ -363,14 +360,14 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="nullable"
               valuePropName="checked"
             >
-              <Switch />
+              <Switch/>
             </Form.Item>
             <Form.Item
               label={t("unique")}
               name="unique"
               valuePropName="checked"
             >
-              <Switch />
+              <Switch/>
             </Form.Item>
           </>
         )}

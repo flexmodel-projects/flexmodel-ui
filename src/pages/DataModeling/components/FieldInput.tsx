@@ -1,7 +1,8 @@
 import React from "react";
-import { DatePicker, Input, InputNumber, Select, Switch } from "antd";
+import {DatePicker, Input, InputNumber, Select, Switch} from "antd";
 import dayjs from "dayjs";
-import { Field } from "../data";
+import {Field} from "../data";
+import {ScalarType} from "../../../utils/type.ts";
 
 interface FieldInputProps {
   fieldFn: () => Field;
@@ -22,7 +23,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
 
   const renderInput = () => {
     switch (field.type) {
-      case "ID":
+      case ScalarType.ID:
         return (
           <Input
             disabled={editMode}
@@ -30,7 +31,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "STRING":
+      case ScalarType.STRING:
         return (
           <Input
             placeholder={field.comment}
@@ -38,7 +39,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "TEXT":
+      case ScalarType.TEXT:
         return (
           <Input.TextArea
             placeholder={field.comment}
@@ -46,9 +47,9 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "DECIMAL":
-      case "INT":
-      case "BIGINT":
+      case ScalarType.DECIMAL:
+      case ScalarType.INT:
+      case ScalarType.LONG:
         return (
           <InputNumber
             placeholder={field.comment}
@@ -57,9 +58,9 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case "BOOLEAN":
+      case ScalarType.BOOLEAN:
         return <Switch checked={value} onChange={(val) => onChange(val)} />;
-      case "DATE":
+      case ScalarType.DATE:
         return (
           <DatePicker
             placeholder={field.comment}
@@ -70,7 +71,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case "DATETIME":
+      case ScalarType.DATETIME:
         return (
           <DatePicker
             showTime
@@ -82,7 +83,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case "JSON":
+      case ScalarType.JSON:
         return (
           <Input.TextArea
             placeholder={field.comment}
@@ -90,7 +91,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "ENUM": {
+      case ScalarType.ENUM: {
         const fromEnum = modelList.find((m) => m.name === field.from);
         return (
           <Select

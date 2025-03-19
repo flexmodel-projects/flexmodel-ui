@@ -7,6 +7,7 @@ import {PlusOutlined} from "@ant-design/icons";
 import type {Entity} from "../data.d.ts";
 import {FieldInitialValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
+import {ObjectType, ScalarType} from "../../../utils/type.ts";
 
 interface Props {
   datasource: string;
@@ -24,7 +25,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
   const [form] = Form.useForm();
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
   const [selectedIndexIndex, setSelectedIndexIndex] = useState<number>(-1);
-  const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues['STRING']);
+  const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues[ScalarType.STRING]);
   const [indexForm, setIndexForm] = useState<any>({});
 
   useEffect(() => {
@@ -37,7 +38,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
     fields: [
       {
         name: 'id',
-        type: 'ID',
+        type: ScalarType.ID,
         unique: true,
         nullable: false,
         generatedValue: 'AUTO_INCREMENT',
@@ -45,11 +46,11 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
       }
     ],
     indexes: [],
-    type: 'ENTITY'
+    type: ObjectType.ENTITY
   });
 
   const handleAddField = () => {
-    setFieldForm(FieldInitialValues['STRING']);
+    setFieldForm(FieldInitialValues[ScalarType.STRING]);
     setSelectedFieldIndex(-1);
     setChangeFieldDialogVisible(true);
   };
@@ -73,7 +74,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteField = (index: number) => {
     const newFields = model.fields.filter((_, i) => i !== index);
-    setModel({...model, fields: newFields, type: 'ENTITY'});
+    setModel({...model, fields: newFields, type: ObjectType.ENTITY});
   };
 
   const handleAddIndex = () => {
@@ -101,7 +102,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const handleDeleteIndex = (index: number) => {
     const newIndexes = model.indexes.filter((_, i) => i !== index);
-    setModel({...model, indexes: newIndexes, type: "ENTITY"});
+    setModel({...model, indexes: newIndexes, type: ObjectType.ENTITY});
   };
 
   const fieldColumns: ColumnsType<any> = [
