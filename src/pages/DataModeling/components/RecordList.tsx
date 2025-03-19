@@ -88,11 +88,14 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
+        case ScalarType.DATETIME:
+          formattedValues[key] = dayjs(value as string);
+          break;
         case ScalarType.DATE:
           formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
           break;
-        case ScalarType.DATETIME:
-          formattedValues[key] = dayjs(value as string);
+        case ScalarType.TIME:
+          formattedValues[key] = dayjs(value as string, 'hh:mm:ss');
           break;
         case ScalarType.JSON:
           formattedValues[key] = JSON.stringify(value);
@@ -109,15 +112,20 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
+        case ScalarType.DATETIME:
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          formattedValues[key] = value?.format('YYYY-MM-DDThh:mm:ss');
+          break;
         case ScalarType.DATE:
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
           formattedValues[key] = value?.format('YYYY-MM-DD');
           break;
-        case ScalarType.DATETIME:
+        case ScalarType.TIME:
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
-          formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
+          formattedValues[key] = value?.format('hh:mm:ss');
           break;
         case ScalarType.JSON:
           formattedValues[key] = JSON.parse(value as string);
@@ -158,16 +166,18 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       case ScalarType.TEXT:
       case ScalarType.JSON:
         return <Input.TextArea {...inputProps} />;
-      case ScalarType.DECIMAL:
+      case ScalarType.FLOAT:
       case ScalarType.INT:
       case ScalarType.LONG:
         return <Input type="number" {...inputProps} />;
       case ScalarType.BOOLEAN:
         return <Switch/>;
-      case ScalarType.DATE:
-        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
       case ScalarType.DATETIME:
         return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
+      case ScalarType.DATE:
+        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
+      case ScalarType.TIME:
+        return <DatePicker picker="time" style={{width: '100%'}} {...inputProps} />;
       default:
         return <Input/>;
     }

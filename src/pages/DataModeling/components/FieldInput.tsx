@@ -47,7 +47,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case ScalarType.DECIMAL:
+      case ScalarType.FLOAT:
       case ScalarType.INT:
       case ScalarType.LONG:
         return (
@@ -60,6 +60,18 @@ const FieldInput: React.FC<FieldInputProps> = ({
         );
       case ScalarType.BOOLEAN:
         return <Switch checked={value} onChange={(val) => onChange(val)} />;
+      case ScalarType.DATETIME:
+        return (
+          <DatePicker
+            showTime
+            placeholder={field.comment}
+            value={value ? dayjs(value) : null}
+            onChange={(date) =>
+              onChange(date ? date.format("YYYY-MM-DD HH:mm:ss") : null)
+            }
+            style={{ width: "100%" }}
+          />
+        );
       case ScalarType.DATE:
         return (
           <DatePicker
@@ -71,14 +83,13 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case ScalarType.DATETIME:
+      case ScalarType.TIME:
         return (
           <DatePicker
-            showTime
             placeholder={field.comment}
             value={value ? dayjs(value) : null}
             onChange={(date) =>
-              onChange(date ? date.format("YYYY-MM-DD HH:mm:ss") : null)
+              onChange(date ? date.format("HH:mm:ss") : null)
             }
             style={{ width: "100%" }}
           />

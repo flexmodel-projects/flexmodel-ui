@@ -260,7 +260,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
           </Form.Item>
         )}
 
-        {form.getFieldValue("tmpType") === ScalarType.DECIMAL && (
+        {form.getFieldValue("tmpType") === ScalarType.FLOAT && (
           <>
             <Form.Item label={t("precision")} name="precision">
               <Input type="number"/>

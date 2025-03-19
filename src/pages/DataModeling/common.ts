@@ -37,8 +37,8 @@ export const BasicFieldTypes: FieldType[] = [
     label: 'Long',
   },
   {
-    name: ScalarType.DECIMAL,
-    label: 'Decimal',
+    name: ScalarType.FLOAT,
+    label: 'Float',
   },
   {
     name: ScalarType.BOOLEAN,
@@ -51,6 +51,10 @@ export const BasicFieldTypes: FieldType[] = [
   {
     name: ScalarType.DATE,
     label: 'Date',
+  },
+  {
+    name: ScalarType.TIME,
+    label: 'Time',
   },
   {
     name: ScalarType.JSON,
@@ -108,8 +112,8 @@ export const FieldInitialValues: any = {
     unique: false,
     nullable: true,
   },
-  Decimal: {
-    type: ScalarType.DECIMAL,
+  Float: {
+    type: ScalarType.FLOAT,
     precision: 20,
     scale: 2,
     unique: false,
@@ -121,12 +125,17 @@ export const FieldInitialValues: any = {
     nullable: true,
   },
   DateTime: {
-    type: ScalarType.DATE,
+    type: ScalarType.DATETIME,
     unique: false,
     nullable: true,
   },
   Date: {
     type: ScalarType.DATE,
+    unique: false,
+    nullable: true,
+  },
+  Time: {
+    type: ScalarType.TIME,
     unique: false,
     nullable: true,
   },

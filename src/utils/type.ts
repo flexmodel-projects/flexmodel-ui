@@ -1,4 +1,3 @@
-
 export const ObjectType = {
   ENTITY: 'ENTITY',
   ENUM: 'ENUM',
@@ -9,12 +8,13 @@ export const ScalarType = {
   ID: 'ID',
   STRING: 'String',
   TEXT: 'Text',
-  DECIMAL: 'Decimal',
+  FLOAT: 'Float',
   INT: 'Int',
   LONG: 'Long',
   BOOLEAN: 'Boolean',
   DATETIME: 'DateTime',
   DATE: 'Date',
+  TIME: 'Time',
   JSON: 'JSON',
   ENUM: 'Enum',
   RELATION: 'Relation',
