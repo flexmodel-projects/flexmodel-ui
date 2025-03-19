@@ -1,5 +1,5 @@
 import React from "react";
-import {DatePicker, Input, InputNumber, Select, Switch} from "antd";
+import {DatePicker, Input, InputNumber, Select, Switch, TimePicker} from "antd";
 import dayjs from "dayjs";
 import {Field} from "../data";
 import {ScalarType} from "../../../utils/type.ts";
@@ -85,9 +85,9 @@ const FieldInput: React.FC<FieldInputProps> = ({
         );
       case ScalarType.TIME:
         return (
-          <DatePicker
+          <TimePicker
             placeholder={field.comment}
-            value={value ? dayjs(value) : null}
+            value={value ? dayjs(value, 'HH:mm:ss') : null}
             onChange={(date) =>
               onChange(date ? date.format("HH:mm:ss") : null)
             }

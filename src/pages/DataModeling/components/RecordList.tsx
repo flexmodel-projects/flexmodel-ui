@@ -13,6 +13,7 @@ import {
   Row,
   Switch,
   Table,
+  TimePicker,
   Tooltip
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
@@ -177,7 +178,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       case ScalarType.DATE:
         return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
       case ScalarType.TIME:
-        return <DatePicker picker="time" style={{width: '100%'}} {...inputProps} />;
+        return <TimePicker style={{width: '100%'}} {...inputProps} />;
       default:
         return <Input/>;
     }
