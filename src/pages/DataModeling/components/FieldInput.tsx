@@ -109,7 +109,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             mode={field?.multiple ? "multiple" : undefined}
             style={{ width: "100%" }}
             placeholder={field.comment}
-            options={fromEnum.elements?.map((val: any) => ({
+            options={fromEnum?.elements?.map((val: any) => ({
               value: val,
               label: val,
             }))}
