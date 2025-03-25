@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
   Card,
@@ -16,17 +16,12 @@ import {
   Table,
   Tag,
 } from "antd";
-import {
-  DownOutlined,
-  SearchOutlined,
-  SettingOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import * as echarts from "echarts";
-import { getApiLogs, getApiLogStat } from "../../api/api-log.ts";
-import { css } from "@emotion/css";
+import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
+import {css} from "@emotion/css";
 import LogSettings from "./components/LogSettings.tsx";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const { RangePicker } = DatePicker;
 const LogViewer: React.FC = () => {
@@ -374,14 +369,11 @@ const LogViewer: React.FC = () => {
             <Descriptions.Item label="data.path">
               {log?.data?.path}
             </Descriptions.Item>
-            <Descriptions.Item label="data.userAgent">
-              {log?.data?.userAgent}
+            <Descriptions.Item label="data.url">
+              {log?.data?.url}
             </Descriptions.Item>
-            <Descriptions.Item label="data.remoteIp">
-              {log?.data?.remoteIp}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.referer">
-              {log?.data?.referer}
+            <Descriptions.Item label="data.request">
+              {JSON.stringify(log?.data?.request)}
             </Descriptions.Item>
           </Descriptions>
         </Drawer>
