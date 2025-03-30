@@ -24,11 +24,6 @@ export const BasicFieldTypes: FieldType[] = [
     label: 'String',
   },
   {
-    name: ScalarType.TEXT,
-    label: 'Text',
-  },
-
-  {
     name: ScalarType.INT,
     label: 'Int',
   },
@@ -94,11 +89,6 @@ export const FieldInitialValues: any = {
   String: {
     type: ScalarType.STRING,
     length: 255,
-    unique: false,
-    nullable: true,
-  },
-  Text: {
-    type: ScalarType.TEXT,
     unique: false,
     nullable: true,
   },

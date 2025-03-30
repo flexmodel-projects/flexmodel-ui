@@ -39,14 +39,6 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case ScalarType.TEXT:
-        return (
-          <Input.TextArea
-            placeholder={field.comment}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        );
       case ScalarType.FLOAT:
       case ScalarType.INT:
       case ScalarType.LONG:

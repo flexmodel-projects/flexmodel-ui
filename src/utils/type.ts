@@ -7,7 +7,6 @@ export const ObjectType = {
 export const ScalarType = {
   ID: 'ID',
   STRING: 'String',
-  TEXT: 'Text',
   FLOAT: 'Float',
   INT: 'Int',
   LONG: 'Long',

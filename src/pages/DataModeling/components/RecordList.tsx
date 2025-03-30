@@ -164,7 +164,6 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         return <Input disabled={editMode}/>;
       case ScalarType.STRING:
         return <Input {...inputProps} />;
-      case ScalarType.TEXT:
       case ScalarType.JSON:
         return <Input.TextArea {...inputProps} />;
       case ScalarType.FLOAT:
@@ -190,7 +189,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     key: field.name,
     render: (text) => {
       const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-      return (field.type === ScalarType.TEXT || field.type === ScalarType.JSON) ? (
+      return (field.type === ScalarType.JSON) ? (
         <Tooltip title={fmtText}>
           <span style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
             {fmtText}
