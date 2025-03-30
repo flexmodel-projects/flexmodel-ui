@@ -5,7 +5,7 @@ const SwaggerUI: React.FC = () => {
     <div style={{width: '100%', height: '100%', border: 'none'}}>
       <iframe
         style={{width: '100%', height: '100%', border: 'none'}}
-        src="/rapi-doc/index.html"
+        src={`${import.meta.env.BASE_URL}/rapi-doc/index.html`}
         title="Rapi Doc"
       />
     </div>

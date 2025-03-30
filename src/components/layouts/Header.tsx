@@ -1,21 +1,21 @@
-import React, { PropsWithChildren } from "react";
-import { Button, Layout, Row, Space, Tooltip } from "antd";
+import React, {PropsWithChildren} from "react";
+import {Button, Layout, Row, Space, Tooltip} from "antd";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
-import { setLocale } from "../../actions/langAction.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/configStore.ts";
-import { useTranslation } from "react-i18next";
-import { Locale } from "antd/es/locale";
-import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {setLocale} from "../../actions/langAction.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../store/configStore.ts";
+import {useTranslation} from "react-i18next";
+import {Locale} from "antd/es/locale";
+import {FileSearchOutlined, QuestionCircleOutlined} from "@ant-design/icons";
 import styles from "./Header.module.scss";
 
-export const Header: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
-  const { t } = useTranslation();
+export const Header: React.FC<PropsWithChildren<unknown>> = ({children}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
-  const { locale } = useSelector((state: RootState) => state.locale);
-  const { i18n } = useTranslation();
+  const {locale} = useSelector((state: RootState) => state.locale);
+  const {i18n} = useTranslation();
 
   const changeLocale = (localeValue: Locale) => {
     dispatch(setLocale(localeValue));
@@ -41,13 +41,13 @@ export const Header: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
             {locale == enUS ? "中文" : "English"}
           </Button>
           <Tooltip title={t("api_document")}>
-            <a href="/rapi-doc/index.html" target="_blank">
-              <FileSearchOutlined className="text-lg" />
+            <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank">
+              <FileSearchOutlined className="text-lg"/>
             </a>
           </Tooltip>
           <Tooltip title={t("help")}>
             <a href="https://flexmodel.wetech.tech" target="_blank">
-              <QuestionCircleOutlined className="text-lg" />
+              <QuestionCircleOutlined className="text-lg"/>
             </a>
           </Tooltip>
         </Space>
