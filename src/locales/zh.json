@@ -91,6 +91,7 @@
   "field": "字段",
   "index": "索引",
   "record": "记录",
+  "code": "编码",
   "name": "名称",
   "type": "类型",
   "unique": "唯一值",

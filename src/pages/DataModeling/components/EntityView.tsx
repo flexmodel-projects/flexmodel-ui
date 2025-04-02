@@ -4,6 +4,7 @@ import RecordList from "./RecordList.tsx";
 import {useState} from "react";
 import {Col, Row, Segmented} from "antd";
 import {useTranslation} from "react-i18next";
+import SDL from "./SDL.tsx";
 
 interface Props {
   datasource: string;
@@ -18,6 +19,7 @@ const EntityView = ({model, datasource}: Props) => {
     {label: t("field"), value: "field"},
     {label: t("index"), value: "index"},
     {label: t("record"), value: "record"},
+    {label: t("code"), value: "code"},
   ];
 
   return <div>
@@ -30,27 +32,30 @@ const EntityView = ({model, datasource}: Props) => {
         </Col>
         <Col span={12} className="text-right">
           <Segmented
-              value={selectedItem}
-              onChange={(val) => setSelectedItem(val as string)}
-              options={options}
+            value={selectedItem}
+            onChange={(val) => setSelectedItem(val as string)}
+            options={options}
           />
         </Col>
       </Row>
     </div>
     {selectedItem === "field" && (
-        <FieldList
-            datasource={datasource}
-            model={model}
-        />
+      <FieldList
+        datasource={datasource}
+        model={model}
+      />
     )}
     {selectedItem === "index" && (
-        <IndexList
-            datasource={datasource}
-            model={model}
-        />
+      <IndexList
+        datasource={datasource}
+        model={model}
+      />
     )}
     {selectedItem === "record" && (
-        <RecordList datasource={datasource} model={model}/>
+      <RecordList datasource={datasource} model={model}/>
+    )}
+    {selectedItem === "code" && (
+      <SDL datasource={datasource} model={model}/>
     )}
   </div>;
 };

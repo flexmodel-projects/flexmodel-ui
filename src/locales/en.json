@@ -91,6 +91,7 @@
   "field": "Field",
   "index": "Index",
   "record": "Record",
+  "code": "Code",
   "name": "Name",
   "type": "Type",
   "unique": "Unique",

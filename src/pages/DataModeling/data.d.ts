@@ -12,6 +12,8 @@ export interface Datasource {
 
 export interface Model extends TypeWrapper {
   fields: any[];
+  sdl?: string;
+  comment?: string;
 }
 
 export interface TypeWrapper {
