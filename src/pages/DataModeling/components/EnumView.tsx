@@ -41,7 +41,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
         <Form.Item name="name" label={t("name")} rules={[{required: true}]}>
           <Input disabled={!!model}/>
         </Form.Item>
-        <Form.Item name="comment" label={t("comment")} rules={[{required: true}]}>
+        <Form.Item name="comment" label={t("comment")}>
           <Input/>
         </Form.Item>
         <Form.List
