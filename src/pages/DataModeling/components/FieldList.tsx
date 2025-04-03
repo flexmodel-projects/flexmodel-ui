@@ -112,7 +112,12 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       title: t('default_value'),
       dataIndex: 'defaultValue',
       key: 'defaultValue',
-      render: (value: boolean) => value?.toString(),
+      render: (value: any) => {
+        if (value instanceof Object) {
+          return value.name + "()";
+        }
+        return value?.toString();
+      },
     },
     {
       title: t('unique'),
