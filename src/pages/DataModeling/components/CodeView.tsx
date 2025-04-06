@@ -9,18 +9,18 @@ interface SDLViewProps {
   model?: Partial<Model>;
 }
 
-const SDL: React.FC<SDLViewProps> = ({model}) => {
+const CodeView: React.FC<SDLViewProps> = ({model}) => {
   return (
     <>
       <div>
         {model?.name} {model?.comment}
       </div>
       <Divider />
-      <div style={{backgroundColor: "rgb(240 240 240)", padding: 6}}>
+      <pre>
         <Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.sdl}</Paragraph>
-      </div>
+      </pre>
     </>
   );
 };
 
-export default SDL;
+export default CodeView;

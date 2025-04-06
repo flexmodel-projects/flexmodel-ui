@@ -4,7 +4,7 @@ import RecordList from "./RecordList.tsx";
 import {useState} from "react";
 import {Col, Row, Segmented} from "antd";
 import {useTranslation} from "react-i18next";
-import SDL from "./SDL.tsx";
+import CodeView from "./CodeView.tsx";
 
 interface Props {
   datasource: string;
@@ -55,7 +55,7 @@ const EntityView = ({model, datasource}: Props) => {
       <RecordList datasource={datasource} model={model}/>
     )}
     {selectedItem === "code" && (
-      <SDL datasource={datasource} model={model}/>
+      <CodeView datasource={datasource} model={model}/>
     )}
   </div>;
 };
