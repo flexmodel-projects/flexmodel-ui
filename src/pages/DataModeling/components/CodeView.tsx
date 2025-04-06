@@ -4,12 +4,12 @@ import {Divider, Typography} from 'antd';
 
 const {Paragraph} = Typography;
 
-interface SDLViewProps {
+interface CodeViewProps {
   datasource: string;
   model?: Partial<Model>;
 }
 
-const CodeView: React.FC<SDLViewProps> = ({model}) => {
+const CodeView: React.FC<CodeViewProps> = ({model}) => {
   return (
     <>
       <div>
@@ -17,7 +17,7 @@ const CodeView: React.FC<SDLViewProps> = ({model}) => {
       </div>
       <Divider />
       <pre>
-        <Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.sdl}</Paragraph>
+        <Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Paragraph>
       </pre>
     </>
   );

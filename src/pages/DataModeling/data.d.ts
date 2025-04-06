@@ -12,7 +12,7 @@ export interface Datasource {
 
 export interface Model extends TypeWrapper {
   fields: any[];
-  sdl?: string;
+  idl?: string;
   comment?: string;
 }
 
