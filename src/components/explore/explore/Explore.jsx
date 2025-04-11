@@ -14,7 +14,7 @@ import Tree from './Tree'
 import {createTree, findRoot} from '../utils/Zip'
 import {Col, Modal, Row} from "antd";
 
-function Explore({ open, onClose, projectName, blob }) {
+function Explore({open, onClose, projectName, blob}) {
   const [button, setButton] = useState('Copy')
   const [tree, setTree] = useState(null)
   const [selected, setSelected] = useState(null)
@@ -23,10 +23,10 @@ function Explore({ open, onClose, projectName, blob }) {
     const load = async () => {
       try {
         const zipJs = new JSZip()
-        const { files } = await zipJs.loadAsync(blob).catch(() => {
+        const {files} = await zipJs.loadAsync(blob).catch(() => {
           throw Error(`Could not load the ZIP project.`)
         })
-        const path = `${findRoot({ files })}/`
+        const path = `${findRoot({files})}/`
         const result = await createTree(files, path, path, zipJs).catch(() => {
           throw Error(`Could not read the ZIP project.`)
         })
@@ -41,7 +41,7 @@ function Explore({ open, onClose, projectName, blob }) {
     if (blob) {
       load()
     }
-  }, [ blob])
+  }, [blob])
 
   const onCopy = () => {
     setButton('Copied!')
@@ -85,7 +85,7 @@ function Explore({ open, onClose, projectName, blob }) {
                   <div className='head'>
                     <strong>{projectName}</strong>
                   </div>
-                  <div className='explorer-content'>
+                  <div className='explorer-content' style={{maxHeight: '400px', overflowY: "auto"}}>
                     <Tree
                       selected={selected}
                       onClickItem={item => {
@@ -113,7 +113,7 @@ function Explore({ open, onClose, projectName, blob }) {
                 <div className='right'>
                   {selected && (
                     <>
-                      <div className='head'  style={{paddingLeft: '30px'}}>
+                      <div className='head' style={{paddingLeft: '40px'}}>
                         <strong>
                           {get(selected, 'filename')}
                         </strong>
@@ -165,7 +165,7 @@ function Explore({ open, onClose, projectName, blob }) {
                         </div>
 
                       </div>
-                      <div className='explorer-content'>
+                      <div className='explorer-content' style={{maxHeight: '400px', overflowY: "auto"}}>
                         <Code item={selected} onChange={() => {
                         }}/>
                       </div>
