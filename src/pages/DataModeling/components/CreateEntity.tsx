@@ -38,10 +38,10 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
     fields: [
       {
         name: 'id',
-        type: ScalarType.ID,
+        type: ScalarType.STRING,
         unique: true,
         nullable: false,
-        generatedValue: 'AUTO_INCREMENT',
+        identity: true,
         comment: 'ID',
       }
     ],

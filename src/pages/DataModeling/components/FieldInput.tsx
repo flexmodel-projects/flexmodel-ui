@@ -23,17 +23,10 @@ const FieldInput: React.FC<FieldInputProps> = ({
 
   const renderInput = () => {
     switch (field.type) {
-      case ScalarType.ID:
-        return (
-          <Input
-            disabled={editMode}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        );
       case ScalarType.STRING:
         return (
           <Input
+            disabled={editMode && field.identity}
             placeholder={field.comment}
             value={value}
             onChange={(e) => onChange(e.target.value)}

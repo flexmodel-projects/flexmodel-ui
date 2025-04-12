@@ -134,12 +134,6 @@ export const FieldInitialValues: any = {
     unique: false,
     nullable: true,
   },
-  ID: {
-    type: ScalarType.ID,
-    generatedValue: 'AUTO_INCREMENT',
-    unique: true,
-    nullable: true,
-  },
   Relation: {
     type: ScalarType.RELATION,
     multiple: true,

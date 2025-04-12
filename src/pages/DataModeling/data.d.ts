@@ -41,6 +41,7 @@ interface Field extends Record<string, any> {
   concreteType: string;
   unique: boolean;
   nullable: boolean;
+  identity: boolean;
   comment?: string;
   multiple?: boolean;
   defaultValue?: any;

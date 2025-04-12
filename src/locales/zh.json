@@ -118,10 +118,6 @@
   "local_field": "本地字段",
   "foreign_field": "外键字段",
   "cascade_delete": "级联删除",
-  "select_group_id": "唯一标识",
-  "select_group_basic_field": "基础字段",
-  "select_group_relation": "关联实体",
-  "select_group_enumeration": "枚举字段",
   "field_asc": "正序",
   "field_desc": "倒叙",
   "input_valid_msg": "请输入{{name}}",
@@ -189,5 +185,9 @@
   "query_execution_failed": "查询执行失败",
   "time_taken": "耗时",
   "total_results": "总结果数",
+  "identity_field": "唯一标识",
+  "basic_field": "基础字段",
+  "relation_field": "关联字段",
+  "enum_field": "枚举字段",
   "welcome": "欢迎来到我们的应用程序"
 }

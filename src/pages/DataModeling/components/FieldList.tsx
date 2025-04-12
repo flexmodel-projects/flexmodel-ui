@@ -1,6 +1,14 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, Tooltip} from 'antd';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, notification, Popconfirm, Space, Table, Tooltip} from 'antd';
+import {
+  ApartmentOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FieldBinaryOutlined,
+  KeyOutlined,
+  PlusOutlined,
+  TagsOutlined
+} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../api/model';
 import FieldForm from "./FieldForm.tsx";
 import {FieldInitialValues, FieldTypeMap} from "../common.ts";
@@ -74,15 +82,52 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   };
 
   const columns = [
-    {title: t('name'), dataIndex: 'name', key: 'name'},
+    {
+      title: t('name'), dataIndex: 'name', key: 'name', render: (name: string, f: Field) => {
+        if (f.identity) {
+          return (
+            <Space>
+              <Tooltip title={t('identity_field')}>
+                <KeyOutlined/>
+              </Tooltip>
+              {name}
+            </Space>
+          );
+        } else if (f.type === ScalarType.RELATION) {
+          return (
+            <Space>
+              <Tooltip title={t('relation_field')}>
+                <ApartmentOutlined/>
+              </Tooltip>
+              {name}
+            </Space>
+          );
+        } else if (f.type === ScalarType.ENUM) {
+          return (
+            <Space>
+              <Tooltip title={t('enum_field')}>
+                <TagsOutlined/>
+              </Tooltip>
+              {name}
+            </Space>
+          );
+        } else {
+          return (
+            <Space>
+              <Tooltip title={t('basic_field')}>
+                <FieldBinaryOutlined/>
+              </Tooltip>
+              {name}
+            </Space>
+          );
+        }
+      }
+    },
     {
       title: t('type'),
       dataIndex: 'type',
       key: 'type',
       render: (type: string, f: Field) => {
-        if (type === ScalarType.ID) {
-          return ScalarType.ID;
-        }
         if (type === ScalarType.RELATION) {
           return <Tooltip title={
             <span>

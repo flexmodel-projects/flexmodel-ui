@@ -118,10 +118,6 @@
   "local_field": "Local field",
   "foreign_field": "Foreign field",
   "cascade_delete": "Cascade delete",
-  "select_group_id": "ID",
-  "select_group_basic_field": "Basic field",
-  "select_group_relation": "Relation",
-  "select_group_enumeration": "Enumeration",
   "field_asc": "ASC",
   "field_desc": "DESC",
   "input_valid_msg": "Please input {{name}}",
@@ -189,5 +185,9 @@
   "query_execution_failed": "Query execution failed",
   "time_taken": "Time taken",
   "total_results": "Total results",
+  "identity_field": "Identity field",
+  "basic_field": "Basic field",
+  "relation_field": "Relation field",
+  "enum_field": "Enum field",
   "welcome": "Welcome to our application"
 }

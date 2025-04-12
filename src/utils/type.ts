@@ -5,7 +5,6 @@ export const ObjectType = {
 }
 
 export const ScalarType = {
-  ID: 'ID',
   STRING: 'String',
   FLOAT: 'Float',
   INT: 'Int',

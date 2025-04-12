@@ -28,6 +28,7 @@ interface Field {
   name: string;
   type: string;
   nullable?: boolean;
+  identity: boolean;
   comment?: string;
   generatedValue?: 'AUTO_INCREMENT' | 'BIGINT_NOT_GENERATED' | 'STRING_NOT_GENERATED';
 }
@@ -160,10 +161,8 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const renderFieldInput = useCallback((field: Field) => {
     const inputProps = {placeholder: field.comment};
     switch (field.type) {
-      case ScalarType.ID:
-        return <Input disabled={editMode}/>;
       case ScalarType.STRING:
-        return <Input {...inputProps} />;
+        return <Input {...inputProps} disabled={editMode && field.identity}/>;
       case ScalarType.JSON:
         return <Input.TextArea {...inputProps} />;
       case ScalarType.FLOAT:
@@ -260,7 +259,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       >
         <Form form={form} layout="vertical">
           {model.fields.map(field => (
-            field.type !== ScalarType.ID
+            field.type.identity === false
             || field.generatedValue === 'BIGINT_NOT_GENERATED'
             || field.generatedValue === 'STRING_NOT_GENERATED'
             || editMode ? (

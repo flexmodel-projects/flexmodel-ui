@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Form, Input, Modal, Select, Switch} from "antd";
 import {getModelList} from "../../../api/model"; // 替换为你的 API 调用
-import {BasicFieldTypes, FieldInitialValues, IDGeneratedValues,} from "../common.ts";
+import {BasicFieldTypes, FieldInitialValues,} from "../common.ts";
 import {useTranslation} from "react-i18next";
 import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
 import {Field} from "../data";
@@ -37,6 +37,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     concreteType: "",
     unique: false,
     nullable: false,
+    identity: false,
     comment: "",
     multiple: false,
     defaultValue: null,
@@ -48,6 +49,8 @@ const FieldForm: React.FC<FieldFormProps> = ({
   useEffect(() => {
     if (visible) {
       reqModelList();
+      setHasId(model.fields?.some((f: any) => f.identity));
+      console.log('xxxx',model.fields?.some((f: any) => f.identity));
     } else {
       form.resetFields();
     }
@@ -96,12 +99,10 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const reqModelList = async () => {
     const data = await getModelList(datasource);
     setModelList(data);
-    setHasId(model.fields?.some((f: any) => f.type === ScalarType.ID));
   };
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
-    console.log("----");
     if (value.startsWith("RELATION")) {
       form.setFieldsValue({
         ...FieldInitialValues[value],
@@ -205,19 +206,14 @@ const FieldForm: React.FC<FieldFormProps> = ({
           rules={[{required: true}]}
         >
           <Select value={tmpType} onChange={handleTypeChange}>
-            <Select.OptGroup label={t("select_group_id")}>
-              <Select.Option value={ScalarType.ID} disabled={hasId}>
-                ID
-              </Select.Option>
-            </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_basic_field")}>
+            <Select.OptGroup label={t("basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>
                   {item.label}
                 </Select.Option>
               ))}
             </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_relation")}>
+            <Select.OptGroup label={t("relation_field")}>
               {modelList
                 .filter((item) => item.type === ObjectType.ENTITY)
                 .map((item) => (
@@ -229,7 +225,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
                   </Select.Option>
                 ))}
             </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_enumeration")}>
+            <Select.OptGroup label={t("enum_field")}>
               {modelList
                 .filter((item) => item.type === ObjectType.ENUM)
                 .map((item) => (
@@ -242,7 +238,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         </Form.Item>
 
         {/* 以下是根据类型动态渲染的部分 */}
-        {form.getFieldValue("tmpType") === ScalarType.ID && (
+        {/*{form.getFieldValue("tmpType") === ScalarType.ID && (
           <Form.Item label="Generated value" name="generatedValue">
             <Select>
               {IDGeneratedValues.map((item) => (
@@ -252,7 +248,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
               ))}
             </Select>
           </Form.Item>
-        )}
+        )}*/}
 
         {form.getFieldValue("tmpType") === ScalarType.STRING && (
           <Form.Item label={t("length")} name="length">
@@ -335,7 +331,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         </Form.Item>
 
         {!(
-          [ScalarType.ID, ScalarType.RELATION].includes(form.getFieldValue("tmpType")) ||
+          [ScalarType.RELATION].includes(form.getFieldValue("tmpType")) ||
           form.getFieldValue("tmpType")?.startsWith("RELATION")
         ) && (
           <>
@@ -354,6 +350,13 @@ const FieldForm: React.FC<FieldFormProps> = ({
                   console.log(val);
                 }}
               />
+            </Form.Item>
+            <Form.Item
+              label={t("identity_field")}
+              name="identity"
+              valuePropName="checked"
+            >
+              <Switch disabled={hasId}/>
             </Form.Item>
             <Form.Item
               label={t("nullable")}
