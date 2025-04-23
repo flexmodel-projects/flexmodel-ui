@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Space, Table, Tooltip} from 'antd';
+import {Button, Dropdown, Menu, notification, Popconfirm, Space, Table, Tooltip, Typography} from 'antd';
 import {
   ApartmentOutlined,
+  CodeOutlined,
   DeleteOutlined,
   EditOutlined,
   FieldBinaryOutlined,
@@ -15,6 +16,8 @@ import {FieldInitialValues, FieldTypeMap} from "../common.ts";
 import {Entity, Field} from "../data";
 import {useTranslation} from "react-i18next";
 import {ScalarType} from "../../../utils/type.ts";
+
+const {Paragraph} = Typography;
 
 interface FieldListProps {
   datasource: string;
@@ -211,6 +214,15 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <div>
           {model?.name} {model?.comment}
+          <Dropdown overlay={
+            <Menu>
+              IDL Info:
+              <Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Paragraph>
+            </Menu>
+          } arrow>
+            <Button type="text" icon={<CodeOutlined/>}/>
+          </Dropdown>
+
         </div>
         <Button
           type="primary"

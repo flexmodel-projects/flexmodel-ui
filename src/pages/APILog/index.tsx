@@ -23,17 +23,17 @@ import {css} from "@emotion/css";
 import LogSettings from "./components/LogSettings.tsx";
 import {useTranslation} from "react-i18next";
 
-const { RangePicker } = DatePicker;
+const {RangePicker} = DatePicker;
 const LogViewer: React.FC = () => {
-  const { t } = useTranslation();
-  const [tableData, setTableData] = useState<any>({ list: [], total: 0 });
+  const {t} = useTranslation();
+  const [tableData, setTableData] = useState<any>({list: [], total: 0});
   const [log, setLog] = useState<any>({});
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const logStatRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const [expand, setExpand] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [query, setQuery] = useState({ current: 1, pageSize: 100 });
+  const [query, setQuery] = useState({current: 1, pageSize: 100});
   const [settingsDialogVisible, setSettingsDialogVisible] =
     useState<boolean>(false);
 
@@ -104,7 +104,7 @@ const LogViewer: React.FC = () => {
     return {
       ...query,
       keyword: filter?.keyword,
-      level: filter?.level?.join(","),
+      isSuccess: filter?.isSuccess,
       dateRange: filter?.dateRange
         ?.map((date: any) => date?.format("YYYY-MM-DD HH:mm:ss"))
         ?.join(","),
@@ -142,46 +142,45 @@ const LogViewer: React.FC = () => {
   };
 
   const searchLog = async () => {
-    setQuery({ current: 1, pageSize: 100 });
+    setQuery({current: 1, pageSize: 100});
     await fetchApiLogs();
     await fetchApiLogStat();
   };
 
   const resetLog = async () => {
     form.resetFields();
-    setQuery({ current: 1, pageSize: 100 });
+    setQuery({current: 1, pageSize: 100});
     await fetchApiLogs();
   };
 
   const columns = [
     {
-      title: t("level"),
-      dataIndex: "level",
+      title: t("is_success"),
+      dataIndex: "isSuccess",
       width: 100,
-      render: (level: string) => {
+      render: (isSuccess: boolean) => {
         let color = "blue";
-        if (level === "ERROR") color = "red";
-        else if (level === "WARN") color = "orange";
-        return <Tag color={color}>{level}</Tag>;
+        if (!isSuccess) color = "red";
+        return <Tag color={color}>{isSuccess ? "YES" : "NO"}</Tag>;
       },
     },
     {
       title: t("message"),
-      dataIndex: "uri",
-      render: (uri: string, record: any) => (
-        <Row style={{ fontSize: "12px", padding: "10px 0" }}>
-          <Col span={24}>{uri}</Col>
+      dataIndex: "path",
+      render: (_: string, record: any) => (
+        <Row style={{fontSize: "12px", padding: "10px 0"}}>
+          <Col span={24}>{record.httpMethod} {record.path}</Col>
           <Col>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <Tag color="blue">status: {record?.data?.status}</Tag>
-              <Tag color="blue">execTime: {record?.data?.execTime}ms</Tag>
-              {record?.data?.remoteIp && (
-                <Tag color="blue">remoteIp: {record?.data?.remoteIp}</Tag>
+            <div style={{display: "flex", gap: "8px"}}>
+              <Tag color="blue">status: {record?.statusCode}</Tag>
+              <Tag color="blue">time: {record?.responseTime}ms</Tag>
+              {record?.ipAddress && (
+                <Tag color="blue">ipAddress: {record?.ipAddress}</Tag>
               )}
-              {record?.data?.status >= 500 ? (
-                <Tag color="red">message: {record?.data?.message}</Tag>
+              {record?.statusCode >= 500 ? (
+                <Tag color="red">message: {record?.errorMessage}</Tag>
               ) : record?.data?.status >= 400 ? (
-                <Tag color="orange">message: {record?.data?.message}</Tag>
+                <Tag color="orange">message: {record?.errorMessage}</Tag>
               ) : null}
             </div>
           </Col>
@@ -200,46 +199,43 @@ const LogViewer: React.FC = () => {
       <Card
         bordered={false}
         className="h-full"
-        styles={{ body: { height: "100%" } }}
+        styles={{body: {height: "100%"}}}
       >
         <Row justify="space-between" align="middle">
           <Col span={4}>
-            <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+            <span style={{fontWeight: "bold", fontSize: "16px"}}>
               {t("logs")}
             </span>
           </Col>
-          <Col span={20} style={{ textAlign: "right" }}>
+          <Col span={20} style={{textAlign: "right"}}>
             <Space>
               <Button
-                icon={<SettingOutlined />}
+                icon={<SettingOutlined/>}
                 onClick={() => setSettingsDialogVisible(true)}
               />
             </Space>
           </Col>
         </Row>
-        <Row style={{ margin: "12px 0" }}>
-          <Col style={{ paddingTop: "10px" }} span={24}>
+        <Row style={{margin: "12px 0"}}>
+          <Col style={{paddingTop: "10px"}} span={24}>
             <Form form={form}>
               {expand && (
                 <Row>
                   <Col span={6}>
-                    <Form.Item name="level" label={t("level")}>
+                    <Form.Item name="isSuccess" label={t("is_success")}>
                       <Select
-                        style={{ width: "150px" }}
-                        mode="multiple"
-                        placeholder={t("select_your_log_level")}
+                        style={{width: "150px"}}
+                        placeholder={t("is_success_tips")}
                         allowClear
                       >
-                        <Select.Option value="DEBUG">Debug</Select.Option>
-                        <Select.Option value="INFO">Info</Select.Option>
-                        <Select.Option value="WARN">Warn</Select.Option>
-                        <Select.Option value="ERROR">Error</Select.Option>
+                        <Select.Option value="true">Yes</Select.Option>
+                        <Select.Option value="false">No</Select.Option>
                       </Select>
                     </Form.Item>
                   </Col>
                   <Col span={18}>
                     <Form.Item name="dateRange" label={t("date_range")}>
-                      <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                      <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -248,17 +244,17 @@ const LogViewer: React.FC = () => {
                 <Col span={19}>
                   <Form.Item
                     name="keyword"
-                    style={{ width: "100%" }}
+                    style={{width: "100%"}}
                     label={t("search_keywords")}
                   >
-                    <Input placeholder={t("search_keywords")} />
+                    <Input placeholder={t("search_keywords")}/>
                   </Form.Item>
                 </Col>
                 <Col span={5}>
                   <Form.Item>
-                    <Space style={{ paddingLeft: "10px" }}>
+                    <Space style={{paddingLeft: "10px"}}>
                       <Button
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                         type="primary"
                         onClick={searchLog}
                       >
@@ -274,12 +270,12 @@ const LogViewer: React.FC = () => {
                       >
                         {expand ? (
                           <>
-                            {t("collapse")} <UpOutlined />
+                            {t("collapse")} <UpOutlined/>
                           </>
                         ) : (
                           <>
                             {t("expand")}
-                            <DownOutlined />
+                            <DownOutlined/>
                           </>
                         )}
                       </a>
@@ -295,7 +291,7 @@ const LogViewer: React.FC = () => {
             <div
               id="logStat"
               ref={logStatRef}
-              style={{ width: "100%", height: "100px" }}
+              style={{width: "100%", height: "100px"}}
             />
           </Col>
         </Row>
@@ -304,7 +300,7 @@ const LogViewer: React.FC = () => {
             <Table
               bordered={false}
               virtual
-              scroll={{ y: expand ? 270 : 325 }}
+              scroll={{y: expand ? 270 : 325}}
               size="small"
               columns={columns}
               dataSource={tableData?.list}
@@ -333,12 +329,12 @@ const LogViewer: React.FC = () => {
               })
             }
             onChange={(page, pageSize) =>
-              setQuery({ ...query, current: page, pageSize })
+              setQuery({...query, current: page, pageSize})
             }
-            style={{ marginTop: 16 }}
+            style={{marginTop: 16}}
           />
         </Row>
-        <FloatButton.BackTop />
+        <FloatButton.BackTop/>
         <Drawer
           title="Request log"
           width={680}
@@ -346,35 +342,14 @@ const LogViewer: React.FC = () => {
           open={drawerVisible}
         >
           <Descriptions column={1} bordered>
-            <Descriptions.Item label="id">{log.id}</Descriptions.Item>
-            <Descriptions.Item label="level">{log.level}</Descriptions.Item>
-            <Descriptions.Item label="createdAt">
-              {log.createdAt}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.execTime">
-              {log?.data?.execTime}ms
-            </Descriptions.Item>
-            <Descriptions.Item label="data.status">
-              {log?.data?.status}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.message">
-              {log?.data?.message}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.errors">
-              {log?.data?.errors}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.method">
-              {log?.data?.method}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.path">
-              {log?.data?.path}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.url">
-              {log?.data?.url}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.request">
-              {JSON.stringify(log?.data?.request)}
-            </Descriptions.Item>
+            {Object.keys(log).map((key) => {
+              const value = log[key] instanceof Object ? (JSON.stringify(log[key])) : log[key] + "";
+              return (
+                <Descriptions.Item key={key} label={key}>
+                  {value}
+                </Descriptions.Item>
+              )
+            })}
           </Descriptions>
         </Drawer>
       </Card>
