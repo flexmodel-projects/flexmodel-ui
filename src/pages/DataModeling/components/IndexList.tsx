@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, Tag} from 'antd';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, Dropdown, Menu, notification, Popconfirm, Table, Tag, Typography} from 'antd';
+import {CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../api/model';
 import IndexForm from "./IndexForm";
 import type {Entity, Index} from "../data.d.ts";
@@ -122,6 +122,15 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <div>
             {model?.name} {model?.comment}
+            <Dropdown overlay={
+              <Menu>
+                <p>IDL Info:</p>
+                <p>---</p>
+                <Typography.Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Typography.Paragraph>
+              </Menu>
+            } arrow>
+              <Button type="text" icon={<CodeOutlined/>}/>
+            </Dropdown>
           </div>
           <Button
             type="primary"

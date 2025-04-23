@@ -17,8 +17,6 @@ import {Entity, Field} from "../data";
 import {useTranslation} from "react-i18next";
 import {ScalarType} from "../../../utils/type.ts";
 
-const {Paragraph} = Typography;
-
 interface FieldListProps {
   datasource: string;
   model: Entity;
@@ -216,8 +214,9 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           {model?.name} {model?.comment}
           <Dropdown overlay={
             <Menu>
-              IDL Info:
-              <Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Paragraph>
+              <p>IDL Info:</p>
+              <p>---</p>
+              <Typography.Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Typography.Paragraph>
             </Menu>
           } arrow>
             <Button type="text" icon={<CodeOutlined/>}/>

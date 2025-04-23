@@ -3,9 +3,11 @@ import {
   Button,
   Col,
   DatePicker,
+  Dropdown,
   Empty,
   Form,
   Input,
+  Menu,
   message,
   Modal,
   Pagination,
@@ -14,10 +16,11 @@ import {
   Switch,
   Table,
   TimePicker,
-  Tooltip
+  Tooltip,
+  Typography
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
 import dayjs from "dayjs";
 import {Entity} from "../data";
@@ -216,7 +219,18 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   return model ? (
     <div style={{padding: '20px'}}>
       <Row justify="space-between">
-        <Col>{model.name} {model.comment}</Col>
+        <Col>
+          {model.name} {model.comment}
+          <Dropdown overlay={
+            <Menu>
+              <p>IDL Info:</p>
+              <p>---</p>
+              <Typography.Paragraph copyable style={{whiteSpace: "pre-wrap"}}>{model?.idl}</Typography.Paragraph>
+            </Menu>
+          } arrow>
+            <Button type="text" icon={<CodeOutlined/>}/>
+          </Dropdown>
+        </Col>
         <Col>
           <Button type="primary"
                   icon={<PlusOutlined/>}

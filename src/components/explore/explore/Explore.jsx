@@ -12,7 +12,7 @@ import Code from './Code'
 import Loading from './Loading'
 import Tree from './Tree'
 import {createTree, findRoot} from '../utils/Zip'
-import {Col, Modal, Row} from "antd";
+import {Col, Row} from "antd";
 
 function Explore({open, onClose, projectName, blob}) {
   const [button, setButton] = useState('Copy')
@@ -63,20 +63,6 @@ function Explore({open, onClose, projectName, blob}) {
 
   return (
     <div>
-      <Modal
-        width={1000}
-        open={open}
-        onOk={() => {
-          setSelected(null)
-          onClose()
-        }}
-        onCancel={() => {
-          setSelected(null)
-          onClose()
-        }}
-        showCloseIcon={false}
-        classNames={{modal: 'modal-explorer', overlay: 'overlay'}}
-      >
         {tree && selected ? (
           <div className='colset-explorer'>
             <Row>
@@ -180,7 +166,6 @@ function Explore({open, onClose, projectName, blob}) {
         ) : (
           <Loading onClose={onClose}/>
         )}
-      </Modal>
     </div>
   )
 }
@@ -191,8 +176,6 @@ Explore.defaultProps = {
 }
 
 Explore.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
   projectName: PropTypes.string,
   blob: PropTypes.instanceOf(Blob),
 }
