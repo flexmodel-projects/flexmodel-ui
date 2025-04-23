@@ -58,7 +58,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource, model}) => {
         </Col>
       </Row>
       <Divider/>
-      <Spin size="large" spinning={loading}>
+      <Spin spinning={loading}>
         <Explore
           projectName={`${datasource}_${model?.name}.zip`}
           blob={blob}
