@@ -169,7 +169,7 @@ const LogViewer: React.FC = () => {
       dataIndex: "path",
       render: (_: string, record: any) => (
         <Row style={{fontSize: "12px", padding: "10px 0"}}>
-          <Col span={24}>{record.httpMethod} {record.path}</Col>
+          <Col span={24}>{record.path}</Col>
           <Col>
             <div style={{display: "flex", gap: "8px"}}>
               <Tag color="blue">status: {record?.statusCode}</Tag>
