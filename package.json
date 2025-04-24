@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@antv/x6": "^2.18.1",
+    "@antv/x6-plugin-scroller": "2.0.10",
     "@antv/x6-react-shape": "^2.2.3",
     "@emotion/css": "^11.13.0",
     "@graphiql/plugin-explorer": "3.2.2",

@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .history
+target
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Graph } from "@antv/x6";
+import { Scroller } from "@antv/x6-plugin-scroller";
 import dagre from "dagre";
 
 interface ERDiagramProps {
@@ -63,10 +64,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         container: containerRef.current,
         width: 1000,
         height: 800,
-        panning: {
-          enabled: true,
-          modifiers: "shift",
-        },
+        panning: true, // 简化 panning 配置
         mousewheel: {
           enabled: true,
           modifiers: ["ctrl", "meta"],
@@ -75,22 +73,43 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
           min: 0.5,
           max: 2,
         },
-        grid: {
-          size: 10,
-          visible: true,
+        autoResize: true,
+
+        background: {
+          color: "#fff", // 添加背景色
         },
-        // connecting: {
-        //   router: "manhattan", // 使用曼哈顿路由，让连线更整齐
-        //   connector: "rounded", // 圆角连接器
-        //   anchor: "center", // 连线锚点
-        //   connectionPoint: "boundary", // 连接点
-        // },
-        // interacting: {
-        //   nodeMovable: true, // 允许节点拖动
-        //   edgeMovable: true, // 允许边拖动
-        //   edgeLabelMovable: true, // 允许边标签拖动
-        // },
+        connecting: {
+          router: "manhattan", // 使用曼哈顿路由，让连线更整齐
+          connector: "rounded", // 圆角连接器
+          anchor: "center", // 连线锚点
+          connectionPoint: "boundary", // 连接点
+        },
+        interacting: {
+          nodeMovable: true, // 允许节点拖动
+          edgeMovable: true, // 允许边拖动
+          edgeLabelMovable: true, // 允许边标签拖动
+        },
       });
+
+      graphRef.current.use(
+        new Scroller({
+          enabled: true,
+          pannable: true,
+          // 设置滚动区域的大小
+          width: 1000,
+          height: 800,
+          // 设置最小可见区域
+          minVisibleWidth: 800,
+          minVisibleHeight: 600,
+          // 添加适当的内边距
+          padding: {
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20,
+          },
+        })
+      );
 
       const nodesMap: Record<string, string> = {};
 
@@ -155,7 +174,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         if (entity.type === "ENTITY") {
           const { name: currentEntity, fields } = entity;
           fields.forEach((field: any) => {
-            if (field.type === "RELATION") {
+            if (field.type === "Relation") {
               // 根据关系定义确定连线另一端的实体
               const targetEntity = field.from;
               // 使用 sorted key 去重，防止反向重复创建同一关系
@@ -223,7 +242,11 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{ width: "100%", height: "800px", border: "1px solid #ddd" }}
+      style={{
+        width: "100%",
+        height: "800px",
+        border: "1px solid #ddd",
+      }}
     />
   );
 };
