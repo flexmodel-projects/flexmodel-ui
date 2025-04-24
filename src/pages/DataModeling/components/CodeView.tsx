@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import type {Model} from "../data";
 import {Button, Col, Divider, Dropdown, Menu, Row, Spin, Typography} from 'antd';
 import {BASE_URI, getFileAsBlob} from "../../../api/base.ts";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import Explore from "../../../components/explore/explore/Explore.jsx";
-import {CodeOutlined} from "@ant-design/icons";
+import {CodeOutlined, DownloadOutlined} from "@ant-design/icons";
 
 
 interface CodeViewProps {
@@ -16,6 +16,12 @@ interface CodeViewProps {
 const CodeView: React.FC<CodeViewProps> = ({datasource, model}) => {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(true);
+  const exploreRef = useRef();
+
+  const downloadZip = () => {
+    // @ts-ignore
+    exploreRef?.current?.downloadZip();
+  }
 
   useEffect(() => {
       if (model) {
@@ -44,22 +50,15 @@ const CodeView: React.FC<CodeViewProps> = ({datasource, model}) => {
           </Dropdown>
         </Col>
         <Col>
-          <Button type="primary" onClick={async () => {
-            const url: string = `${BASE_URI}/codegen/${datasource}_${model?.name}.zip`;
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${datasource}_${model?.name}.zip`); // 替换为你希望保存的文件名
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }}>
-            Generate code
+          <Button type="primary" icon={<DownloadOutlined />} onClick={() => downloadZip()}>
+            下载源码包
           </Button>
         </Col>
       </Row>
       <Divider/>
       <Spin spinning={loading}>
         <Explore
+          ref={exploreRef}
           projectName={`${datasource}_${model?.name}.zip`}
           blob={blob}
         />
