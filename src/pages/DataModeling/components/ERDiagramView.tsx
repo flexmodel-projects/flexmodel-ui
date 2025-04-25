@@ -67,7 +67,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         panning: true, // 简化 panning 配置
         mousewheel: {
           enabled: true,
-          modifiers: ["ctrl", "meta"],
+          modifiers: "shift",
         },
         scaling: {
           min: 0.5,
@@ -89,6 +89,17 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
           edgeMovable: true, // 允许边拖动
           edgeLabelMovable: true, // 允许边标签拖动
         },
+        // connecting: {
+        //   router: "manhattan", // 使用曼哈顿路由，让连线更整齐
+        //   connector: "rounded", // 圆角连接器
+        //   anchor: "center", // 连线锚点
+        //   connectionPoint: "boundary", // 连接点
+        // },
+        // interacting: {
+        //   nodeMovable: true, // 允许节点拖动
+        //   edgeMovable: true, // 允许边拖动
+        //   edgeLabelMovable: true, // 允许边标签拖动
+        // },
       });
 
       graphRef.current.use(
@@ -242,11 +253,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{
-        width: "100%",
-        height: "800px",
-        border: "1px solid #ddd",
-      }}
+      style={{ width: "100%", height: "800px", border: "1px solid #ddd" }}
     />
   );
 };
