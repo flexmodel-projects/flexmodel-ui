@@ -155,7 +155,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         if (entity.type === "ENTITY") {
           const { name: currentEntity, fields } = entity;
           fields.forEach((field: any) => {
-            if (field.type === "RELATION") {
+            if (field.type === "Relation") {
               // 根据关系定义确定连线另一端的实体
               const targetEntity = field.from;
               // 使用 sorted key 去重，防止反向重复创建同一关系
