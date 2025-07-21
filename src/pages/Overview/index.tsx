@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic,} from "antd";
+import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic} from "antd";
 import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
 import Title from "antd/lib/typography/Title";
-import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone,} from "@ant-design/icons";
+import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
 import {fetchOverview} from "../../api/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 
-const {RangePicker} = DatePicker;
+const { RangePicker } = DatePicker;
 
-// 定义统计数据类型
+// 统计数据类型
 interface Statistics {
   queryCount: number;
   mutationCount: number;
@@ -18,21 +18,27 @@ interface Statistics {
   dataSourceCount: number;
 }
 
-// 定义图表数据类型
-interface ChartData {
-  date: string;
-  total: number;
-}
-
-// 定义接口访问排名数据类型
+// 接口访问排名
 interface RankingData {
   name: string;
   total: number;
 }
 
-// 主页面组件
+// 趋势图数据
+interface ApiStat {
+  dateList: string[];
+  successData: number[];
+  failData: number[];
+}
+
+// 接口返回类型
+interface OverviewResponse extends Statistics {
+  apiRankingList: RankingData[];
+  apiStat: ApiStat;
+}
+
 const StatisticsPage: React.FC = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [stats, setStats] = useState<Statistics>({
     queryCount: 0,
@@ -40,7 +46,11 @@ const StatisticsPage: React.FC = () => {
     subscribeCount: 0,
     dataSourceCount: 0,
   });
-  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [apiStat, setApiStat] = useState<ApiStat>({
+    dateList: [],
+    successData: [],
+    failData: [],
+  });
   const [rankingData, setRankingData] = useState<RankingData[]>([]);
 
   // 默认日期范围设置为本周
@@ -52,14 +62,19 @@ const StatisticsPage: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const data = await fetchOverview({
+      const data: OverviewResponse = await fetchOverview({
         dateRange: dateRange
           .map((date: any) => date?.format("YYYY-MM-DD HH:mm:ss"))
           ?.join(","),
       });
       setLoading(false);
-      setStats(data as Statistics);
-      setChartData(data.apiStatList);
+      setStats({
+        queryCount: data.queryCount,
+        mutationCount: data.mutationCount,
+        subscribeCount: data.subscribeCount,
+        dataSourceCount: data.dataSourceCount,
+      });
+      setApiStat(data.apiStat);
       setRankingData(data.apiRankingList);
     };
     loadData();
@@ -73,7 +88,6 @@ const StatisticsPage: React.FC = () => {
 
   const handleQuickSelect = (type: "today" | "week" | "month" | "year") => {
     let start: Dayjs, end: Dayjs;
-
     const now = dayjs();
     switch (type) {
       case "today":
@@ -96,40 +110,35 @@ const StatisticsPage: React.FC = () => {
         start = now.startOf("day");
         end = now.endOf("day");
     }
-
     setDateRange([start, end]);
   };
 
   // ECharts 配置
   const chartConfig = {
-    tooltip: {
-      trigger: "axis",
-    },
-    grid: {
-      top: "3%",
-      left: "3%",
-      right: "3%",
-      containLabel: true,
-    },
-    xAxis: {
-      type: "category",
-      data: chartData.map((item) => item.date),
-    },
-    yAxis: {
-      type: "value",
-    },
+    tooltip: { trigger: "axis" },
+    legend: { data: [t("success"), t("fail")] },
+    grid: { top: "3%", left: "3%", right: "3%", containLabel: true },
+    xAxis: { type: "category", data: apiStat.dateList },
+    yAxis: { type: "value" },
     series: [
       {
-        name: "Total Requests",
+        name: t("success"),
         type: "line",
-        data: chartData.map((item) => item.total),
+        data: apiStat.successData,
+        itemStyle: { color: "#52c41a" },
+      },
+      {
+        name: t("fail"),
+        type: "line",
+        data: apiStat.failData,
+        itemStyle: { color: "#ff4d4f" },
       },
     ],
   };
 
   return (
     <div
-      style={{flex: 1, width: "100%", display: "flex"}}
+      style={{ flex: 1, width: "100%", display: "flex" }}
       className={styles.root}
     >
       <Spin spinning={loading}>
@@ -139,40 +148,37 @@ const StatisticsPage: React.FC = () => {
               <Statistic
                 title={t("query")}
                 value={stats.queryCount}
-                prefix={<HourglassTwoTone/>}
+                prefix={<HourglassTwoTone />}
                 precision={0}
               />
             </Card>
           </Col>
-
           <Col span={6}>
             <Card>
               <Statistic
                 title={t("mutation")}
                 value={stats.mutationCount}
-                prefix={<FlagTwoTone/>}
+                prefix={<FlagTwoTone />}
                 precision={0}
               />
             </Card>
           </Col>
-
           <Col span={6}>
             <Card>
               <Statistic
                 title={t("subscription")}
                 value={stats.subscribeCount}
-                prefix={<RocketTwoTone/>}
+                prefix={<RocketTwoTone />}
                 precision={0}
               />
             </Card>
           </Col>
-
           <Col span={6}>
             <Card>
               <Statistic
                 title={t("datasource")}
                 value={stats.dataSourceCount}
-                prefix={<DatabaseTwoTone/>}
+                prefix={<DatabaseTwoTone />}
                 precision={0}
               />
             </Card>
@@ -185,49 +191,37 @@ const StatisticsPage: React.FC = () => {
               title={t("trend_analysis")}
               extra={
                 <Space>
-                  <Button
-                    onClick={() => handleQuickSelect("today")}
-                    type="text"
-                  >
+                  <Button onClick={() => handleQuickSelect("today")} type="text">
                     {t("today")}
                   </Button>
                   <Button onClick={() => handleQuickSelect("week")} type="text">
                     {t("week")}
                   </Button>
-                  <Button
-                    onClick={() => handleQuickSelect("month")}
-                    type="text"
-                  >
+                  <Button onClick={() => handleQuickSelect("month")} type="text">
                     {t("month")}
                   </Button>
                   <Button onClick={() => handleQuickSelect("year")} type="text">
                     {t("year")}
                   </Button>
-                  <RangePicker
-                    value={dateRange}
-                    onChange={handleDateChange}
-                  />
+                  <RangePicker value={dateRange} onChange={handleDateChange} />
                 </Space>
               }
             >
               <Row gutter={16} className="h-full">
                 <Col span={18}>
-                  <ReactECharts
-                    option={chartConfig}
-                    style={{height: "100%"}}
-                  />
+                  <ReactECharts option={chartConfig} style={{ height: "100%" }} />
                 </Col>
                 <Col span={6} className="flex flex-col">
                   <Title level={5}>{t("api_ranking")}</Title>
                   <List
-                    style={{overflowY: "scroll", maxHeight: "56vh"}}
+                    style={{ overflowY: "scroll", maxHeight: "56vh" }}
                     className="flex flex-1 relative"
                     dataSource={rankingData}
                     renderItem={(item, index) => (
-                      <List.Item style={{padding: "10px 16px"}}>
+                      <List.Item style={{ padding: "10px 16px" }}>
                         <div className="flex w-full justify-between">
                           <Space className="overflow-hidden w-60">
-                            <Badge count={index + 1} showZero color="green"/>{" "}
+                            <Badge count={index + 1} showZero color="green" />{" "}
                             {item.name}
                           </Space>
                           <span>{item.total}</span>
@@ -244,4 +238,6 @@ const StatisticsPage: React.FC = () => {
     </div>
   );
 };
+
 export default StatisticsPage;
+

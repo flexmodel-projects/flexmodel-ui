@@ -188,5 +188,15 @@
   "query_execution_failed": "查询执行失败",
   "time_taken": "耗时",
   "total_results": "总结果数",
-  "welcome": "欢迎来到我们的应用程序"
+  "welcome": "欢迎来到我们的应用程序",
+  "is_success": "是否成功",
+  "success": "成功",
+  "fail": "失败",
+  "http_method": "请求方法",
+  "status_code": "状态码",
+  "response_time": "响应时间",
+  "client_ip": "客户端IP",
+  "error_message": "错误信息",
+  "request_log": "请求日志",
+  "path": "路径"
 }

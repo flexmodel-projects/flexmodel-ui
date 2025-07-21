@@ -188,5 +188,15 @@
   "query_execution_failed": "Query execution failed",
   "time_taken": "Time taken",
   "total_results": "Total results",
-  "welcome": "Welcome to our application"
+  "welcome": "Welcome to our application",
+  "is_success": "Success Status",
+  "success": "Success",
+  "fail": "Fail",
+  "http_method": "HTTP Method",
+  "status_code": "Status Code",
+  "response_time": "Response Time",
+  "client_ip": "Client IP",
+  "error_message": "Error Message",
+  "request_log": "Request Log",
+   "path": "Path"
 }

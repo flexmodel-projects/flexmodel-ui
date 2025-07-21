@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
   Card,
@@ -16,17 +16,12 @@ import {
   Table,
   Tag,
 } from "antd";
-import {
-  DownOutlined,
-  SearchOutlined,
-  SettingOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import * as echarts from "echarts";
-import { getApiLogs, getApiLogStat } from "../../api/api-log.ts";
-import { css } from "@emotion/css";
+import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
+import {css} from "@emotion/css";
 import LogSettings from "./components/LogSettings.tsx";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const { RangePicker } = DatePicker;
 const LogViewer: React.FC = () => {
@@ -109,7 +104,12 @@ const LogViewer: React.FC = () => {
     return {
       ...query,
       keyword: filter?.keyword,
-      level: filter?.level?.join(","),
+      isSuccess:
+        filter?.isSuccess === undefined || filter?.isSuccess === null
+          ? undefined
+          : filter?.isSuccess === true || filter?.isSuccess === "true"
+          ? true
+          : false,
       dateRange: filter?.dateRange
         ?.map((date: any) => date?.format("YYYY-MM-DD HH:mm:ss"))
         ?.join(","),
@@ -160,43 +160,61 @@ const LogViewer: React.FC = () => {
 
   const columns = [
     {
-      title: t("level"),
-      dataIndex: "level",
+      title: t("id"),
+      dataIndex: "id",
+      width: 120,
+      ellipsis: true,
+    },
+    {
+      title: t("http_method"),
+      dataIndex: "httpMethod",
       width: 100,
-      render: (level: string) => {
-        let color = "blue";
-        if (level === "ERROR") color = "red";
-        else if (level === "WARN") color = "orange";
-        return <Tag color={color}>{level}</Tag>;
+      render: (method: string) => <Tag color="blue">{method}</Tag>,
+    },
+    {
+      title: t("path"),
+      dataIndex: "path",
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: t("status_code"),
+      dataIndex: "statusCode",
+      width: 100,
+      render: (code: number) => {
+        const color = code >= 500 ? "red" : code >= 400 ? "orange" : "green";
+        return <Tag color={color}>{code}</Tag>;
       },
     },
     {
-      title: t("message"),
-      dataIndex: "uri",
-      render: (uri: string, record: any) => (
-        <Row style={{ fontSize: "12px", padding: "10px 0" }}>
-          <Col span={24}>{uri}</Col>
-          <Col>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <Tag color="blue">status: {record?.data?.status}</Tag>
-              <Tag color="blue">execTime: {record?.data?.execTime}ms</Tag>
-              {record?.data?.remoteIp && (
-                <Tag color="blue">remoteIp: {record?.data?.remoteIp}</Tag>
-              )}
-              {record?.data?.status >= 500 ? (
-                <Tag color="red">message: {record?.data?.message}</Tag>
-              ) : record?.data?.status >= 400 ? (
-                <Tag color="orange">message: {record?.data?.message}</Tag>
-              ) : null}
-            </div>
-          </Col>
-        </Row>
-      ),
+      title: t("response_time"),
+      dataIndex: "responseTime",
+      width: 120,
+      render: (time: number) => <span>{time}ms</span>,
+    },
+    {
+      title: t("client_ip"),
+      dataIndex: "clientIp",
+      width: 120,
+      ellipsis: true,
     },
     {
       title: t("created_at"),
       dataIndex: "createdAt",
-      width: 250,
+      width: 180,
+    },
+    {
+      title: t("is_success"),
+      dataIndex: "isSuccess",
+      width: 100,
+      render: (success: boolean) => success ? <Tag color="green">Success</Tag> : <Tag color="red">Fail</Tag>,
+    },
+    {
+      title: t("error_message"),
+      dataIndex: "errorMessage",
+      width: 200,
+      ellipsis: true,
+      render: (msg: string) => msg ? <span style={{color: 'red'}}>{msg}</span> : null,
     },
   ];
 
@@ -228,17 +246,10 @@ const LogViewer: React.FC = () => {
               {expand && (
                 <Row>
                   <Col span={6}>
-                    <Form.Item name="level" label={t("level")}>
-                      <Select
-                        style={{ width: "150px" }}
-                        mode="multiple"
-                        placeholder={t("select_your_log_level")}
-                        allowClear
-                      >
-                        <Select.Option value="DEBUG">Debug</Select.Option>
-                        <Select.Option value="INFO">Info</Select.Option>
-                        <Select.Option value="WARN">Warn</Select.Option>
-                        <Select.Option value="ERROR">Error</Select.Option>
+                    <Form.Item name="isSuccess" label={t("is_success")}>
+                      <Select style={{ width: "150px" }} allowClear>
+                        <Select.Option value={true}>{t("success")}</Select.Option>
+                        <Select.Option value={false}>{t("fail")}</Select.Option>
                       </Select>
                     </Form.Item>
                   </Col>
@@ -345,44 +356,24 @@ const LogViewer: React.FC = () => {
         </Row>
         <FloatButton.BackTop />
         <Drawer
-          title="Request log"
+          title={t("request_log")}
           width={680}
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
         >
           <Descriptions column={1} bordered>
             <Descriptions.Item label="id">{log.id}</Descriptions.Item>
-            <Descriptions.Item label="level">{log.level}</Descriptions.Item>
-            <Descriptions.Item label="createdAt">
-              {log.createdAt}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.execTime">
-              {log?.data?.execTime}ms
-            </Descriptions.Item>
-            <Descriptions.Item label="data.status">
-              {log?.data?.status}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.message">
-              {log?.data?.message}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.errors">
-              {log?.data?.errors}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.method">
-              {log?.data?.method}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.path">
-              {log?.data?.path}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.userAgent">
-              {log?.data?.userAgent}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.remoteIp">
-              {log?.data?.remoteIp}
-            </Descriptions.Item>
-            <Descriptions.Item label="data.referer">
-              {log?.data?.referer}
-            </Descriptions.Item>
+            <Descriptions.Item label="url">{log.url}</Descriptions.Item>
+            <Descriptions.Item label="httpMethod">{log.httpMethod}</Descriptions.Item>
+            <Descriptions.Item label="path">{log.path}</Descriptions.Item>
+            <Descriptions.Item label="requestBody">{log.requestBody}</Descriptions.Item>
+            <Descriptions.Item label="requestHeaders">{log.requestHeaders ? JSON.stringify(log.requestHeaders) : null}</Descriptions.Item>
+            <Descriptions.Item label="statusCode">{log.statusCode}</Descriptions.Item>
+            <Descriptions.Item label="responseTime">{log.responseTime}ms</Descriptions.Item>
+            <Descriptions.Item label="clientIp">{log.clientIp}</Descriptions.Item>
+            <Descriptions.Item label="createdAt">{log.createdAt}</Descriptions.Item>
+            <Descriptions.Item label="isSuccess">{log.isSuccess ? t("yes") : t("no")}</Descriptions.Item>
+            <Descriptions.Item label="errorMessage">{log.errorMessage}</Descriptions.Item>
           </Descriptions>
         </Drawer>
       </Card>
