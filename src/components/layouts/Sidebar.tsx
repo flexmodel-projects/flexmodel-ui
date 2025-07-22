@@ -11,15 +11,13 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
-import styles from "./Sidebar.module.scss";
 
-const Sidebar: React.FC<{ defaultSelectedKey?: string }> = () => {
+const Sidebar: React.FC = () => {
   const { t } = useTranslation();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(true);
 
-  // 菜单数据
   const menuData = [
     {
       key: "/",
@@ -48,28 +46,32 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = () => {
     },
   ];
 
-  // 切换收起/展开
-  const toggleCollapsed = () => {
-    setCollapsed((prev) => !prev);
-  };
-
-  // 菜单点击
   const handleMenuClick = ({ key }: { key: string }) => {
     if (location.pathname !== key) {
-      history(key);
+      navigate(key);
     }
   };
 
   return (
     <Layout.Sider
       theme="light"
+      collapsible
       collapsed={collapsed}
+      onCollapse={setCollapsed}
       collapsedWidth={56}
       width={180}
-      className={[styles.root, "!w-18 !basis-18 !min-w-18"].join(" ")}
       trigger={null}
+      style={{
+        minHeight: "100vh",
+        transition: "width 0.3s cubic-bezier(0.4,0,0.2,1)",
+        boxShadow: "2px 0 8px 0 rgba(0,0,0,0.04)",
+        zIndex: 10
+      }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <img src="/logo.png" width={40} alt="logo" />
+        </div>
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
@@ -79,7 +81,7 @@ const Sidebar: React.FC<{ defaultSelectedKey?: string }> = () => {
           items={menuData}
         />
         <div style={{ padding: 8, textAlign: "center" }}>
-          <span onClick={toggleCollapsed} style={{ cursor: "pointer", fontSize: 18 }}>
+          <span onClick={() => setCollapsed(!collapsed)} style={{ cursor: "pointer", fontSize: 18 }}>
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </span>
         </div>
