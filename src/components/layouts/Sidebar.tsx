@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
             width={32}
             alt="logo"
             style={{
-              transition: 'transform 0.3s',
+              transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
               transform: collapsed ? 'scale(1)' : 'scale(1.1)',
               flexShrink: 0
             }}
@@ -83,17 +83,18 @@ const Sidebar: React.FC = () => {
           <span
             style={{
               marginLeft: 10,
-              fontWeight: 700,
+              fontWeight: 600,
               fontSize: 20,
               letterSpacing: 1,
               opacity: collapsed ? 0 : 1,
-              transform: collapsed ? 'scale(0.95)' : 'scale(1)',
-              transition: 'opacity 0.3s, transform 0.3s',
+              transform: collapsed ? 'translateX(-10px) scale(0.95)' : 'translateX(0) scale(1)',
+              transition: 'opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1), max-width 0.3s cubic-bezier(0.4,0,0.2,1)',
               whiteSpace: 'nowrap',
-              pointerEvents: collapsed ? 'none' : 'auto',
-              width: collapsed ? 0 : 'auto',
+              pointerEvents: 'none', // 始终禁用 pointerEvents，避免动画时可点击
+              maxWidth: collapsed ? 0 : 120,
               overflow: 'hidden',
               display: 'inline-block',
+              verticalAlign: 'middle',
             }}
           >
             Flexmodel
