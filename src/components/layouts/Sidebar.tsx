@@ -69,8 +69,35 @@ const Sidebar: React.FC = () => {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img src="/logo.png" width={40} alt="logo" />
+        <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", paddingLeft: collapsed ? 0 : 20, overflow: 'hidden' }}>
+          <img
+            src="/logo.png"
+            width={32}
+            alt="logo"
+            style={{
+              transition: 'transform 0.3s',
+              transform: collapsed ? 'scale(1)' : 'scale(1.1)',
+              flexShrink: 0
+            }}
+          />
+          <span
+            style={{
+              marginLeft: 10,
+              fontWeight: 700,
+              fontSize: 20,
+              letterSpacing: 1,
+              opacity: collapsed ? 0 : 1,
+              transform: collapsed ? 'scale(0.95)' : 'scale(1)',
+              transition: 'opacity 0.3s, transform 0.3s',
+              whiteSpace: 'nowrap',
+              pointerEvents: collapsed ? 'none' : 'auto',
+              width: collapsed ? 0 : 'auto',
+              overflow: 'hidden',
+              display: 'inline-block',
+            }}
+          >
+            Flexmodel
+          </span>
         </div>
         <Menu
           mode="inline"
