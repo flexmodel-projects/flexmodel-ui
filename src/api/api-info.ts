@@ -1,58 +1,51 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getApis() {
-  return request({
-    url: `${BASE_URI}/apis`,
-    method: 'get'
-  });
+/**
+ * 获取 API 列表
+ */
+export const getApis = (): Promise<any[]> => {
+  return api.get('/apis')
 }
 
-export function createApi(data: object) {
-  return request({
-    url: `${BASE_URI}/apis`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建 API
+ */
+export const createApi = (data: any): Promise<any> => {
+  return api.post('/apis', data)
 }
 
-export function generateAPIs(data: object) {
-  return request({
-    url: `${BASE_URI}/apis/generate`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 批量生成 API
+ */
+export const generateAPIs = (data: any): Promise<any> => {
+  return api.post('/apis/generate', data)
 }
 
-export function updateApi(id: string, data: object) {
-  return request({
-    url: `${BASE_URI}/apis/${id}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 更新 API
+ */
+export const updateApi = (id: string, data: any): Promise<any> => {
+  return api.put(`/apis/${id}`, data)
 }
 
-export function updateApiStatus(id: string, enabled: boolean) {
-  return request({
-    url: `${BASE_URI}/apis/${id}`,
-    method: 'patch',
-    data: {enabled: enabled}
-  });
+/**
+ * 更新 API 启用状态
+ */
+export const updateApiStatus = (id: string, enabled: boolean): Promise<any> => {
+  return api.patch(`/apis/${id}`, { enabled })
 }
 
-export function updateApiName(id: string, name: string) {
-  return request({
-    url: `${BASE_URI}/apis/${id}`,
-    method: 'patch',
-    data: {name: name}
-  });
+/**
+ * 更新 API 名称
+ */
+export const updateApiName = (id: string, name: string): Promise<any> => {
+  return api.patch(`/apis/${id}`, { name })
 }
 
-
-export function deleteApi(id: string) {
-  return request({
-    url: `${BASE_URI}/apis/${id}`,
-    method: 'delete'
-  });
+/**
+ * 删除 API
+ */
+export const deleteApi = (id: string): Promise<void> => {
+  return api.delete(`/apis/${id}`)
 }
 

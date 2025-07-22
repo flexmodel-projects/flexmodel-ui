@@ -1,9 +1,8 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getSystemProfile() {
-  return request({
-    url: `${BASE_URI}/system/profile`,
-    method: 'get'
-  });
+/**
+ * 获取系统信息
+ */
+export const getSystemProfile = (): Promise<any> => {
+  return api.get('/system/profile')
 }

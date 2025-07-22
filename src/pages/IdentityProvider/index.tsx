@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Divider, Dropdown, Empty, message, Modal, Row, Spin, Tree,} from "antd";
 import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
-import {deleteIdentityProvider, getIdentityProviders, updateIdentityProvider,} from "../../api/identity-provider";
+import {
+  deleteIdentityProvider,
+  getIdentityProviders as getIdentityProvidersApi,
+  updateIdentityProvider,
+} from "../../api/identity-provider";
 import IdPInfo from "./components/IdPInfo.tsx";
 import EditProvider from "./components/EditProvider.tsx";
 import CreateProvider from "./components/CreateProvider.tsx";
@@ -38,10 +42,10 @@ const IdPManagement: React.FC = () => {
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
   const [editForm, setEditForm] = useState<IdentityProvider | null>(null);
 
-  const fetchIdentityProviders = async () => {
+  const getIdentityProviders = async () => {
     try {
       setIdPLoading(true);
-      const data = await getIdentityProviders();
+      const data = await getIdentityProvidersApi();
       setIdPLoading(false);
       setIdPList(data);
       setActiveIdP(data[0] || null);
@@ -52,14 +56,14 @@ const IdPManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchIdentityProviders();
+    getIdentityProviders();
   }, []);
 
   const handleDelete = async () => {
     if (activeIdP) {
       try {
         await deleteIdentityProvider(activeIdP.name);
-        fetchIdentityProviders();
+        getIdentityProviders();
         setDeleteVisible(false);
         message.success("Deleted successfully");
       } catch {
@@ -76,7 +80,7 @@ const IdPManagement: React.FC = () => {
         provider: formData,
       });
       setEditVisible(false);
-      await fetchIdentityProviders();
+      await getIdentityProviders();
       setActiveIdP(reqData);
       message.success(t("form_save_success"));
     } catch {
@@ -197,7 +201,7 @@ const IdPManagement: React.FC = () => {
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         onConfirm={(res) => {
-          fetchIdentityProviders().then(() => setActiveIdP(res));
+          getIdentityProviders().then(() => setActiveIdP(res));
         }}
       />
       <EditProvider

@@ -1,17 +1,15 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function saveSettings(data: object) {
-  return request({
-    url: `${BASE_URI}/settings`,
-    method: 'patch',
-    data: data
-  });
+/**
+ * 保存设置
+ */
+export const saveSettings = (data: any): Promise<any> => {
+  return api.patch('/settings', data)
 }
 
-export function getSettings() {
-  return request({
-    url: `${BASE_URI}/settings`,
-    method: 'get'
-  });
+/**
+ * 获取设置
+ */
+export const getSettings = (): Promise<any> => {
+  return api.get('/settings')
 }

@@ -1,12 +1,8 @@
-import request from "../utils/request.ts";
-import {BASE_URI} from "./base.ts";
+import {api} from '../utils/request'
 
-export function fetchOverview(filter?: object) {
-  return request({
-    url: `${BASE_URI}/overview`,
-    method: 'get',
-    params: {
-      ...filter
-    }
-  });
+/**
+ * 获取总览信息
+ */
+export const getOverview = (filter?: any): Promise<any> => {
+  return api.get('/overview', filter)
 }

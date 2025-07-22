@@ -1,44 +1,36 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getRecordList(datasourceName: string, modelName: string,
-                              query?: {
-                                current: number,
-                                pageSize: number
-                              }) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records`,
-    method: 'get',
-    params: query
-  });
+/**
+ * 获取记录列表
+ */
+export const getRecordList = (datasourceName: string, modelName: string, query?: { current: number, pageSize: number }): Promise<any[]> => {
+  return api.get(`/datasources/${datasourceName}/models/${modelName}/records`, query)
 }
 
-export function getOneRecord(datasourceName: string, modelName: string, id: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records/${id}`,
-    method: 'get'
-  });
+/**
+ * 获取单条记录
+ */
+export const getOneRecord = (datasourceName: string, modelName: string, id: any): Promise<any> => {
+  return api.get(`/datasources/${datasourceName}/models/${modelName}/records/${id}`)
 }
 
-export function createRecord(datasourceName: string, modelName: string, data: {}) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建记录
+ */
+export const createRecord = (datasourceName: string, modelName: string, data: any): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/models/${modelName}/records`, data)
 }
 
-export function updateRecord(datasourceName: string, modelName: string, id: any, data: {}) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records/${id}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 更新记录
+ */
+export const updateRecord = (datasourceName: string, modelName: string, id: any, data: any): Promise<any> => {
+  return api.put(`/datasources/${datasourceName}/models/${modelName}/records/${id}`, data)
 }
 
-export function deleteRecord(datasourceName: string, modelName: string, id: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/records/${id}`,
-    method: 'delete'
-  });
+/**
+ * 删除记录
+ */
+export const deleteRecord = (datasourceName: string, modelName: string, id: any): Promise<void> => {
+  return api.delete(`/datasources/${datasourceName}/models/${modelName}/records/${id}`)
 }

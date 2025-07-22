@@ -1,79 +1,72 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
-import {TypeWrapper} from "../pages/DataModeling/data";
+import {api} from '../utils/request'
+import {TypeWrapper} from '../pages/DataModeling/data'
 
-export function getModelList(datasourceName: string) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models`,
-    method: 'get'
-  });
+/**
+ * 获取模型列表
+ */
+export const getModelList = (datasourceName: string): Promise<any[]> => {
+  return api.get(`/datasources/${datasourceName}/models`)
 }
 
-export function createModel(datasourceName: string, data: TypeWrapper) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建模型
+ */
+export const createModel = (datasourceName: string, data: TypeWrapper): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/models`, data)
 }
 
-export function modifyModel(datasourceName: string, data: TypeWrapper) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${data.name}`,
-    method: 'put',
-    data: data,
-  });
+/**
+ * 修改模型
+ */
+export const modifyModel = (datasourceName: string, data: TypeWrapper): Promise<any> => {
+  return api.put(`/datasources/${datasourceName}/models/${data.name}`, data)
 }
 
-export function dropModel(datasourceName: string, modelName: string) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}`,
-    method: 'delete'
-  });
+/**
+ * 删除模型
+ */
+export const dropModel = (datasourceName: string, modelName: string): Promise<void> => {
+  return api.delete(`/datasources/${datasourceName}/models/${modelName}`)
 }
 
-export function createField(datasourceName: string, modelName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建字段
+ */
+export const createField = (datasourceName: string, modelName: string, data: any): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/models/${modelName}/fields`, data)
 }
 
-export function modifyField(datasourceName: string, modelName: string, fieldName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 修改字段
+ */
+export const modifyField = (datasourceName: string, modelName: string, fieldName: string, data: any): Promise<any> => {
+  return api.put(`/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`, data)
 }
 
-export function dropField(datasourceName: string, modelName: string, fieldName: string) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`,
-    method: 'delete'
-  });
+/**
+ * 删除字段
+ */
+export const dropField = (datasourceName: string, modelName: string, fieldName: string): Promise<void> => {
+  return api.delete(`/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`)
 }
 
-export function createIndex(datasourceName: string, modelName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建索引
+ */
+export const createIndex = (datasourceName: string, modelName: string, data: any): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/models/${modelName}/indexes`, data)
 }
 
-export function modifyIndex(datasourceName: string, modelName: string, indexName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 修改索引
+ */
+export const modifyIndex = (datasourceName: string, modelName: string, indexName: string, data: any): Promise<any> => {
+  return api.put(`/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`, data)
 }
 
-export function dropIndex(datasourceName: string, modelName: string, indexName: string) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`,
-    method: 'delete'
-  });
+/**
+ * 删除索引
+ */
+export const dropIndex = (datasourceName: string, modelName: string, indexName: string): Promise<void> => {
+  return api.delete(`/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`)
 }

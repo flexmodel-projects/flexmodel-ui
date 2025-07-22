@@ -1,8 +1,8 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
-export function getVariables() {
-  return request({
-    url: `${BASE_URI}/environment/variables`,
-    method: 'get'
-  });
+import {api} from '../utils/request'
+
+/**
+ * 获取环境变量
+ */
+export const getVariables = (): Promise<any> => {
+  return api.get('/environment/variables')
 }

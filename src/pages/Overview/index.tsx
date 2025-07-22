@@ -4,7 +4,7 @@ import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
 import Title from "antd/lib/typography/Title";
 import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
-import {fetchOverview} from "../../api/overview.ts";
+import {getOverview} from "../../api/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 
@@ -62,7 +62,7 @@ const StatisticsPage: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const data: OverviewResponse = await fetchOverview({
+      const data: OverviewResponse = await getOverview({
         dateRange: dateRange
           .map((date: any) => date?.format("YYYY-MM-DD HH:mm:ss"))
           ?.join(","),

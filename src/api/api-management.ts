@@ -1,10 +1,8 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function executeQuery(data: object) {
-  return request({
-    url: `${BASE_URI}/graphql`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 执行 GraphQL 查询
+ */
+export const executeQuery = (data: any): Promise<any> => {
+  return api.post('/graphql', data)
 }

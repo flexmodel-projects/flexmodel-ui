@@ -1,22 +1,15 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getApiLogs(filter?: object) {
-  return request({
-    url: `${BASE_URI}/logs`,
-    method: 'get',
-    params: {
-      ...filter,
-    }
-  });
+/**
+ * 获取 API 日志列表
+ */
+export const getApiLogs = (filter?: any): Promise<any[]> => {
+  return api.get('/logs', filter)
 }
 
-export function getApiLogStat(filter?: object) {
-  return request({
-    url: `${BASE_URI}/logs/stat`,
-    method: 'get',
-    params: {
-      ...filter
-    }
-  })
+/**
+ * 获取 API 日志统计
+ */
+export const getApiLogStat = (filter?: any): Promise<any> => {
+  return api.get('/logs/stat', filter)
 }

@@ -1,33 +1,30 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getIdentityProviders() {
-  return request({
-    url: `${BASE_URI}/identity-providers`,
-    method: 'get'
-  });
+/**
+ * 获取身份提供商列表
+ */
+export const getIdentityProviders = (): Promise<any[]> => {
+  return api.get('/identity-providers')
 }
 
-export function createIdentityProvider(data: object) {
-  return request({
-    url: `${BASE_URI}/identity-providers`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建身份提供商
+ */
+export const createIdentityProvider = (data: any): Promise<any> => {
+  return api.post('/identity-providers', data)
 }
 
-export function updateIdentityProvider(id: string, data: object) {
-  return request({
-    url: `${BASE_URI}/identity-providers/${id}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 更新身份提供商
+ */
+export const updateIdentityProvider = (id: string, data: any): Promise<any> => {
+  return api.put(`/identity-providers/${id}`, data)
 }
 
-export function deleteIdentityProvider(id: string) {
-  return request({
-    url: `${BASE_URI}/identity-providers/${id}`,
-    method: 'delete'
-  });
+/**
+ * 删除身份提供商
+ */
+export const deleteIdentityProvider = (id: string): Promise<void> => {
+  return api.delete(`/identity-providers/${id}`)
 }
 

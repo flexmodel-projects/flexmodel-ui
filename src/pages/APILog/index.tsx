@@ -84,13 +84,13 @@ const LogViewer: React.FC = () => {
     ],
   };
 
-  const fetchApiLogs = async () => {
+  const getApiLogsHandler = async () => {
     const filter = form.getFieldsValue();
     const res: any[] = await getApiLogs(getFilterQuery(filter));
     setTableData(res);
   };
 
-  const fetchApiLogStat = async () => {
+  const getApiLogStatHandler = async () => {
     const filter = form.getFieldsValue();
     const statList: any[] = await getApiLogStat(getFilterQuery(filter));
     option.xAxis.data = statList.map((stat) => stat.date);
@@ -119,12 +119,12 @@ const LogViewer: React.FC = () => {
   const initializeChart = () => {
     if (logStatRef.current) {
       chartInstance.current = echarts.init(logStatRef.current);
-      fetchApiLogStat();
+      getApiLogStatHandler();
     }
   };
 
   useEffect(() => {
-    fetchApiLogs();
+    getApiLogsHandler();
     initializeChart();
     // 在窗口大小变化时更新图表大小
     const resizeChart = () => chartInstance.current?.resize();
@@ -138,7 +138,7 @@ const LogViewer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchApiLogs();
+    getApiLogsHandler();
   }, [query]);
 
   const showDetail = (record: any) => {
@@ -148,14 +148,14 @@ const LogViewer: React.FC = () => {
 
   const searchLog = async () => {
     setQuery({ current: 1, pageSize: 100 });
-    await fetchApiLogs();
-    await fetchApiLogStat();
+    await getApiLogsHandler();
+    await getApiLogStatHandler();
   };
 
   const resetLog = async () => {
     form.resetFields();
     setQuery({ current: 1, pageSize: 100 });
-    await fetchApiLogs();
+    await getApiLogsHandler();
   };
 
   const columns = [

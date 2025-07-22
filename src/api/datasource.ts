@@ -1,74 +1,64 @@
-import {BASE_URI} from "./base.ts";
-import request from "../utils/request.ts";
+import {api} from '../utils/request'
 
-export function getDatasourceList() {
-  return request({
-    url: `${BASE_URI}/datasources`,
-    method: 'get'
-  });
+/**
+ * 获取数据源列表
+ */
+export const getDatasourceList = (): Promise<any[]> => {
+  return api.get('/datasources')
 }
 
-export function syncModels(datasourceName: string, models: string[]) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/sync`,
-    method: 'post',
-    data: models
-  });
+/**
+ * 同步模型
+ */
+export const syncModels = (datasourceName: string, models: string[]): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/sync`, models)
 }
 
-export function importModels(datasourceName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/import`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 导入模型
+ */
+export const importModels = (datasourceName: string, data: any): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/import`, data)
 }
 
-
-export function validateDatasource(data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/validate`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 校验数据源
+ */
+export const validateDatasource = (data: any): Promise<any> => {
+  return api.post('/datasources/validate', data)
 }
 
-export function getPhysicsModelNames(data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/physics/names`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 获取物理模型名称
+ */
+export const getPhysicsModelNames = (data: any): Promise<any[]> => {
+  return api.post('/datasources/physics/names', data)
 }
 
-export function createDatasource(data: any) {
-  return request({
-    url: `${BASE_URI}/datasources`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 新建数据源
+ */
+export const createDatasource = (data: any): Promise<any> => {
+  return api.post('/datasources', data)
 }
 
-export function updateDatasource(datasourceName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}`,
-    method: 'put',
-    data: data
-  });
+/**
+ * 更新数据源
+ */
+export const updateDatasource = (datasourceName: string, data: any): Promise<any> => {
+  return api.put(`/datasources/${datasourceName}`, data)
 }
 
-export function deleteDatasource(datasourceName: string) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}`,
-    method: 'delete'
-  });
+/**
+ * 删除数据源
+ */
+export const deleteDatasource = (datasourceName: string): Promise<void> => {
+  return api.delete(`/datasources/${datasourceName}`)
 }
 
-
-export function executeNativeQuery(datasourceName: string, data: any) {
-  return request({
-    url: `${BASE_URI}/datasources/${datasourceName}/native-query`,
-    method: 'post',
-    data: data
-  });
+/**
+ * 执行原生查询
+ */
+export const executeNativeQuery = (datasourceName: string, data: any): Promise<any> => {
+  return api.post(`/datasources/${datasourceName}/native-query`, data)
 }

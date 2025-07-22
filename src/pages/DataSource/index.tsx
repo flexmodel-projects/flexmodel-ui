@@ -36,7 +36,7 @@ const DatasourceManagement: React.FC = () => {
 
   const [scriptForm] = Form.useForm();
 
-  const fetchDatasourceList = async () => {
+  const getDatasourceListHandler = async () => {
     try {
       setDsLoading(true);
       const list = await getDatasourceList();
@@ -53,7 +53,7 @@ const DatasourceManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchDatasourceList();
+    getDatasourceListHandler();
   }, []);
 
   const handleTestConnection = async () => {
@@ -91,7 +91,7 @@ const DatasourceManagement: React.FC = () => {
       });
       setEditVisible(false);
       setActiveDs(res);
-      fetchDatasourceList();
+      getDatasourceListHandler();
     } catch (error) {
       console.error(error);
       message.error("Failed to update datasource.");
@@ -224,7 +224,7 @@ const DatasourceManagement: React.FC = () => {
         <ConnectDatabaseDrawer
           visible={drawerVisible}
           onChange={(data) => {
-            fetchDatasourceList();
+            getDatasourceListHandler();
             setActiveDs(data);
           }}
           onClose={() => {
