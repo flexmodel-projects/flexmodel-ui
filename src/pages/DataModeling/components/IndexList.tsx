@@ -120,9 +120,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
     <div style={{padding: '20px'}}>
       <div>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <div>
-            {model?.name} {model?.comment}
-          </div>
+          <div></div>
           <Button
             type="primary"
             icon={<PlusOutlined/>}

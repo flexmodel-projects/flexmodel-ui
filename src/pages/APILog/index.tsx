@@ -19,7 +19,6 @@ import {
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import * as echarts from "echarts";
 import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
-import {css} from "@emotion/css";
 import LogSettings from "./components/LogSettings.tsx";
 import {useTranslation} from "react-i18next";
 
@@ -325,9 +324,7 @@ const LogViewer: React.FC = () => {
               columns={columns}
               dataSource={tableData?.list}
               rowKey="id"
-              rowClassName={css`
-                cursor: pointer;
-              `}
+              rowClassName={() => "cursor-pointer"}
               onRow={(record) => ({
                 onClick: () => showDetail(record),
               })}

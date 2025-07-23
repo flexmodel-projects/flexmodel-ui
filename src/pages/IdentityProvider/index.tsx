@@ -11,20 +11,7 @@ import EditProvider from "./components/EditProvider.tsx";
 import CreateProvider from "./components/CreateProvider.tsx";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
-
-interface IdentityProvider {
-  name: string;
-  provider?:
-    | {
-        type: string;
-        issuer: string;
-        clientId: string;
-        clientSecret: string;
-      }
-    | any;
-  type?: string;
-  children?: IdentityProvider[];
-}
+import type {IdentityProvider} from "./data";
 
 const treeProps = {
   title: "name",
@@ -91,11 +78,14 @@ const IdPManagement: React.FC = () => {
   return (
     <>
       <Card style={{ flex: 1, width: "100%" }} className={styles.root}>
-        <div style={{ display: "flex", backgroundColor: "#fff", flex: 1 }}>
+        <div
+          className="bg-white dark:bg-[#18181c]"
+          style={{ display: "flex", flex: 1 }}
+        >
           <div
+            className="border-r border-[#f5f5f5] dark:border-[#23232a]"
             style={{
               width: "20%",
-              borderRight: "1px solid rgba(5, 5, 5, 0.06)",
               padding: "10px 10px 0px 0px",
             }}
           >
@@ -163,7 +153,7 @@ const IdPManagement: React.FC = () => {
               {t("idp_new_provider")}
             </Button>
           </div>
-          <div style={{ width: "80%", padding: "8px 20px" }}>
+          <div className="bg-white dark:bg-[#18181c]" style={{ width: "80%", padding: "8px 20px" }}>
             {idPList.length > 0 && activeIdP ? (
               <Row>
                 <Col span={24}>
@@ -184,7 +174,7 @@ const IdPManagement: React.FC = () => {
                   </Row>
                 </Col>
                 <Col span={24}>
-                  <Card bordered={false}>
+                  <Card bordered={false} className="bg-white dark:bg-[#23232a]">
                     <IdPInfo data={activeIdP} />
                   </Card>
                 </Col>

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "graphiql/graphiql.css";
 import "@graphiql/plugin-explorer/dist/style.css";
-import { executeQuery } from "../../../api/api-management.ts";
-import { explorerPlugin } from "@graphiql/plugin-explorer";
-import { GraphiQL } from "graphiql";
-import { css } from "@emotion/css";
+import {executeQuery} from "../../../api/api-management.ts";
+import {explorerPlugin} from "@graphiql/plugin-explorer";
+import {GraphiQL} from "graphiql";
 
 interface GraphQLProps {
   data: any;
@@ -35,12 +34,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   return (
     <div style={{ height: 540, flex: 1 }}>
       <GraphiQL
-        className={css`
-          --font-size-body: 12px;
-          --font-size-h2: 18px;
-          --font-size-h3: 17px;
-          --font-size-h4: 16px;
-        `}
+        className="text-[12px] [&_h2]:text-[18px] [&_h3]:text-[17px] [&_h4]:text-[16px]"
         query={query}
         operationName={operationName}
         headers={headers}

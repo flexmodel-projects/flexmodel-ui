@@ -158,9 +158,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   return (
     <div style={{padding: '20px'}}>
       <div style={{display: 'flex', justifyContent: 'space-between'}}>
-        <div>
-          {model?.name} {model?.comment}
-        </div>
+        <div></div>
         <Button
           type="primary"
           icon={<PlusOutlined/>}

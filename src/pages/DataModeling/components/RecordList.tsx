@@ -206,7 +206,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   return model ? (
     <div style={{padding: '20px'}}>
       <Row justify="space-between">
-        <Col>{model.name} {model.comment}</Col>
+        <Col></Col>
         <Col>
           <Button type="primary"
                   icon={<PlusOutlined/>}

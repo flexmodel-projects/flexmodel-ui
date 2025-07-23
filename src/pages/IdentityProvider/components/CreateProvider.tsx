@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd';
 import {createIdentityProvider} from "../../../api/identity-provider.ts";
 import IdPInfo from "./IdPInfo.tsx";
-import {css} from "@emotion/css";
 import {useTranslation} from "react-i18next";
 
 interface CreateProviderProps {
@@ -43,11 +42,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
     }
   };
 
-  const segmentTitle = css`
-    font-size: 16px;
-    font-weight: bold;
-    padding-bottom: 10px;
-  `;
+  const segmentTitle = "text-[16px] font-bold pb-[10px]";
 
   return (
     <Drawer

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {css} from "@emotion/css";
 import {Menu, message} from "antd";
 import About from "./components/About.tsx";
 import Base from "./components/Base.tsx";
@@ -65,46 +64,25 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className={css`
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      width: 100%;
-      height: 100%;
-      padding-top: 16px;
-      padding-bottom: 16px;
-      background-color: #ffffff;
-    `}>
-      <div className={css`
-       width: 224px;
-       border-right: 1px solid rgba(5, 5, 5, 0.06);
-    `}>
+    <div className="flex w-full h-full pt-4 pb-4 bg-white dark:bg-[#18181c]">
+      <div className="w-[224px] border-r border-[#f5f5f5] dark:border-[#23232a] bg-white dark:bg-[#23232a]">
         <Menu
           mode="inline"
           selectedKeys={[initConfig.selectKey]}
-          onClick={({key}) => {
+          onClick={({ key }) => {
             setInitConfig({
               ...initConfig,
               selectKey: key as SettingsStateKeys,
             });
           }}
           items={getMenu()}
+          className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
         />
       </div>
-      <div className={css`
-      -webkit-flex: 1;
-      -ms-flex: 1;
-      flex: 1;
-      padding: 8px 40px;
-      `}>
-        <div className={css`
-        margin-bottom: 12px;
-        color: rgba(0, 0, 0, 0.88);
-        font-weight: 400;
-        font-size: 20px;
-        line-height: 28px;
-        `}>{menuMap[initConfig.selectKey]}</div>
+      <div className="flex-1 px-10 py-2 bg-white dark:bg-[#18181c]">
+        <div className="mb-3 font-normal text-[20px] leading-7 text-[rgba(0,0,0,0.88)] dark:text-[#f5f5f5]">
+          {menuMap[initConfig.selectKey]}
+        </div>
         {renderChildren()}
       </div>
     </div>

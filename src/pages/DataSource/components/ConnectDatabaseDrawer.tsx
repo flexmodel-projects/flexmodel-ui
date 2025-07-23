@@ -5,7 +5,6 @@ import MySQLConfig from "./MySQLConfig.tsx";
 import SQLiteConfig from "./SQLiteConfig.tsx";
 import CommonConfig from "./CommonConfig.tsx";
 import DatabaseInfo from "./DatabaseInfo.tsx";
-import {css} from "@emotion/css";
 import Title from "antd/lib/typography/Title";
 import {useTranslation} from "react-i18next";
 
@@ -83,11 +82,7 @@ const ConnectDatabaseDrawer: React.FC<{
     }
   };
 
-  const segmentTitle = css`
-    font-size: 16px;
-    font-weight: bold;
-    padding-bottom: 10px;
-  `;
+  const segmentTitle = "text-[16px] font-bold pb-[10px]";
 
   const onChangeModel: TransferProps['onChange'] = (nextTargetKeys) => {
     setTargetKeys(nextTargetKeys);

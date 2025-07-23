@@ -201,5 +201,6 @@
   "path": "路径",
   "toggle_dark_mode": "切换夜间模式",
   "dark_mode": "夜间",
-  "light_mode": "白天"
+  "light_mode": "白天",
+  "code": "代码"
 }
