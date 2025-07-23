@@ -1,6 +1,6 @@
 import type {Enum} from "../data";
 import {Drawer} from "antd";
-import {createModel} from "../../../api/model.ts";
+import {createModel} from "../../../services/model.ts";
 import {useTranslation} from "react-i18next";
 import EnumView from "./EnumView.tsx";
 

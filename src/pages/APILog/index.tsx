@@ -18,7 +18,7 @@ import {
 } from "antd";
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import * as echarts from "echarts";
-import {getApiLogs, getApiLogStat} from "../../api/api-log.ts";
+import {getApiLogs, getApiLogStat} from "../../services/api-log.ts";
 import LogSettings from "./components/LogSettings.tsx";
 import {useTranslation} from "react-i18next";
 

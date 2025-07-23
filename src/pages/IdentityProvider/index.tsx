@@ -1,23 +1,18 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Divider, Dropdown, Empty, message, Modal, Row, Spin, Tree,} from "antd";
-import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
+import {useTranslation} from "react-i18next";
+import styles from "./index.module.scss";
+import type {IdentityProvider} from "./data";
+import IdPMenu from "./components/IdPMenu.tsx";
 import {
   deleteIdentityProvider,
   getIdentityProviders as getIdentityProvidersApi,
   updateIdentityProvider,
-} from "../../api/identity-provider";
+} from "../../services/identity-provider.ts";
 import IdPInfo from "./components/IdPInfo.tsx";
 import EditProvider from "./components/EditProvider.tsx";
 import CreateProvider from "./components/CreateProvider.tsx";
-import {useTranslation} from "react-i18next";
-import styles from "./index.module.scss";
-import type {IdentityProvider} from "./data";
 
-const treeProps = {
-  title: "name",
-  key: "name",
-  children: "children",
-};
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -82,77 +77,15 @@ const IdPManagement: React.FC = () => {
           className="bg-white dark:bg-[#18181c]"
           style={{ display: "flex", flex: 1 }}
         >
-          <div
-            className="border-r border-[#f5f5f5] dark:border-[#23232a]"
-            style={{
-              width: "20%",
-              padding: "10px 10px 0px 0px",
-            }}
-          >
-            <div
-              style={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              <span style={{ fontWeight: 600, fontSize: "16px" }}>
-                {t("idp_management")}
-              </span>
-            </div>
-            <Divider />
-            <Spin spinning={idPLoading}>
-              <Tree
-                treeData={idPList}
-                fieldNames={treeProps}
-                defaultExpandAll
-                selectedKeys={activeIdP ? [activeIdP.name] : []}
-                onSelect={(_, { node }) => setActiveIdP(node)}
-                titleRender={(nodeData: any) => (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "220px",
-                    }}
-                  >
-                    <div>{nodeData.name}</div>
-                    {nodeData.type !== "system" && (
-                      <Dropdown
-                        trigger={["click"]}
-                        menu={{
-                          items: [
-                            {
-                              key: "delete",
-                              label: (
-                                <span style={{ color: "red" }}>Delete</span>
-                              ),
-                              onClick: () => {
-                                setActiveIdP(nodeData);
-                                setDeleteVisible(true);
-                              },
-                            },
-                          ],
-                        }}
-                      >
-                        <MoreOutlined style={{ cursor: "pointer" }} />
-                      </Dropdown>
-                    )}
-                  </div>
-                )}
-              />
-            </Spin>
-            <Divider />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setDrawerVisible(true)}
-              block
-              ghost
-            >
-              {t("idp_new_provider")}
-            </Button>
-          </div>
+          <IdPMenu
+            idPList={idPList}
+            activeIdP={activeIdP}
+            idPLoading={idPLoading}
+            setActiveIdP={setActiveIdP}
+            setDeleteVisible={setDeleteVisible}
+            setDrawerVisible={setDrawerVisible}
+            t={t}
+          />
           <div className="bg-white dark:bg-[#18181c]" style={{ width: "80%", padding: "8px 20px" }}>
             {idPList.length > 0 && activeIdP ? (
               <Row>
@@ -175,7 +108,10 @@ const IdPManagement: React.FC = () => {
                 </Col>
                 <Col span={24}>
                   <Card bordered={false} className="bg-white dark:bg-[#23232a]">
-                    <IdPInfo data={activeIdP} />
+                    <IdPInfo data={{
+                      name: activeIdP.name,
+                      provider: activeIdP.provider
+                    }} />
                   </Card>
                 </Col>
               </Row>

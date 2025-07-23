@@ -4,7 +4,7 @@ import SelectModel from "./components/SelectModel.tsx";
 import styles from "./index.module.scss";
 import EntityView from "./components/EntityView.tsx";
 import NativeQueryView from "./components/NativeQueryView.tsx";
-import {modifyModel} from "../../api/model.ts";
+import {modifyModel} from "../../services/model.ts";
 import {useTranslation} from "react-i18next";
 import EnumView from "./components/EnumView.tsx";
 import {Enum} from "./data";

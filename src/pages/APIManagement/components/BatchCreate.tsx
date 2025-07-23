@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Button, Checkbox, Divider, Drawer, Form, Input, message, Select, Splitter} from "antd";
 import SelectModel from "../../DataModeling/components/SelectModel.tsx";
-import {generateAPIs} from "../../../api/api-info.ts";
+import {generateAPIs} from "../../../services/api-info.ts";
 
 interface Props {
   onConfirm: (data: any) => void;

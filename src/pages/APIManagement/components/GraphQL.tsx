@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "graphiql/graphiql.css";
 import "@graphiql/plugin-explorer/dist/style.css";
-import {executeQuery} from "../../../api/api-management.ts";
+import {executeQuery} from "../../../services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
 

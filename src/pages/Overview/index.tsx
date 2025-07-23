@@ -4,7 +4,7 @@ import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
 import Title from "antd/lib/typography/Title";
 import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
-import {getOverview} from "../../api/overview.ts";
+import {getOverview} from "../../services/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 

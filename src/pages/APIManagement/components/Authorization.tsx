@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Form, InputNumber, Select, Switch} from "antd";
 import {SelectProps} from "rc-select/lib/Select";
-import {getIdentityProviders} from "../../../api/identity-provider.ts";
+import {getIdentityProviders} from "../../../services/identity-provider.ts";
 import {useTranslation} from "react-i18next";
 
 interface AuthProps {

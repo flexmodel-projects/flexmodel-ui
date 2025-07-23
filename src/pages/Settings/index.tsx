@@ -3,7 +3,7 @@ import {Menu, message} from "antd";
 import About from "./components/About.tsx";
 import Base from "./components/Base.tsx";
 import Proxy from "./components/Proxy.tsx";
-import {getSettings, saveSettings as reqSaveSettings} from "../../api/settings.ts";
+import {getSettings, saveSettings as reqSaveSettings} from "../../services/settings.ts";
 import Security from "./components/Security.tsx";
 import {useTranslation} from "react-i18next";
 

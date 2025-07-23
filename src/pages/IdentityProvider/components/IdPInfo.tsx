@@ -7,10 +7,11 @@ interface IdpInfoProps {
   data: {
     name: string;
     provider?: {
-      type: string;
-      issuer: string;
-      clientId: string;
-      clientSecret: string;
+      type?: string;
+      issuer?: string;
+      clientId?: string;
+      clientSecret?: string;
+      [key: string]: any;
     };
   };
 }
@@ -20,7 +21,7 @@ const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
   const {t} = useTranslation();
 
   return (
-    <Descriptions bordered column={1}>
+    <Descriptions bordered column={1} style={{ width: '100%' }}>
       {/* Display name */}
       <Descriptions.Item label={t('idp_provider_name')}>{data.name}</Descriptions.Item>
 

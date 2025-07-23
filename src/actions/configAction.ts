@@ -1,4 +1,4 @@
-import {getSystemProfile} from "../api/system.ts";
+import {getSystemProfile} from "../services/system.ts";
 
 export const setConfig = (config: any) => ({
   type: 'SET_CONFIG',

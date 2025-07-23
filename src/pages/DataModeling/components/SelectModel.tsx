@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree,} from "antd";
 import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined,} from "@ant-design/icons";
-import {getDatasourceList} from "../../../api/datasource";
-import {createModel as reqCreateModel, dropModel, getModelList,} from "../../../api/model";
+import {getDatasourceList} from "../../../services/datasource.ts";
+import {createModel as reqCreateModel, dropModel, getModelList,} from "../../../services/model.ts";
 import {useNavigate} from "react-router-dom";
 import CreateEntity from "./CreateEntity.tsx";
 import {Datasource, Model} from "../data";

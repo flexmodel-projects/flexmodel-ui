@@ -20,7 +20,7 @@ import {
   Tree,
 } from "antd";
 import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
-import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../api/api-info.ts";
+import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../services/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";

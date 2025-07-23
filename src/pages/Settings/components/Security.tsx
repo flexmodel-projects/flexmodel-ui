@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, InputNumber, Select, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
 import {SelectProps} from "rc-select/lib/Select";
-import {getIdentityProviders} from "../../../api/identity-provider.ts";
+import {getIdentityProviders} from "../../../services/identity-provider.ts";
 import {RootState} from "../../../store/configStore.ts";
 import {useSelector} from "react-redux";
 

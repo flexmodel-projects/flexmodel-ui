@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
-import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../api/record.ts";
+import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../services/record.ts";
 import dayjs from "dayjs";
 import {Entity} from "../data";
 import {useTranslation} from "react-i18next";

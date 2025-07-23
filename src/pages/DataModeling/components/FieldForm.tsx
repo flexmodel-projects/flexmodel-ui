@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Modal, Select, Switch } from "antd";
-import { getModelList } from "../../../api/model"; // 替换为你的 API 调用
-import {
-  BasicFieldTypes,
-  FieldInitialValues,
-  IDGeneratedValues,
-} from "../common.ts";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {Form, Input, Modal, Select, Switch} from "antd";
+import {getModelList} from "../../../services/model.ts"; // 替换为你的 API 调用
+import {BasicFieldTypes, FieldInitialValues, IDGeneratedValues,} from "../common.ts";
+import {useTranslation} from "react-i18next";
 import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
-import { Field } from "../data";
+import {Field} from "../data";
 
 interface FieldFormProps {
   visible: boolean;

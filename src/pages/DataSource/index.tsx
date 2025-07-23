@@ -10,9 +10,9 @@ import {
   importModels as reqImportModels,
   updateDatasource,
   validateDatasource,
-} from "../../api/datasource.ts";
+} from "../../services/datasource.ts";
 import {DbsMap} from "./common.ts";
-import {getModelList} from "../../api/model.ts";
+import {getModelList} from "../../services/model.ts";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
 

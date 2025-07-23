@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Modal, notification, Space, Table} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
-import {executeNativeQuery} from "../../../api/datasource.ts";
+import {executeNativeQuery} from "../../../services/datasource.ts";
 import type {NativeQueryModel} from "../data";
 
 interface NativeQueryViewProps {

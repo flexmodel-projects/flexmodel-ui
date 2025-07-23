@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd';
-import {createIdentityProvider} from "../../../api/identity-provider.ts";
+import {createIdentityProvider} from "../../../services/identity-provider.ts";
 import IdPInfo from "./IdPInfo.tsx";
 import {useTranslation} from "react-i18next";
 

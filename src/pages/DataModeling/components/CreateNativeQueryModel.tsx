@@ -1,7 +1,7 @@
 import type {NativeQueryModel} from "../data";
 import NativeQueryView from "./NativeQueryView.tsx";
 import {Drawer} from "antd";
-import {createModel} from "../../../api/model.ts";
+import {createModel} from "../../../services/model.ts";
 import {useTranslation} from "react-i18next";
 
 interface Props {
