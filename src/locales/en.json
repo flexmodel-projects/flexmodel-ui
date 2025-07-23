@@ -198,5 +198,8 @@
   "client_ip": "Client IP",
   "error_message": "Error Message",
   "request_log": "Request Log",
-   "path": "Path"
+   "path": "Path",
+  "toggle_dark_mode": "Toggle dark mode",
+  "dark_mode": "Dark",
+  "light_mode": "Light"
 }

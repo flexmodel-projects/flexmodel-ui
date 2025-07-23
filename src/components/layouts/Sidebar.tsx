@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   const menuData = [
     {
@@ -109,7 +109,11 @@ const Sidebar: React.FC = () => {
           items={menuData}
         />
         <div style={{ padding: 8, textAlign: "center" }}>
-          <span onClick={() => setCollapsed(!collapsed)} style={{ cursor: "pointer", fontSize: 18 }}>
+          <span
+            onClick={() => setCollapsed(!collapsed)}
+            style={{ cursor: "pointer", fontSize: 18 }}
+            className="dark:text-white"
+          >
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </span>
         </div>

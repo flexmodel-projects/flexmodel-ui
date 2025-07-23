@@ -1,0 +1,77 @@
+html.dark .ant-layout-header,
+html.dark .ant-layout-header * {
+  background: #18181c !important;
+  color: #f5f5f5 !important;
+  border-bottom: 1px solid #23232a !important;
+}
+html.dark .ant-layout-header img {
+  --header-logo-filter: brightness(0.85) contrast(1.2);
+}
+
+/* 侧边栏暗色适配 */
+html.dark .ant-layout-sider {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+  border-right: 1px solid #23232a !important;
+}
+html.dark .ant-menu,
+html.dark .ant-menu-item {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+}
+html.dark .ant-menu-item-selected {
+  background: #18181c !important;
+  color: #1677ff !important;
+}
+html.dark .ant-menu-item-active {
+  background: #23232a !important;
+}
+
+/* 主内容区暗色适配 */
+html.dark .ant-layout-content,
+html.dark .page-content-wrapper {
+  background: #18181c !important;
+  color: #f5f5f5 !important;
+}
+
+/* antd Card/Table 等组件暗色适配 */
+html.dark .ant-card,
+html.dark .ant-table,
+html.dark .ant-table-thead > tr > th,
+html.dark .ant-table-tbody > tr > td {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+  border-color: #23232a !important;
+}
+
+/* antd Input/Select 等表单控件暗色适配 */
+html.dark .ant-input,
+html.dark .ant-select-selector,
+html.dark .ant-input-affix-wrapper {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+  border-color: #23232a !important;
+}
+
+/* antd 按钮暗色适配 */
+html.dark .ant-btn {
+  color: #f5f5f5 !important;
+  border-color: #23232a !important;
+}
+html.dark .ant-btn-primary {
+  background: #1677ff !important;
+  border-color: #1677ff !important;
+}
+
+/* About 介绍卡片暗色适配 */
+html.dark .about-card {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+}
+
+/* Settings 表单卡片暗色适配 */
+html.dark .settings-card {
+  background: #23232a !important;
+  color: #f5f5f5 !important;
+  border-color: #23232a !important;
+} 
