@@ -9,8 +9,7 @@ import GBase from "../../assets/icons/svg/gbase.svg?react";
 import DM8 from "../../assets/icons/svg/dm.svg?react";
 import TiDB from "../../assets/icons/svg/tidb.svg?react";
 import MongoDB from "../../assets/icons/svg/mongodb.svg?react";
-
-export type Db = { name: string; icon: any; }
+import type {Db} from '../../types/data-source.d.ts';
 
 export const Dbs: Db[] = [
   {

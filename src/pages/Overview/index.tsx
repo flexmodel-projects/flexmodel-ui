@@ -7,35 +7,9 @@ import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@an
 import {getOverview} from "../../services/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "./index.module.scss";
+import type {ApiStat, OverviewResponse, RankingData, Statistics} from '../../types/overview.d.ts';
 
 const { RangePicker } = DatePicker;
-
-// 统计数据类型
-interface Statistics {
-  queryCount: number;
-  mutationCount: number;
-  subscribeCount: number;
-  dataSourceCount: number;
-}
-
-// 接口访问排名
-interface RankingData {
-  name: string;
-  total: number;
-}
-
-// 趋势图数据
-interface ApiStat {
-  dateList: string[];
-  successData: number[];
-  failData: number[];
-}
-
-// 接口返回类型
-interface OverviewResponse extends Statistics {
-  apiRankingList: RankingData[];
-  apiStat: ApiStat;
-}
 
 const StatisticsPage: React.FC = () => {
   const { t } = useTranslation();

@@ -108,7 +108,7 @@ const Sidebar: React.FC = () => {
           style={{ flex: 1, borderRight: 0 }}
           items={menuData}
         />
-        <div style={{ padding: 8, textAlign: "center" }}>
+        <div style={{ padding: 20, textAlign: "right" }}>
           <span
             onClick={() => setCollapsed(!collapsed)}
             style={{ cursor: "pointer", fontSize: 18 }}

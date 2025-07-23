@@ -1,8 +1,7 @@
 import {FieldType} from "./data";
+import type {IdP} from '../../types/data-modeling-common.d.ts';
 
 import OIDC from "../../assets/icons/svg/idp_ocid.svg?react";
-
-export type IdP = { name: string; icon: any; }
 
 export const IdPs: IdP[] = [
   {

@@ -19,40 +19,23 @@ import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../services/record.ts";
 import dayjs from "dayjs";
-import {Entity} from "../data";
 import {useTranslation} from "react-i18next";
-
-interface Field {
-  name: string;
-  type: string;
-  nullable?: boolean;
-  comment?: string;
-  generatedValue?: 'AUTO_INCREMENT' | 'BIGINT_NOT_GENERATED' | 'STRING_NOT_GENERATED';
-}
-
-interface MRecord {
-  [key: string]: any;
-}
-
-interface RecordListProps {
-  datasource: string;
-  model: Entity;
-}
+import type {Field, MRecord, RecordListProps} from '../../../types/data-modeling-record.d.ts';
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [records, setRecords] = useState({list: [], total: 0});
+  const [records, setRecords] = useState<{list: any[]; total: number}>({list: [], total: 0});
   const [form] = Form.useForm();
   const [query, setQuery] = useState({current: 1, pageSize: 10});
 
-  const idField = model?.fields?.find(f => f.type === 'id');
+  const idField = model?.fields?.find((f: Field) => f.type === 'id');
 
-  const fieldMap: Record<string, Field> = model.fields.reduce((p, c) => {
-    p[c.name] = c
-    return p
+  const fieldMap: Record<string, Field> = model.fields.reduce((p: Record<string, Field>, c: Field) => {
+    p[c.name] = c;
+    return p;
   }, {} as Record<string, Field>);
 
   useEffect(() => {
@@ -176,7 +159,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     title: field.name,
     dataIndex: field.name,
     key: field.name,
-    render: (text) => {
+    render: (text: string) => {
       const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
       return (field.type === 'TEXT' || field.type === 'JSON') ? (
         <Tooltip title={fmtText}>
