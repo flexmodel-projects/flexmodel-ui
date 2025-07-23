@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Layout, Row, Space, Tooltip} from "antd";
+import {Button, Dropdown, Layout, Menu, Row, Space, Switch, Tooltip} from "antd";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
@@ -47,35 +47,45 @@ const Header: React.FC = () => {
   return (
     <Layout.Header className="bg-white dark:bg-[#18181c] p-0 border-b border-[#f5f5f5] dark:border-[#23232a] shadow-sm dark:shadow-lg" style={{ padding: 0 }}>
       <Row justify="end" align="middle" style={{ height: 64 }}>
-        <Space className="pr-[15px]">
-          <Button
-            size="small"
-            type="default"
-            onClick={() => changeLocale(locale == enUS ? zhCN : enUS)}
-            icon={<GlobalOutlined />}
-          >
-            {locale == enUS ? "中文" : "English"}
-          </Button>
-          <Button
-            size="small"
-            type="default"
-            icon={isDark ? <SunOutlined /> : <MoonOutlined />}
-            onClick={toggleDarkMode}
-            style={{ marginRight: 8 }}
-          >
-            {isDark ? t("dark_mode") : t("light_mode")}
-          </Button>
-          <Tooltip title={t("api_document") as string}>
-            <a href="/rapi-doc/index.html" target="_blank" rel="noopener noreferrer">
-              <FileSearchOutlined className="text-lg" />
-            </a>
-          </Tooltip>
-          <Tooltip title={t("help") as string}>
-            <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
-              <QuestionCircleOutlined className="text-lg" />
-            </a>
-          </Tooltip>
-        </Space>
+          <Space className="pr-[15px]" size={20}>
+            <Space size={8}>
+              <Switch
+                checked={isDark}
+                onChange={toggleDarkMode}
+                checkedChildren={<SunOutlined />}
+                unCheckedChildren={<MoonOutlined />}
+                style={{ marginRight: 4 }}
+              />
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item key="zh" onClick={() => changeLocale(zhCN)}>
+                      中文
+                    </Menu.Item>
+                    <Menu.Item key="en" onClick={() => changeLocale(enUS)}>
+                      English
+                    </Menu.Item>
+                  </Menu>
+                }
+                placement="bottomRight"
+                trigger={["click"]}
+              >
+                <Button size="small" type="default" icon={<GlobalOutlined />}>{locale == enUS ? "English" : "中文"}</Button>
+              </Dropdown>
+            </Space>
+            <Space size={8}>
+              <Tooltip title={t("api_document") as string}>
+                <a href="/rapi-doc/index.html" target="_blank" rel="noopener noreferrer">
+                  <FileSearchOutlined className="text-lg" />
+                </a>
+              </Tooltip>
+              <Tooltip title={t("help") as string}>
+                <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
+                  <QuestionCircleOutlined className="text-lg" />
+                </a>
+              </Tooltip>
+            </Space>
+          </Space>
       </Row>
     </Layout.Header>
   );
