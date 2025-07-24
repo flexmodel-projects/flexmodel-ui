@@ -1,4 +1,4 @@
-import type {NativeQueryModel} from "../data";
+import type {NativeQueryModel} from "@/types/data-modeling";
 import NativeQueryView from "./NativeQueryView.tsx";
 import {Drawer} from "antd";
 import {createModel} from "../../../services/model.ts";

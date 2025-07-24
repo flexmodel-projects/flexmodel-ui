@@ -19,107 +19,83 @@ export const IdpMap: Record<string, string> = IdPs.reduce((p, c) => {
 export const BasicFieldTypes: FieldType[] = [
   {
     name: 'STRING',
-    label: 'STRING',
+    label: 'String',
   },
   {
     name: 'TEXT',
-    label: 'TEXT',
+    label: 'Text',
   },
-
   {
     name: 'INT',
-    label: 'INT',
+    label: 'Int',
   },
   {
     name: 'BIGINT',
-    label: 'BIGINT',
+    label: 'Long',
   },
   {
     name: 'DECIMAL',
-    label: 'DECIMAL',
+    label: 'Float',
   },
   {
     name: 'BOOLEAN',
-    label: 'BOOLEAN',
+    label: 'Boolean',
   },
   {
     name: 'DATETIME',
-    label: 'DATETIME',
+    label: 'DateTime',
   },
   {
     name: 'DATE',
-    label: 'DATE',
+    label: 'Date',
   },
   {
     name: 'JSON',
     label: 'JSON',
   },
-]
+];
 
 export const FieldTypeMap: Record<string, string> = BasicFieldTypes.reduce((p, c) => {
   p[c.name] = c.label
   return p
 }, {} as Record<string, string>);
 
-export const IDGeneratedValues: any[] = [
-  {
-    name: 'AUTO_INCREMENT',
-    label: 'Auto increment',
-  },
-  {
-    name: 'UUID',
-    label: 'UUID',
-  },
-  {
-    name: 'ULID',
-    label: 'ULID',
-  },
-  {
-    name: 'BIGINT_NOT_GENERATED',
-    label: 'Bigint not generated',
-  },
-  {
-    name: 'STRING_NOT_GENERATED',
-    label: 'String not generated',
-  }
-]
-
 export const FieldInitialValues: any = {
   STRING: {
-    type: 'STRING',
+    type: 'String',
     length: 255,
     unique: false,
     nullable: true,
   },
   TEXT: {
-    type: 'TEXT',
+    type: 'Text',
     unique: false,
     nullable: true,
   },
   INT: {
-    type: 'INT',
+    type: 'Int',
     unique: false,
     nullable: true,
   },
-  BIGINT: {
-    type: 'BIGINT',
+  LONG: {
+    type: 'Long',
     unique: false,
     nullable: true,
   },
   DECIMAL: {
-    type: 'DECIMAL',
+    type: 'Decimal',
     precision: 20,
     scale: 2,
     unique: false,
     nullable: true,
   },
   BOOLEAN: {
-    type: 'BOOLEAN',
+    type: 'Boolean',
     unique: false,
     nullable: true,
   },
   DATE: {
-    type: 'DATE',
+    type: 'Date',
     unique: false,
     nullable: true,
   },
@@ -135,7 +111,7 @@ export const FieldInitialValues: any = {
     nullable: true,
   },
   RELATION: {
-    type: 'RELATION',
+    type: 'Relation',
     multiple: true,
     localField: null,
     foreignField: null,

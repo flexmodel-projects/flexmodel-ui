@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {Button, Form, Input, Space} from "antd";
 import {useTranslation} from "react-i18next";
-import type {Enum} from "../data";
+import type {Enum} from "@/types/data-modeling";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 interface EnumViewProps {

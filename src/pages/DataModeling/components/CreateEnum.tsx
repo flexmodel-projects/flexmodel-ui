@@ -1,4 +1,4 @@
-import type {Enum} from "../data";
+import type {Enum} from "@/types/data-modeling";
 import {Drawer} from "antd";
 import {createModel} from "../../../services/model.ts";
 import {useTranslation} from "react-i18next";

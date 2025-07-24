@@ -17,17 +17,17 @@ import {
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
-import {createRecord, deleteRecord, getRecordList, updateRecord} from "../../../services/record.ts";
+import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/services/record.ts";
 import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
-import type {Field, MRecord, RecordListProps} from '../../../types/data-modeling-record.d.ts';
+import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [records, setRecords] = useState<{list: any[]; total: number}>({list: [], total: 0});
+  const [records, setRecords] = useState<{list: MRecord[]; total: number}>({list: [], total: 0});
   const [form] = Form.useForm();
   const [query, setQuery] = useState({current: 1, pageSize: 10});
 
@@ -45,7 +45,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     const data = await getRecordList(datasource, model.name, query);
-    setRecords(data);
+    setRecords(data as {list: MRecord[]; total: number});
     setLoading(false);
   }, [datasource, model.name, query]);
 
@@ -65,15 +65,15 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     await fetchRecords();
   };
 
-  const formatFormFieldsValue = (changedValues: any): Record<string, any> => {
+  const formatFormFieldsValue = (changedValues: Record<string, any>): Record<string, any> => {
     const formattedValues: Record<string, any> = {};
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "DATE":
+        case "Date":
           formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
           break;
-        case "DATETIME":
+        case "DateTime":
           formattedValues[key] = dayjs(value as string);
           break;
         case "JSON":
@@ -86,19 +86,15 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     return formattedValues;
   }
 
-  const formatValues = (changedValues: any) => {
+  const formatValues = (changedValues: Record<string, any>) => {
     const formattedValues: Record<string, any> = {};
     for (const [key, value] of Object.entries(changedValues)) {
       const field = fieldMap[key];
       switch (field.type) {
-        case "DATE":
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
+        case "Date":
           formattedValues[key] = value?.format('YYYY-MM-DD');
           break;
-        case "DATETIME":
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
+        case "DateTime":
           formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
           break;
         case "JSON":
@@ -135,20 +131,20 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     switch (field.type) {
       case 'ID':
         return <Input disabled={editMode}/>;
-      case 'STRING':
+      case 'String':
         return <Input {...inputProps} />;
-      case 'TEXT':
+      case 'Text':
       case 'JSON':
         return <Input.TextArea {...inputProps} />;
-      case 'DECIMAL':
+      case 'Decimal':
       case 'INT':
-      case 'BIGINT':
+      case 'Long':
         return <Input type="number" {...inputProps} />;
-      case 'BOOLEAN':
+      case 'Boolean':
         return <Switch/>;
-      case 'DATE':
+      case 'Date':
         return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
-      case 'DATETIME':
+      case 'DateTime':
         return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
       default:
         return <Input/>;
@@ -232,10 +228,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       >
         <Form form={form} layout="vertical">
           {model.fields.map(field => (
-            field.type !== 'ID'
-            || field.generatedValue === 'BIGINT_NOT_GENERATED'
-            || field.generatedValue === 'STRING_NOT_GENERATED'
-            || editMode ? (
+            editMode ? (
               <Form.Item key={field.name} name={field.name} label={field.name}
                          rules={[{required: !field.nullable, message: `${t('input_valid_msg', {name: field.name})}`}]}>
                 {renderFieldInput(field)}

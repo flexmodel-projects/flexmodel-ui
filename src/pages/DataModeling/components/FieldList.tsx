@@ -3,8 +3,8 @@ import {Button, notification, Popconfirm, Table, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../services/model.ts';
 import FieldForm from "./FieldForm.tsx";
-import {FieldInitialValues, FieldTypeMap} from "../common.ts";
-import {Entity, Field} from "../data";
+import {FieldInitialValues} from "../common.ts";
+import {Entity, Field} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
 
 interface FieldListProps {
@@ -79,10 +79,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       dataIndex: 'type',
       key: 'type',
       render: (type: string, f: Field) => {
-        if (type === 'ID') {
-          return 'ID';
-        }
-        if (type === 'RELATION') {
+        if (type === 'Relation') {
           return <Tooltip title={
             <span>
                 {t('local_field')}: {f?.localField + ''}
@@ -92,26 +89,26 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
               {t('cascade_delete')}: {f?.cascadeDelete + ''}
               </span>
           }>
-            {f?.concreteType}
+            {f.concreteType}
           </Tooltip>;
         }
-        if (type === 'ENUM') {
+        if (type === 'Enum') {
           return <Tooltip title={
             <span>
                 {t('enums')}
               </span>
           }>
-            {f?.concreteType}
+            {f.concreteType}
           </Tooltip>;
         }
-        return FieldTypeMap[type]
+        return type;
       },
     },
     {
       title: t('default_value'),
       dataIndex: 'defaultValue',
       key: 'defaultValue',
-      render: (value: boolean) => value?.toString(),
+      render: (value: any) => JSON.stringify(value),
     },
     {
       title: t('unique'),

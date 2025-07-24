@@ -4,7 +4,7 @@ import {ColumnsType} from 'antd/es/table';
 import FieldForm from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
-import type {Entity} from "../data.d.ts";
+import type {Entity} from "@/types/data-modeling";
 import {FieldInitialValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
 
@@ -37,10 +37,9 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
     fields: [
       {
         name: 'id',
-        type: 'ID',
+        type: 'String',
         unique: true,
         nullable: false,
-        generatedValue: 'AUTO_INCREMENT',
         comment: 'ID',
       }
     ],
@@ -106,7 +105,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
 
   const fieldColumns: ColumnsType<any> = [
     {title: t('name'), dataIndex: 'name', key: 'name'},
-    {title: t('type'), dataIndex: 'type', key: 'type', render: (text) => text},
+    {title: t('type'), dataIndex: 'type', key: 'type'},
     {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
     {
       title: t('nullable'),

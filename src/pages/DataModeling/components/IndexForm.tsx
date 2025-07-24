@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Form, Input, Modal, Select, Switch} from 'antd';
-import type {Index} from "../data.d.ts";
+import type {Index} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
 
 interface ChangeIndexProps {

@@ -3,7 +3,7 @@ import {Button, Form, Input, Modal, notification, Space, Table} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
 import {executeNativeQuery} from "../../../services/datasource.ts";
-import type {NativeQueryModel} from "../data";
+import type {NativeQueryModel} from "@/types/data-modeling";
 
 interface NativeQueryViewProps {
   datasource: string;

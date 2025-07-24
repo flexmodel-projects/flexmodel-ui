@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/IdentityProvider/index.module.scss";
-import type {IdentityProvider} from "@/pages/IdentityProvider/data";
+import type {IdentityProvider} from "@/types/identity-provider";
 import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
 import {
   deleteIdentityProvider,

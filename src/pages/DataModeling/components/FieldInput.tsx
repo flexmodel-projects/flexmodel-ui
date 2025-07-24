@@ -1,7 +1,7 @@
 import React from "react";
-import { DatePicker, Input, InputNumber, Select, Switch } from "antd";
+import {DatePicker, Input, InputNumber, Select, Switch} from "antd";
 import dayjs from "dayjs";
-import { Field } from "../data";
+import {Field} from "@/types/data-modeling";
 
 interface FieldInputProps {
   fieldFn: () => Field;
@@ -48,7 +48,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
         );
       case "DECIMAL":
       case "INT":
-      case "BIGINT":
+      case "Long":
         return (
           <InputNumber
             placeholder={field.comment}

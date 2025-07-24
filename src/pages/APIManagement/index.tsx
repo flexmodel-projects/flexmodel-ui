@@ -26,7 +26,7 @@ import GraphQL from "./components/GraphQL.tsx";
 import HoverEditInput from "./components/HoverEditInput.tsx";
 import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
-import {ApiInfo, TreeNode} from "./data";
+import {ApiInfo, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/configStore.ts";

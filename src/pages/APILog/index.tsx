@@ -21,12 +21,13 @@ import * as echarts from "echarts";
 import {getApiLogs, getApiLogStat} from "../../services/api-log.ts";
 import LogSettings from "./components/LogSettings.tsx";
 import {useTranslation} from "react-i18next";
+import type {ApiLog} from '@/types/api-log';
 
 const { RangePicker } = DatePicker;
 const LogViewer: React.FC = () => {
   const { t } = useTranslation();
-  const [tableData, setTableData] = useState<any>({ list: [], total: 0 });
-  const [log, setLog] = useState<any>({});
+  const [tableData, setTableData] = useState<{ list: ApiLog[]; total: number }>({ list: [], total: 0 });
+  const [log, setLog] = useState<ApiLog | null>(null);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const logStatRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
@@ -359,18 +360,18 @@ const LogViewer: React.FC = () => {
           open={drawerVisible}
         >
           <Descriptions column={1} bordered>
-            <Descriptions.Item label="id">{log.id}</Descriptions.Item>
-            <Descriptions.Item label="url">{log.url}</Descriptions.Item>
-            <Descriptions.Item label="httpMethod">{log.httpMethod}</Descriptions.Item>
-            <Descriptions.Item label="path">{log.path}</Descriptions.Item>
-            <Descriptions.Item label="requestBody">{log.requestBody}</Descriptions.Item>
-            <Descriptions.Item label="requestHeaders">{log.requestHeaders ? JSON.stringify(log.requestHeaders) : null}</Descriptions.Item>
-            <Descriptions.Item label="statusCode">{log.statusCode}</Descriptions.Item>
-            <Descriptions.Item label="responseTime">{log.responseTime}ms</Descriptions.Item>
-            <Descriptions.Item label="clientIp">{log.clientIp}</Descriptions.Item>
-            <Descriptions.Item label="createdAt">{log.createdAt}</Descriptions.Item>
-            <Descriptions.Item label="isSuccess">{log.isSuccess ? t("yes") : t("no")}</Descriptions.Item>
-            <Descriptions.Item label="errorMessage">{log.errorMessage}</Descriptions.Item>
+            <Descriptions.Item label="id">{log?.id}</Descriptions.Item>
+            <Descriptions.Item label="url">{log?.url}</Descriptions.Item>
+            <Descriptions.Item label="httpMethod">{log?.httpMethod}</Descriptions.Item>
+            <Descriptions.Item label="path">{log?.path}</Descriptions.Item>
+            <Descriptions.Item label="requestBody">{log?.requestBody}</Descriptions.Item>
+            <Descriptions.Item label="requestHeaders">{log?.requestHeaders ? JSON.stringify(log.requestHeaders) : null}</Descriptions.Item>
+            <Descriptions.Item label="statusCode">{log?.statusCode}</Descriptions.Item>
+            <Descriptions.Item label="responseTime">{log?.responseTime}ms</Descriptions.Item>
+            <Descriptions.Item label="clientIp">{log?.clientIp}</Descriptions.Item>
+            <Descriptions.Item label="createdAt">{log?.createdAt}</Descriptions.Item>
+            <Descriptions.Item label="isSuccess">{log?.isSuccess ? t("yes") : t("no")}</Descriptions.Item>
+            <Descriptions.Item label="errorMessage">{log?.errorMessage}</Descriptions.Item>
           </Descriptions>
         </Drawer>
       </Card>
