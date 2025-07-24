@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Form, Input, Modal, Select, Switch} from "antd";
 import {getModelList} from "../../../services/model.ts"; // 替换为你的 API 调用
-import {BasicFieldTypes, FieldInitialValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
 import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
 import {Field} from "@/types/data-modeling";
@@ -15,6 +14,107 @@ interface FieldFormProps {
   onCancel: () => void;
 }
 
+// 字段类型常量
+export const BasicFieldTypes = [
+  {
+    name: 'String',
+    label: 'String',
+  },
+  {
+    name: 'Int',
+    label: 'Int',
+  },
+  {
+    name: 'Long',
+    label: 'Long',
+  },
+  {
+    name: 'Float',
+    label: 'Float',
+  },
+  {
+    name: 'Boolean',
+    label: 'Boolean',
+  },
+  {
+    name: 'DateTime',
+    label: 'DateTime',
+  },
+  {
+    name: 'Date',
+    label: 'Date',
+  },
+  {
+    name: 'Time',
+    label: 'Time',
+  },
+  {
+    name: 'JSON',
+    label: 'JSON',
+  },
+];
+
+// 字段初始值常量
+export const FieldInitialValues: any = {
+  STRING: {
+    type: 'String',
+    length: 255,
+    unique: false,
+    nullable: true,
+  },
+  INT: {
+    type: 'Int',
+    unique: false,
+    nullable: true,
+  },
+  LONG: {
+    type: 'Long',
+    unique: false,
+    nullable: true,
+  },
+  DECIMAL: {
+    type: 'Decimal',
+    precision: 20,
+    scale: 2,
+    unique: false,
+    nullable: true,
+  },
+  BOOLEAN: {
+    type: 'Boolean',
+    unique: false,
+    nullable: true,
+  },
+  DATE: {
+    type: 'Date',
+    unique: false,
+    nullable: true,
+  },
+  TIME: {
+    type: 'Time',
+    unique: false,
+    nullable: true,
+  },
+  DATETIME: {
+    type: 'DateTime',
+    unique: false,
+    nullable: true,
+  },
+  JSON: {
+    type: 'JSON',
+    unique: false,
+    nullable: true,
+  },
+  RELATION: {
+    type: 'Relation',
+    multiple: true,
+    localField: null,
+    foreignField: null,
+    unique: false,
+    nullable: true,
+    cascadeDelete: false
+  },
+};
+
 const FieldForm: React.FC<FieldFormProps> = ({
   visible,
   datasource,
@@ -26,7 +126,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [modelList, setModelList] = useState<any[]>([]);
-  const [hasId, setHasId] = useState<boolean>(false);
   const [RelationModel, setRelationModel] = useState<any>();
   const [tmpType, setTmpType] = useState<string>("");
 
@@ -58,12 +157,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
       if (currentValue.type === "Relation") {
         tmpType = `Relation:${currentValue.from}`;
         setTmpType(`Relation:${currentValue.from}`);
-        if (!currentValue.localField) {
-          form.setFieldValue(
-            "localField",
-            model.fields.filter((f: any) => f.type === "id")[0]?.name
-          );
-        }
       } else if (currentValue.type === "Enum") {
         tmpType = `Enum:${currentValue.from}`;
       } else {
@@ -81,12 +174,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
       const RelationName = tmpType.replace("Relation:", "").replace("[]", "");
       const relatedModel = modelList.find((m) => m.name === RelationName);
       setRelationModel(relatedModel);
-      if (!currentValue.localField) {
-        form.setFieldValue(
-          "localField",
-          model.fields.filter((f: any) => f.type === "ID")[0]?.name
-        );
-      }
     } else {
       setRelationModel(null);
     }
@@ -95,7 +182,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const reqModelList = async () => {
     const data = await getModelList(datasource);
     setModelList(data);
-    setHasId(model.fields?.some((f: any) => f.type === "ID"));
   };
 
   const handleTypeChange = (value: string) => {
@@ -204,11 +290,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
           rules={[{ required: true }]}
         >
           <Select value={tmpType} onChange={handleTypeChange}>
-            <Select.OptGroup label={t("select_group_id")}>
-              <Select.Option value="ID" disabled={hasId}>
-                ID
-              </Select.Option>
-            </Select.OptGroup>
             <Select.OptGroup label={t("select_group_basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>

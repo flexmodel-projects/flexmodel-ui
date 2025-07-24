@@ -37,7 +37,14 @@ const ConnectDatabaseDrawer: React.FC<{
   const handleTestConnection = async () => {
     try {
       const values = await form.validateFields();
-      const result = await validateDatasource({name: values.name, config: {...values}});
+      const result = await validateDatasource({
+        name: values.name,
+        type: 'USER' as import('@/types/data-source').DatasourceType,
+        config: { ...values },
+        enabled: true,
+        createdAt: '',
+        updatedAt: ''
+      });
       if (result.success) {
         message.success(t('test_connection_success_message', {time: result.time}));
       } else {
@@ -53,7 +60,14 @@ const ConnectDatabaseDrawer: React.FC<{
     // TODO: Implement import models functionality
     handleNext();
     const values = await form.validateFields();
-    const data = {name: values.name, config: {...values}};
+    const data = {
+      name: values.name,
+      type: 'USER' as import('@/types/data-source').DatasourceType,
+      config: { ...values },
+      enabled: true,
+      createdAt: '',
+      updatedAt: ''
+    };
     setPLoading(true);
     const physicsModelNames = await getPhysicsModelNames(data);
     setFormData(data);

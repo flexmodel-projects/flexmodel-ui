@@ -75,7 +75,7 @@ const Header: React.FC = () => {
             </Space>
             <Space size={8}>
               <Tooltip title={t("api_document") as string}>
-                <a href="/rapi-doc/index.html" target="_blank" rel="noopener noreferrer">
+                <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
                   <FileSearchOutlined className="text-lg" />
                 </a>
               </Tooltip>

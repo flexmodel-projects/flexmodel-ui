@@ -41,11 +41,25 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
 
   const addOrEditIndex = async (values: Index) => {
     try {
+      const indexSchema = {
+        ...values,
+        modelName: model?.name,
+        fields: values.fields.map((f: any) => ({
+          fieldName: f.fieldName,
+          direction: f.direction,
+          name: f.fieldName,
+          type: '', // 需根据实际情况填写
+          concreteType: '',
+          unique: false,
+          nullable: false,
+          comment: '',
+        }))
+      };
       if (selectedIndexKey === -1) {
-        await createIndex(datasource, model?.name as string, values);
+        await createIndex(datasource, model?.name as string, indexSchema);
         setIndexList([...indexList, values]);
       } else {
-        await modifyIndex(datasource, model?.name as string, values.name, values);
+        await modifyIndex(datasource, model?.name as string, values.name, indexSchema);
         const updatedIndexes = [...indexList];
         updatedIndexes[selectedIndexKey] = values;
         setIndexList(updatedIndexes);

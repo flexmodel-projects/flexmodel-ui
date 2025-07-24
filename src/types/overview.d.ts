@@ -21,5 +21,6 @@ export interface OverviewResponse {
   mutationCount: number;
   subscribeCount: number;
   dataSourceCount: number;
-  // 根据需要添加apiRankingList和apiStat，如果openapi中指定
+  apiStat?: ApiStat;
+  apiRankingList?: RankingData[];
 } 

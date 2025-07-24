@@ -5,12 +5,13 @@ import {getDatasourceList} from "@/services/datasource.ts";
 import {createModel as reqCreateModel, dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
 import CreateEntity from "@/pages/DataModeling/components/CreateEntity.tsx";
-import {Datasource, Model} from "@/pages/DataModeling/data";
+import type {DatasourceSchema} from '@/types/data-source';
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
 import {RootState} from "@/store/configStore.ts";
 import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel.tsx";
 import CreateEnum from "@/pages/DataModeling/components/CreateEnum.tsx";
+import type {Model} from '@/types/data-modeling';
 
 interface ModelTree {
   name: string;
@@ -34,7 +35,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
-  const [dsList, setDsList] = useState<Datasource[]>([]);
+  const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [modelList, setModelList] = useState<ModelTree[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
   const [selectKeys, setSelectKeys] = useState<any[]>([]);
@@ -69,7 +70,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
   // 获取模型列表
   const reqModelList = async () => {
     setModelLoading(true);
-    const res: Model[] = await getModelList(activeDs);
+    const res: any = await getModelList(activeDs);
     setModelLoading(false);
     const groupData = groupByType(res);
     setModelList(groupData);

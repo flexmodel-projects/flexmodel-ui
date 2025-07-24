@@ -30,7 +30,12 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
   const handleCreateProvider = async () => {
     try {
       const values = await form.validateFields();
-      const newProvider = {name: values.name, provider: values};
+      const newProvider = {
+        name: values.name,
+        provider: values,
+        createdAt: '',
+        updatedAt: ''
+      };
       const res = await createIdentityProvider(newProvider);
       setFormData(res);
       message.success('Provider created successfully');

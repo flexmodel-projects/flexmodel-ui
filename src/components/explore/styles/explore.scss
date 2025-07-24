@@ -1,6 +1,6 @@
-@import 'variables';
-@import 'mixins';
-@import 'prism';
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'prism' as *;
 
 $placeholder-bg: #f7f7f7;
 $placeholder-border: #e4e4e4;
@@ -423,4 +423,35 @@ pre.prism-code {
 .markdown-source {
   padding: 0;
   height: 100%;
+}
+
+// 夜间模式覆盖
+.dark {
+  .explorer-ul {
+    .file,
+    .folder {
+      color: $dark-color;
+      background: transparent;
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      &.selected {
+        background: rgba(255, 255, 255, 0.10);
+        font-weight: bold;
+      }
+      &:focus {
+        outline: 1px dotted $dark-outline;
+      }
+      &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        &:hover {
+          background: transparent;
+        }
+        &:focus {
+          outline: 1px dotted $dark-outline;
+        }
+      }
+    }
+  }
 }

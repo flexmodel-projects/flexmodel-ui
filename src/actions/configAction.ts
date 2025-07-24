@@ -6,6 +6,6 @@ export const setConfig = (config: any) => ({
 });
 
 export const fetchConfig = () => async (dispatch: any) => {
-  const {config} = await getSystemProfile();
-  dispatch(setConfig(config));
+  const profile = await getSystemProfile();
+  dispatch(setConfig(profile.settings));
 }

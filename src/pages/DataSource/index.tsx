@@ -15,17 +15,19 @@ import {DbsMap} from "@/pages/DataSource/common.ts";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/DataSource/index.module.scss";
-import {Datasource} from '@/types/data-source.d.ts';
+import type {DatasourceSchema} from '@/types/data-source';
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
 
-  const [dsList, setDsList] = useState<Datasource[]>([]);
-  const [activeDs, setActiveDs] = useState<Datasource>({
-    config: { dbKind: "" },
-    createTime: "",
-    name: "",
-    type: "",
+  const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
+  const [activeDs, setActiveDs] = useState<DatasourceSchema>({
+    name: '',
+    type: 'USER',
+    config: { dbKind: '' },
+    enabled: true,
+    createdAt: '',
+    updatedAt: ''
   });
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
@@ -82,13 +84,11 @@ const DatasourceManagement: React.FC = () => {
     try {
       const res = await updateDatasource(formData.name, {
         name: formData.name,
-        enabled: activeDs.enabled,
-        config: {
-          dbKind: formData.dbKind,
-          username: formData.username,
-          password: formData.password,
-          url: formData.url,
-        },
+        type: 'USER' as import('@/types/data-source').DatasourceType,
+        config: formData.config,
+        enabled: formData.enabled,
+        createdAt: '',
+        updatedAt: ''
       });
       setEditVisible(false);
       setActiveDs(res);
@@ -167,7 +167,7 @@ const DatasourceManagement: React.FC = () => {
                           <Menu.Item
                             className="text-red"
                             icon={<DeleteOutlined />}
-                            disabled={node.type === "system"}
+                            disabled={node.type === 'SYSTEM'}
                             onClick={() => {
                               setDeleteVisible(true);
                             }}
@@ -209,7 +209,7 @@ const DatasourceManagement: React.FC = () => {
                   </Button>
                   <Button
                     type="primary"
-                    disabled={activeDs.type === "system"}
+                    disabled={activeDs.type === 'SYSTEM'}
                     onClick={() => setEditVisible(true)}
                   >
                     {t("edit")}

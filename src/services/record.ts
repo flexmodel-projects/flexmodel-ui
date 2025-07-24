@@ -12,7 +12,7 @@ export const getRecordList = (datasourceName: string, modelName: string, query?:
 /**
  * 获取单条记录
  */
-export const getOneRecord = (datasourceName: string, modelName: string, id: string, nestedQuery?: boolean): Promise<MRecord> => {
+export const getOneRecord = (datasourceName: string, modelName: string, id: string): Promise<MRecord> => {
   return api.get(`/datasources/${datasourceName}/models/${modelName}/records/${id}`)
 }
 

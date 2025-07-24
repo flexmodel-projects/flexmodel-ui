@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <div style={{ height: 64, display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", paddingLeft: collapsed ? 0 : 20, overflow: 'hidden' }}>
           <img
-            src="/logo.png"
+            src={`${import.meta.env.BASE_URL}/logo.png`}
             width={32}
             alt="logo"
             style={{

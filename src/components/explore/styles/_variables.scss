@@ -1,3 +1,4 @@
+@use "sass:color" as color;
 // Theme Light
 
 $light-background: #fff;
@@ -9,7 +10,7 @@ $light-color-light: #d1d2d3;
 $light-color-medium: #8d8f91;
 $light-color-dark: #494c4e;
 $light-border: #e4e4e4;
-$light-border-dark: darken($light-border, 10);
+$light-border-dark: color.scale($light-border, $lightness: -10%);
 $light-outline: rgba(0, 0, 0, 0.2);
 $light-primary: #ff6a00;
 $light-link: #0188ff;
@@ -18,14 +19,14 @@ $light-link: #0188ff;
 
 $dark-background: #1b1f23;
 $dark-background-light: #262a2d;
-$dark-background-lighter: lighten($dark-background-light, 5);
+$dark-background-lighter: color.scale($dark-background-light, $lightness: 5%);
 $dark-background-disabled: #23282b;
 $dark-color: #fff;
 $dark-color-light: #d1d2d3;
 $dark-color-medium: #8d8f91;
 $dark-color-dark: #494c4e;
 $dark-border: #323638;
-$dark-border-dark: lighten($dark-border, 10);
+$dark-border-dark: color.scale($dark-border, $lightness: 10%);
 $dark-outline: #76797a;
 $dark-primary: #ff6a00;
 $dark-link: #0188ff;

@@ -1,1 +1,0 @@
-export type IdP = { name: string; icon: any }; 

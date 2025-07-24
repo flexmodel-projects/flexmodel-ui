@@ -60,6 +60,8 @@ const IdPManagement: React.FC = () => {
       await updateIdentityProvider(formData.name, {
         ...formData,
         provider: formData,
+        createdAt: '',
+        updatedAt: ''
       });
       setEditVisible(false);
       await getIdentityProviders();

@@ -48,8 +48,8 @@ const StatisticsPage: React.FC = () => {
         subscribeCount: data.subscribeCount,
         dataSourceCount: data.dataSourceCount,
       });
-      setApiStat(data.apiStat);
-      setRankingData(data.apiRankingList);
+      if (data.apiStat) setApiStat(data.apiStat);
+      if (data.apiRankingList) setRankingData(data.apiRankingList);
     };
     loadData();
   }, [dateRange]);

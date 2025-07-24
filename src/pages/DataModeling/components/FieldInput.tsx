@@ -1,5 +1,5 @@
 import React from "react";
-import {DatePicker, Input, InputNumber, Select, Switch} from "antd";
+import {DatePicker, Input, InputNumber, Select, Switch, TimePicker} from "antd";
 import dayjs from "dayjs";
 import {Field} from "@/types/data-modeling";
 
@@ -13,7 +13,6 @@ interface FieldInputProps {
 
 const FieldInput: React.FC<FieldInputProps> = ({
   fieldFn,
-  editMode = false,
   value,
   onChange,
   modelList = [],
@@ -22,15 +21,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
 
   const renderInput = () => {
     switch (field.type) {
-      case "ID":
-        return (
-          <Input
-            disabled={editMode}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        );
-      case "STRING":
+      case "String":
         return (
           <Input
             placeholder={field.comment}
@@ -38,16 +29,8 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "TEXT":
-        return (
-          <Input.TextArea
-            placeholder={field.comment}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        );
-      case "DECIMAL":
-      case "INT":
+      case "Float":
+      case "Int":
       case "Long":
         return (
           <InputNumber
@@ -57,9 +40,9 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case "BOOLEAN":
+      case "Boolean":
         return <Switch checked={value} onChange={(val) => onChange(val)} />;
-      case "DATE":
+      case "Date":
         return (
           <DatePicker
             placeholder={field.comment}
@@ -70,7 +53,18 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={{ width: "100%" }}
           />
         );
-      case "DATETIME":
+      case "Time":
+        return (
+          <TimePicker
+            placeholder={field.comment}
+            value={value ? dayjs(value, "HH:mm:ss") : null}
+            onChange={(time) =>
+              onChange(time ? time.format("HH:mm:ss") : null)
+            }
+            style={{ width: "100%" }}
+          />
+        );
+      case "DateTime":
         return (
           <DatePicker
             showTime
@@ -90,7 +84,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
           />
         );
-      case "ENUM": {
+      case "Enum": {
         const fromEnum = modelList.find((m) => m.name === field.from);
         return (
           <Select

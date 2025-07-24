@@ -151,7 +151,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     }
   }, [editMode]);
 
-  const columns: ColumnsType<MRecord> = model?.fields.map(field => ({
+  const columns: ColumnsType<MRecord> = model?.fields.map((field: Field) => ({
     title: field.name,
     dataIndex: field.name,
     key: field.name,
@@ -227,7 +227,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         width={600}
       >
         <Form form={form} layout="vertical">
-          {model.fields.map(field => (
+          {model.fields.map((field: Field) => (
             editMode ? (
               <Form.Item key={field.name} name={field.name} label={field.name}
                          rules={[{required: !field.nullable, message: `${t('input_valid_msg', {name: field.name})}`}]}>

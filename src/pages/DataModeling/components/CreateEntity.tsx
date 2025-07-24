@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Drawer, Form, Input, Popconfirm, Table, Tag} from 'antd';
 import {ColumnsType} from 'antd/es/table';
-import FieldForm from "./FieldForm.tsx";
+import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
 import IndexForm from "./IndexForm.tsx";
 import {PlusOutlined} from "@ant-design/icons";
 import type {Entity} from "@/types/data-modeling";
-import {FieldInitialValues} from "../common.ts";
 import {useTranslation} from "react-i18next";
 
 interface Props {
@@ -34,15 +33,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
   const [model, setModel] = useState<Entity>({
     name: '',
     comment: '',
-    fields: [
-      {
-        name: 'id',
-        type: 'String',
-        unique: true,
-        nullable: false,
-        comment: 'ID',
-      }
-    ],
+    fields: [],
     indexes: [],
     type: 'ENTITY'
   });

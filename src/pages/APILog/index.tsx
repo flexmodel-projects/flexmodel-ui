@@ -86,8 +86,8 @@ const LogViewer: React.FC = () => {
 
   const getApiLogsHandler = async () => {
     const filter = form.getFieldsValue();
-    const res: any[] = await getApiLogs(getFilterQuery(filter));
-    setTableData(res);
+    const res = await getApiLogs(getFilterQuery(filter));
+    setTableData({ list: res.list, total: res.total });
   };
 
   const getApiLogStatHandler = async () => {

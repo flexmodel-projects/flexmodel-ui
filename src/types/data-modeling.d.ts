@@ -74,14 +74,6 @@ export interface IdentifyProvider {
   updatedAt?: string;
 } 
 
-export interface Field {
-  name: string;
-  type: string;
-  nullable?: boolean;
-  comment?: string;
-  generatedValue?: 'AUTO_INCREMENT' | 'BIGINT_NOT_GENERATED' | 'STRING_NOT_GENERATED';
-}
-
 export interface MRecord {
   [key: string]: any;
 }

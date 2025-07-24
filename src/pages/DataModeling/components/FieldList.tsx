@@ -2,9 +2,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Button, notification, Popconfirm, Table, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../services/model.ts';
-import FieldForm from "./FieldForm.tsx";
-import {FieldInitialValues} from "../common.ts";
-import {Entity, Field} from "@/types/data-modeling";
+import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
+import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
 
 interface FieldListProps {
@@ -43,13 +42,23 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
 
   const addOrEditField = async (values: Field) => {
     try {
+      const typedField: TypedFieldSchema = {
+        name: values.name,
+        type: values.type,
+        unique: values.unique ?? false,
+        nullable: values.nullable ?? false,
+        comment: values.comment,
+        defaultValue: values.defaultValue,
+        modelName: model?.name,
+        concreteType: values.concreteType,
+      };
       if (selectedFieldIndex === -1) {
-        const res = await createField(datasource, model?.name, values);
-        setFieldList([...fieldList, res]);
+        const res = await createField(datasource, model?.name, typedField);
+        setFieldList([...fieldList, res as unknown as Field]);
       } else {
-        const res = await modifyField(datasource, model?.name, values.name, values);
+        const res = await modifyField(datasource, model?.name, values.name, typedField);
         const updatedFields = [...fieldList];
-        updatedFields[selectedFieldIndex] = res;
+        updatedFields[selectedFieldIndex] = res as unknown as Field;
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);

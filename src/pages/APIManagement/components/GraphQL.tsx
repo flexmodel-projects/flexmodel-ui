@@ -75,7 +75,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
             headers: value ? JSON.parse(value) : null,
           });
         }}
-        fetcher={executeQuery}
+        fetcher={executeQuery as any}
         plugins={[explorer]}
         /*visiblePlugin={explorer}*/
       ></GraphiQL>
