@@ -1,260 +1,113 @@
-import React, { useEffect, useRef } from "react";
-import { Graph } from "@antv/x6";
-import { Scroller } from "@antv/x6-plugin-scroller";
-import dagre from "dagre";
+import React, {useEffect, useRef} from "react";
+import {Graph} from '@antv/x6';
+import {Button, Card, Space} from "antd";
+import {MinusOutlined, PlusOutlined} from "@ant-design/icons";
+import {Entity, Field} from '@/types/data-modeling';
 
 interface ERDiagramProps {
-  datasource: any;
-  data: any[];
+  data: Entity[];
+}
+
+// 生成节点 label 的 HTML 字符串
+function getEntityTableHTML(entity: Entity) {
+  return `
+    <div style='padding:4px;'>
+      <div style='font-weight:bold;text-align:center;'>${entity.name}</div>
+      <table style='width:100%;border-collapse:collapse;font-size:12px;'>
+        <tbody>
+          ${(entity.fields || []).map((f: Field) => `
+            <tr>
+              <td style='border:1px solid #eee;padding:2px 4px;'>${f.concreteType}</td>
+              <td style='border:1px solid #eee;padding:2px 4px;'>${f.name}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
 
-  // 添加自动布局方法
-  const layout = (graph: Graph) => {
-    const nodes = graph.getNodes();
-    const edges = graph.getEdges();
-
-    const g = new dagre.graphlib.Graph();
-    g.setGraph({
-      rankdir: "LR", // 布局方向：从左到右
-      nodesep: 60, // 节点间距
-      ranksep: 80, // 层级间距
-      align: "DL", // 对齐方式
-      marginx: 20, // 水平边距
-      marginy: 20, // 垂直边距
-    });
-    g.setDefaultEdgeLabel(() => ({}));
-
-    // 添加节点
-    nodes.forEach((node) => {
-      g.setNode(node.id, {
-        width: node.getSize().width,
-        height: node.getSize().height,
-      });
-    });
-
-    // 添加边
-    edges.forEach((edge) => {
-      // const source = edge.getSource();
-      // const target = edge.getTarget();
-      const sourceId = edge.getSourceCellId();
-      const targetId = edge.getTargetCellId();
-      g.setEdge(sourceId, targetId);
-    });
-
-    // 执行布局
-    dagre.layout(g);
-
-    // 应用布局结果
-    graph.batchUpdate(() => {
-      nodes.forEach((node) => {
-        const nodeWithPosition = g.node(node.id);
-        node.position(nodeWithPosition.x, nodeWithPosition.y);
-      });
-    });
+  // 放大缩小
+  const handleZoom = (delta: number) => {
+    if (graphRef.current) {
+      let zoom = graphRef.current.zoom() + delta;
+      if (zoom < 0.2) zoom = 0.2;
+      if (zoom > 2) zoom = 2;
+      graphRef.current.zoomTo(zoom);
+    }
   };
 
   useEffect(() => {
-    if (containerRef.current) {
-      // 初始化 X6 图实例
-      graphRef.current = new Graph({
-        container: containerRef.current,
-        width: 1000,
-        height: 800,
-        panning: true, // 简化 panning 配置
-        mousewheel: {
-          enabled: true,
-          modifiers: "shift",
-        },
-        scaling: {
-          min: 0.5,
-          max: 2,
-        },
-        autoResize: true,
-
-        background: {
-          color: "#fff", // 添加背景色
-        },
-        connecting: {
-          router: "manhattan", // 使用曼哈顿路由，让连线更整齐
-          connector: "rounded", // 圆角连接器
-          anchor: "center", // 连线锚点
-          connectionPoint: "boundary", // 连接点
-        },
-        interacting: {
-          nodeMovable: true, // 允许节点拖动
-          edgeMovable: true, // 允许边拖动
-          edgeLabelMovable: true, // 允许边标签拖动
-        },
-        // connecting: {
-        //   router: "manhattan", // 使用曼哈顿路由，让连线更整齐
-        //   connector: "rounded", // 圆角连接器
-        //   anchor: "center", // 连线锚点
-        //   connectionPoint: "boundary", // 连接点
-        // },
-        // interacting: {
-        //   nodeMovable: true, // 允许节点拖动
-        //   edgeMovable: true, // 允许边拖动
-        //   edgeLabelMovable: true, // 允许边标签拖动
-        // },
-      });
-
-      graphRef.current.use(
-        new Scroller({
-          enabled: true,
-          pannable: true,
-          // 设置滚动区域的大小
-          width: 1000,
-          height: 800,
-          // 设置最小可见区域
-          minVisibleWidth: 800,
-          minVisibleHeight: 600,
-          // 添加适当的内边距
-          padding: {
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20,
-          },
-        })
-      );
-
-      const nodesMap: Record<string, string> = {};
-
-      // 生成节点
-      data.forEach((entity) => {
-        if (entity.type === "ENTITY") {
-          const { name, fields } = entity;
-          let content = `<div><strong>${name}</strong></div>`;
-          content += '<ul style="padding-left:16px;margin:4px 0;">';
-          fields.forEach((field: any) => {
-            content += `<li>${field.name}: ${field.concreteType}</li>`;
-          });
-          content += "</ul>";
-
-          const node = graphRef.current!.addNode({
-            id: name,
-            width: 200, // 固定宽度
-            height: Math.max(100, 30 + fields.length * 20), // 根据字段数量动态调整高度
-            shape: "rect",
-            attrs: {
-              body: {
-                fill: "#f8f9fa",
-                stroke: "#ddd",
-                strokeWidth: 1,
-                rx: 6, // 圆角
-                ry: 6,
-              },
-              label: {
-                text: "",
-              },
-            },
-            markup: [
-              {
-                tagName: "rect",
-                selector: "body",
-              },
-              {
-                tagName: "foreignObject",
-                selector: "content",
-                attrs: {
-                  width: "100%",
-                  height: "100%",
-                  style: "overflow: auto;",
-                },
-              },
-            ],
-          });
-
-          node.prop(
-            "attrs/content/html",
-            `<div style="padding:10px; font-size:12px; word-break: break-all; white-space: normal;">${content}</div>`
-          );
-
-          nodesMap[name] = node.id;
-        }
-      });
-
-      const addedEdges = new Set<string>();
-
-      // 生成连线
-      data.forEach((entity) => {
-        if (entity.type === "ENTITY") {
-          const { name: currentEntity, fields } = entity;
-          fields.forEach((field: any) => {
-            if (field.type === "Relation") {
-              // 根据关系定义确定连线另一端的实体
-              const targetEntity = field.from;
-              // 使用 sorted key 去重，防止反向重复创建同一关系
-              const edgeKey = [currentEntity, targetEntity].sort().join("--");
-              if (!addedEdges.has(edgeKey)) {
-                addedEdges.add(edgeKey);
-                graphRef.current!.addEdge({
-                  source: { cell: nodesMap[targetEntity] },
-                  target: { cell: nodesMap[currentEntity] },
-                  attrs: {
-                    line: {
-                      stroke: "#A2B1C3",
-                      strokeWidth: 1,
-                      targetMarker: {
-                        name: "block",
-                        width: 8,
-                        height: 8,
-                      },
-                    },
-                  },
-                  label: {
-                    position: 0.5,
-                    attrs: {
-                      text: {
-                        text: field.name,
-                        fill: "#6a6c8a",
-                        fontSize: 10,
-                        textAnchor: "middle",
-                        textVerticalAnchor: "middle",
-                      },
-                      // rect: {
-                      //   fill: "#fff",
-                      //   stroke: "#E5E8EF",
-                      //   strokeWidth: 1,
-                      //   rx: 3,
-                      //   ry: 3,
-                      // },
-                    },
-                    // markup: [
-                    //   {
-                    //     tagName: "rect",
-                    //     selector: "rect",
-                    //   },
-                    //   {
-                    //     tagName: "text",
-                    //     selector: "text",
-                    //   },
-                    // ],
-                  },
-                });
-              }
-            }
-          });
-        }
-      });
-
-      // 应用布局
-      layout(graphRef.current);
-
-      // 自动调整画布大小以适应内容
-      graphRef.current.zoomToFit({ padding: 20 });
+    if (!containerRef.current) return;
+    if (graphRef.current) {
+      graphRef.current.dispose();
+      graphRef.current = null;
     }
+    const graph = new Graph({
+      container: containerRef.current,
+      width: containerRef.current.clientWidth,
+      height: containerRef.current.clientHeight || 600,
+      grid: true,
+      panning: true,
+      background: { color: '#f5f5f5' },
+    });
+    graphRef.current = graph;
+
+    // 生成节点
+    const nodes = (data || []).filter(e => e.type === 'ENTITY').map((entity, idx) => ({
+      id: String(entity.name),
+      x: 80 + (idx % 5) * 220,
+      y: 80 + Math.floor(idx / 5) * 180,
+      width: 200,
+      height: 60 + (entity.fields?.length || 0) * 22,
+      shape: 'rect',
+      attrs: {
+        body: { fill: '#fff', stroke: '#1890ff', strokeWidth: 1.5, rx: 8, ry: 8 },
+        label: {
+          html: getEntityTableHTML(entity),
+          refX: 0.5,
+          refY: 0.5,
+          textWrap: {
+            width: 200,
+            height: 60 + (entity.fields?.length || 0) * 22,
+            ellipsis: false,
+          },
+        },
+      },
+      label: '', // 必须设置 label，否则 X6 不渲染 label.attrs
+    }));
+    // 生成边
+    const edges: any[] = [];
+    (data || []).forEach((entity) => {
+      if (entity.type === 'ENTITY') {
+        (entity.fields || []).forEach((field: Field) => {
+          if (field.type === 'Relation' && field.from && field.from !== entity.name) {
+            edges.push({
+              source: String(field.from),
+              target: String(entity.name),
+              label: field.name,
+              attrs: { line: { stroke: '#aaa', strokeWidth: 1.2, targetMarker: 'classic' } },
+            });
+          }
+        });
+      }
+    });
+    graph.fromJSON({ nodes, edges });
+    graph.centerContent();
   }, [data]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{ width: "100%", height: "800px", border: "1px solid #ddd" }}
-    />
+    <Card style={{ width: '100%', height: '100%', minHeight: 600, position: 'relative', padding: 0 }} bodyStyle={{ padding: 0 }}>
+      <Space style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
+        <Button icon={<PlusOutlined />} onClick={() => handleZoom(0.1)} />
+        <Button icon={<MinusOutlined />} onClick={() => handleZoom(-0.1)} />
+      </Space>
+      <div ref={containerRef} style={{ width: '100%', height: 600 }} />
+    </Card>
   );
 };
 
