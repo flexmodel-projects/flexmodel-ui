@@ -16,7 +16,10 @@ export interface ApiStat {
   failData: number[];
 }
 
-export interface OverviewResponse extends Statistics {
-  apiRankingList: RankingData[];
-  apiStat: ApiStat;
+export interface OverviewResponse {
+  queryCount: number;
+  mutationCount: number;
+  subscribeCount: number;
+  dataSourceCount: number;
+  // 根据需要添加apiRankingList和apiStat，如果openapi中指定
 } 

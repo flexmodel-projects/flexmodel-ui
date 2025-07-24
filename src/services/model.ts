@@ -1,24 +1,24 @@
 import {api} from '@/utils/request'
-import {TypeWrapper} from '../pages/DataModeling/data'
+import {EntitySchema, EnumSchema, IndexSchema, NativeQuerySchema, TypedFieldSchema} from '@/types/data-modeling'
 
 /**
  * 获取模型列表
  */
-export const getModelList = (datasourceName: string): Promise<any[]> => {
+export const getModelList = (datasourceName: string): Promise<(EntitySchema | EnumSchema | NativeQuerySchema)[]> => {
   return api.get(`/datasources/${datasourceName}/models`)
 }
 
 /**
  * 新建模型
  */
-export const createModel = (datasourceName: string, data: TypeWrapper): Promise<any> => {
+export const createModel = (datasourceName: string, data: EntitySchema | EnumSchema | NativeQuerySchema): Promise<EntitySchema | EnumSchema | NativeQuerySchema> => {
   return api.post(`/datasources/${datasourceName}/models`, data)
 }
 
 /**
  * 修改模型
  */
-export const modifyModel = (datasourceName: string, data: TypeWrapper): Promise<any> => {
+export const modifyModel = (datasourceName: string, data: EntitySchema | EnumSchema | NativeQuerySchema): Promise<EntitySchema | EnumSchema | NativeQuerySchema> => {
   return api.put(`/datasources/${datasourceName}/models/${data.name}`, data)
 }
 
@@ -32,14 +32,14 @@ export const dropModel = (datasourceName: string, modelName: string): Promise<vo
 /**
  * 新建字段
  */
-export const createField = (datasourceName: string, modelName: string, data: any): Promise<any> => {
+export const createField = (datasourceName: string, modelName: string, data: TypedFieldSchema): Promise<TypedFieldSchema> => {
   return api.post(`/datasources/${datasourceName}/models/${modelName}/fields`, data)
 }
 
 /**
  * 修改字段
  */
-export const modifyField = (datasourceName: string, modelName: string, fieldName: string, data: any): Promise<any> => {
+export const modifyField = (datasourceName: string, modelName: string, fieldName: string, data: TypedFieldSchema): Promise<TypedFieldSchema> => {
   return api.put(`/datasources/${datasourceName}/models/${modelName}/fields/${fieldName}`, data)
 }
 
@@ -53,14 +53,14 @@ export const dropField = (datasourceName: string, modelName: string, fieldName: 
 /**
  * 新建索引
  */
-export const createIndex = (datasourceName: string, modelName: string, data: any): Promise<any> => {
+export const createIndex = (datasourceName: string, modelName: string, data: IndexSchema): Promise<IndexSchema> => {
   return api.post(`/datasources/${datasourceName}/models/${modelName}/indexes`, data)
 }
 
 /**
  * 修改索引
  */
-export const modifyIndex = (datasourceName: string, modelName: string, indexName: string, data: any): Promise<any> => {
+export const modifyIndex = (datasourceName: string, modelName: string, indexName: string, data: IndexSchema): Promise<IndexSchema> => {
   return api.put(`/datasources/${datasourceName}/models/${modelName}/indexes/${indexName}`, data)
 }
 

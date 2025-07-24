@@ -7,7 +7,7 @@ import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView.tsx
 import {modifyModel} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
 import EnumView from "@/pages/DataModeling/components/EnumView.tsx";
-import {Enum} from "@/pages/DataModeling/data";
+import type {Enum} from '@/types/data-modeling.d.ts';
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView.tsx";
 
 const ModelingPage: React.FC = () => {

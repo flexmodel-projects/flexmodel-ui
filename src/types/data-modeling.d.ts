@@ -90,3 +90,66 @@ export interface RecordListProps {
   datasource: string;
   model: any; // Entity类型建议在实际使用时import
 } 
+
+export interface EntitySchema {
+  name: string;
+  type: string;
+  fields: TypedFieldSchema[];
+  indexes: IndexSchema[];
+  comment?: string;
+  additionalProperties?: Record<string, any>;
+  idl?: string;
+}
+
+export interface EnumSchema {
+  name: string;
+  comment?: string;
+  elements: string[];
+  additionalProperties?: Record<string, any>;
+  idl?: string;
+  type: string;
+}
+
+export interface NativeQuerySchema {
+  name: string;
+  type: string;
+  statement: string;
+  comment?: string;
+  additionalProperties?: Record<string, any>;
+  idl?: string;
+  parameters?: string[];
+  fields?: QueryField[];
+}
+
+export interface TypedFieldSchema {
+  name: string;
+  type: string;
+  comment?: string;
+  unique: boolean;
+  nullable: boolean;
+  defaultValue?: any;
+  additionalProperties?: Record<string, any>;
+  modelName: string;
+  identity?: boolean;
+  concreteType?: string;
+}
+
+export interface IndexSchema {
+  name: string;
+  fields: Field[];
+  unique: boolean;
+  modelName: string;
+}
+
+export interface Field {
+  fieldName: string;
+  direction: Direction;
+}
+
+export type Direction = 'ASC' | 'DESC';
+
+export interface QueryField {
+  name: string;
+  aliasName?: string;
+  fieldName?: string;
+} 

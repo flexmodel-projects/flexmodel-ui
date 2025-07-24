@@ -1,6 +1,6 @@
 import {api, BASE_URI} from '@/utils/request'
 
-export function getTemplateNames() {
+export function getTemplateNames(): Promise<string[]> {
   return api.get('/codegen/templates/names');
 }
 

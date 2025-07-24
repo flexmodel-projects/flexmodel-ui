@@ -15,12 +15,13 @@ import {DbsMap} from "@/pages/DataSource/common.ts";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/DataSource/index.module.scss";
+import {Datasource} from '@/types/data-source.d.ts';
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
 
-  const [dsList, setDsList] = useState<any[]>([]);
-  const [activeDs, setActiveDs] = useState<any>({
+  const [dsList, setDsList] = useState<Datasource[]>([]);
+  const [activeDs, setActiveDs] = useState<Datasource>({
     config: { dbKind: "" },
     createTime: "",
     name: "",

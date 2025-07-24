@@ -6,6 +6,9 @@ import Proxy from "@/pages/Settings/components/Proxy.tsx";
 import {getSettings, saveSettings as reqSaveSettings} from "@/services/settings.ts";
 import Security from "@/pages/Settings/components/Security.tsx";
 import {useTranslation} from "react-i18next";
+import type {Settings} from '@/types/settings';
+
+type OnChangeHandler = (data: Partial<Settings>) => void;
 
 const Settings: React.FC = () => {
   const {t} = useTranslation();
@@ -16,7 +19,7 @@ const Settings: React.FC = () => {
     selectKey: SettingsStateKeys;
   };
 
-  const menuMap: Record<string, React.ReactNode> = {
+  const menuMap: Record<SettingsStateKeys, React.ReactNode> = {
     base: t('settings_basic_settings'),
     /*variables: 'Variables',*/
     security: t('settings_security'),
@@ -24,15 +27,15 @@ const Settings: React.FC = () => {
     about: t('settings_about'),
   };
 
-  const renderChildren = () => {
+  const renderChildren = (onChange: OnChangeHandler) => {
     const {selectKey} = initConfig;
     switch (selectKey) {
       case 'base':
-        return <Base settings={settings} onChange={data => saveSettings(data)}/>;
+        return <Base settings={settings} onChange={onChange}/>;
       case 'security':
-        return <Security settings={settings} onChange={data => saveSettings(data)}/>;
+        return <Security settings={settings} onChange={onChange}/>;
       case 'proxy':
-        return <Proxy settings={settings} onChange={data => saveSettings(data)}/>;
+        return <Proxy settings={settings} onChange={onChange}/>;
       /*case 'variables':
         return <Variables/>;*/
       case 'about':
@@ -48,19 +51,22 @@ const Settings: React.FC = () => {
   });
 
   const getMenu = () => {
-    return Object.keys(menuMap).map((item) => ({key: item, label: menuMap[item]}));
+    return (Object.keys(menuMap) as SettingsStateKeys[]).map((item) => ({
+      key: item,
+      label: menuMap[item],
+    }));
   };
 
-  const [settings, setSettings] = useState<any>();
+  const [settings, setSettings] = useState<Settings | undefined>(undefined);
 
   useEffect(() => {
     getSettings().then(res => setSettings(res));
   }, []);
 
-  const saveSettings = (data: object) => {
-    reqSaveSettings(data)
+  const saveSettings: OnChangeHandler = (data) => {
+    reqSaveSettings(data as Settings)
       .then(() => message.success(t('form_save_success')));
-    setSettings({...settings, ...data});
+    setSettings(prev => ({ ...prev, ...data } as Settings));
   };
 
   return (
@@ -83,7 +89,7 @@ const Settings: React.FC = () => {
         <div className="mb-3 font-normal text-[20px] leading-7 text-[rgba(0,0,0,0.88)] dark:text-[#f5f5f5]">
           {menuMap[initConfig.selectKey]}
         </div>
-        {renderChildren()}
+        {renderChildren(saveSettings)}
       </div>
     </div>
   );
