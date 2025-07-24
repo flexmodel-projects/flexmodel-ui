@@ -1,10 +1,10 @@
 import React from "react";
-import { Tabs } from "antd";
-import { useTranslation } from "react-i18next";
-import DataModeling from "../DataModeling";
-import DataSource from "../DataSource";
-import { ContainerOutlined, DatabaseOutlined } from "@ant-design/icons";
-import styles from "./index.module.scss";
+import {Tabs} from "antd";
+import {useTranslation} from "react-i18next";
+import DataModeling from "@/pages/DataModeling";
+import DataSource from "@/pages/DataSource";
+import {ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
+import styles from "@/pages/DataView/index.module.scss";
 
 // 标签页切换的logic处理
 const onChange = (key: string) => {

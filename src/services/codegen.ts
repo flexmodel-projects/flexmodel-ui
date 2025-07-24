@@ -1,4 +1,4 @@
-import {api, BASE_URI} from '../utils/request'
+import {api, BASE_URI} from '@/utils/request'
 
 export function getTemplateNames() {
   return api.get('/codegen/templates/names');

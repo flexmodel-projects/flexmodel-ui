@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Space, Spin, Steps, Transfer, TransferProps} from 'antd';
-import {createDatasource, getPhysicsModelNames, syncModels, validateDatasource} from "../../../services/datasource.ts";
-import MySQLConfig from "./MySQLConfig.tsx";
-import SQLiteConfig from "./SQLiteConfig.tsx";
-import CommonConfig from "./CommonConfig.tsx";
-import DatabaseInfo from "./DatabaseInfo.tsx";
+import {createDatasource, getPhysicsModelNames, syncModels, validateDatasource} from "@/services/datasource.ts";
+import MySQLConfig from "@/pages/DataSource/components/MySQLConfig.tsx";
+import SQLiteConfig from "@/pages/DataSource/components/SQLiteConfig.tsx";
+import CommonConfig from "@/pages/DataSource/components/CommonConfig.tsx";
+import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
 import Title from "antd/lib/typography/Title";
 import {useTranslation} from "react-i18next";
 

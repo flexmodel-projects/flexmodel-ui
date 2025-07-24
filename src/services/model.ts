@@ -1,4 +1,4 @@
-import {api} from '../utils/request'
+import {api} from '@/utils/request'
 import {TypeWrapper} from '../pages/DataModeling/data'
 
 /**

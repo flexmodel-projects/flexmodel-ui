@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree,} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
-import DatabaseInfo from "./components/DatabaseInfo.tsx";
-import EditDSConfig from "./components/EditDatabaseModal.tsx";
-import ConnectDatabaseDrawer from "./components/ConnectDatabaseDrawer.tsx";
+import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
+import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
+import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer.tsx";
 import {
   deleteDatasource,
   getDatasourceList,
   importModels as reqImportModels,
   updateDatasource,
   validateDatasource,
-} from "../../services/datasource.ts";
-import {DbsMap} from "./common.ts";
-import {getModelList} from "../../services/model.ts";
+} from "@/services/datasource.ts";
+import {DbsMap} from "@/pages/DataSource/common.ts";
+import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
-import styles from "./index.module.scss";
+import styles from "@/pages/DataSource/index.module.scss";
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();

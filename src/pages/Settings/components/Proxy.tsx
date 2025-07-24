@@ -3,7 +3,7 @@ import {Button, Form, Input, Space, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
-import {RootState} from "../../../store/configStore.ts";
+import {RootState} from "@/store/configStore.ts";
 
 interface BaseProps {
   settings: any;

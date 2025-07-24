@@ -4,10 +4,10 @@ import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
 import Title from "antd/lib/typography/Title";
 import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
-import {getOverview} from "../../services/overview.ts";
+import {getOverview} from "@/services/overview.ts";
 import {useTranslation} from "react-i18next";
-import styles from "./index.module.scss";
-import type {ApiStat, OverviewResponse, RankingData, Statistics} from '../../types/overview.d.ts';
+import styles from "@/pages/Overview/index.module.scss";
+import type {ApiStat, OverviewResponse, RankingData, Statistics} from '@/types/overview.d.ts';
 
 const { RangePicker } = DatePicker;
 

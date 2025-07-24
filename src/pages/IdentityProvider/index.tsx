@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from "react";
 import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
 import {useTranslation} from "react-i18next";
-import styles from "./index.module.scss";
-import type {IdentityProvider} from "./data";
-import IdPMenu from "./components/IdPMenu.tsx";
+import styles from "@/pages/IdentityProvider/index.module.scss";
+import type {IdentityProvider} from "@/pages/IdentityProvider/data";
+import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
 import {
   deleteIdentityProvider,
   getIdentityProviders as getIdentityProvidersApi,
   updateIdentityProvider,
-} from "../../services/identity-provider.ts";
-import IdPInfo from "./components/IdPInfo.tsx";
-import EditProvider from "./components/EditProvider.tsx";
-import CreateProvider from "./components/CreateProvider.tsx";
+} from "@/services/identity-provider.ts";
+import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo.tsx";
+import EditProvider from "@/pages/IdentityProvider/components/EditProvider.tsx";
+import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider.tsx";
 
 
 const IdPManagement: React.FC = () => {

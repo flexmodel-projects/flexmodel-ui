@@ -1,16 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree,} from "antd";
 import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined,} from "@ant-design/icons";
-import {getDatasourceList} from "../../../services/datasource.ts";
-import {createModel as reqCreateModel, dropModel, getModelList,} from "../../../services/model.ts";
+import {getDatasourceList} from "@/services/datasource.ts";
+import {createModel as reqCreateModel, dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
-import CreateEntity from "./CreateEntity.tsx";
-import {Datasource, Model} from "../data";
+import CreateEntity from "@/pages/DataModeling/components/CreateEntity.tsx";
+import {Datasource, Model} from "@/pages/DataModeling/data";
 import {useTranslation} from "react-i18next";
 import {useSelector} from "react-redux";
-import {RootState} from "../../../store/configStore.ts";
-import CreateNativeQueryModel from "./CreateNativeQueryModel.tsx";
-import CreateEnum from "./CreateEnum.tsx";
+import {RootState} from "@/store/configStore.ts";
+import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel.tsx";
+import CreateEnum from "@/pages/DataModeling/components/CreateEnum.tsx";
 
 interface ModelTree {
   name: string;

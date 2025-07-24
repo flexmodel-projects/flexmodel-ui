@@ -1,6 +1,6 @@
 import React from 'react';
-import { Descriptions } from 'antd';
-import HidePassword from "../../../components/HidePassword.tsx";
+import {Descriptions} from 'antd';
+import HidePassword from "@/components/HidePassword.tsx";
 import {useTranslation} from "react-i18next";
 
 interface Datasource {

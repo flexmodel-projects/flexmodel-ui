@@ -1,4 +1,4 @@
-import {api} from '../utils/request'
+import {api} from '@/utils/request'
 
 /**
  * 获取数据源列表

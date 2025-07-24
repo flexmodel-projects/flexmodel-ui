@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import {Card, Divider, notification, Row, Splitter} from "antd";
-import SelectModel from "./components/SelectModel.tsx";
-import styles from "./index.module.scss";
-import EntityView from "./components/EntityView.tsx";
-import NativeQueryView from "./components/NativeQueryView.tsx";
-import {modifyModel} from "../../services/model.ts";
+import SelectModel from "@/pages/DataModeling/components/SelectModel.tsx";
+import styles from "@/pages/DataModeling/index.module.scss";
+import EntityView from "@/pages/DataModeling/components/EntityView.tsx";
+import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView.tsx";
+import {modifyModel} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
-import EnumView from "./components/EnumView.tsx";
-import {Enum} from "./data";
-import ERDiagram from "./components/ERDiagramView.tsx";
+import EnumView from "@/pages/DataModeling/components/EnumView.tsx";
+import {Enum} from "@/pages/DataModeling/data";
+import ERDiagram from "@/pages/DataModeling/components/ERDiagramView.tsx";
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();

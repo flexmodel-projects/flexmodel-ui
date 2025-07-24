@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Col, Input, Row, Table} from 'antd';
-import {getVariables} from "../../../services/environment.ts";
-import HidePassword from "../../../components/HidePassword.tsx";
+import {getVariables} from "@/services/environment.ts";
+import HidePassword from "@/components/HidePassword.tsx";
 
 
 const Variables: React.FC = () => {

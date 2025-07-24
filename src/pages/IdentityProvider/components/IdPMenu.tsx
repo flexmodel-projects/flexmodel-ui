@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Divider, Dropdown, Menu, Spin} from "antd";
 import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
-import type {IdentityProvider} from "../data";
+import type {IdentityProvider} from "@/pages/IdentityProvider/data";
 
 interface IdPMenuProps {
   idPList: IdentityProvider[];

@@ -1,0 +1,1 @@
+export type Db = { name: string; icon: any; }; 
