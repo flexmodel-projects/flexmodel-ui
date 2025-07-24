@@ -10,29 +10,18 @@ interface ERDiagramProps {
 
 // 生成节点 label 的 HTML 字符串
 function getEntityTableHTML(entity: Entity) {
+  const fields = entity.fields || [];
   return `
-    <div style='padding:4px;'>
-      <div style='font-weight:bold;text-align:center;'>${entity.name}</div>
-      <table style='width:100%;border-collapse:collapse;font-size:12px;'>
-        <thead>
-          <tr>
-            <th style='border:1px solid #eee;padding:2px 4px;'>字段名</th>
-            <th style='border:1px solid #eee;padding:2px 4px;'>类型</th>
-            <th style='border:1px solid #eee;padding:2px 4px;'>注释</th>
-            <th style='border:1px solid #eee;padding:2px 4px;'>主键</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${(entity.fields || []).map((f: Field) => `
-            <tr>
-              <td style='border:1px solid #eee;padding:2px 4px;'>${f.name}</td>
-              <td style='border:1px solid #eee;padding:2px 4px;'>${f.concreteType || f.type}</td>
-              <td style='border:1px solid #eee;padding:2px 4px;'>${f.comment || ''}</td>
-              <td style='border:1px solid #eee;padding:2px 4px;text-align:center;'>${f.identity || f.primaryKey ? '是' : ''}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
+    <div class="er-entity">
+      <div class="er-entity-header">${entity.name}</div>
+      <div class="er-entity-fields">
+        ${fields.map(f => `
+          <div>
+            <span class="field-name">${f.name}</span>
+            <span class="field-type">${f.concreteType || f.type}</span>
+          </div>
+        `)}
+      </div>
     </div>
   `;
 }
@@ -78,7 +67,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       attrs: {
         body: { fill: '#fff', stroke: '#1890ff', strokeWidth: 1.5, rx: 8, ry: 8 },
         label: {
-          html: getEntityTableHTML(entity),
+          html: getEntityTableHTML(entity), // 只渲染字段内容
           refX: 0.5,
           refY: 0.5,
           textWrap: {
@@ -88,7 +77,6 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
           },
         },
       },
-      label: '', // 必须设置 label，否则 X6 不渲染 label.attrs
     }));
     // 生成边
     const edges: any[] = [];
@@ -111,7 +99,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   }, [data]);
 
   return (
-    <Card style={{ width: '100%', height: '100%', minHeight: 600, position: 'relative', padding: 0 }} bodyStyle={{ padding: 0 }}>
+    <Card style={{ width: '100%', height: '100%', minHeight: 600, position: 'relative', padding: 0 }}>
       <div ref={containerRef} style={{ width: '100%', height: 600 }} />
       <Space style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }} direction="horizontal">
         <Button type="default" icon={<PlusOutlined />} onClick={() => handleZoom(0.1)} title="放大" />
