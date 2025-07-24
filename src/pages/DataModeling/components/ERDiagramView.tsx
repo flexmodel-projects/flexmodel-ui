@@ -14,11 +14,21 @@ function getEntityTableHTML(entity: Entity) {
     <div style='padding:4px;'>
       <div style='font-weight:bold;text-align:center;'>${entity.name}</div>
       <table style='width:100%;border-collapse:collapse;font-size:12px;'>
+        <thead>
+          <tr>
+            <th style='border:1px solid #eee;padding:2px 4px;'>字段名</th>
+            <th style='border:1px solid #eee;padding:2px 4px;'>类型</th>
+            <th style='border:1px solid #eee;padding:2px 4px;'>注释</th>
+            <th style='border:1px solid #eee;padding:2px 4px;'>主键</th>
+          </tr>
+        </thead>
         <tbody>
           ${(entity.fields || []).map((f: Field) => `
             <tr>
-              <td style='border:1px solid #eee;padding:2px 4px;'>${f.concreteType}</td>
               <td style='border:1px solid #eee;padding:2px 4px;'>${f.name}</td>
+              <td style='border:1px solid #eee;padding:2px 4px;'>${f.concreteType || f.type}</td>
+              <td style='border:1px solid #eee;padding:2px 4px;'>${f.comment || ''}</td>
+              <td style='border:1px solid #eee;padding:2px 4px;text-align:center;'>${f.identity || f.primaryKey ? '是' : ''}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -102,11 +112,11 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
 
   return (
     <Card style={{ width: '100%', height: '100%', minHeight: 600, position: 'relative', padding: 0 }} bodyStyle={{ padding: 0 }}>
-      <Space style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
-        <Button icon={<PlusOutlined />} onClick={() => handleZoom(0.1)} />
-        <Button icon={<MinusOutlined />} onClick={() => handleZoom(-0.1)} />
-      </Space>
       <div ref={containerRef} style={{ width: '100%', height: 600 }} />
+      <Space style={{ position: 'absolute', top: 24, left: 24, zIndex: 10 }} direction="horizontal">
+        <Button type="default" icon={<PlusOutlined />} onClick={() => handleZoom(0.1)} title="放大" />
+        <Button type="default" icon={<MinusOutlined />} onClick={() => handleZoom(-0.1)} title="缩小" />
+      </Space>
     </Card>
   );
 };
