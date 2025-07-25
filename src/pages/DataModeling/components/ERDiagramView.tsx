@@ -140,7 +140,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       height: 60 + (entity.fields?.length || 0) * 22,
       shape: 'rect',
       attrs: {
-        body: { fill: '#fff', stroke: '#1890ff', strokeWidth: 1.5, rx: 8, ry: 8 },
+        body: { fill: '#fff' ,stroke: '#1890ff', strokeWidth: 1.5, rx: 8, ry: 8 },
         label: {
           html: getEntityTableHTML(entity), // 只渲染字段内容
           refX: 0.5,
@@ -179,27 +179,27 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       style={
         fullscreen
           ? {
-              width: '100vw',
-              height: '100vh',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 9999,
-              padding: 0,
-              borderRadius: 0,
-              minHeight: 0,
-              overflow: 'hidden', // 防止滚动条
-            }
+            width: '100vw',
+            height: '100vh',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 9999,
+            padding: 0,
+            borderRadius: 0,
+            minHeight: 0,
+            overflow: 'hidden', // 防止滚动条
+          }
           : {
-              width: '100%',
-              height: '100%',
-              minHeight: 600,
-              position: 'relative',
-              padding: 0,
-              overflow: 'hidden',
-            }
+            width: '100%',
+            height: '100%',
+            minHeight: 600,
+            position: 'relative',
+            padding: 0,
+            overflow: 'hidden',
+          }
       }
     >
       <div
