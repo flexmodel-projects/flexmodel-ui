@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Graph} from '@antv/x6';
 import {Button, Card, Space} from "antd";
 // 新增引入全屏图标
@@ -10,6 +10,7 @@ import ERNodeView from './ERNodeView';
 
 interface ERDiagramProps {
   data: Entity[];
+  datasource: string;
 }
 
 const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
@@ -18,6 +19,8 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   // 新增：全屏状态
   const [fullscreen, setFullscreen] = React.useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  // 新增：夜间模式监听
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
 
   // 放大缩小
   const handleZoom = (delta: number) => {
@@ -125,20 +128,19 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         visible: true,
         type: 'dot',
         args: {
-          color: '#e3eaf3',
+          color: isDark ? '#333842' : '#e3eaf3',
           thickness: 1,
         },
       },
       panning: true,
-      background: { color: '#f0f4fa' },
+      background: { color: isDark ? '#23232a' : '#f0f4fa' },
     });
     graphRef.current = graph;
-
     // 生成节点
     const nodes = (data || []).filter(e => e.type === 'ENTITY').map((entity, idx) => ({
       id: String(entity.name),
-      x: 80 + (idx % 5) * 360, // 横向间距加大
-      y: 80 + Math.floor(idx / 5) * 320, // 纵向间距加大
+      x: 80 + (idx % 5) * 320, // 横向间距加大
+      y: 80 + Math.floor(idx / 5) * 300, // 纵向间距加大
       width: 200,
       height: 60 + (entity.fields?.length || 0) * 22,
       shape: 'er-react-node',
@@ -154,22 +156,34 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
               source: String(field.from),
               target: String(entity.name),
               label: field.name,
-              attrs: { line: { stroke: '#4096ff', strokeWidth: 2, targetMarker: 'classic' } },
+              attrs: { line: { stroke: isDark ? '#36a3f7' : '#4096ff', strokeWidth: 2, targetMarker: 'classic' } },
             });
           }
         });
       }
     });
     graph.fromJSON({ nodes, edges });
-    graph.centerContent();
-  }, [data]);
+    graph.zoomTo(0.5); // 数据加载后再次确认缩放为50%
+    setTimeout(() => {
+      graph.zoomTo(0.5); // 延迟再次设置缩放，确保渲染完成后生效
+      graph.centerContent();
+    }, 100);
+  }, [data, isDark]);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <Card
       ref={cardRef}
-      style={
-        fullscreen
-          ? {
+      bodyStyle={{ padding: 0 }}
+      style={fullscreen
+        ? {
             width: '100vw',
             height: '100vh',
             position: 'fixed',
@@ -181,17 +195,20 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
             padding: 0,
             borderRadius: 0,
             minHeight: 0,
-            overflow: 'hidden', // 防止滚动条
-            boxShadow: '0 0 32px #4096ff22',
+            overflow: 'hidden',
+            boxShadow: 'none',
+            background: isDark ? '#18181c' : '#fff',
           }
-          : {
+        : {
             width: '100%',
             height: '100%',
             minHeight: 600,
             position: 'relative',
             padding: 0,
             overflow: 'hidden',
-            background: '#f0f4fa',
+            background: isDark ? '#23232a' : '#fafafa',
+            borderRadius: 8,
+            boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.5)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
           }
       }
     >
@@ -199,36 +216,28 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         ref={containerRef}
         style={{ width: fullscreen ? '100vw' : '100%', height: fullscreen ? '100vh' : 600, overflow: 'hidden' }}
       />
-      <Space style={{ position: 'absolute', top: 34, left: 34, zIndex: 10 }} direction="horizontal">
-        <Button
-          type="default"
-          icon={<PlusOutlined />}
-          onClick={() => handleZoom(0.1)}
-          title="放大"
-          style={{ borderColor: '#4096ff', color: '#4096ff' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#e3f0ff'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
-        />
-        <Button
-          type="default"
-          icon={<MinusOutlined />}
-          onClick={() => handleZoom(-0.1)}
-          title="缩小"
-          style={{ borderColor: '#4096ff', color: '#4096ff' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#e3f0ff'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
-        />
-        {/* 新增全屏按钮 */}
-        <Button
-          type="default"
-          icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
-          onClick={handleToggleFullscreen}
-          title={fullscreen ? "退出全屏" : "全屏"}
-          style={{ borderColor: '#4096ff', color: '#4096ff' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#e3f0ff'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#fff'; }}
-        />
-      </Space>
+      <div style={{ position: 'absolute', top: 20, left: 20 }}>
+        <Space direction="horizontal">
+          <Button
+            icon={<PlusOutlined />}
+            onClick={() => handleZoom(0.1)}
+            title="放大"
+            style={{ borderRadius: 4 }}
+          />
+          <Button
+            icon={<MinusOutlined />}
+            onClick={() => handleZoom(-0.1)}
+            title="缩小"
+            style={{ borderRadius: 4 }}
+          />
+          <Button
+            icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+            onClick={handleToggleFullscreen}
+            title={fullscreen ? "退出全屏" : "全屏"}
+            style={{ borderRadius: 4 }}
+          />
+        </Space>
+      </div>
     </Card>
   );
 };
