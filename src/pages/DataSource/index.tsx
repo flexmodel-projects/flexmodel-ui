@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Divider, Dropdown, Form, Input, Layout, Menu, message, Modal, Space, Spin} from "antd";
+import {Button, Card, Divider, Dropdown, Form, Input, Layout, Menu, message, Modal, Space, Spin, theme} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
 import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
 import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
@@ -19,6 +19,7 @@ import type {DatasourceSchema} from '@/types/data-source';
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [activeDs, setActiveDs] = useState<DatasourceSchema>({
@@ -134,15 +135,23 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <Card className={[styles.root, "h-full"].join(" ")}>
+      <Card 
+        className={[styles.root, "h-full"].join(" ")}
+        style={{
+          borderRadius: token.borderRadius,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
         <Layout style={{height: '70vh', background: 'transparent'}}>
-          <Layout.Sider width={240} style={{background: 'transparent', paddingRight: 8}}>
-              <div className="truncate" style={{marginBottom: 8}}>
+          <Layout.Sider width={240} style={{background: 'transparent', paddingRight: token.marginSM}}>
+              <div className="truncate" style={{marginBottom: token.marginSM}}>
                 <span className="text-base font-semibold">
                   {t("datasource_management")}
                 </span>
               </div>
-              <Divider style={{margin: '8px 0'}} />
+              <Divider style={{margin: `${token.marginSM} 0`}} />
               <Spin spinning={dsLoading}>
                 <Menu
                   mode="inline"
@@ -153,13 +162,13 @@ const DatasourceManagement: React.FC = () => {
                       key={ds.name}
                       icon={<Icon component={DbsMap[ds.config?.dbKind]} />}
                       onClick={() => handleTreeClick(ds)}
-                      style={{ display: 'flex', alignItems: 'center', borderRadius: 8, marginBottom: 2, position: 'relative', paddingRight: 32 }}
+                      style={{ display: 'flex', alignItems: 'center', borderRadius: token.borderRadius, marginBottom: token.marginXS, position: 'relative', paddingRight: token.controlHeight }}
                     >
                       <span style={{ flex: 1 }}>{ds.name}</span>
                       <span
                         style={{
                           position: 'absolute',
-                          right: 8,
+                          right: token.marginSM,
                           top: '50%',
                           transform: 'translateY(-50%)',
                           display: 'none',
@@ -190,7 +199,7 @@ const DatasourceManagement: React.FC = () => {
                   ))}
                 </Menu>
               </Spin>
-              <Divider style={{margin: '8px 0'}} />
+              <Divider style={{margin: `${token.marginSM} 0`}} />
               <Button
                 type="primary"
                 icon={<BlockOutlined />}
@@ -201,8 +210,8 @@ const DatasourceManagement: React.FC = () => {
                 {t("connect_datasource")}
               </Button>
           </Layout.Sider>
-          <Layout.Content style={{paddingLeft: 8, height: '100%'}}>
-              <div className="flex justify-between pb-[10px]">
+          <Layout.Content style={{paddingLeft: token.marginSM, height: '100%'}}>
+              <div className="flex justify-between" style={{paddingBottom: token.marginSM}}>
                 <div>{activeDs.name}</div>
                 <div>
                   <Space>

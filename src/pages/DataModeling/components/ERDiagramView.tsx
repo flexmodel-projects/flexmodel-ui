@@ -164,9 +164,9 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       }
     });
     graph.fromJSON({ nodes, edges });
-    graph.zoomTo(0.5); // 数据加载后再次确认缩放为50%
+    graph.zoomTo(0.6); // 数据加载后再次确认缩放为50%
     setTimeout(() => {
-      graph.zoomTo(0.5); // 延迟再次设置缩放，确保渲染完成后生效
+      graph.zoomTo(0.6); // 延迟再次设置缩放，确保渲染完成后生效
       graph.centerContent();
     }, 100);
   }, [data, isDark]);
@@ -209,7 +209,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
             overflow: 'hidden',
             background: isDark ? '#23232a' : '#fafafa',
             borderRadius: 8,
-            boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.5)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+            boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.6)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
           }
       }
     >

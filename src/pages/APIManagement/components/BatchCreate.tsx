@@ -55,8 +55,7 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
     >
       <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-          <div style={{borderRight: '1px solid rgba(5, 5, 5, 0.06)', padding: 8, background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s, border-radius 0.3s', height: '100%', boxSizing: 'border-box'}}>
-            <SelectModel
+        <SelectModel
               datasource={datasource}
               editable={false}
               onSelect={(ds: string, model: Model) => {
@@ -65,10 +64,9 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
               }}
             />
             <Divider/>
-          </div>
         </Splitter.Panel>
         <Splitter.Panel>
-          <div style={{padding: 8, background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s, border-radius 0.3s', height: '100%', boxSizing: 'border-box'}}>
+          <div style={{padding: 8, borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s, border-radius 0.3s', height: '100%', boxSizing: 'border-box'}}>
             <Form form={form} layout="vertical">
               <Form.Item name="datasourceName" hidden>
                 <Input/>

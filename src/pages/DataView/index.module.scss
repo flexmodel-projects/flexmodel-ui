@@ -1,45 +1,14 @@
 .root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
   :global {
-    // 紧凑的标签页样式
-    .ant-tabs-nav {
-      margin-bottom: 8px !important;
-      
-      .ant-tabs-tab {
-        padding: 6px 16px !important;
-        margin: 0 4px 0 0 !important;
-        height: 32px !important;
-        line-height: 20px !important;
-        font-size: 13px !important;
-        border-radius: 6px !important;
-        transition: all 0.2s ease;
-        
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.04);
-        }
-        
-        .ant-tabs-tab-btn {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          
-          .anticon {
-            font-size: 14px;
-          }
-        }
-      }
-      
-      .ant-tabs-tab-active {
-        background-color: #1890ff !important;
-        border-color: #1890ff !important;
-        
-        .ant-tabs-tab-btn {
-          color: white !important;
-        }
-      }
-    }
-    
+    // 确保内容区域占满剩余空间
     .ant-tabs-content {
       height: 100%;
+      flex: 1;
+      
       .ant-tabs-tabpane {
         height: 100%;
       }

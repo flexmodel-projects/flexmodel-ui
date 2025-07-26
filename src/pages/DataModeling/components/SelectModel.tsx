@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Button, Dropdown, Input, Menu, Modal, Select, Spin} from "antd";
+import {Button, Dropdown, Input, Menu, Modal, Select, Spin, theme} from "antd";
 import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import {getDatasourceList} from "@/services/datasource.ts";
 import {createModel as reqCreateModel, dropModel, getModelList,} from "@/services/model.ts";
@@ -23,10 +23,20 @@ import {
 import '@/components/explore/styles/explore.scss';
 import Tree from '@/components/explore/explore/Tree.jsx';
 import styles from "@/pages/DataModeling/index.module.scss";
+import {getCompactCardStyle} from '@/utils/theme';
 
 interface ModelTree {
   name: string;
   children?: ModelTree[];
+}
+
+interface TreeItem {
+  type: 'folder' | 'file';
+  filename: string;
+  path: string;
+  children?: TreeItem[];
+  data?: any;
+  modelType?: string;
 }
 
 interface SelectModelProps {
@@ -43,6 +53,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
   version,
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
@@ -61,7 +72,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
   ] = useState(false);
   const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
-  const [showERDiagram, setShowERDiagram] = useState(false); // ER图显示状态
 
   // 添加模型
   const addEntity = async (item: any) => {
@@ -221,15 +231,15 @@ const SelectModel: React.FC<SelectModelProps> = ({
   };
 
   // 转换modelList为Tree.jsx需要的数据结构
-  function convertToTreeData(list) {
-    return list.map(group => ({
-      type: 'folder',
+  function convertToTreeData(list: ModelTree[]): TreeItem[] {
+    return list.map((group: ModelTree) => ({
+      type: 'folder' as const,
       filename: group.name,
-      path: group.key || group.name,
-      children: (group.children || []).map(item => ({
-        type: 'file',
+      path: (group as any).key || group.name,
+      children: (group.children || []).map((item: any) => ({
+        type: 'file' as const,
         filename: item.name,
-        path: (group.key || group.name) + '/' + item.name,
+        path: ((group as any).key || group.name) + '/' + item.name,
         data: item.data,
         modelType: item.data?.type, // 新增字段，标记模型类型 ENTITY/ENUM/NATIVE_QUERY
       })),
@@ -238,20 +248,98 @@ const SelectModel: React.FC<SelectModelProps> = ({
 
   const treeData = useMemo(() => ({ children: convertToTreeData(filteredModelList) }), [filteredModelList]);
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    display: 'flex',
+    flexDirection: 'column' as const,
+    height: '100%',
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: `1px solid ${token.colorBorder}`,
+  };
+
+  const headerStyle = {
+    padding: 0,
+    marginBottom: token.marginXS,
+    flexShrink: 0,
+  };
+
+  const selectRowStyle = {
+    display: 'flex',
+    gap: token.marginXS,
+    alignItems: 'center',
+    marginBottom: token.marginXS,
+  };
+
+  const searchRowStyle = {
+    display: 'flex',
+    gap: token.marginXS,
+    alignItems: 'center',
+    width: '100%',
+  };
+
+  const treeContainerStyle = {
+    flex: 1,
+    minHeight: 0,
+    overflow: 'hidden',
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    padding: token.paddingXS,
+    border: `1px solid ${token.colorBorderSecondary}`,
+  };
+
+  const treeScrollStyle = {
+    height: '100%',
+    overflow: 'auto',
+  };
+
+  const selectStyle = {
+    width: "100%",
+    height: token.controlHeightSM,
+    fontSize: token.fontSizeSM,
+  };
+
+  const inputStyle = {
+    width: '100%',
+    height: token.controlHeightSM,
+    fontSize: token.fontSizeSM,
+  };
+
+  const buttonStyle = {
+    width: token.controlHeightSM,
+    height: token.controlHeightSM,
+    minWidth: token.controlHeightSM,
+    minHeight: token.controlHeightSM,
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const dropdownStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
   return (
-    <div className="flex flex-col h-full p-4 box-border bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
-      <div style={{padding: 0, marginBottom: 8, flexShrink: 0}}>
-        <div style={{display: 'flex', gap: 4, alignItems: 'center', marginBottom: 4}}>
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <div style={selectRowStyle}>
           <Select
             value={activeDs}
             onChange={onSelectDatasource}
-            style={{ width: "100%", height: 32 }}
+            style={selectStyle}
             size="small"
-            dropdownStyle={{ fontSize: 13 }}
+            dropdownStyle={dropdownStyle}
           >
             {dsList.map((item) => (
               <Select.Option key={item.name} value={item.name}>
-                <div style={{ display: "flex", alignItems: "center", fontSize: 13 }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: token.fontSizeSM
+                }}>
                   {item.name}
                 </div>
               </Select.Option>
@@ -260,7 +348,12 @@ const SelectModel: React.FC<SelectModelProps> = ({
               <Button
                 type="link"
                 icon={<EditOutlined />}
-                style={{ width: "100%", height: 32, padding: 0, fontSize: 13 }}
+                style={{
+                  width: "100%",
+                  height: token.controlHeightSM,
+                  padding: 0,
+                  fontSize: token.fontSizeSM
+                }}
                 onClick={() => navigate("/datasource")}
               >
                 {t("management")}
@@ -268,15 +361,22 @@ const SelectModel: React.FC<SelectModelProps> = ({
             </Select.Option>
           </Select>
         </div>
-        <div style={{display: 'flex', gap: 4, alignItems: 'center', width: '100%'}}>
+        <div style={searchRowStyle}>
           <Input
             placeholder={t("search_models")}
             value={filterText}
-            onChange={handleSearchChange} // 绑定搜索框变化事件
-            style={{ width: '100%', height: 32, fontSize: 13 }}
+            onChange={handleSearchChange}
+            style={inputStyle}
             allowClear
             size="small"
-            prefix={<SearchOutlined style={{color: '#bfbfbf', fontSize: 16}} />}
+            prefix={
+              <SearchOutlined
+                style={{
+                  color: token.colorTextSecondary,
+                  fontSize: token.fontSizeSM
+                }}
+              />
+            }
           />
           {editable && (
             <Dropdown
@@ -296,15 +396,20 @@ const SelectModel: React.FC<SelectModelProps> = ({
                 </Menu>
               }
             >
-              <Button icon={<PlusOutlined />} size="small" style={{width: 32, height: 32, minWidth: 32, minHeight: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}} />
+              <Button
+                icon={<PlusOutlined />}
+                size="small"
+                style={buttonStyle}
+              />
             </Dropdown>
           )}
         </div>
       </div>
-      {/* 树形组件区域，设置明确的高度限制和滚动 */}
-      <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#23232a] rounded-lg p-2 box-border transition-colors duration-300">
-        <div className={`h-full overflow-auto ${styles.antScrollbar}`}>
-          <Spin spinning={modelLoading}>
+
+      {/* 树形组件区域 */}
+      <div style={treeContainerStyle}>
+        <div style={treeScrollStyle} className={styles.antScrollbar}>
+          <Spin spinning={modelLoading} size="small">
             <Tree
               tree={treeData}
               selected={activeModel ? { path: (() => {
@@ -325,7 +430,14 @@ const SelectModel: React.FC<SelectModelProps> = ({
                       <Menu.Item key="delete" onClick={() => setDeleteDialogVisible(true)}>删除</Menu.Item>
                     </Menu>
                   } trigger={["click"]}>
-                    <MoreOutlined style={{ cursor: "pointer", marginRight: 8 }} onClick={e => e.stopPropagation()} />
+                    <MoreOutlined
+                      style={{
+                        cursor: "pointer",
+                        marginRight: token.marginXS,
+                        fontSize: token.fontSizeSM
+                      }}
+                      onClick={e => e.stopPropagation()}
+                    />
                   </Dropdown>
                 );
               }}
@@ -340,10 +452,12 @@ const SelectModel: React.FC<SelectModelProps> = ({
                 if (item.path === '__enum_group') return <IconEnumFolder key={`enumfolder${item.path}`} />;
                 return <IconFolder key={`folder${item.path}`} />;
               }}
+              compact={true}
             />
           </Spin>
         </div>
       </div>
+
       <Modal
         title={`${t("delete")} '${activeModel?.name}'?`}
         open={deleteDialogVisible}

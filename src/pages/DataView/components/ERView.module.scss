@@ -4,134 +4,32 @@
   background-color: transparent;
   display: flex;
   flex-direction: column;
+}
+
+.contentCard {
+  flex: 1;
+  height: 100%;
   
-  .toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px;
-    background: #fff;
-    border-bottom: 1px solid #f0f0f0;
-    min-height: 48px;
-    
-    .toolbarLeft {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      
-      .toolbarIcon {
-        font-size: 16px;
-        color: #1890ff;
-      }
-      
-      .toolbarTitle {
-        font-size: 14px;
-        font-weight: 500;
-        color: #262626;
-      }
-    }
-    
-    .toolbarRight {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      
-      .toolbarIcon {
-        font-size: 16px;
-        color: #666;
-        transition: color 0.2s ease;
-        
-        &:hover {
-          color: #1890ff;
-        }
-      }
-    }
-  }
-  
-  .card {
-    flex: 1;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    background: transparent;
-    
-    :global {
-      .ant-card-head {
-        display: none;
-      }
-      
-      .ant-card-body {
-        height: 100%;
-        padding: 0;
-        overflow: hidden;
-        background: transparent;
-      }
-    }
-  }
-  
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    min-height: 300px;
-    
-    p {
-      margin-top: 12px;
-      color: #666;
-      font-size: 13px;
-    }
-  }
-  
-  .headerText {
-    color: #666;
-  }
-  
-  // 夜间模式支持
   :global {
-    html.dark & {
-      background: #18181c !important;
-      color: #f5f5f5 !important;
-      
-      .toolbar {
-        background: #23232a !important;
-        border-bottom-color: #434343 !important;
-        
-        .toolbarLeft {
-          .toolbarIcon {
-            color: #36a3f7 !important;
-          }
-          
-          .toolbarTitle {
-            color: #f5f5f5 !important;
-          }
-        }
-        
-        .toolbarRight {
-          .toolbarIcon {
-            color: #d9d9d9 !important;
-            
-            &:hover {
-              color: #36a3f7 !important;
-            }
-          }
-        }
-      }
-      
-      .card {
-        background: #23232a !important;
-        color: #f5f5f5 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.32) !important;
-      }
-      
-      .loading p {
-        color: #d9d9d9;
-      }
-      
-      .header-text {
-        color: #d9d9d9 !important;
-      }
+    .ant-card-body {
+      height: calc(100% - 57px); // 减去Card header的高度
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
     }
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  
+  p {
+    margin-top: 12px;
+    font-size: 13px;
   }
 } 

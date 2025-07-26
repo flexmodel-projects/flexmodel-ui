@@ -1,58 +1,47 @@
 import React from "react";
-import {Tabs} from "antd";
 import {useTranslation} from "react-i18next";
 import DataModeling from "@/pages/DataModeling";
 import DataSource from "@/pages/DataSource";
-import ERView from "@/pages/DataView/components/ERView";
+import ERView from "./components/ERView";
 import {BranchesOutlined, ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
+import TabMenu, {TabMenuItem} from "@/components/common/TabMenu";
 import styles from "@/pages/DataView/index.module.scss";
-
-// 标签页切换的logic处理
-const onChange = (key: string) => {
-  console.log(key);
-};
 
 const DataView: React.FC = () => {
   const { t } = useTranslation();
-  // 标签页渲染内容
-  const tabContent = [
+
+  // 标签页配置
+  const tabItems: TabMenuItem[] = [
     {
       key: "modeling",
       label: t("data_modeling"),
       element: DataModeling,
       icon: <ContainerOutlined />,
+      path: "/data/modeling",
     },
     {
       key: "source",
       label: t("data_source"),
       element: DataSource,
       icon: <DatabaseOutlined />,
+      path: "/data/source",
     },
     {
       key: "er",
       label: t("er_view"),
       element: ERView,
       icon: <BranchesOutlined />,
+      path: "/data/er",
     },
   ];
 
   return (
-    <Tabs
+    <TabMenu
+      items={tabItems}
+      defaultActiveKey="modeling"
       className={styles.root}
       style={{ flex: 1 }}
-      onChange={onChange}
-      type="card"
-      size="small"
-      items={tabContent.map((content) => {
-        const { label, key, icon } = content;
-
-        return {
-          label,
-          key,
-          children: <content.element />,
-          icon,
-        };
-      })}
+      compact={true}
     />
   );
 };

@@ -1,16 +1,26 @@
-import {Layout} from "antd";
+import React from "react";
+import {Layout, theme} from "antd";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "../../routes.tsx";
 
-const PageLayout = () => {
+const PageLayout: React.FC = () => {
+  const { token } = theme.useToken();
+  
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar />
       <Layout>
         <Header />
         <Layout.Content className="overflow-x-auto">
-          <div className="p-[15px] flex h-[calc(100vh-64px)]">
+          <div 
+            style={{ 
+              padding: token.padding,
+              display: 'flex',
+              height: `calc(100vh - ${token.controlHeight * 1.5}px)`,
+              gap: token.marginSM
+            }}
+          >
             <RenderRoutes />
           </div>
         </Layout.Content>
@@ -19,4 +29,4 @@ const PageLayout = () => {
   );
 };
 
-export default PageLayout;
+export default React.memo(PageLayout);

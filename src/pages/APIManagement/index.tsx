@@ -1,8 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
-  Card,
-  Col,
   Dropdown,
   Flex,
   Form,
@@ -10,16 +8,14 @@ import {
   Menu,
   message,
   Modal,
-  Row,
   Select,
-  Space,
   Splitter,
   Switch,
   Tabs,
   TabsProps,
   theme as antdTheme,
 } from "antd";
-import {MoreOutlined, PlusOutlined, SaveOutlined} from "@ant-design/icons";
+import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../services/api-info.ts";
 import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
@@ -178,7 +174,6 @@ const ApiManagement: React.FC = () => {
 
   // 编辑 API
   const renameApi = async (name: string) => {
-    setEditNode("");
     if (renameTarget.id) {
       await updateApiName(renameTarget.id, name);
       await reqApiList();
@@ -285,8 +280,8 @@ const ApiManagement: React.FC = () => {
   };
 
   // 转换apiList为Tree.jsx需要的数据结构
-  function convertApiListToTreeData(list) {
-    return list.map(item => {
+  function convertApiListToTreeData(list: any[]) {
+    return list.map((item: any) => {
       if (item.type === 'FOLDER') {
         return {
           type: 'folder',
@@ -380,48 +375,68 @@ const ApiManagement: React.FC = () => {
 
   return (
     <div
-      className="api-management-wrapper min-h-screen bg-white text-black dark:bg-[#18181c] dark:text-[#f5f5f5]"
-      // style属性保留token变量，兼容Antd主题
+      className="api-management-wrapper h-full bg-white text-black dark:bg-[#18181c] dark:text-[#f5f5f5]"
       style={{
         background: token.colorBgContainer,
         color: token.colorText,
-        minHeight: '100vh',
-        padding: 16,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <div className="h-full flex flex-col">
-        <Row gutter={0} className="h-full">
-          <Splitter className="h-full">
-            <Splitter.Panel size="25%" collapsible className="bg-white dark:bg-[#23232a] pr-4">
-              <Space align="center">
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item onClick={() => showCreateApiDialog()}>
-                        {t("new_api")}
-                      </Menu.Item>
-                      <Menu.Item onClick={() => showCreateFolderDialog()}>
-                        {t("new_folder")}
-                      </Menu.Item>
-                      <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>
-                        {t("batch_new_api")}
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <Button icon={<PlusOutlined />} />
-                </Dropdown>
-                <Input
-                  placeholder={t("search_apis")}
-                  value={searchText}
-                  onChange={handleSearchChange}
-                  allowClear
-                />
-              </Space>
+      <Splitter className="h-full">
+        <Splitter.Panel
+          defaultSize="20%"
+          max="40%"
+          collapsible
+          style={{
+            height: '100%',
+            paddingRight: token.marginXS,
+            boxSizing: 'border-box'
+          }}
+        >
+          <div
+            className="bg-white dark:bg-[#23232a]"
+            style={{
+              height: '100%',
+              overflow: 'hidden',
+              borderRadius: token.borderRadius,
+              padding: token.paddingSM
+            }}
+          >
+            <div className="w-full mb-2 flex items-center gap-2">
+              <Input
+                size="small"
+                placeholder={t("search_apis")}
+                value={searchText}
+                onChange={handleSearchChange}
+                allowClear
+                prefix={<SearchOutlined />}
+                className="flex-1"
+              />
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => showCreateApiDialog()}>
+                      {t("new_api")}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => showCreateFolderDialog()}>
+                      {t("new_folder")}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>
+                      {t("batch_new_api")}
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button size="small" icon={<PlusOutlined />} />
+              </Dropdown>
+            </div>
+            <div className="flex-1 overflow-auto">
               <Tree
                 tree={{ children: convertApiListToTreeData(apiList) }}
                 selected={selectedNode ? { path: selectedNode.data.id } : { path: '' }}
-                onClickItem={item => {
+                onClickItem={(item: any) => {
                   setSelectedNode({
                     children: [],
                     data: item.data,
@@ -432,7 +447,7 @@ const ApiManagement: React.FC = () => {
                   });
                   setSelectedKeys([item.path]);
                 }}
-                renderMore={item => {
+                renderMore={(item: any) => {
                   // 仅文件和文件夹都显示更多按钮
                   return (
                     <Dropdown
@@ -457,7 +472,7 @@ const ApiManagement: React.FC = () => {
                     </Dropdown>
                   );
                 }}
-                renderIcon={(item, nodeType) => {
+                renderIcon={(item: any, nodeType: any) => {
                   if (nodeType === 'file') {
                     const method = item.data?.method;
                     if (method === 'GET') return <ApiMethodGet key={`get${item.path}`} />;
@@ -472,160 +487,181 @@ const ApiManagement: React.FC = () => {
                   return <IconFolder key={`folder${item.path}`} />;
                 }}
               />
-            </Splitter.Panel>
-            <Splitter.Panel className="flex pl-4">
-              <Card className="api-management-card flex-1 w-full bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
-                style={{ background: token.colorBgContainer, color: token.colorText }}>
-                {editForm?.type == "API" ? (
-                  <Row className="flex flex-col">
-                    <Col className="pb-[10px] h-[42px]">
-                      <Flex gap="small" justify="flex-start" align="center" wrap>
-                        <Input
-                          addonBefore={
-                            <Select
-                              value={editForm?.method}
-                              onChange={(value) =>
-                                setEditForm({ ...editForm, method: value })
-                              }
-                              options={methodOptions}
-                            />
-                          }
-                          prefix={<span>{config?.application['flexmodel.context-path']}</span>}
-                          className="w-[85%]"
-                          value={editForm?.path}
-                          onChange={(e) =>
-                            setEditForm({ ...editForm, path: e?.target?.value })
-                          }
-                        />
-                        <Button
-                          type="primary"
-                          onClick={handleSaveApi}
-                          icon={<SaveOutlined />}
-                        >
-                          {t("save")}
-                        </Button>
-                        <Switch
-                          value={editForm?.enabled}
-                          onChange={(val) => {
-                            setEditForm({ ...editForm, enabled: val });
-                            updateApiStatus(editForm.id, val).then(() => {
-                              message.success(val ? t("enabled") : t("closed"));
-                              reqApiList();
-                            });
-                          }}
-                        />
-                      </Flex>
-                    </Col>
-                    <Col className="flex-1">
-                      <Tabs
-                        size="small"
-                        defaultActiveKey="graphql"
-                        items={items}
-                        onChange={onChange}
-                      />
-                    </Col>
-                  </Row>
-                ) : (
-                  <div>
-                    <div>
-                      {t("folder_name")}: {editForm?.name}
-                    </div>
-                  </div>
-                )}
-              </Card>
-            </Splitter.Panel>
-          </Splitter>
-          {/* 删除确认弹窗 */}
-          <Modal
-            title={t('delete')}
-            open={deleteConfirmVisible}
-            onOk={handleDelete}
-            onCancel={() => setDeleteConfirmVisible(false)}
-            confirmLoading={deleteLoading}
-            okText={t('delete')}
-            okButtonProps={{ danger: true }}
-            cancelText={t('cancel')}
+            </div>
+          </div>
+        </Splitter.Panel>
+                 <Splitter.Panel
+           style={{
+             height: '100%',
+             paddingLeft: token.marginXS,
+             boxSizing: 'border-box'
+           }}
+         >
+           <div
+             className="bg-white dark:bg-[#23232a]"
+             style={{
+               height: '100%',
+               overflow: 'hidden',
+               borderRadius: token.borderRadius,
+               padding: token.paddingSM
+             }}
+           >
+             {editForm?.type == "API" ? (
+               <div className="flex flex-col h-full">
+                 <div className="mb-2">
+                   <Flex gap="small" justify="flex-start" align="center" wrap>
+                     <Input
+                       size="small"
+                       addonBefore={
+                         <Select
+                           size="small"
+                           value={editForm?.method}
+                           onChange={(value) =>
+                             setEditForm({ ...editForm, method: value })
+                           }
+                           options={methodOptions}
+                           style={{ minWidth: 80 }}
+                         />
+                       }
+                       prefix={<span style={{ fontSize: token.fontSizeSM }}>{config?.application['flexmodel.context-path']}</span>}
+                       className="flex-1"
+                       value={editForm?.path}
+                       onChange={(e) =>
+                         setEditForm({ ...editForm, path: e?.target?.value })
+                       }
+                     />
+                     <Button
+                       size="small"
+                       type="primary"
+                       onClick={handleSaveApi}
+                       icon={<SaveOutlined />}
+                     >
+                       {t("save")}
+                     </Button>
+                     <Switch
+                       size="small"
+                       value={editForm?.enabled}
+                       onChange={(val) => {
+                         setEditForm({ ...editForm, enabled: val });
+                         updateApiStatus(editForm.id, val).then(() => {
+                           message.success(val ? t("enabled") : t("closed"));
+                           reqApiList();
+                         });
+                       }}
+                     />
+                   </Flex>
+                 </div>
+                 <div className="flex-1 overflow-hidden">
+                   <Tabs
+                     size="small"
+                     defaultActiveKey="graphql"
+                     items={items}
+                     onChange={onChange}
+                     style={{ height: '100%' }}
+                     tabBarStyle={{ marginBottom: token.marginSM }}
+                   />
+                 </div>
+               </div>
+             ) : (
+               <div>
+                 <div>
+                   {t("folder_name")}: {editForm?.name}
+                 </div>
+               </div>
+             )}
+           </div>
+         </Splitter.Panel>
+      </Splitter>
+      {/* 删除确认弹窗 */}
+      <Modal
+        title={t('delete')}
+        open={deleteConfirmVisible}
+        onOk={handleDelete}
+        onCancel={() => setDeleteConfirmVisible(false)}
+        confirmLoading={deleteLoading}
+        okText={t('delete')}
+        okButtonProps={{ danger: true }}
+        cancelText={t('cancel')}
+      >
+        <span>{t('delete_dialog_text', { name: deleteTarget?.name || '' })}</span>
+      </Modal>
+      {/* 新增重命名弹窗 */}
+      <Modal
+        title={t('rename')}
+        open={renameDialogVisible}
+        onCancel={() => setRenameDialogVisible(false)}
+        onOk={async () => {
+          await renameApi(renameValue);
+          setRenameDialogVisible(false);
+        }}
+      >
+        <Input value={renameValue} onChange={e => setRenameValue(e.target.value)} />
+      </Modal>
+      {/* 新建接口弹窗 */}
+      <Modal
+        title={t('new_api')}
+        open={createApiDialogVisible}
+        onCancel={() => { setCreateApiDialogVisible(false); setCreateApiError(""); }}
+        onOk={handleCreateApiForm}
+        confirmLoading={createApiLoading}
+      >
+        <Form
+          form={createApiForm}
+          layout="vertical"
+          onFinish={handleCreateApiForm}
+          autoComplete="off"
+          size="small"
+        >
+          <Form.Item
+            label={t('name')}
+            name="name"
+            rules={[{ required: true, message: '名称不能为空' }]}
           >
-            <span>{t('delete_dialog_text', { name: deleteTarget?.name || '' })}</span>
-          </Modal>
-          {/* 新增重命名弹窗 */}
-          <Modal
-            title={t('rename')}
-            open={renameDialogVisible}
-            onCancel={() => setRenameDialogVisible(false)}
-            onOk={async () => {
-              await renameApi(renameValue);
-              setRenameDialogVisible(false);
-            }}
+            <Input placeholder="请输入接口名称" autoFocus />
+          </Form.Item>
+          <Form.Item
+            label={t('method')}
+            name="method"
+            initialValue="GET"
+            rules={[{ required: true, message: '请选择请求方法' }]}
           >
-            <Input value={renameValue} onChange={e => setRenameValue(e.target.value)} />
-          </Modal>
-          {/* 新建接口弹窗 */}
-          <Modal
-            title={t('new_api')}
-            open={createApiDialogVisible}
-            onCancel={() => { setCreateApiDialogVisible(false); setCreateApiError(""); }}
-            onOk={handleCreateApiForm}
-            confirmLoading={createApiLoading}
+            <Select options={methodOptions} style={{ width: 120 }} />
+          </Form.Item>
+          <Form.Item
+            label={t('path')}
+            name="path"
+            rules={[{ required: true, message: '接口地址不能为空' }]}
           >
-            <Form
-              form={createApiForm}
-              layout="vertical"
-              onFinish={handleCreateApiForm}
-              autoComplete="off"
-            >
-              <Form.Item
-                label={t('name')}
-                name="name"
-                rules={[{ required: true, message: '名称不能为空' }]}
-              >
-                <Input placeholder="请输入接口名称" autoFocus />
-              </Form.Item>
-              <Form.Item
-                label={t('method')}
-                name="method"
-                initialValue="GET"
-                rules={[{ required: true, message: '请选择请求方法' }]}
-              >
-                <Select options={methodOptions} style={{ width: 120 }} />
-              </Form.Item>
-              <Form.Item
-                label={t('path')}
-                name="path"
-                rules={[{ required: true, message: '接口地址不能为空' }]}
-              >
-                <Input placeholder="请输入接口地址" />
-              </Form.Item>
-              {createApiError && <div style={{ color: 'red', marginTop: 8 }}>{createApiError}</div>}
-            </Form>
-          </Modal>
-          {/* 新建文件夹弹窗 */}
-          <Modal
-            title={t("new_folder")}
-            open={createFolderDialogVisible}
-            onCancel={() => setCreateFolderDialogVisible(false)}
-            onOk={handleCreateFolder}
-            confirmLoading={createFolderLoading}
-          >
-            <Input
-              placeholder={t("folder_name")}
-              value={createFolderName}
-              onChange={e => setCreateFolderName(e.target.value)}
-              maxLength={32}
-            />
-            {createFolderError && <div style={{ color: 'red', marginTop: 8 }}>{createFolderError}</div>}
-          </Modal>
-        </Row>
-        <BatchCreate
-          onConfirm={(data: any) => {
-            console.log(data);
-            reqApiList();
-            setBatchCreateDrawerVisible(false);
-          }}
-          onCancel={() => setBatchCreateDrawerVisible(false)}
-          visible={batchCreateDialogDrawer}
+            <Input placeholder="请输入接口地址" />
+          </Form.Item>
+          {createApiError && <div style={{ color: 'red', marginTop: 8 }}>{createApiError}</div>}
+        </Form>
+      </Modal>
+      {/* 新建文件夹弹窗 */}
+      <Modal
+        title={t("new_folder")}
+        open={createFolderDialogVisible}
+        onCancel={() => setCreateFolderDialogVisible(false)}
+        onOk={handleCreateFolder}
+        confirmLoading={createFolderLoading}
+      >
+        <Input
+          placeholder={t("folder_name")}
+          value={createFolderName}
+          onChange={e => setCreateFolderName(e.target.value)}
+          maxLength={32}
         />
-      </div>
+        {createFolderError && <div style={{ color: 'red', marginTop: 8 }}>{createFolderError}</div>}
+      </Modal>
+      <BatchCreate
+        onConfirm={(data: any) => {
+          console.log(data);
+          reqApiList();
+          setBatchCreateDrawerVisible(false);
+        }}
+        onCancel={() => setBatchCreateDrawerVisible(false)}
+        visible={batchCreateDialogDrawer}
+      />
     </div>
   );
 };

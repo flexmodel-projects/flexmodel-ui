@@ -92,36 +92,53 @@ const ERView: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.toolbar}>
-        <div className={styles.toolbarLeft}>
-          <DatabaseOutlined className={styles.toolbarIcon} />
-          <span className={styles.toolbarTitle}>{t("er_view")}</span>
-        </div>
-        <div className={styles.toolbarRight}>
-          <Select
-            value={selectedDatasource}
-            onChange={handleDatasourceChange}
-            style={{ minWidth: 150 }}
-            placeholder={t("select_datasource")}
-            loading={datasources.length === 0}
-          >
-            {datasources.map(ds => (
-              <Select.Option key={ds.name} value={ds.name}>
-                {ds.name}
-              </Select.Option>
-            ))}
-          </Select>
-          <Tooltip title={t("refresh_models")}>
-            <ReloadOutlined
-              className={styles.toolbarIcon}
-              onClick={handleRefresh}
-              style={{ cursor: 'pointer' }}
-            />
-          </Tooltip>
-        </div>
-      </div>
-
-      <Card className={styles.card}>
+      <Card 
+        className={styles.contentCard}
+        title={
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            width: '100%'
+          }}>
+            {/* 左侧：标题区域 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <DatabaseOutlined style={{ fontSize: 16, color: '#1890ff' }} />
+              <span style={{ fontSize: 14, fontWeight: 500 }}>{t("er_view")}</span>
+            </div>
+            
+            {/* 右侧：操作区域 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Select
+                value={selectedDatasource}
+                onChange={handleDatasourceChange}
+                style={{ minWidth: 150 }}
+                placeholder={t("select_datasource")}
+                loading={datasources.length === 0}
+              >
+                {datasources.map(ds => (
+                  <Select.Option key={ds.name} value={ds.name}>
+                    {ds.name}
+                  </Select.Option>
+                ))}
+              </Select>
+              <Tooltip title={t("refresh_models")}>
+                <ReloadOutlined
+                  onClick={handleRefresh}
+                  style={{ 
+                    cursor: 'pointer',
+                    fontSize: 16,
+                    color: '#666',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
+                />
+              </Tooltip>
+            </div>
+          </div>
+        }
+      >
         {loading ? (
           <div className={styles.loading}>
             <Spin size="large" />

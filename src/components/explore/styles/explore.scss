@@ -230,10 +230,10 @@ $placeholder-border: #e4e4e4;
       display: block;
       position: absolute;
       z-index: 1000;
-      top: 6px;
+      top: 10px;
       left: 0;
-      height: 16px;
-      width: 16px;
+      height: 8px;
+      width: 8px;
     }
 
     outline: 1px dotted transparent;
@@ -465,6 +465,154 @@ pre.prism-code {
           outline: none;
         }
       }
+    }
+  }
+}
+
+// 紧凑模式样式
+.explorer-ul-compact {
+  &,
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-size: 12px;
+    line-height: 24px;
+  }
+  span {
+    display: block;
+  }
+  .file,
+  .folder {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    color: $light-color;
+    word-wrap: normal;
+    white-space: nowrap;
+    &:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .text {
+      position: relative;
+      padding-left: 36px;
+      margin: 0 4px;
+    }
+    .icon {
+      display: block;
+      position: absolute;
+      top: 2px;
+      left: 14px;
+      height: 16px;
+      width: 16px;
+    }
+    .icon-caret-down {
+      display: block;
+      position: absolute;
+      z-index: 1000;
+      top: 4px;
+      left: 0;
+      height: 12px;
+      width: 12px;
+    }
+    .icon-chevron-right, .icon-chevron-down {
+      display: block;
+      position: absolute;
+      z-index: 1000;
+      top: 4px;
+      left: 0;
+      height: 8px;
+      width: 8px;
+    }
+
+    outline: 1px dotted transparent;
+    &:focus {
+      outline: none;
+    }
+
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      &:hover {
+        background: transparent;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+    &.selected {
+      background: #e6f7ff;
+      color: #1677ff;
+      border-radius: 4px;
+      outline: none;
+    }
+  }
+
+  .folder-hide {
+    > ul {
+      display: none;
+    }
+    > .folder > .text > .icon-caret-down {
+      transform: rotate(-90deg);
+    }
+  }
+
+  $range: 8px;
+
+  .level-0 {
+    .text {
+      margin-left: 0 * $range + 4px;
+    }
+  }
+  .level-1 {
+    .text {
+      margin-left: 1 * $range + 4px;
+    }
+  }
+  .level-2 {
+    .text {
+      margin-left: 2 * $range + 4px;
+    }
+  }
+  .level-3 {
+    .text {
+      margin-left: 3 * $range + 4px;
+    }
+  }
+  .level-4 {
+    .text {
+      margin-left: 4 * $range + 4px;
+    }
+  }
+  .level-5 {
+    .text {
+      margin-left: 5 * $range + 4px;
+    }
+  }
+  .level-6 {
+    .text {
+      margin-left: 6 * $range + 4px;
+    }
+  }
+  .level-7 {
+    .text {
+      margin-left: 7 * $range + 4px;
+    }
+  }
+  .level-8 {
+    .text {
+      margin-left: 8 * $range + 4px;
+    }
+  }
+  .level-9 {
+    .text {
+      margin-left: 9 * $range + 4px;
+    }
+  }
+  .level-10 {
+    .text {
+      margin-left: 10 * $range + 4px;
     }
   }
 }

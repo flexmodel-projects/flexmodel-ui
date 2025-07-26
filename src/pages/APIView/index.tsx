@@ -1,45 +1,47 @@
 import React from "react";
-import {Tabs} from "antd";
 import {useTranslation} from "react-i18next";
 import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined,} from "@ant-design/icons";
 import APIDocument from "../APIDocument";
 import APILog from "../APILog";
 import APIManagement from "../APIManagement";
+import TabMenu, {TabMenuItem} from "@/components/common/TabMenu";
 import styles from "./index.module.scss";
 
 const ApiView: React.FC = () => {
   const { t } = useTranslation();
 
-  // 标签页渲染内容
-  const items = [
+  // 标签页配置
+  const tabItems: TabMenuItem[] = [
     {
       key: "management",
       label: t("api_management"),
-      children: <APIManagement />,
+      element: APIManagement,
       icon: <DeploymentUnitOutlined />,
+      path: "/api/management",
     },
     {
       key: "document",
       label: t("api_document"),
-      children: <APIDocument />,
+      element: APIDocument,
       icon: <FileTextOutlined />,
+      path: "/api/document",
     },
     {
       key: "log",
       label: t("api_log"),
-      children: <APILog />,
+      element: APILog,
       icon: <LineChartOutlined />,
+      path: "/api/log",
     },
   ];
 
   return (
-    <Tabs
+    <TabMenu
+      items={tabItems}
+      defaultActiveKey="management"
       className={styles.root}
       style={{ flex: 1 }}
-      type="card"
-      size="small"
-      defaultActiveKey="management"
-      items={items}
+      compact={true}
     />
   );
 };
