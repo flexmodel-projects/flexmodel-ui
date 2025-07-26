@@ -36,7 +36,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
   };
 
   return (
-    <>
+    <div className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300 p-4">
       <Form form={form} initialValues={model} layout="vertical">
         <Form.Item name="name" label={t("name")} rules={[{required: true}]}>
           <Input disabled={!!model}/>
@@ -113,7 +113,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
           </Space>
         </Form.Item>
       </Form>
-    </>
+    </div>
   );
 };
 

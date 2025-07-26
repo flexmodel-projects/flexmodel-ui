@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Card, Divider, notification, Row, Splitter} from "antd";
+import {Card, notification, Row, Splitter} from "antd";
 import SelectModel from "@/pages/DataModeling/components/SelectModel.tsx";
 import styles from "@/pages/DataModeling/index.module.scss";
 import EntityView from "@/pages/DataModeling/components/EntityView.tsx";
@@ -65,16 +65,15 @@ const ModelingPage: React.FC = () => {
 
   return (
     <Card className={`${styles.root} h-full`}>
-      <Row className="flex-1">
+      <Row className="flex-1" style={{height: '100%'}}>
         <Splitter>
-          <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-            <div className={styles.panelContainer}>
+          <Splitter.Panel defaultSize="20%" max="40%" collapsible style={{height: '100%', paddingRight: 4, boxSizing: 'border-box'}}>
+            <div className={styles.panelContainer} style={{height: '100%', overflow: 'hidden'}}>
               <SelectModel datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
-              <Divider/>
             </div>
           </Splitter.Panel>
-          <Splitter.Panel>
-            <div style={{padding: "20px"}}>
+          <Splitter.Panel style={{height: '100%', paddingLeft: 4, boxSizing: 'border-box'}}>
+            <div className={styles.panelContainer}>
               {renderModelView()}
             </div>
           </Splitter.Panel>

@@ -73,10 +73,10 @@ $placeholder-border: #e4e4e4;
         }
       }
       a {
-        outline: 1px solid transparent;
+        outline: none;
         height: 40px;
         &:focus {
-          outline: 1px dotted $light-outline;
+          outline: none;
         }
       }
       .placeholder-text {
@@ -226,10 +226,19 @@ $placeholder-border: #e4e4e4;
       height: 16px;
       width: 16px;
     }
+    .icon-chevron-right, .icon-chevron-down {
+      display: block;
+      position: absolute;
+      z-index: 1000;
+      top: 6px;
+      left: 0;
+      height: 16px;
+      width: 16px;
+    }
 
     outline: 1px dotted transparent;
     &:focus {
-      outline: 1px dotted $light-outline;
+      outline: none;
     }
 
     &.disabled {
@@ -239,12 +248,14 @@ $placeholder-border: #e4e4e4;
         background: transparent;
       }
       &:focus {
-        outline: 1px dotted $light-outline;
+        outline: none;
       }
     }
     &.selected {
-      background: rgba(0, 0, 0, 0.05);
-      font-weight: bold;
+      background: #e6f7ff;
+      color: #1677ff;
+      border-radius: 6px;
+      outline: none;
     }
   }
 
@@ -436,11 +447,13 @@ pre.prism-code {
         background: rgba(255, 255, 255, 0.06);
       }
       &.selected {
-        background: rgba(255, 255, 255, 0.10);
-        font-weight: bold;
+        background: #1677ff;
+        color: #fff;
+        border-radius: 6px;
+        outline: none;
       }
       &:focus {
-        outline: 1px dotted $dark-outline;
+        outline: none;
       }
       &.disabled {
         opacity: 0.4;
@@ -449,7 +462,7 @@ pre.prism-code {
           background: transparent;
         }
         &:focus {
-          outline: 1px dotted $dark-outline;
+          outline: none;
         }
       }
     }

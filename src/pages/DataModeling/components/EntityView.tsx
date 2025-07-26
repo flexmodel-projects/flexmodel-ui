@@ -25,7 +25,7 @@ const EntityView = ({ datasource, model }: Props) => {
   ];
 
   return (
-    <div style={{ paddingLeft: '20px' }}>
+    <div className="pl-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
       <Row>
         <Col span={12}>
           <div>

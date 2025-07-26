@@ -9,13 +9,14 @@ import {RootState} from "../../store/configStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {FileSearchOutlined, GlobalOutlined, MoonOutlined, QuestionCircleOutlined, SunOutlined} from "@ant-design/icons";
+import {applyDarkMode, getDarkModeFromStorage, setDarkModeToStorage} from "../../utils/darkMode.ts";
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { locale } = useSelector((state: RootState) => state.locale);
   const { i18n } = useTranslation();
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+  const [isDark, setIsDark] = useState(() => getDarkModeFromStorage());
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -26,12 +27,10 @@ const Header: React.FC = () => {
   }, []);
 
   const toggleDarkMode = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-    }
-    setIsDark(document.documentElement.classList.contains("dark"));
+    const newDarkMode = !isDark;
+    applyDarkMode(newDarkMode);
+    setDarkModeToStorage(newDarkMode);
+    setIsDark(newDarkMode);
   };
 
   const changeLocale = (localeValue: Locale) => {

@@ -16,5 +16,30 @@
         }
       }
     }
+    // 只在悬浮时显示更多按钮
+    .ant-menu-item .menu-more-btn {
+      display: none;
+    }
+    .ant-menu-item:hover .menu-more-btn {
+      display: inline-block !important;
+    }
+  }
+}
+
+.dark .root :global {
+  .ant-card-body {
+    background: #23232a;
+    color: #f5f5f5;
+  }
+  .ant-menu-item {
+    background: #23232a;
+    color: #f5f5f5;
+  }
+  .ant-menu-item-selected {
+    background: #18181c !important;
+    color: #f5f5f5 !important;
+  }
+  .ant-divider {
+    border-color: #23232a;
   }
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Divider, Dropdown, Form, Input, Menu, message, Modal, Space, Spin, Tree,} from "antd";
+import {Button, Card, Divider, Dropdown, Form, Input, Layout, Menu, message, Modal, Space, Spin} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
 import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
 import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
@@ -135,93 +135,97 @@ const DatasourceManagement: React.FC = () => {
   return (
     <>
       <Card className={[styles.root, "h-full"].join(" ")}>
-        <div className="flex flex-1 bg-white">
-          <div
-            className="w-1/5 pt-2.5 pr-2.5"
-            style={{
-              borderRight: "1px solid rgba(5, 5, 5, 0.06)",
-            }}
-          >
-            <div className="truncate">
-              <span className="text-base font-semibold">
-                {t("datasource_management")}
-              </span>
-            </div>
-            <Divider />
-            <Spin spinning={dsLoading}>
-              <Tree.DirectoryTree
-                showIcon={false}
-                treeData={dsList.map((ds) => ({
-                  ...ds,
-                  title: ds.name,
-                  key: ds.name,
-                }))}
-                selectedKeys={[activeDs.name]}
-                titleRender={(node) => (
-                  <div className="flex items-center">
-                    {<Icon component={DbsMap[node.config?.dbKind]} />}&nbsp;
-                    <span>{node.title}</span>
-                    <Dropdown
-                      overlay={
-                        <Menu>
-                          <Menu.Item
-                            className="text-red"
-                            icon={<DeleteOutlined />}
-                            disabled={node.type === 'SYSTEM'}
-                            onClick={() => {
-                              setDeleteVisible(true);
-                            }}
-                          >
-                            {t("delete")}
-                          </Menu.Item>
-                        </Menu>
-                      }
-                      trigger={["hover"]}
-                      placement="bottomRight"
-                    >
-                      <MoreOutlined className="ml-auto cursor-pointer" />
-                    </Dropdown>
-                  </div>
-                )}
-                onSelect={(_, { node }) => handleTreeClick(node)}
-              />
-            </Spin>
-            <Divider />
-            <Button
-              type="primary"
-              icon={<BlockOutlined />}
-              onClick={() => setDrawerVisible(true)}
-              className="w-full"
-              ghost
-            >
-              {t("connect_datasource")}
-            </Button>
-          </div>
-          <div className="px-2 py-5 w-4/5">
-            <div className="flex justify-between pb-[10px]">
-              <div>{activeDs.name}</div>
-              <div>
-                <Space>
-                  <Button onClick={handleImport}>{t("import")}</Button>
-                  <Button onClick={handleExport}>{t("export")}</Button>
-                  <Button onClick={handleTestConnection} loading={testLoading}>
-                    {t("test")}
-                  </Button>
-                  <Button
-                    type="primary"
-                    disabled={activeDs.type === 'SYSTEM'}
-                    onClick={() => setEditVisible(true)}
-                  >
-                    {t("edit")}
-                  </Button>
-                </Space>
+        <Layout style={{height: '70vh', background: 'transparent'}}>
+          <Layout.Sider width={240} style={{background: 'transparent', paddingRight: 8}}>
+              <div className="truncate" style={{marginBottom: 8}}>
+                <span className="text-base font-semibold">
+                  {t("datasource_management")}
+                </span>
               </div>
-            </div>
-            <div>
-              <DatabaseInfo datasource={activeDs} />
-            </div>
-          </div>
-        </div>
+              <Divider style={{margin: '8px 0'}} />
+              <Spin spinning={dsLoading}>
+                <Menu
+                  mode="inline"
+                  selectedKeys={[activeDs.name]}
+                >
+                  {dsList.map(ds => (
+                    <Menu.Item
+                      key={ds.name}
+                      icon={<Icon component={DbsMap[ds.config?.dbKind]} />}
+                      onClick={() => handleTreeClick(ds)}
+                      style={{ display: 'flex', alignItems: 'center', borderRadius: 8, marginBottom: 2, position: 'relative', paddingRight: 32 }}
+                    >
+                      <span style={{ flex: 1 }}>{ds.name}</span>
+                      <span
+                        style={{
+                          position: 'absolute',
+                          right: 8,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          display: 'none',
+                          zIndex: 2
+                        }}
+                        className="menu-more-btn"
+                      >
+                        <Dropdown
+                          overlay={
+                            <Menu>
+                              <Menu.Item
+                                className="text-red"
+                                icon={<DeleteOutlined />}
+                                disabled={ds.type === 'SYSTEM'}
+                                onClick={e => { e.domEvent.stopPropagation(); setDeleteVisible(true); }}
+                              >
+                                {t("delete")}
+                              </Menu.Item>
+                            </Menu>
+                          }
+                          trigger={["hover"]}
+                          placement="bottomRight"
+                        >
+                          <MoreOutlined className="cursor-pointer" onClick={e => e.stopPropagation()} />
+                        </Dropdown>
+                      </span>
+                    </Menu.Item>
+                  ))}
+                </Menu>
+              </Spin>
+              <Divider style={{margin: '8px 0'}} />
+              <Button
+                type="primary"
+                icon={<BlockOutlined />}
+                onClick={() => setDrawerVisible(true)}
+                style={{width: '100%'}}
+                ghost
+              >
+                {t("connect_datasource")}
+              </Button>
+          </Layout.Sider>
+          <Layout.Content style={{paddingLeft: 8, height: '100%'}}>
+              <div className="flex justify-between pb-[10px]">
+                <div>{activeDs.name}</div>
+                <div>
+                  <Space>
+                    <Button onClick={handleImport}>{t("import")}</Button>
+                    <Button onClick={handleExport}>{t("export")}</Button>
+                    <Button onClick={handleTestConnection} loading={testLoading}>
+                      {t("test")}
+                    </Button>
+                    <Button
+                      type="primary"
+                      disabled={activeDs.type === 'SYSTEM'}
+                      onClick={() => setEditVisible(true)}
+                    >
+                      {t("edit")}
+                    </Button>
+                  </Space>
+                </div>
+              </div>
+              <div>
+                <DatabaseInfo datasource={activeDs} />
+              </div>
+          </Layout.Content>
+        </Layout>
         <ConnectDatabaseDrawer
           visible={drawerVisible}
           onChange={(data) => {

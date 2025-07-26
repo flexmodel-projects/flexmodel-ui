@@ -32,10 +32,6 @@
   width: 100%;
 }
 
-:where(.css-dev-only-do-not-override-1x0dypw).ant-splitter .ant-splitter-panel {
-  padding-right: 24px;
-}
-
 .ant-tree-title div span:first-child {
   max-width: 130px;
 }

@@ -116,8 +116,9 @@ const ConnectDatabaseDrawer: React.FC<{
       placement="right"
       onClose={onClose}
       open={visible}
+      className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
     >
-      <div style={{paddingBottom: 20}}>
+      <div style={{paddingBottom: 20}} className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]">
         <Steps current={active} size="small">
           <Step title={t('connect_step_select_database')}/>
           <Step title={t('connect_step_connect_database')}/>

@@ -76,7 +76,7 @@ const IdPManagement: React.FC = () => {
     <>
       <Card style={{ flex: 1, width: "100%" }} className={styles.root}>
         <div
-          className="bg-white dark:bg-[#18181c]"
+          className="bg-white dark:bg-[#23232a]"
           style={{ display: "flex", flex: 1 }}
         >
           <IdPMenu
@@ -88,7 +88,7 @@ const IdPManagement: React.FC = () => {
             setDrawerVisible={setDrawerVisible}
             t={t}
           />
-          <div className="bg-white dark:bg-[#18181c]" style={{ width: "80%", padding: "8px 20px" }}>
+          <div className="bg-white dark:bg-[#23232a]" style={{ width: "80%", padding: "8px 20px" }}>
             {idPList.length > 0 && activeIdP ? (
               <Row>
                 <Col span={24}>

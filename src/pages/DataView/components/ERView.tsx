@@ -1,0 +1,146 @@
+import React, {useEffect, useState} from "react";
+import {Card, Empty, notification, Select, Spin, Tooltip} from "antd";
+import {useTranslation} from "react-i18next";
+import {getDatasourceList} from "@/services/datasource";
+import {getModelList} from "@/services/model";
+import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
+import type {DatasourceSchema} from "@/types/data-source";
+import type {Entity} from "@/types/data-modeling";
+import {DatabaseOutlined, ReloadOutlined} from "@ant-design/icons";
+import styles from "./ERView.module.scss";
+
+const ERView: React.FC = () => {
+  const { t } = useTranslation();
+  const [datasources, setDatasources] = useState<DatasourceSchema[]>([]);
+  const [selectedDatasource, setSelectedDatasource] = useState<string>("");
+  const [models, setModels] = useState<Entity[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // 获取数据源列表
+  useEffect(() => {
+    const fetchDatasources = async () => {
+      try {
+        const dsList = await getDatasourceList();
+        setDatasources(dsList);
+        if (dsList.length > 0) {
+          setSelectedDatasource(dsList[0].name);
+        }
+      } catch (error) {
+        console.error("获取数据源列表失败:", error);
+        notification.error({
+          message: "获取数据源列表失败",
+          description: "请检查网络连接或联系管理员"
+        });
+      }
+    };
+    fetchDatasources();
+  }, []);
+
+  // 获取模型列表
+  useEffect(() => {
+    if (!selectedDatasource) return;
+
+    const fetchModels = async () => {
+      setLoading(true);
+      try {
+        const modelList = await getModelList(selectedDatasource);
+        // 过滤出实体类型的模型
+        const entityModels = modelList.filter(model => model.type === "ENTITY") as Entity[];
+        setModels(entityModels);
+      } catch (error) {
+        console.error("获取模型列表失败:", error);
+        notification.error({
+          message: "获取模型列表失败",
+          description: "请检查数据源连接或联系管理员"
+        });
+        setModels([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModels();
+  }, [selectedDatasource]);
+
+  const handleDatasourceChange = (value: string) => {
+    setSelectedDatasource(value);
+  };
+
+  const handleRefresh = () => {
+    if (selectedDatasource) {
+      // 重新获取模型数据
+      const fetchModels = async () => {
+        setLoading(true);
+        try {
+          const modelList = await getModelList(selectedDatasource);
+          const entityModels = modelList.filter(model => model.type === "ENTITY") as Entity[];
+          setModels(entityModels);
+        } catch (error) {
+          console.error("获取模型列表失败:", error);
+          notification.error({
+            message: "获取模型列表失败",
+            description: "请检查数据源连接或联系管理员"
+          });
+          setModels([]);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchModels();
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.toolbar}>
+        <div className={styles.toolbarLeft}>
+          <DatabaseOutlined className={styles.toolbarIcon} />
+          <span className={styles.toolbarTitle}>{t("er_view")}</span>
+        </div>
+        <div className={styles.toolbarRight}>
+          <Select
+            value={selectedDatasource}
+            onChange={handleDatasourceChange}
+            style={{ minWidth: 150 }}
+            placeholder={t("select_datasource")}
+            loading={datasources.length === 0}
+          >
+            {datasources.map(ds => (
+              <Select.Option key={ds.name} value={ds.name}>
+                {ds.name}
+              </Select.Option>
+            ))}
+          </Select>
+          <Tooltip title={t("refresh_models")}>
+            <ReloadOutlined
+              className={styles.toolbarIcon}
+              onClick={handleRefresh}
+              style={{ cursor: 'pointer' }}
+            />
+          </Tooltip>
+        </div>
+      </div>
+
+      <Card className={styles.card}>
+        {loading ? (
+          <div className={styles.loading}>
+            <Spin size="large" />
+            <p>{t("loading_models")}</p>
+          </div>
+        ) : models.length > 0 ? (
+          <ERDiagram
+            datasource={selectedDatasource}
+            data={models}
+          />
+        ) : (
+          <Empty
+            description={t("no_model_data")}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        )}
+      </Card>
+    </div>
+  );
+};
+
+export default ERView;

@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./store/configStore.ts";
 import {useEffect, useState} from "react";
 import {fetchConfig} from "./actions/configAction.ts";
+import {initializeDarkMode} from "./utils/darkMode.ts";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const App = () => {
   }, [dispatch]);
 
   const {locale} = useSelector((state: RootState) => state.locale);
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+  const [isDark, setIsDark] = useState(() => initializeDarkMode());
   useEffect(() => {
     const observer = new MutationObserver(() => {
       setIsDark(document.documentElement.classList.contains("dark"));

@@ -59,6 +59,7 @@ const EditDatabaseModal: React.FC<EditDatabaseProps> = ({visible, datasource, on
       onCancel={handleCancel}
       onOk={handleConfirm}
       width={500}
+      className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
     >
       <Form
         form={form}

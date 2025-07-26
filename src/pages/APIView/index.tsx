@@ -1,11 +1,7 @@
 import React from "react";
-import { Tabs } from "antd";
-import { useTranslation } from "react-i18next";
-import {
-  DeploymentUnitOutlined,
-  FileTextOutlined,
-  LineChartOutlined,
-} from "@ant-design/icons";
+import {Tabs} from "antd";
+import {useTranslation} from "react-i18next";
+import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined,} from "@ant-design/icons";
 import APIDocument from "../APIDocument";
 import APILog from "../APILog";
 import APIManagement from "../APIManagement";
@@ -41,6 +37,7 @@ const ApiView: React.FC = () => {
       className={styles.root}
       style={{ flex: 1 }}
       type="card"
+      size="small"
       defaultActiveKey="management"
       items={items}
     />

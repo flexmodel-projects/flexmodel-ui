@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu, Spin} from "antd";
+import {Button, Divider, Dropdown, Menu, Spin, theme as antdTheme} from "antd";
 import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
 import type {IdentityProvider} from "@/types/identity-provider";
 
@@ -13,65 +13,83 @@ interface IdPMenuProps {
   t: (key: string) => string;
 }
 
-const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setActiveIdP, setDeleteVisible, setDrawerVisible, t }) => (
+const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setActiveIdP, setDeleteVisible, setDrawerVisible, t }) => {
+  const { token } = antdTheme.useToken();
+
+  return (
   <div
-    className="border-r border-[#f5f5f5] dark:border-[#23232a]"
-    style={{ width: "20%", padding: "10px 10px 0px 0px" }}
+    className="idp-menu-panel bg-white dark:bg-[#23232a]"
+    style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', padding: 8, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 200, maxWidth: 260 }}
   >
-    <div
-      style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-    >
-      <span style={{ fontWeight: 600, fontSize: "16px" }}>{t("idp_management")}</span>
+    <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginBottom: 8 }}>
+      <span style={{ fontWeight: 400, fontSize: "16px", fontFamily: token.fontFamily }}>{t("idp_management")}</span>
     </div>
-    <Divider />
+    <Divider style={{margin: '8px 0'}} />
     <Spin spinning={idPLoading}>
       <Menu
         mode="inline"
         selectedKeys={activeIdP ? [activeIdP.name] : []}
-        style={{ width: "100%" }}
+        className="idp-menu-list bg-white dark:bg-[#23232a]"
+        style={{ borderRadius: 8, flex: 1 }}
         onClick={({ key }) => {
           const found = idPList.find((item) => item.name === key);
           if (found) setActiveIdP(found);
         }}
       >
         {idPList.map((item) => (
-          <Menu.Item key={item.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>{item.name}</span>
+          <Menu.Item
+            key={item.name}
+            style={{ display: 'flex', alignItems: 'center', borderRadius: 8, marginBottom: 2, position: 'relative', paddingRight: 32 }}
+          >
+            <span style={{ flex: 1 }}>{item.name}</span>
             {item.type !== "system" && (
-              <Dropdown
-                trigger={["click"]}
-                placement="bottomRight"
-                menu={{
-                  items: [
-                    {
-                      key: "delete",
-                      label: <span style={{ color: "red" }}>Delete</span>,
-                      onClick: () => {
-                        setActiveIdP(item);
-                        setDeleteVisible(true);
-                      },
-                    },
-                  ],
+              <span
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  display: 'none',
+                  zIndex: 2
                 }}
+                className="menu-more-btn"
               >
-                <MoreOutlined style={{ cursor: "pointer" }} />
-              </Dropdown>
+                <Dropdown
+                  trigger={["click"]}
+                  placement="bottomRight"
+                  menu={{
+                    items: [
+                      {
+                        key: "delete",
+                        label: <span style={{ color: "red" }}>Delete</span>,
+                        onClick: () => {
+                          setActiveIdP(item);
+                          setDeleteVisible(true);
+                        },
+                      },
+                    ],
+                  }}
+                >
+                  <MoreOutlined style={{ cursor: "pointer" }} />
+                </Dropdown>
+              </span>
             )}
           </Menu.Item>
         ))}
       </Menu>
     </Spin>
-    <Divider />
+    <Divider style={{margin: '8px 0'}} />
     <Button
       type="primary"
       icon={<PlusOutlined />}
       onClick={() => setDrawerVisible(true)}
-      block
+      style={{width: '100%'}}
       ghost
     >
       {t("idp_new_provider")}
     </Button>
   </div>
-);
+  );
+};
 
 export default IdPMenu;

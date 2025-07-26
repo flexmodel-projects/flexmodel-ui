@@ -7,6 +7,7 @@ import {Entity, Field} from '@/types/data-modeling';
 import {register} from 'x6-html-shape';
 import createRender from 'x6-html-shape/dist/react';
 import ERNodeView from './ERNodeView';
+import {getDarkModeFromStorage} from '@/utils/darkMode';
 
 interface ERDiagramProps {
   data: Entity[];
@@ -20,7 +21,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   const [fullscreen, setFullscreen] = React.useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   // 新增：夜间模式监听
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+  const [isDark, setIsDark] = useState(() => getDarkModeFromStorage());
 
   // 放大缩小
   const handleZoom = (delta: number) => {

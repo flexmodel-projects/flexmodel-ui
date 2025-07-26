@@ -70,7 +70,7 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
 
   return (
     <Space
-      className="w-full"
+      className="w-full bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300 p-4"
       direction="vertical"
     >
       <>

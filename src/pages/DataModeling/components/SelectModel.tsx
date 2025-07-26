@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Button, Divider, Dropdown, Input, Menu, Modal, Select, Space, Spin, Tree,} from "antd";
-import {DeleteOutlined, EditOutlined, MoreOutlined, PlusOutlined, ReloadOutlined,} from "@ant-design/icons";
+import React, {useEffect, useMemo, useState} from "react";
+import {Button, Dropdown, Input, Menu, Modal, Select, Spin} from "antd";
+import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import {getDatasourceList} from "@/services/datasource.ts";
 import {createModel as reqCreateModel, dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +12,17 @@ import {RootState} from "@/store/configStore.ts";
 import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel.tsx";
 import CreateEnum from "@/pages/DataModeling/components/CreateEnum.tsx";
 import type {Model} from '@/types/data-modeling';
+import {
+  IconEntityFolder,
+  IconEnum,
+  IconEnumFolder,
+  IconFile,
+  IconFolder,
+  IconModel
+} from '@/components/explore/icons/Icons.jsx';
+import '@/components/explore/styles/explore.scss';
+import Tree from '@/components/explore/explore/Tree.jsx';
+import styles from "@/pages/DataModeling/index.module.scss";
 
 interface ModelTree {
   name: string;
@@ -38,10 +49,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [modelList, setModelList] = useState<ModelTree[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
-  const [selectKeys, setSelectKeys] = useState<any[]>([]);
   const [filteredModelList, setFilteredModelList] = useState<ModelTree[]>([]); // 增加状态来保存过滤后的数据
   const [activeModel, setActiveModel] = useState<any>(null);
-  const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
@@ -52,7 +61,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
   ] = useState(false);
   const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
-  const treeRef = useRef<any>(null);
+  const [showERDiagram, setShowERDiagram] = useState(false); // ER图显示状态
+
   // 添加模型
   const addEntity = async (item: any) => {
     await reqCreateModel(activeDs, item);
@@ -77,24 +87,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
     setFilteredModelList(groupData); // 初始化时未过滤
     setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
     const m = activeModel || groupData[0]?.children[0] || null;
-    setSelectKeys(activeModel?.name ? [activeModel.name] : [m.name]);
     setActiveModel(m);
     onSelect(activeDs, m);
-  };
-
-  // 处理模型选择
-  const handleItemChange = (item: any) => {
-    setActiveModel(item);
-    setSelectKeys([item?.key]);
-    console.log(item);
-    onSelect(activeDs, item?.data);
-  };
-
-  // 刷新数据源
-  const refreshDatasource = async () => {
-    setDsLoading(true);
-    await reqModelList();
-    setDsLoading(false);
   };
 
   // 删除模型
@@ -109,13 +103,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
   // 选择数据源
   const onSelectDatasource = (value: string) => {
     setActiveDs(value);
-  };
-
-  // 处理菜单点击
-  const handleMenuClick = (e: any) => {
-    if (e.key === "delete") {
-      setDeleteDialogVisible(true);
-    }
   };
 
   // 过滤树形结构数据
@@ -175,10 +162,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
     }
   }, [version]);
 
-  const onExpand = (expandedKeys: any) => {
-    setExpandedKeys(expandedKeys);
-  };
-
   /**
    * 按照 type 分组并生成特定结构
    * @param {Array} data - 输入的数据数组
@@ -237,109 +220,130 @@ const SelectModel: React.FC<SelectModelProps> = ({
     return order.map((type) => groups[type]).filter(Boolean);
   };
 
+  // 转换modelList为Tree.jsx需要的数据结构
+  function convertToTreeData(list) {
+    return list.map(group => ({
+      type: 'folder',
+      filename: group.name,
+      path: group.key || group.name,
+      children: (group.children || []).map(item => ({
+        type: 'file',
+        filename: item.name,
+        path: (group.key || group.name) + '/' + item.name,
+        data: item.data,
+        modelType: item.data?.type, // 新增字段，标记模型类型 ENTITY/ENUM/NATIVE_QUERY
+      })),
+    }));
+  }
+
+  const treeData = useMemo(() => ({ children: convertToTreeData(filteredModelList) }), [filteredModelList]);
+
   return (
-    <div>
-      <div className="flex">
-        <Select
-          value={activeDs}
-          onChange={onSelectDatasource}
-          style={{ width: "calc(100% - 50px)" }}
-        >
-          {dsList.map((item) => (
-            <Select.Option key={item.name} value={item.name}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {item.name}
-              </div>
-            </Select.Option>
-          ))}
-          <Select.Option value="manage" disabled>
-            <Button
-              type="link"
-              icon={<EditOutlined />}
-              style={{ width: "100%" }}
-              onClick={() => navigate("/datasource")}
-            >
-              {t("management")}
-            </Button>
-          </Select.Option>
-        </Select>
-        <Button
-          icon={<ReloadOutlined />}
-          onClick={refreshDatasource}
-          loading={dsLoading}
-          style={{ marginLeft: 8 }}
-        />
-      </div>
-      <Divider />
-      <Space>
-        {editable && (
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item onClick={() => setCreateDrawerVisible(true)}>
-                  {t("new_entity")}
-                </Menu.Item>
-                <Menu.Item onClick={() => setCreateEnumDrawerVisible(true)}>
-                  {t("new_enum")}
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => setCreateNativeQueryModelDrawerVisible(true)}
-                >
-                  {t("new_native_query")}
-                </Menu.Item>
-              </Menu>
-            }
+    <div className="flex flex-col h-full p-4 box-border bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
+      <div style={{padding: 0, marginBottom: 8, flexShrink: 0}}>
+        <div style={{display: 'flex', gap: 4, alignItems: 'center', marginBottom: 4}}>
+          <Select
+            value={activeDs}
+            onChange={onSelectDatasource}
+            style={{ width: "100%", height: 32 }}
+            size="small"
+            dropdownStyle={{ fontSize: 13 }}
           >
-            <Button icon={<PlusOutlined />} />
-          </Dropdown>
-        )}
-        <Input
-          placeholder={t("search_models")}
-          value={filterText}
-          onChange={handleSearchChange} // 绑定搜索框变化事件
-          style={{ width: "100%" }}
-          allowClear
-        />
-      </Space>
-      <Divider />
-      <Spin spinning={modelLoading}>
-        <Tree.DirectoryTree
-          ref={treeRef}
-          height={380}
-          treeData={filteredModelList} // 使用过滤后的数据
-          expandedKeys={expandedKeys}
-          onExpand={onExpand}
-          fieldNames={{ key: "key", title: "name", children: "children" }}
-          selectedKeys={selectKeys}
-          onSelect={(_, { node }) => handleItemChange(node)}
-          titleRender={(node: any) => (
-            <div className="flex items-center">
-              <Space>
-                <span title={node.name} className="truncate block w-[180px]">
-                  {node.name}
-                </span>
-              </Space>
-              {editable && node?.isLeaf && (
-                <Dropdown
-                  overlay={
-                    <Menu onClick={handleMenuClick}>
-                      <Menu.Item
-                        key="delete"
-                        style={{ color: "red" }}
-                        icon={<DeleteOutlined />}
-                      >
-                        {t("delete")}
-                      </Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <MoreOutlined style={{ cursor: "pointer" }} />
-                </Dropdown>
-              )}
-            </div>
+            {dsList.map((item) => (
+              <Select.Option key={item.name} value={item.name}>
+                <div style={{ display: "flex", alignItems: "center", fontSize: 13 }}>
+                  {item.name}
+                </div>
+              </Select.Option>
+            ))}
+            <Select.Option value="manage" disabled>
+              <Button
+                type="link"
+                icon={<EditOutlined />}
+                style={{ width: "100%", height: 32, padding: 0, fontSize: 13 }}
+                onClick={() => navigate("/datasource")}
+              >
+                {t("management")}
+              </Button>
+            </Select.Option>
+          </Select>
+        </div>
+        <div style={{display: 'flex', gap: 4, alignItems: 'center', width: '100%'}}>
+          <Input
+            placeholder={t("search_models")}
+            value={filterText}
+            onChange={handleSearchChange} // 绑定搜索框变化事件
+            style={{ width: '100%', height: 32, fontSize: 13 }}
+            allowClear
+            size="small"
+            prefix={<SearchOutlined style={{color: '#bfbfbf', fontSize: 16}} />}
+          />
+          {editable && (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={() => setCreateDrawerVisible(true)}>
+                    {t("new_entity")}
+                  </Menu.Item>
+                  <Menu.Item onClick={() => setCreateEnumDrawerVisible(true)}>
+                    {t("new_enum")}
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => setCreateNativeQueryModelDrawerVisible(true)}
+                  >
+                    {t("new_native_query")}
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button icon={<PlusOutlined />} size="small" style={{width: 32, height: 32, minWidth: 32, minHeight: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}} />
+            </Dropdown>
           )}
-        />
-      </Spin>
+        </div>
+      </div>
+      {/* 树形组件区域，设置明确的高度限制和滚动 */}
+      <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-[#23232a] rounded-lg p-2 box-border transition-colors duration-300">
+        <div className={`h-full overflow-auto ${styles.antScrollbar}`}>
+          <Spin spinning={modelLoading}>
+            <Tree
+              tree={treeData}
+              selected={activeModel ? { path: (() => {
+                // 查找当前选中项的分组
+                const group = filteredModelList.find(g => (g.children || []).some(c => c.name === activeModel.name));
+                if (group) return ((group as any).key || group.name) + '/' + activeModel.name;
+                return activeModel.name;
+              })() } : { path: '' }}
+              onClickItem={(item: any) => {
+                setActiveModel(item.data || item);
+                if (item.data) onSelect(activeDs, item.data);
+              }}
+              renderMore={(item: any) => {
+                if (item.type !== 'file') return null;
+                return (
+                  <Dropdown overlay={
+                    <Menu>
+                      <Menu.Item key="delete" onClick={() => setDeleteDialogVisible(true)}>删除</Menu.Item>
+                    </Menu>
+                  } trigger={["click"]}>
+                    <MoreOutlined style={{ cursor: "pointer", marginRight: 8 }} onClick={e => e.stopPropagation()} />
+                  </Dropdown>
+                );
+              }}
+              renderIcon={(item: any, nodeType: any) => {
+                if (nodeType === 'file') {
+                  if (item.modelType === 'ENTITY') return <IconModel key={`model${item.path}`} />;
+                  if (item.modelType === 'ENUM') return <IconEnum key={`enum${item.path}`} />;
+                  return <IconFile key={`file${item.path}`} />;
+                }
+                // 文件夹分组特殊icon
+                if (item.path === '__entity_group') return <IconEntityFolder key={`entityfolder${item.path}`} />;
+                if (item.path === '__enum_group') return <IconEnumFolder key={`enumfolder${item.path}`} />;
+                return <IconFolder key={`folder${item.path}`} />;
+              }}
+            />
+          </Spin>
+        </div>
+      </div>
       <Modal
         title={`${t("delete")} '${activeModel?.name}'?`}
         open={deleteDialogVisible}

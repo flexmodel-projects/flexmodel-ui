@@ -4,5 +4,35 @@
       height: 100%;
       display: flex;
     }
+    // 只在悬浮时显示更多按钮
+    .ant-menu-item .menu-more-btn {
+      display: none;
+    }
+    .ant-menu-item:hover .menu-more-btn {
+      display: inline-block !important;
+    }
+  }
+}
+
+// 身份源菜单面板夜间模式适配
+.idp-menu-panel {
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
+  border-radius: 12px;
+  // 暗色模式适配
+  :global(body.dark) & {
+    background: #23232a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.32);
+    border: 1px solid #23232a;
+  }
+}
+.idp-menu-list {
+  transition: background 0.2s;
+  background: #fff;
+  color: #222;
+  :global(body.dark) & {
+    background: #23232a !important;
+    color: #eee;
   }
 }

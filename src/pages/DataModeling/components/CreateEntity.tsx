@@ -160,6 +160,7 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
         }}
         open={drawerVisible}
         width="50%"
+        className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] transition-colors duration-300"
         footer={
           <div style={{textAlign: 'right'}}>
             <Button onClick={() => {

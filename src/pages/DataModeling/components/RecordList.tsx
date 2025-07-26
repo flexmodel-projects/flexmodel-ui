@@ -183,7 +183,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   });
 
   return model ? (
-    <div style={{padding: '20px'}}>
+    <div className="p-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
       <Row justify="space-between">
         <Col></Col>
         <Col>
@@ -206,7 +206,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         dataSource={records.list}
         pagination={false}
         rowKey={idField?.name}
-        style={{marginTop: 16}}
+        className="mt-4 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5]"
       />
 
       <Pagination
@@ -216,7 +216,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         total={records.total}
         showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
         onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
-        style={{marginTop: 16}}
+        className="mt-4"
       />
 
       <Modal

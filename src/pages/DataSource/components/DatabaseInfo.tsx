@@ -22,7 +22,8 @@ interface DatabaseInfoProps {
 const DatabaseInfo: React.FC<DatabaseInfoProps> = ({ datasource }) => {
   const { t } = useTranslation();
   return (
-    <Descriptions bordered column={1} items={[
+    <div className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]">
+      <Descriptions bordered column={1} items={[
       {
         key: 'Connection name',
         label: t('connection_name'),
@@ -66,6 +67,7 @@ const DatabaseInfo: React.FC<DatabaseInfoProps> = ({ datasource }) => {
         span: 1,
       }] : []),
     ]} />
+    </div>
   );
 };
 

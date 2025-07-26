@@ -1,9 +1,9 @@
-import { useRoutes } from "react-router-dom";
+import {useRoutes} from "react-router-dom";
 import IdentityProvider from "./pages/IdentityProvider";
 import Settings from "./pages/Settings";
 import Overview from "./pages/Overview";
 import DataView from "./pages/DataView";
-import ApiView from "./pages/ApiView";
+import ApiView from "./pages/APIView";
 
 export const routes = [
   {

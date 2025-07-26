@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Layout, Menu} from "antd";
+import {Layout, Menu, theme as antdTheme} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
   ApiOutlined,
@@ -17,6 +17,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { token } = antdTheme.useToken();
 
   const menuData = [
     {
@@ -83,9 +84,10 @@ const Sidebar: React.FC = () => {
           <span
             style={{
               marginLeft: 10,
-              fontWeight: 600,
+              fontWeight: 400,
               fontSize: 20,
               letterSpacing: 1,
+              fontFamily: token.fontFamily,
               opacity: collapsed ? 0 : 1,
               transform: collapsed ? 'translateX(-10px) scale(0.95)' : 'translateX(0) scale(1)',
               transition: 'opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1), max-width 0.3s cubic-bezier(0.4,0,0.2,1)',
@@ -95,6 +97,7 @@ const Sidebar: React.FC = () => {
               overflow: 'hidden',
               display: 'inline-block',
               verticalAlign: 'middle',
+              color: token.colorText,
             }}
           >
             Flexmodel

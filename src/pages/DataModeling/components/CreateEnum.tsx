@@ -24,6 +24,7 @@ const CreateEnum = ({datasource, onConfirm, onCancel, visible}: Props) => {
         width={"60%"}
         onClose={() => onCancel()}
         open={visible}
+        className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] transition-colors duration-300"
       >
         <EnumView datasource={datasource} onConfirm={onSubmit}/>
       </Drawer>

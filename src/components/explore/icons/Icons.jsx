@@ -329,3 +329,122 @@ export const IconHot = () => (
             fill="#FF0000" p-id="2098"></path>
 </svg>
 )
+
+export const IconModel = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='model'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-model'
+    width='18' height='18'
+  >
+    <rect x='3' y='5' width='18' height='14' rx='2' fill='#4F8CFF' />
+    <rect x='7' y='9' width='10' height='6' rx='1' fill='#fff' />
+    <rect x='9' y='11' width='6' height='2' rx='1' fill='#4F8CFF' />
+  </svg>
+)
+
+export const IconEnum = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='enum'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-enum'
+    width='18' height='18'
+  >
+    <circle cx='12' cy='12' r='9' fill='#FFB84F' />
+    <text x='12' y='16' textAnchor='middle' fontSize='10' fill='#fff' fontFamily='Arial' fontWeight='bold'>E</text>
+  </svg>
+)
+
+export const IconEntityFolder = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='entity-folder'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-entity-folder'
+    width='18' height='18'
+  >
+    {/* 文件夹主体 */}
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#36CFC9' />
+    {/* 文件夹盖子 */}
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#5EEAD4' />
+    {/* 叠加一条白色线条装饰 */}
+    <rect x='6' y='13' width='12' height='1.2' rx='0.6' fill='#fff' />
+  </svg>
+)
+
+export const IconEnumFolder = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='enum-folder'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-enum-folder'
+    width='18' height='18'
+  >
+    {/* 文件夹主体 */}
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
+    {/* 文件夹盖子 */}
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
+    {/* 叠加一个En字母 */}
+    <text x='12' y='16' textAnchor='middle' fontSize='9' fill='#fff' fontFamily='Arial' fontWeight='bold'>En</text>
+  </svg>
+)
+
+export const ApiMethodGet = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#52C41A" fontFamily="Arial" fontWeight="bold">GET</text>
+  </svg>
+)
+export const ApiMethodPost = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#1890FF" fontFamily="Arial" fontWeight="bold">POST</text>
+  </svg>
+)
+export const ApiMethodPut = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#FAAD14" fontFamily="Arial" fontWeight="bold">PUT</text>
+  </svg>
+)
+export const ApiMethodDelete = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#F5222D" fontFamily="Arial" fontWeight="bold">DEL</text>
+  </svg>
+)
+export const ApiMethodPatch = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+    <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#722ED1" fontFamily="Arial" fontWeight="bold">PAT</text>
+  </svg>
+)
+
+export const ApiFolder = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='api-folder'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-api-folder'
+    width='18' height='18'
+  >
+    {/* 文件夹主体，API专属色 */}
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#1890FF' />
+    {/* 文件夹盖子 */}
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#91D5FF' />
+    {/* API字母 */}
+    <text x='12' y='16' textAnchor='middle' fontSize='8' fill='#fff' fontFamily='Arial' fontWeight='bold'>API</text>
+  </svg>
+)

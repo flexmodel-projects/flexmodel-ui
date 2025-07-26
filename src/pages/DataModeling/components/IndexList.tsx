@@ -131,7 +131,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   ];
 
   return (
-    <div style={{padding: '20px'}}>
+    <div className="p-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
       <div>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <div></div>
@@ -151,6 +151,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
           dataSource={indexList}
           columns={columns}
           pagination={false}
+          className="w-full bg-white dark:bg-[#23232a] dark:text-[#f5f5f5]"
         />
       </div>
       <IndexForm

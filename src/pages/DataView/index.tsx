@@ -3,7 +3,8 @@ import {Tabs} from "antd";
 import {useTranslation} from "react-i18next";
 import DataModeling from "@/pages/DataModeling";
 import DataSource from "@/pages/DataSource";
-import {ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
+import ERView from "@/pages/DataView/components/ERView";
+import {BranchesOutlined, ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
 import styles from "@/pages/DataView/index.module.scss";
 
 // 标签页切换的logic处理
@@ -27,6 +28,12 @@ const DataView: React.FC = () => {
       element: DataSource,
       icon: <DatabaseOutlined />,
     },
+    {
+      key: "er",
+      label: t("er_view"),
+      element: ERView,
+      icon: <BranchesOutlined />,
+    },
   ];
 
   return (
@@ -35,6 +42,7 @@ const DataView: React.FC = () => {
       style={{ flex: 1 }}
       onChange={onChange}
       type="card"
+      size="small"
       items={tabContent.map((content) => {
         const { label, key, icon } = content;
 
