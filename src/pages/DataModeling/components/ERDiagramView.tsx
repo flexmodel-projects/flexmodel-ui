@@ -12,9 +12,10 @@ import {getDarkModeFromStorage} from '@/utils/darkMode';
 interface ERDiagramProps {
   data: Entity[];
   datasource: string;
+  layout?: 'grid' | 'relation';
 }
 
-const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
+const ERDiagram: React.FC<ERDiagramProps> = ({ data, layout: externalLayout = 'grid' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   // 新增：全屏状态
@@ -22,6 +23,11 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   // 新增：夜间模式监听
   const [isDark, setIsDark] = useState(() => getDarkModeFromStorage());
+  // 新增：布局模式状态 - 'relation'为关系布局，'grid'为网状布局
+  const isAutoLayout = externalLayout === 'relation';
+
+  // 新增：保存原始节点位置
+  const originalPositionsRef = useRef<{ [key: string]: { x: number; y: number } }>({});
 
   // 放大缩小
   const handleZoom = (delta: number) => {
@@ -43,6 +49,208 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       graphRef.current.resize(width, height);
       graphRef.current.centerContent();
     }
+  };
+
+  // 新增：自动布局算法
+  const handleAutoLayout = () => {
+    if (!graphRef.current || !data) return;
+
+    const entities = (data || []).filter(e => e.type === 'ENTITY');
+    if (entities.length === 0) return;
+
+    if (!isAutoLayout) {
+      // 恢复到网状布局
+      const nodes = graphRef.current.getNodes();
+      nodes.forEach(node => {
+        const entityName = node.id;
+        const originalPosition = originalPositionsRef.current[entityName];
+        if (originalPosition) {
+          node.position(originalPosition.x, originalPosition.y);
+        }
+      });
+      
+      // 重新生成边
+      const edges: any[] = [];
+      entities.forEach((entity) => {
+        if (entity.type === 'ENTITY') {
+          (entity.fields || []).forEach((field: Field) => {
+            if (field.type === 'Relation' && field.from && field.from !== entity.name) {
+              edges.push({
+                source: String(field.from),
+                target: String(entity.name),
+                label: field.name,
+                attrs: { 
+                  line: { 
+                    stroke: isDark ? '#36a3f7' : '#4096ff', 
+                    strokeWidth: 2, 
+                    strokeDasharray: '8,4',
+                    targetMarker: 'classic' 
+                  } 
+                },
+              });
+            }
+          });
+        }
+      });
+
+      // 清除现有边并添加新边
+      const existingEdges = graphRef.current.getEdges();
+      existingEdges.forEach(edge => edge.remove());
+      graphRef.current.addEdges(edges);
+
+      // 自动调整缩放和居中
+      setTimeout(() => {
+        graphRef.current?.zoomTo(0.6);
+        graphRef.current?.centerContent();
+      }, 100);
+      
+      return;
+    }
+
+    // 构建关系图
+    const adjacencyList: { [key: string]: string[] } = {};
+    const entityMap = new Map<string, Entity>();
+    
+    entities.forEach(entity => {
+      entityMap.set(entity.name, entity);
+      adjacencyList[entity.name] = [];
+    });
+
+    // 收集所有关系
+    entities.forEach(entity => {
+      (entity.fields || []).forEach((field: Field) => {
+        if (field.type === 'Relation' && field.from && field.from !== entity.name) {
+          if (adjacencyList[field.from]) {
+            adjacencyList[field.from].push(entity.name);
+          }
+          if (adjacencyList[entity.name]) {
+            adjacencyList[entity.name].push(field.from);
+          }
+        }
+      });
+    });
+
+    // 使用BFS进行分层布局
+    const visited = new Set<string>();
+    const levels: string[][] = [];
+    const queue: { entity: string; level: number }[] = [];
+    
+    // 找到入度最小的实体作为起始点
+    const inDegrees: { [key: string]: number } = {};
+    entities.forEach(entity => {
+      inDegrees[entity.name] = 0;
+    });
+    
+    entities.forEach(entity => {
+      (entity.fields || []).forEach((field: Field) => {
+        if (field.type === 'Relation' && field.from && field.from !== entity.name) {
+          inDegrees[entity.name]++;
+        }
+      });
+    });
+
+    // 找到入度为0的实体作为起始点
+    const startEntities = Object.keys(inDegrees).filter(key => inDegrees[key] === 0);
+    if (startEntities.length === 0) {
+      // 如果没有入度为0的实体，选择第一个实体
+      startEntities.push(entities[0].name);
+    }
+
+    // BFS分层
+    startEntities.forEach(startEntity => {
+      if (!visited.has(startEntity)) {
+        queue.push({ entity: startEntity, level: 0 });
+        visited.add(startEntity);
+        
+        while (queue.length > 0) {
+          const { entity, level } = queue.shift()!;
+          
+          if (!levels[level]) {
+            levels[level] = [];
+          }
+          levels[level].push(entity);
+          
+          // 添加相邻实体到下一层
+          (adjacencyList[entity] || []).forEach(neighbor => {
+            if (!visited.has(neighbor)) {
+              visited.add(neighbor);
+              queue.push({ entity: neighbor, level: level + 1 });
+            }
+          });
+        }
+      }
+    });
+
+    // 处理孤立的实体
+    entities.forEach(entity => {
+      if (!visited.has(entity.name)) {
+        if (!levels[0]) levels[0] = [];
+        levels[0].push(entity.name);
+      }
+    });
+
+    // 计算位置
+    const nodePositions: { [key: string]: { x: number; y: number } } = {};
+    const levelHeight = 300;
+    const nodeWidth = 320;
+    
+    levels.forEach((levelEntities, levelIndex) => {
+      const y = 80 + levelIndex * levelHeight;
+      const totalWidth = levelEntities.length * nodeWidth;
+      const startX = Math.max(80, (800 - totalWidth) / 2); // 假设容器宽度为800
+      
+      levelEntities.forEach((entityName, entityIndex) => {
+        nodePositions[entityName] = {
+          x: startX + entityIndex * nodeWidth,
+          y: y
+        };
+      });
+    });
+
+    // 更新节点位置
+    const nodes = graphRef.current.getNodes();
+    nodes.forEach(node => {
+      const entityName = node.id;
+      const position = nodePositions[entityName];
+      if (position) {
+        node.position(position.x, position.y);
+      }
+    });
+
+    // 重新生成边
+    const edges: any[] = [];
+    entities.forEach((entity) => {
+      if (entity.type === 'ENTITY') {
+        (entity.fields || []).forEach((field: Field) => {
+          if (field.type === 'Relation' && field.from && field.from !== entity.name) {
+            edges.push({
+              source: String(field.from),
+              target: String(entity.name),
+              label: field.name,
+              attrs: { 
+                line: { 
+                  stroke: isDark ? '#36a3f7' : '#4096ff', 
+                  strokeWidth: 2, 
+                  strokeDasharray: '8,4',
+                  targetMarker: 'classic' 
+                } 
+              },
+            });
+          }
+        });
+      }
+    });
+
+    // 清除现有边并添加新边
+    const existingEdges = graphRef.current.getEdges();
+    existingEdges.forEach(edge => edge.remove());
+    graphRef.current.addEdges(edges);
+
+    // 自动调整缩放和居中
+    setTimeout(() => {
+      graphRef.current?.zoomTo(0.6);
+      graphRef.current?.centerContent();
+    }, 100);
   };
 
   // 新增：全屏切换方法
@@ -84,6 +292,9 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     };
   }, [fullscreen]);
 
+  // 新增：刷新key状态
+  const [refreshKey, setRefreshKey] = useState(0);
+
   // 新增：监听全屏变化，自动同步状态
   React.useEffect(() => {
     const handleChange = () => {
@@ -93,6 +304,13 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         (document as any).msFullscreenElement
       );
       setFullscreen(isFull);
+      
+      // 退出全屏时，延迟刷新组件
+      if (!isFull) {
+        setTimeout(() => {
+          setRefreshKey(prev => prev + 1);
+        }, 100);
+      }
     };
     document.addEventListener('fullscreenchange', handleChange);
     document.addEventListener('webkitfullscreenchange', handleChange);
@@ -106,10 +324,17 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    // 清理之前的图形实例
     if (graphRef.current) {
-      graphRef.current.dispose();
+      try {
+        graphRef.current.dispose();
+      } catch (error) {
+        console.warn('清理图形实例时出错:', error);
+      }
       graphRef.current = null;
     }
+    
     // 注册React节点类型
     register({
       shape: 'er-react-node',
@@ -120,10 +345,15 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       width: 200,
       height: 60,
     });
+    
+    // 确保容器尺寸正确
+    const width = containerRef.current.clientWidth || 800;
+    const height = containerRef.current.clientHeight || 600;
+    
     const graph = new Graph({
       container: containerRef.current,
-      width: containerRef.current.clientWidth,
-      height: containerRef.current.clientHeight || 600,
+      width: width,
+      height: height,
       grid: {
         size: 16,
         visible: true,
@@ -138,15 +368,23 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     });
     graphRef.current = graph;
     // 生成节点
-    const nodes = (data || []).filter(e => e.type === 'ENTITY').map((entity, idx) => ({
-      id: String(entity.name),
-      x: 80 + (idx % 5) * 320, // 横向间距加大
-      y: 80 + Math.floor(idx / 5) * 300, // 纵向间距加大
-      width: 200,
-      height: 60 + (entity.fields?.length || 0) * 22,
-      shape: 'er-react-node',
-      data: { entity },
-    }));
+    const nodes = (data || []).filter(e => e.type === 'ENTITY').map((entity, idx) => {
+      const x = 80 + (idx % 5) * 320; // 横向间距加大
+      const y = 80 + Math.floor(idx / 5) * 300; // 纵向间距加大
+      
+      // 保存原始位置
+      originalPositionsRef.current[entity.name] = { x, y };
+      
+      return {
+        id: String(entity.name),
+        x: x,
+        y: y,
+        width: 200,
+        height: 60 + (entity.fields?.length || 0) * 22,
+        shape: 'er-react-node',
+        data: { entity },
+      };
+    });
     // 生成边
     const edges: any[] = [];
     (data || []).forEach((entity) => {
@@ -157,7 +395,14 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
               source: String(field.from),
               target: String(entity.name),
               label: field.name,
-              attrs: { line: { stroke: isDark ? '#36a3f7' : '#4096ff', strokeWidth: 2, targetMarker: 'classic' } },
+              attrs: { 
+                line: { 
+                  stroke: isDark ? '#36a3f7' : '#4096ff', 
+                  strokeWidth: 2, 
+                  strokeDasharray: '8,4',
+                  targetMarker: 'classic' 
+                } 
+              },
             });
           }
         });
@@ -168,8 +413,28 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     setTimeout(() => {
       graph.zoomTo(0.6); // 延迟再次设置缩放，确保渲染完成后生效
       graph.centerContent();
+      // 确保图形大小正确
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth;
+        const height = containerRef.current.clientHeight;
+        if (width > 0 && height > 0) {
+          graph.resize(width, height);
+        }
+      }
     }, 100);
-  }, [data, isDark]);
+    
+    // 清理函数
+    return () => {
+      if (graphRef.current) {
+        try {
+          graphRef.current.dispose();
+        } catch (error) {
+          console.warn('组件卸载时清理图形实例出错:', error);
+        }
+        graphRef.current = null;
+      }
+    };
+  }, [data, isDark, refreshKey]);
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -178,6 +443,13 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
+
+  // 监听外部布局状态变化
+  useEffect(() => {
+    if (graphRef.current && data) {
+      handleAutoLayout();
+    }
+  }, [externalLayout]);
 
   return (
     <Card
@@ -214,6 +486,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     >
       <div
         ref={containerRef}
+        key={refreshKey}
         style={{ width: fullscreen ? '100vw' : '100%', height: fullscreen ? '100vh' : '100%', overflow: 'hidden' }}
       />
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
@@ -230,6 +503,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
             title="缩小"
             style={{ borderRadius: 4 }}
           />
+
           <Button
             icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
             onClick={handleToggleFullscreen}

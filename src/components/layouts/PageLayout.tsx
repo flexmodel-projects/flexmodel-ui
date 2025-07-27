@@ -8,17 +8,18 @@ const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   
   return (
-    <Layout style={{ minHeight: "100vh", height: "100vh", overflow: "hidden" }}>
+    <Layout style={{ height: "100vh", overflow: "hidden" }}>
       <Sidebar />
-      <Layout style={{ height: "100vh", overflow: "hidden" }}>
+      <Layout style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <Header />
         <Layout.Content 
           className="overflow-hidden" 
           style={{ 
-            height: `calc(100vh - ${token.controlHeight * 1.5}px)`,
+            flex: 1,
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden"
+            overflow: "hidden",
+            minHeight: 0 // 重要：允许 flex 子元素收缩
           }}
         >
           <div 
@@ -26,7 +27,7 @@ const PageLayout: React.FC = () => {
               padding: token.padding,
               display: 'flex',
               flex: 1,
-              height: '100%',
+              minHeight: 0, // 重要：允许 flex 子元素收缩
               gap: token.marginSM,
               overflow: "hidden"
             }}

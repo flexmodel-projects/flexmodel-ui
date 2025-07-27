@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, Empty, notification, Select, Spin, Tooltip} from "antd";
+import {Card, Empty, notification, Segmented, Select, Spin, Tooltip} from "antd";
 import {useTranslation} from "react-i18next";
 import {getDatasourceList} from "@/services/datasource";
 import {getModelList} from "@/services/model";
@@ -15,6 +15,8 @@ const ERView: React.FC = () => {
   const [selectedDatasource, setSelectedDatasource] = useState<string>("");
   const [models, setModels] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(false);
+  const [layout, setLayout] = useState<'grid' | 'relation'>('grid');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // 获取数据源列表
   useEffect(() => {
@@ -34,6 +36,23 @@ const ERView: React.FC = () => {
       }
     };
     fetchDatasources();
+  }, []);
+
+  // 监听全屏退出，刷新组件
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        // 退出全屏时，延迟刷新组件
+        setTimeout(() => {
+          setRefreshKey(prev => prev + 1);
+        }, 100);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
   }, []);
 
   // 获取模型列表
@@ -92,12 +111,12 @@ const ERView: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Card 
+      <Card
         className={styles.contentCard}
         title={
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%'
           }}>
@@ -106,9 +125,17 @@ const ERView: React.FC = () => {
               <DatabaseOutlined style={{ fontSize: 16, color: '#1890ff' }} />
               <span style={{ fontSize: 14, fontWeight: 500 }}>{t("er_view")}</span>
             </div>
-            
+
             {/* 右侧：操作区域 */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Segmented
+                options={[
+                  { label: '网状', value: 'grid' },
+                  { label: '关系', value: 'relation' }
+                ]}
+                value={layout}
+                onChange={(value) => setLayout(value as 'grid' | 'relation')}
+              />
               <Select
                 value={selectedDatasource}
                 onChange={handleDatasourceChange}
@@ -122,10 +149,11 @@ const ERView: React.FC = () => {
                   </Select.Option>
                 ))}
               </Select>
+
               <Tooltip title={t("refresh_models")}>
                 <ReloadOutlined
                   onClick={handleRefresh}
-                  style={{ 
+                  style={{
                     cursor: 'pointer',
                     fontSize: 16,
                     color: '#666',
@@ -148,8 +176,10 @@ const ERView: React.FC = () => {
           </div>
         ) : models.length > 0 ? (
           <ERDiagram
+            key={refreshKey}
             datasource={selectedDatasource}
             data={models}
+            layout={layout}
           />
         ) : (
           <Empty

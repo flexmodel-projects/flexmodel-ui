@@ -31,7 +31,7 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
     <Layout
       className={`${className || ''}`}
       style={{
-        height: '100% !important',
+        height: '100%',
         background: token.colorBgContainer,
         display: 'flex',
         flexDirection: 'column',

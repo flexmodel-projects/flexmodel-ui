@@ -221,7 +221,7 @@ const LogViewer: React.FC = () => {
   return (
     <>
       <Card
-        bordered={false}
+        variant="borderless"
         className="h-full"
         styles={{ body: { height: "100%" } }}
       >
@@ -320,7 +320,7 @@ const LogViewer: React.FC = () => {
             <Table
               bordered={false}
               virtual
-              scroll={{ y: expand ? 270 : 325 }}
+              scroll={{ y: expand ? 320 : 365 }}
               columns={columns}
               dataSource={tableData?.list}
               rowKey="id"
