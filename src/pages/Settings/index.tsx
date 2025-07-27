@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Menu, message} from "antd";
+import {Card, Menu, message} from "antd";
 import About from "@/pages/Settings/components/About.tsx";
 import Base from "@/pages/Settings/components/Base.tsx";
 import Proxy from "@/pages/Settings/components/Proxy.tsx";
@@ -7,11 +7,12 @@ import {getSettings, saveSettings as reqSaveSettings} from "@/services/settings.
 import Security from "@/pages/Settings/components/Security.tsx";
 import {useTranslation} from "react-i18next";
 import type {Settings} from '@/types/settings';
+import Title from 'antd/es/typography/Title';
 
 type OnChangeHandler = (data: Partial<Settings>) => void;
 
 const Settings: React.FC = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   type SettingsStateKeys = 'base' | 'security' | 'proxy' | 'about';
 
   type SettingsState = {
@@ -28,18 +29,18 @@ const Settings: React.FC = () => {
   };
 
   const renderChildren = (onChange: OnChangeHandler) => {
-    const {selectKey} = initConfig;
+    const { selectKey } = initConfig;
     switch (selectKey) {
       case 'base':
-        return <Base settings={settings} onChange={onChange}/>;
+        return <Base settings={settings} onChange={onChange} />;
       case 'security':
-        return <Security settings={settings} onChange={onChange}/>;
+        return <Security settings={settings} onChange={onChange} />;
       case 'proxy':
-        return <Proxy settings={settings} onChange={onChange}/>;
+        return <Proxy settings={settings} onChange={onChange} />;
       /*case 'variables':
         return <Variables/>;*/
       case 'about':
-        return <About/>;
+        return <About />;
       default:
         return null;
     }
@@ -70,28 +71,29 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full h-full pt-4 pb-4 bg-white dark:bg-[#18181c]">
-      <div className="w-[224px] border-r border-[#f5f5f5] dark:border-[#23232a] bg-white dark:bg-[#23232a]">
-        <Menu
-          mode="inline"
-          selectedKeys={[initConfig.selectKey]}
-          onClick={({ key }) => {
-            setInitConfig({
-              ...initConfig,
-              selectKey: key as SettingsStateKeys,
-            });
-          }}
-          items={getMenu()}
-          className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
-        />
-      </div>
-      <div className="flex-1 px-10 py-2 bg-white dark:bg-[#18181c]">
-        <div className="mb-3 font-normal text-[20px] leading-7 text-[rgba(0,0,0,0.88)] dark:text-[#f5f5f5]">
-          {menuMap[initConfig.selectKey]}
+    <Card style={{ width: '100%', height: '100%' }}>
+      <div className="flex w-full h-full pt-4 pb-4">
+        <div className="w-[224px] h-full settings-menu-wrapper">
+          <Menu
+            mode="inline"
+            selectedKeys={[initConfig.selectKey]}
+            onClick={({ key }) => {
+              setInitConfig({
+                ...initConfig,
+                selectKey: key as SettingsStateKeys,
+              });
+            }}
+            items={getMenu()}
+          />
         </div>
-        {renderChildren(saveSettings)}
+        <div className="flex-1 px-10 py-2">
+          <Title level={3} className="description" style={{ color: 'var(--ant-color-text)' }}>
+            {menuMap[initConfig.selectKey]}
+          </Title>
+          {renderChildren(saveSettings)}
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 

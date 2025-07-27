@@ -140,8 +140,6 @@ const Header: React.FC = () => {
             >
               <Button size="small" type="default" icon={<GlobalOutlined />}>{currentLocaleText}</Button>
             </Dropdown>
-          </Space>
-          <Space size={token.marginSM}>
             <Tooltip title={t("api_document") as string}>
               <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
                 <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />

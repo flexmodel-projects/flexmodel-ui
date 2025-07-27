@@ -1,0 +1,189 @@
+.compactTabs {
+  // 整体容器背景
+  background: var(--ant-color-bg-container) !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid var(--ant-color-border) !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+
+  // 标签导航容器 - 只对当前组件内的tabs生效
+  .ant-tabs-nav {
+    margin-bottom: 4px !important;
+    padding: 0 !important;
+    background: var(--ant-color-bg-layout) !important;
+    border-radius: 6px !important;
+    padding: 4px !important;
+    border: 1px solid var(--ant-color-border) !important;
+    flex-shrink: 0 !important;
+  }
+
+  // 标签导航列表
+  .ant-tabs-nav-list {
+    gap: 4px !important;
+  }
+
+  // 单个标签项
+  .ant-tabs-tab {
+    padding: 6px 12px !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    height: 32px !important;
+    line-height: 20px !important;
+    min-height: 32px !important;
+    transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+  }
+
+  // 标签按钮
+  .ant-tabs-tab-btn {
+    font-size: 14px !important;
+    line-height: 20px !important;
+    font-weight: 500 !important;
+    color: var(--ant-color-text-secondary) !important;
+    transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  // 激活状态的标签
+  .ant-tabs-tab-active {
+    background: var(--ant-color-primary-bg) !important;
+    border-color: var(--ant-color-primary-border) !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+    
+    .ant-tabs-tab-btn {
+      color: var(--ant-color-primary) !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  // 悬停状态的标签
+  .ant-tabs-tab:hover {
+    background: var(--ant-color-fill-tertiary) !important;
+    border-color: var(--ant-color-border) !important;
+    
+    .ant-tabs-tab-btn {
+      color: var(--ant-color-text) !important;
+    }
+  }
+
+  // 标签图标
+  .ant-tabs-tab .anticon {
+    font-size: 14px !important;
+    margin-right: 0 !important;
+    vertical-align: -0.125em !important;
+    flex-shrink: 0 !important;
+  }
+
+  // 内容区域
+  .ant-tabs-content-holder {
+    padding-top: 0 !important;
+    background: var(--ant-color-bg-container) !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--ant-color-border) !important;
+    padding: 4px !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+  }
+
+  // ant-tabs-content 和 ant-tabs-content-top 样式覆盖 - 确保全屏高度
+  .ant-tabs-content {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .ant-tabs-content-top {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  // 标签页内容
+  .ant-tabs-tabpane {
+    padding: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  // 移除默认的底部边框
+  .ant-tabs-nav::before {
+    display: none !important;
+  }
+
+  // 紧凑模式下的额外样式
+  &.compact {
+    padding: 2px !important;
+
+    .ant-tabs-nav {
+      margin-bottom: 2px !important;
+      padding: 2px !important;
+    }
+
+    .ant-tabs-tab {
+      padding: 4px 10px !important;
+      height: 28px !important;
+      min-height: 28px !important;
+      font-size: 13px !important;
+      border-radius: 4px !important;
+    }
+
+    .ant-tabs-tab-btn {
+      font-size: 13px !important;
+      gap: 4px !important;
+    }
+
+    .ant-tabs-content-holder {
+      padding: 2px !important;
+    }
+
+    .ant-tabs-tab .anticon {
+      font-size: 13px !important;
+    }
+  }
+
+  // 暗色主题适配
+  :global([data-theme='dark']) & {
+    background: var(--ant-color-bg-container) !important;
+    border-color: var(--ant-color-border) !important;
+
+    .ant-tabs-nav {
+      background: var(--ant-color-bg-layout) !important;
+      border-color: var(--ant-color-border) !important;
+    }
+
+    .ant-tabs-tab {
+      border-color: var(--ant-color-border) !important;
+    }
+
+    .ant-tabs-tab-active {
+      background: var(--ant-color-primary-bg) !important;
+      border-color: var(--ant-color-primary) !important;
+    }
+
+    .ant-tabs-tab:hover {
+      background: var(--ant-color-fill-secondary) !important;
+      border-color: var(--ant-color-border) !important;
+    }
+
+    .ant-tabs-content-holder {
+      background: var(--ant-color-bg-container) !important;
+      border-color: var(--ant-color-border) !important;
+    }
+  }
+} 

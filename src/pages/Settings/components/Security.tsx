@@ -55,7 +55,7 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
   };
 
   return (
-    <div style={{width: 600, marginTop: 20}}>
+
       <Form form={form}
             initialValues={formData}
             layout="vertical"
@@ -87,8 +87,6 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
           <Button type="primary" onClick={submit}>{t('save')}</Button>
         </Form.Item>
       </Form>
-    </div>
-
   );
 };
 

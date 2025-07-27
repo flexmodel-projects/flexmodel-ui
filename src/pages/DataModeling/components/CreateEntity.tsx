@@ -1,190 +1,165 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Drawer, Form, Input, Popconfirm, Table, Tag} from 'antd';
-import {ColumnsType} from 'antd/es/table';
-import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
-import IndexForm from "./IndexForm.tsx";
-import {PlusOutlined} from "@ant-design/icons";
-import type {Entity} from "@/types/data-modeling";
-import {useTranslation} from "react-i18next";
+import React, {useState} from 'react';
+import {Button, Drawer, Form, Input, notification, Table, theme} from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
+import {createModel} from '../../../services/model.ts';
+import {useTranslation} from 'react-i18next';
+import FieldForm from './FieldForm.tsx';
+import IndexForm from './IndexForm.tsx';
+import {Entity, Field, Index} from '@/types/data-modeling';
+import {getCompactFormStyle} from '@/utils/theme';
 
-interface Props {
-  datasource: string;
-  onConfirm: (model: Entity) => void;
-  onCancel: () => void;
+interface CreateEntityProps {
   visible: boolean;
+  datasource: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
-const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel}) => {
+const CreateEntity: React.FC<CreateEntityProps> = ({
+  visible,
+  datasource,
+  onConfirm,
+  onCancel,
+}) => {
   const {t} = useTranslation();
-
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState<boolean>(false);
-  const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState<boolean>(false);
+  const { token } = theme.useToken();
   const [form] = Form.useForm();
-  const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
-  const [selectedIndexIndex, setSelectedIndexIndex] = useState<number>(-1);
-  const [fieldForm, setFieldForm] = useState<any>(FieldInitialValues['STRING']);
-  const [indexForm, setIndexForm] = useState<any>({});
-
-  useEffect(() => {
-    setDrawerVisible(visible);
-  }, [visible]);
-
   const [model, setModel] = useState<Entity>({
     name: '',
-    comment: '',
+    type: 'ENTITY',
     fields: [],
     indexes: [],
-    type: 'ENTITY'
+  });
+  const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState(false);
+  const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState(false);
+  const [fieldForm, setFieldForm] = useState<Field>({
+    name: '',
+    type: 'String',
+    concreteType: 'String',
+    unique: false,
+    nullable: true,
+    comment: '',
+    fieldName: '',
+    direction: 'ASC',
+  });
+  const [indexForm, setIndexForm] = useState<Index>({
+    name: '',
+    fields: [],
+    unique: false,
   });
 
   const handleAddField = () => {
-    setFieldForm(FieldInitialValues['STRING']);
-    setSelectedFieldIndex(-1);
+    setFieldForm({
+      name: '',
+      type: 'String',
+      concreteType: 'String',
+      unique: false,
+      nullable: true,
+      comment: '',
+      fieldName: '',
+      direction: 'ASC',
+    });
     setChangeFieldDialogVisible(true);
-  };
-
-  const handleEditField = (index: number) => {
-    setFieldForm(model.fields[index]);
-    setSelectedFieldIndex(index);
-    setChangeFieldDialogVisible(true);
-  };
-
-  const addOrEditField = (val: any) => {
-    const newFields = [...model.fields];
-    if (selectedFieldIndex === -1) {
-      newFields.push(val);
-    } else {
-      newFields[selectedFieldIndex] = val;
-    }
-    setModel({...model, fields: newFields});
-    setChangeFieldDialogVisible(false);
-  };
-
-  const handleDeleteField = (index: number) => {
-    const newFields = model.fields.filter((_, i) => i !== index);
-    setModel({...model, fields: newFields, type: 'ENTITY'});
   };
 
   const handleAddIndex = () => {
-    setIndexForm({});
-    setSelectedIndexIndex(-1);
+    setIndexForm({
+      name: '',
+      fields: [],
+      unique: false,
+    });
     setChangeIndexDialogVisible(true);
   };
 
-  const handleEditIndex = (index: number) => {
-    setIndexForm(model.indexes[index]);
-    setSelectedIndexIndex(index);
-    setChangeIndexDialogVisible(true);
-  };
-
-  const addOrEditIndex = (val: any) => {
-    const newIndexes = [...model.indexes];
-    if (selectedIndexIndex === -1) {
-      newIndexes.push(val);
+  const addOrEditField = (values: Field) => {
+    const updatedFields = [...model.fields];
+    const existingIndex = updatedFields.findIndex(f => f.name === values.name);
+    if (existingIndex >= 0) {
+      updatedFields[existingIndex] = values;
     } else {
-      newIndexes[selectedIndexIndex] = val;
+      updatedFields.push(values);
     }
-    setModel({...model, indexes: newIndexes});
+    setModel({...model, fields: updatedFields});
+    setChangeFieldDialogVisible(false);
+  };
+
+  const addOrEditIndex = (values: Index) => {
+    const updatedIndexes = [...model.indexes];
+    const existingIndex = updatedIndexes.findIndex(i => i.name === values.name);
+    if (existingIndex >= 0) {
+      updatedIndexes[existingIndex] = values;
+    } else {
+      updatedIndexes.push(values);
+    }
+    setModel({...model, indexes: updatedIndexes});
     setChangeIndexDialogVisible(false);
   };
 
-  const handleDeleteIndex = (index: number) => {
-    const newIndexes = model.indexes.filter((_, i) => i !== index);
-    setModel({...model, indexes: newIndexes, type: "ENTITY"});
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const entityData = {
+        ...values,
+        type: 'ENTITY',
+        fields: model.fields,
+        indexes: model.indexes,
+      };
+      await createModel(datasource, entityData);
+      notification.success({message: t('form_save_success')});
+      onConfirm();
+    } catch (error) {
+      console.error(error);
+      notification.error({message: t('form_save_failed')});
+    }
   };
 
-  const fieldColumns: ColumnsType<any> = [
+  const fieldColumns = [
     {title: t('name'), dataIndex: 'name', key: 'name'},
     {title: t('type'), dataIndex: 'type', key: 'type'},
-    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
-    {
-      title: t('nullable'),
-      dataIndex: 'nullable',
-      key: 'nullable',
-      render: (nullable: boolean) => (nullable ? 'Yes' : 'No')
-    },
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (value: boolean) => (value ? t('yes') : t('no'))},
+    {title: t('nullable'), dataIndex: 'nullable', key: 'nullable', render: (value: boolean) => (value ? t('yes') : t('no'))},
     {title: t('comment'), dataIndex: 'comment', key: 'comment'},
-    {
-      title: t('operations'),
-      key: 'operations',
-      render: (_, __, index) => (
-        <>
-          <Button type="link" onClick={() => handleEditField(index)}>{t('edit')}</Button>
-          <Popconfirm title="Are you sure to delete this?" onConfirm={() => handleDeleteField(index)}>
-            <Button type="link" danger style={{marginLeft: 8}}>{t('delete')}</Button>
-          </Popconfirm>
-        </>
-      )
-    }
   ];
 
-  const indexColumns: ColumnsType<any> = [
+  const indexColumns = [
     {title: t('name'), dataIndex: 'name', key: 'name'},
-    {
-      title: t('fields'),
-      key: 'fields',
-      render: (text) => (
-        <div className="flex gap-1">
-          {text?.fields?.map((item: any) => (
-            <Tag color="blue" key={item.fieldName}>
-              {item.fieldName} {item.direction}
-            </Tag>
-          ))}
-        </div>
-      )
-    },
-    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique) => unique ? 'Yes' : 'No'},
-    {
-      title: t('operations'),
-      key: 'operations',
-      render: (_, __, index) => (
-        <>
-          <Button type="link" size="small" onClick={() => handleEditIndex(index)}>{t('edit')}</Button>
-          <Popconfirm title={t('table_selection_delete_text')} onConfirm={() => handleDeleteIndex(index)}>
-            <Button type="link" size="small" danger style={{marginLeft: 8}}>{t('delete')}</Button>
-          </Popconfirm>
-        </>
-      )
-    }
+    {title: t('fields'), dataIndex: 'fields', key: 'fields', render: (fields: any[]) => fields.map(f => f.fieldName).join(', ')},
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (value: boolean) => (value ? t('yes') : t('no'))},
   ];
+
+  // 紧凑主题样式
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
+  const tableStyle = {
+    marginTop: token.marginSM,
+  };
 
   return (
     <>
       <Drawer
         title={t('new_entity')}
-        placement="right"
-        onClose={() => {
-          setDrawerVisible(false);
-          onCancel();
-        }}
-        open={drawerVisible}
-        width="50%"
-        className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] transition-colors duration-300"
+        open={visible}
+        onClose={onCancel}
+        width={800}
         footer={
           <div style={{textAlign: 'right'}}>
-            <Button onClick={() => {
-              setDrawerVisible(false);
-              onCancel();
-            }} style={{marginRight: 8}}>
+            <Button onClick={onCancel} style={{marginRight: 8}}>
               {t('cancel')}
             </Button>
-            <Button onClick={() => {
-              form.setFieldValue('fields', model.fields);
-              form.setFieldValue('indexes', model.indexes);
-              onConfirm(form.getFieldsValue(true));
-            }} type="primary">
-              {t('conform')}
+            <Button onClick={handleSubmit} type="primary">
+              {t('confirm')}
             </Button>
           </div>
         }
       >
-        <Form form={form} layout="vertical">
-          <Form.Item label={t('name')} name="name" rules={[{required: true, message: 'Please input the name!'}]}>
-            <Input/>
+        <Form form={form} layout="vertical" style={formStyle}>
+          <Form.Item name="name" label={t('name')} rules={[{required: true}]}>
+            <Input size="small"/>
           </Form.Item>
-          <Form.Item label={t('comment')} name="comment">
-            <Input/>
+          <Form.Item name="comment" label={t('comment')} rules={[{required: true}]}>
+            <Input size="small"/>
           </Form.Item>
           <Form.Item label={t('fields')}>
             <Table
@@ -193,8 +168,9 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
               dataSource={model.fields}
               pagination={false}
               rowKey={(record) => record.name}
+              style={tableStyle}
               footer={() => (
-                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddField} ghost>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddField} ghost size="small">
                   {t('new_field')}
                 </Button>
               )}
@@ -207,8 +183,9 @@ const CreateEntity: React.FC<Props> = ({visible, datasource, onConfirm, onCancel
               dataSource={model.indexes}
               pagination={false}
               rowKey={(record) => record.name}
+              style={tableStyle}
               footer={() => (
-                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost>
+                <Button type="primary" icon={<PlusOutlined/>} style={{width: '100%'}} onClick={handleAddIndex} ghost size="small">
                   {t('new_index')}
                 </Button>
               )}

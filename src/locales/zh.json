@@ -207,5 +207,6 @@
   "toggle_dark_mode": "切换夜间模式",
   "dark_mode": "夜间",
   "light_mode": "白天",
-  "code": "代码"
+  "code": "代码",
+  "confirm": "确认"
 }

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Modal, notification, Space, Table} from "antd";
+import {Button, Form, Input, Modal, notification, Space, Table, theme} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
 import {executeNativeQuery} from "../../../services/datasource.ts";
 import type {NativeQueryModel} from "@/types/data-modeling";
+import {getCompactCardStyle, getCompactFormStyle, getCompactTableStyle} from '@/utils/theme';
 
 interface NativeQueryViewProps {
   datasource: string;
@@ -13,6 +14,7 @@ interface NativeQueryViewProps {
 
 const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, onConfirm }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [form] = Form.useForm();
   const [paramsForm] = Form.useForm();
@@ -100,31 +102,69 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
     }
   };
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: ` ${token.colorBorder}`,
+  };
+
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
+  const spaceStyle = {
+    gap: token.marginXS,
+  };
+
+  const resultInfoStyle = {
+    fontSize: token.fontSizeSM,
+    color: token.colorTextSecondary,
+  };
+
+  const tableStyle = {
+    ...getCompactTableStyle(token),
+    marginTop: token.marginSM,
+  };
+
   return (
-    <div className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300 p-4">
-      <Form form={form} initialValues={model} layout="vertical">
+    <div style={containerStyle}>
+      <Form form={form} initialValues={model} layout="vertical" style={formStyle}>
         <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
-          <Input disabled={!!model} />
+          <Input disabled={!!model} size="small" />
         </Form.Item>
         <Form.Item name="statement" label={t("statement")} rules={[{ required: true }]}>
-          <TextArea rows={4} />
+          <TextArea rows={4} size="small" />
         </Form.Item>
         <Form.Item>
-          <Space align="end" style={{ float: "right" }}>
-            <div>
+          <Space align="end" style={{ float: "right", ...spaceStyle }}>
+            <div style={resultInfoStyle}>
               {t("time_taken")}: {execResult.time}ms; {t("total_results")}: {execResult.result.length}
             </div>
-            <Button type="default" onClick={handleNativeQueryExecute}>
+            <Button type="default" onClick={handleNativeQueryExecute} size="small">
               {t("execute")}
             </Button>
-            <Button type="primary" onClick={handleSave}>
+            <Button type="primary" onClick={handleSave} size="small">
               {t("save")}
             </Button>
           </Space>
         </Form.Item>
       </Form>
 
-      <Table size="small" columns={columns} dataSource={execResult.result} rowKey="id" />
+      <Table 
+        size="small" 
+        columns={columns} 
+        dataSource={execResult.result} 
+        rowKey="id" 
+        style={tableStyle}
+        pagination={{
+          size: 'small',
+          pageSize: 10,
+          showSizeChanger: false,
+        }}
+      />
 
       <Modal
         title={t("parameters")}
@@ -138,7 +178,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
         <Form form={paramsForm} layout="vertical">
           {params.map((param) => (
             <Form.Item key={param} name={param} label={param}>
-              <Input />
+              <Input size="small" />
             </Form.Item>
           ))}
         </Form>

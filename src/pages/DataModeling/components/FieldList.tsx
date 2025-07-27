@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, Tooltip} from 'antd';
+import {Button, notification, Popconfirm, Table, theme, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../services/model.ts';
 import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
 import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
+import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
 
 interface FieldListProps {
   datasource: string;
@@ -13,6 +14,7 @@ interface FieldListProps {
 
 const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
+  const { token } = theme.useToken();
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
@@ -58,7 +60,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       } else {
         const res = await modifyField(datasource, model?.name, values.name, typedField);
         const updatedFields = [...fieldList];
-        updatedFields[selectedFieldIndex] = res as unknown as Field;
+
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);
@@ -141,6 +143,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
             type="link"
             icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
+            size="small"
           >
             {t('edit')}
           </Button>
@@ -152,6 +155,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
               type="link"
               danger
               icon={<DeleteOutlined/>}
+              size="small"
             >
               {t('delete')}
             </Button>
@@ -161,26 +165,46 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
     },
   ];
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: ` ${token.colorBorder}`,
+  };
+
+  const headerStyle = {
+    ...getCompactButtonGroupStyle(token),
+    justifyContent: 'space-between',
+  };
+
+  const tableStyle = {
+    ...getCompactTableStyle(token),
+    marginTop: token.marginSM,
+  };
+
   return (
-    <div className="p-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
-      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+    <div style={containerStyle}>
+      <div style={headerStyle}>
         <div></div>
         <Button
           type="primary"
           icon={<PlusOutlined/>}
           onClick={handleNewField}
+          size="small"
         >
           {t('new_field')}
         </Button>
       </div>
-      <div style={{marginTop: 16}}>
+      <div style={{marginTop: token.marginSM}}>
         <Table
           size="small"
           rowKey="name"
           dataSource={fieldList}
           columns={columns}
           pagination={false}
-          className="w-full bg-white dark:bg-[#23232a] dark:text-[#f5f5f5]"
+          style={tableStyle}
         />
       </div>
       <FieldForm

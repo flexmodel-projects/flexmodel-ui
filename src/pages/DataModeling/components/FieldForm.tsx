@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {Form, Input, Modal, Select, Switch} from "antd";
-import {getModelList} from "../../../services/model.ts"; // 替换为你的 API 调用
+import {Form, Input, Modal, Select, Switch, theme} from "antd";
+import {getModelList} from "../../../services/model.ts";
 import {useTranslation} from "react-i18next";
-import FieldInput from "./FieldInput.tsx"; // 替换为你的组件
+import FieldInput from "./FieldInput.tsx";
 import {Field} from "@/types/data-modeling";
+import {getCompactFormStyle} from '@/utils/theme';
 
 interface FieldFormProps {
   visible: boolean;
@@ -124,6 +125,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [form] = Form.useForm();
   const [modelList, setModelList] = useState<any[]>([]);
   const [RelationModel, setRelationModel] = useState<any>();
@@ -136,43 +138,34 @@ const FieldForm: React.FC<FieldFormProps> = ({
     unique: false,
     nullable: false,
     comment: "",
-    multiple: false,
-    defaultValue: null,
-    from: "",
-    tmpType: "STRING",
+    defaultValue: undefined,
     length: 255,
+    precision: 20,
+    scale: 2,
+    multiple: false,
+    localField: null,
+    foreignField: null,
+    cascadeDelete: false,
+    from: "",
+    tmpType: "",
   };
 
   useEffect(() => {
     if (visible) {
       reqModelList();
-    } else {
-      form.resetFields();
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    if (currentValue) {
-      let tmpType = currentValue.type;
-      if (currentValue.type === "Relation") {
-        tmpType = `Relation:${currentValue.from}`;
-        setTmpType(`Relation:${currentValue.from}`);
-      } else if (currentValue.type === "Enum") {
-        tmpType = `Enum:${currentValue.from}`;
+      if (currentValue) {
+        form.setFieldsValue(currentValue);
+        setTmpType(currentValue.tmpType || currentValue.type);
       } else {
-        setTmpType(currentValue.type);
+        form.setFieldsValue(initialValues);
       }
-      form.setFieldsValue({
-        ...currentValue,
-        tmpType: tmpType,
-      });
     }
-  }, [currentValue]);
+  }, [visible, currentValue]);
 
   useEffect(() => {
-    if (tmpType.startsWith("Relation")) {
-      const RelationName = tmpType.replace("Relation:", "").replace("[]", "");
-      const relatedModel = modelList.find((m) => m.name === RelationName);
+    if (tmpType?.startsWith("Relation:")) {
+      const relatedModelName = tmpType.replace("Relation:", "");
+      const relatedModel = modelList.find((m) => m.name === relatedModelName);
       setRelationModel(relatedModel);
     } else {
       setRelationModel(null);
@@ -202,7 +195,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         from: value.replace("Enum:", ""),
         multiple: false,
         defaultValue: undefined, // 清空默认值
-      });
+      })
     } else {
       form.setFieldsValue({
         ...FieldInitialValues[value],
@@ -253,30 +246,38 @@ const FieldForm: React.FC<FieldFormProps> = ({
     }
   };
 
-  const handleCancel = () => {
-    onCancel();
+  // 紧凑主题样式
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
+  const inputStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const selectStyle = {
+    fontSize: token.fontSizeSM,
   };
 
   return (
     <Modal
+      title={t("field_form_title")}
       open={visible}
-      onCancel={handleCancel}
+      onCancel={onCancel}
       onOk={handleConfirm}
-      title={currentValue?.name ? t("edit_field") : t("new_field")}
+      width={600}
     >
       <Form
         form={form}
+        layout="vertical"
         onValuesChange={handleFormChange}
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-        layout="horizontal"
-        initialValues={initialValues}
+        style={formStyle}
       >
-        <Form.Item label={t("name")} name="name" rules={[{ required: true }]}>
-          <Input disabled={!!currentValue?.name} />
+        <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
+          <Input size="small" style={inputStyle} />
         </Form.Item>
-        <Form.Item label={t("comment")} name="comment">
-          <Input />
+        <Form.Item name="comment" label={t("comment")}>
+          <Input size="small" style={inputStyle} />
         </Form.Item>
         <Form.Item name="type" hidden>
           <Input />
@@ -289,7 +290,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
           name="tmpType"
           rules={[{ required: true }]}
         >
-          <Select value={tmpType} onChange={handleTypeChange}>
+          <Select value={tmpType} onChange={handleTypeChange} size="small" style={selectStyle}>
             <Select.OptGroup label={t("select_group_basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>
@@ -321,20 +322,19 @@ const FieldForm: React.FC<FieldFormProps> = ({
           </Select>
         </Form.Item>
 
-
         {form.getFieldValue("tmpType") === "String" && (
           <Form.Item label={t("length")} name="length">
-            <Input type="number" />
+            <Input type="number" size="small" style={inputStyle} />
           </Form.Item>
         )}
 
         {form.getFieldValue("tmpType") === "Decimal" && (
           <>
             <Form.Item label={t("precision")} name="precision">
-              <Input type="number" />
+              <Input type="number" size="small" style={inputStyle} />
             </Form.Item>
             <Form.Item label={t("scale")} name="scale">
-              <Input type="number" />
+              <Input type="number" size="small" style={inputStyle} />
             </Form.Item>
           </>
         )}
@@ -346,7 +346,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="localField"
               rules={[{ required: true }]}
             >
-              <Select>
+              <Select size="small" style={selectStyle}>
                 {model?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>
                     {field.name}
@@ -359,7 +359,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="foreignField"
               rules={[{ required: true }]}
             >
-              <Select>
+              <Select size="small" style={selectStyle}>
                 {RelationModel?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>
                     {field.name}
@@ -384,61 +384,20 @@ const FieldForm: React.FC<FieldFormProps> = ({
           </>
         )}
 
-        <Form.Item dependencies={["tmpType"]} noStyle>
-          {({ getFieldValue }) => {
-            const tmpType = getFieldValue("tmpType");
-
-            if (tmpType.startsWith("Enum")) {
-              return (
-                <Form.Item
-                  label={t("selection_multiple")}
-                  name="multiple"
-                  valuePropName="checked"
-                >
-                  <Switch />
-                </Form.Item>
-              );
-            }
-          }}
+        <Form.Item label={t("unique")} name="unique" valuePropName="checked">
+          <Switch />
         </Form.Item>
-
-        {!(
-          ["Relation"].includes(form.getFieldValue("tmpType")) ||
-          form.getFieldValue("tmpType")?.startsWith("Relation")
-        ) && (
-          <>
-            <Form.Item
-              label={t("default_value")}
-              name="defaultValue"
-              shouldUpdate={(prevValues: Field, curValues) =>
-                prevValues.defaultValue !== curValues.defaultValue
-              }
-            >
-              <FieldInput
-                fieldFn={() => form.getFieldsValue()}
-                modelList={modelList}
-                value={undefined}
-                onChange={function (val: any): void {
-                  console.log(val);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label={t("nullable")}
-              name="nullable"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label={t("unique")}
-              name="unique"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-          </>
-        )}
+        <Form.Item label={t("nullable")} name="nullable" valuePropName="checked">
+          <Switch />
+        </Form.Item>
+        <Form.Item label={t("default_value")} name="defaultValue">
+          <FieldInput
+            fieldFn={() => form.getFieldsValue()}
+            value={form.getFieldValue("defaultValue")}
+            onChange={(val) => form.setFieldsValue({ defaultValue: val })}
+            modelList={modelList}
+          />
+        </Form.Item>
       </Form>
     </Modal>
   );

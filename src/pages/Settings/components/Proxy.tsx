@@ -15,9 +15,9 @@ interface FormData {
   routes: { path: string, to: string }[];
 }
 
-const Proxy: React.FC<BaseProps> = ({settings, onChange}) => {
+const Proxy: React.FC<BaseProps> = ({ settings, onChange }) => {
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const { config } = useSelector((state: RootState) => state.config);
 
@@ -38,60 +38,56 @@ const Proxy: React.FC<BaseProps> = ({settings, onChange}) => {
 
   const submit = async () => {
     const values = await form.validateFields();
-    onChange({...settings, proxy: values})
+    onChange({ ...settings, proxy: values })
   };
 
   return (
-    <div style={{width: 800, marginTop: 20}}>
-      <Form form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            style={{maxWidth: 800}}
-            autoComplete="off"
-            onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
-      >
-        <Form.Item name="routesEnabled" label={t('settings_routes')}>
-          <Switch/>
-        </Form.Item>
-        {formData?.routesEnabled &&
-          <Form.List name="routes">
-            {(fields, {add, remove}) => (
-              <>
-                {fields.map(({key, name, ...restField}) => (
-                  <Space key={key} style={{display: 'flex', marginBottom: 8}} align="baseline">
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'path']}
-                      rules={[{required: true}]}
-                    >
-                      <Input placeholder="path， e.g. /hello/**" prefix={config?.application['flexmodel.context-path']}/>
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'to']}
-                      rules={[{required: true}]}
-                    >
-                      <Input placeholder="to, e.g. http://localhost:8080/hello"/>
-                    </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(name)}/>
-                  </Space>
-                ))}
-                <Form.Item>
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
-                    {t('settings_add_route')}
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-        }
-
-        <Form.Item>
-          <Button type="primary" onClick={submit}>{t('save')}</Button>
-        </Form.Item>
-      </Form>
-    </div>
-
+    <Form form={form}
+      layout="vertical"
+      onFinish={onFinish}
+      style={{ maxWidth: 800 }}
+      autoComplete="off"
+      onValuesChange={(changedValues) => setFormData((prev: any) => ({ ...prev, ...changedValues }))}
+    >
+      <Form.Item name="routesEnabled" label={t('settings_routes')}>
+        <Switch />
+      </Form.Item>
+      {formData?.routesEnabled &&
+        <Form.List name="routes">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'path']}
+                    rules={[{ required: true }]}
+                  >
+                    <Input placeholder="path， e.g. /hello/**" prefix={config?.application['flexmodel.context-path']} />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, 'to']}
+                    rules={[{ required: true }]}
+                  >
+                    <Input placeholder="to, e.g. http://localhost:8080/hello" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                  {t('settings_add_route')}
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+      }
+      <Form.Item>
+        <Button type="primary" onClick={submit}>{t('save')}</Button>
+      </Form.Item>
+    </Form>
   );
 };
 

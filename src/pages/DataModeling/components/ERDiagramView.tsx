@@ -182,7 +182,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   return (
     <Card
       ref={cardRef}
-      bodyStyle={{ padding: 0 }}
+      bodyStyle={{ padding: 0, height: '100%' }}
       style={fullscreen
         ? {
             width: '100vw',
@@ -203,7 +203,6 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         : {
             width: '100%',
             height: '100%',
-            minHeight: 600,
             position: 'relative',
             padding: 0,
             overflow: 'hidden',
@@ -215,7 +214,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     >
       <div
         ref={containerRef}
-        style={{ width: fullscreen ? '100vw' : '100%', height: fullscreen ? '100vh' : 600, overflow: 'hidden' }}
+        style={{ width: fullscreen ? '100vw' : '100%', height: fullscreen ? '100vh' : '100%', overflow: 'hidden' }}
       />
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
         <Space direction="horizontal">

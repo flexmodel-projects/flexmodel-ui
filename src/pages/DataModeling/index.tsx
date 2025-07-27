@@ -9,6 +9,7 @@ import {useTranslation} from "react-i18next";
 import EnumView from "@/pages/DataModeling/components/EnumView.tsx";
 import type {Enum} from '@/types/data-modeling.d.ts';
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView.tsx";
+import {getCompactPanelStyle, getCompactSplitterStyle} from '@/utils/theme';
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
@@ -60,65 +61,48 @@ const ModelingPage: React.FC = () => {
         // return <ModelGroupView datasource={activeDs} model={activeModel}/>;
         return <ERDiagram datasource={activeDs} data={activeModel?.children}/>;
       default:
-        return <div style={{padding: token.padding, color: "gray"}}>Please select a model to operate.</div>;
+        return <div style={{padding: token.paddingSM, color: token.colorTextSecondary, fontSize: token.fontSizeSM}}>Please select a model to operate.</div>;
     }
   };
 
+  const splitterStyle = {
+    ...getCompactSplitterStyle(token),
+  };
+
+  const leftPanelStyle = {
+    height: '100%',
+    paddingRight: token.marginXS,
+    boxSizing: 'border-box' as const,
+  };
+
+  const rightPanelStyle = {
+    height: '100%',
+    paddingLeft: token.marginXS,
+    boxSizing: 'border-box' as const,
+  };
+
+  const panelContainerStyle = {
+    ...getCompactPanelStyle(token),
+  };
+
   return (
-    <Card 
-      className={`${styles.root} h-full`}
-      style={{
-        borderRadius: token.borderRadius,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <Row 
-        className="flex-1" 
-        style={{
-          height: '100%',
-          gap: token.marginXS
-        }}
-      >
-        <Splitter>
-          <Splitter.Panel 
-            defaultSize="20%" 
-            max="40%" 
-            collapsible 
-            style={{
-              height: '100%', 
-              paddingRight: token.marginXS, 
-              boxSizing: 'border-box'
-            }}
+    <Card>
+      <Row className="flex-1">
+        <Splitter style={splitterStyle}>
+          <Splitter.Panel
+            defaultSize="20%"
+            max="40%"
+            collapsible
+            style={leftPanelStyle}
           >
-            <div 
-              className={styles.panelContainer} 
-              style={{
-                height: '100%', 
-                overflow: 'hidden',
-                borderRadius: token.borderRadius,
-                padding: token.paddingSM
-              }}
-            >
-              <SelectModel datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
-            </div>
+            <SelectModel datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
           </Splitter.Panel>
-          <Splitter.Panel 
-            style={{
-              height: '100%', 
-              paddingLeft: token.marginXS, 
-              boxSizing: 'border-box'
-            }}
+          <Splitter.Panel
+            style={rightPanelStyle}
           >
-            <div 
+            <div
               className={styles.panelContainer}
-              style={{
-                borderRadius: token.borderRadius,
-                padding: token.paddingSM,
-                height: '100%',
-                overflow: 'hidden'
-              }}
+              style={panelContainerStyle}
             >
               {renderModelView()}
             </div>

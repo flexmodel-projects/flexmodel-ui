@@ -23,7 +23,6 @@ import {
 import '@/components/explore/styles/explore.scss';
 import Tree from '@/components/explore/explore/Tree.jsx';
 import styles from "@/pages/DataModeling/index.module.scss";
-import {getCompactCardStyle} from '@/utils/theme';
 
 interface ModelTree {
   name: string;
@@ -248,23 +247,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
 
   const treeData = useMemo(() => ({ children: convertToTreeData(filteredModelList) }), [filteredModelList]);
 
-  // 紧凑主题样式
-  const containerStyle = {
-    ...getCompactCardStyle(token),
-    display: 'flex',
-    flexDirection: 'column' as const,
-    height: '100%',
-    padding: token.paddingSM,
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    border: `1px solid ${token.colorBorder}`,
-  };
-
-  const headerStyle = {
-    padding: 0,
-    marginBottom: token.marginXS,
-    flexShrink: 0,
-  };
 
   const selectRowStyle = {
     display: 'flex',
@@ -287,12 +269,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
     padding: token.paddingXS,
-    border: `1px solid ${token.colorBorderSecondary}`,
-  };
-
-  const treeScrollStyle = {
-    height: '100%',
-    overflow: 'auto',
   };
 
   const selectStyle = {
@@ -307,108 +283,89 @@ const SelectModel: React.FC<SelectModelProps> = ({
     fontSize: token.fontSizeSM,
   };
 
-  const buttonStyle = {
-    width: token.controlHeightSM,
-    height: token.controlHeightSM,
-    minWidth: token.controlHeightSM,
-    minHeight: token.controlHeightSM,
-    padding: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
-  const dropdownStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div style={selectRowStyle}>
-          <Select
-            value={activeDs}
-            onChange={onSelectDatasource}
-            style={selectStyle}
-            size="small"
-            dropdownStyle={dropdownStyle}
-          >
-            {dsList.map((item) => (
-              <Select.Option key={item.name} value={item.name}>
-                <div style={{
-                  display: "flex",
-                  alignItems: "center",
-                  fontSize: token.fontSizeSM
-                }}>
-                  {item.name}
-                </div>
-              </Select.Option>
-            ))}
-            <Select.Option value="manage" disabled>
-              <Button
-                type="link"
-                icon={<EditOutlined />}
-                style={{
-                  width: "100%",
-                  height: token.controlHeightSM,
-                  padding: 0,
-                  fontSize: token.fontSizeSM
-                }}
-                onClick={() => navigate("/datasource")}
-              >
-                {t("management")}
-              </Button>
+    <>
+      <div style={selectRowStyle}>
+        <Select
+          value={activeDs}
+          onChange={onSelectDatasource}
+          style={selectStyle}
+          size="small"
+        >
+          {dsList.map((item) => (
+            <Select.Option key={item.name} value={item.name}>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                fontSize: token.fontSizeSM
+              }}>
+                {item.name}
+              </div>
             </Select.Option>
-          </Select>
-        </div>
-        <div style={searchRowStyle}>
-          <Input
-            placeholder={t("search_models")}
-            value={filterText}
-            onChange={handleSearchChange}
-            style={inputStyle}
-            allowClear
-            size="small"
-            prefix={
-              <SearchOutlined
-                style={{
-                  color: token.colorTextSecondary,
-                  fontSize: token.fontSizeSM
-                }}
-              />
-            }
-          />
-          {editable && (
-            <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item onClick={() => setCreateDrawerVisible(true)}>
-                    {t("new_entity")}
-                  </Menu.Item>
-                  <Menu.Item onClick={() => setCreateEnumDrawerVisible(true)}>
-                    {t("new_enum")}
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() => setCreateNativeQueryModelDrawerVisible(true)}
-                  >
-                    {t("new_native_query")}
-                  </Menu.Item>
-                </Menu>
-              }
+          ))}
+          <Select.Option value="manage" disabled>
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              style={{
+                width: "100%",
+                height: token.controlHeightSM,
+                padding: 0,
+                fontSize: token.fontSizeSM
+              }}
+              onClick={() => navigate("/datasource")}
             >
-              <Button
-                icon={<PlusOutlined />}
-                size="small"
-                style={buttonStyle}
-              />
-            </Dropdown>
-          )}
-        </div>
+              {t("management")}
+            </Button>
+          </Select.Option>
+        </Select>
+      </div>
+      <div style={searchRowStyle}>
+        <Input
+          placeholder={t("search_models")}
+          value={filterText}
+          onChange={handleSearchChange}
+          style={inputStyle}
+          allowClear
+          size="small"
+          prefix={
+            <SearchOutlined
+              style={{
+                color: token.colorTextSecondary,
+                fontSize: token.fontSizeSM
+              }}
+            />
+          }
+        />
+        {editable && (
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item onClick={() => setCreateDrawerVisible(true)}>
+                  {t("new_entity")}
+                </Menu.Item>
+                <Menu.Item onClick={() => setCreateEnumDrawerVisible(true)}>
+                  {t("new_enum")}
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => setCreateNativeQueryModelDrawerVisible(true)}
+                >
+                  {t("new_native_query")}
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button
+              icon={<PlusOutlined />}
+              size="small"
+            />
+          </Dropdown>
+        )}
       </div>
 
       {/* 树形组件区域 */}
       <div style={treeContainerStyle}>
-        <div style={treeScrollStyle} className={styles.antScrollbar}>
+        <div className={styles.antScrollbar}>
           <Spin spinning={modelLoading} size="small">
             <Tree
               tree={treeData}
@@ -490,7 +447,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
         }}
         onCancel={() => setCreateEnumDrawerVisible(false)}
       />
-    </div>
+    </>
   );
 };
 

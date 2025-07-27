@@ -1,11 +1,11 @@
 import React from "react";
 import {useTranslation} from "react-i18next";
-import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined,} from "@ant-design/icons";
+import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined} from "@ant-design/icons";
 import APIDocument from "../APIDocument";
 import APILog from "../APILog";
 import APIManagement from "../APIManagement";
-import TabMenu, {TabMenuItem} from "@/components/common/TabMenu";
-import styles from "./index.module.scss";
+import TabPageContainer from "@/components/layouts/TabPageContainer";
+import {TabMenuItem} from "@/components/layouts/TabMenu";
 
 const ApiView: React.FC = () => {
   const { t } = useTranslation();
@@ -36,11 +36,10 @@ const ApiView: React.FC = () => {
   ];
 
   return (
-    <TabMenu
+    <TabPageContainer
       items={tabItems}
       defaultActiveKey="management"
-      className={styles.root}
-      style={{ flex: 1 }}
+      style={{ height: '100%' }}
       compact={true}
     />
   );

@@ -7,9 +7,9 @@ interface BaseProps {
   onChange: (val: any) => void;
 }
 
-const Base: React.FC<BaseProps> = ({settings, onChange}) => {
+const Base: React.FC<BaseProps> = ({ settings, onChange }) => {
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [form] = Form.useForm();
 
@@ -24,17 +24,14 @@ const Base: React.FC<BaseProps> = ({settings, onChange}) => {
   };
 
   return (
-    <div style={{width: 600, marginTop: 20}}>
-      <Form form={form} layout="vertical">
-        <Form.Item name="appName" label={t('settings_app_name')}>
-          <Input/>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" onClick={submit}>{t('save')}</Button>
-        </Form.Item>
-      </Form>
-    </div>
-
+    <Form form={form} layout="vertical">
+      <Form.Item name="appName" label={t('settings_app_name')}>
+        <Input />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" onClick={submit}>{t('save')}</Button>
+      </Form.Item>
+    </Form>
   );
 };
 

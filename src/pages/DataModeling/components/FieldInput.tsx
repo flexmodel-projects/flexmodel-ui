@@ -1,5 +1,5 @@
 import React from "react";
-import {DatePicker, Input, InputNumber, Select, Switch, TimePicker} from "antd";
+import {DatePicker, Input, InputNumber, Select, Switch, theme, TimePicker} from "antd";
 import dayjs from "dayjs";
 import {Field} from "@/types/data-modeling";
 
@@ -17,7 +17,17 @@ const FieldInput: React.FC<FieldInputProps> = ({
   onChange,
   modelList = [],
 }) => {
+  const { token } = theme.useToken();
   const field = fieldFn();
+
+  // 紧凑主题样式
+  const inputStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const selectStyle = {
+    fontSize: token.fontSizeSM,
+  };
 
   const renderInput = () => {
     switch (field.type) {
@@ -27,6 +37,8 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            size="small"
+            style={inputStyle}
           />
         );
       case "Float":
@@ -37,7 +49,8 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(val) => onChange(val)}
-            style={{ width: "100%" }}
+            style={{ width: "100%", ...inputStyle }}
+            size="small"
           />
         );
       case "Boolean":
@@ -51,6 +64,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
               onChange(date ? date.format("YYYY-MM-DD") : null)
             }
             style={{ width: "100%" }}
+            size="small"
           />
         );
       case "Time":
@@ -62,6 +76,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
               onChange(time ? time.format("HH:mm:ss") : null)
             }
             style={{ width: "100%" }}
+            size="small"
           />
         );
       case "DateTime":
@@ -74,6 +89,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
               onChange(date ? date.format("YYYY-MM-DD HH:mm:ss") : null)
             }
             style={{ width: "100%" }}
+            size="small"
           />
         );
       case "JSON":
@@ -82,6 +98,8 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            size="small"
+            style={inputStyle}
           />
         );
       case "Enum": {
@@ -91,19 +109,25 @@ const FieldInput: React.FC<FieldInputProps> = ({
             mode={field?.multiple ? "multiple" : undefined}
             style={{ width: "100%" }}
             placeholder={field.comment}
-            options={fromEnum.elements?.map((val: any) => ({
+            options={fromEnum?.elements?.map((val: any) => ({
               value: val,
               label: val,
             }))}
             value={field.defaultValue}
             defaultValue={field.defaultValue}
             onChange={(e) => onChange(e)}
+            size="small"
           />
         );
       }
       default:
         return (
-          <Input value={value} onChange={(e) => onChange(e.target.value)} />
+          <Input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            size="small"
+            style={inputStyle}
+          />
         );
     }
   };

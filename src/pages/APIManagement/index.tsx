@@ -17,7 +17,6 @@ import {
 } from "antd";
 import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../services/api-info.ts";
-import "./index.css";
 import GraphQL from "./components/GraphQL.tsx";
 import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
@@ -551,16 +550,21 @@ const ApiManagement: React.FC = () => {
                      />
                    </Flex>
                  </div>
-                 <div className="flex-1 overflow-hidden">
-                   <Tabs
-                     size="small"
-                     defaultActiveKey="graphql"
-                     items={items}
-                     onChange={onChange}
-                     style={{ height: '100%' }}
-                     tabBarStyle={{ marginBottom: token.marginSM }}
-                   />
-                 </div>
+                                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+                    <Tabs
+                      size="small"
+                      defaultActiveKey="graphql"
+                      items={items}
+                      onChange={onChange}
+                      style={{ 
+                        height: '100%', 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        minHeight: 0
+                      }}
+                      tabBarStyle={{ marginBottom: token.marginSM }}
+                    />
+                  </div>
                </div>
              ) : (
                <div>

@@ -32,7 +32,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   const explorer = explorerPlugin();
 
   return (
-    <div style={{ height: 540, flex: 1 }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
       <GraphiQL
         className="text-[12px] [&_h2]:text-[18px] [&_h3]:text-[17px] [&_h4]:text-[16px]"
         query={query}

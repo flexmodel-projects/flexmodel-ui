@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
+import {Button, Card, Col, Empty, message, Modal, Row, theme} from "antd";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/IdentityProvider/index.module.scss";
+import {getCompactCardStyle, getCompactPanelStyle} from '@/utils/theme';
 import type {IdentityProvider} from "@/types/identity-provider";
 import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
 import {
@@ -16,6 +17,7 @@ import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider.t
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [idPList, setIdPList] = useState<IdentityProvider[]>([]);
   const [activeIdP, setActiveIdP] = useState<IdentityProvider | null>(null);
   const [idPLoading, setIdPLoading] = useState<boolean>(false);
@@ -72,13 +74,25 @@ const IdPManagement: React.FC = () => {
     }
   };
 
+  // 紧凑主题样式
+  const cardStyle = {
+    ...getCompactCardStyle(token),
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column' as const,
+  };
+
+  const panelContainerStyle = {
+    ...getCompactPanelStyle(token),
+  };
+
   return (
     <>
-      <Card style={{ flex: 1, width: "100%" }} className={styles.root}>
-        <div
-          className="bg-white dark:bg-[#23232a]"
-          style={{ display: "flex", flex: 1 }}
-        >
+      <Card 
+        className={`${styles.root} h-full w-full`}
+        style={cardStyle}
+      >
+        <div className={styles.container}>
           <IdPMenu
             idPList={idPList}
             activeIdP={activeIdP}
@@ -88,28 +102,26 @@ const IdPManagement: React.FC = () => {
             setDrawerVisible={setDrawerVisible}
             t={t}
           />
-          <div className="bg-white dark:bg-[#23232a]" style={{ width: "80%", padding: "8px 20px" }}>
+          <div className={`${styles.content} ${styles.panelContainer}`} style={panelContainerStyle}>
             {idPList.length > 0 && activeIdP ? (
               <Row>
                 <Col span={24}>
-                  <Row justify="space-between">
-                    <Col>{activeIdP.name}</Col>
-                    <Col>
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          console.log("activeIdP", activeIdP);
-                          setEditForm(activeIdP);
-                          setEditVisible(true);
-                        }}
-                      >
-                        {t("edit")}
-                      </Button>
-                    </Col>
-                  </Row>
+                  <div className={styles.header}>
+                    <div className={styles.title}>{activeIdP.name}</div>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        console.log("activeIdP", activeIdP);
+                        setEditForm(activeIdP);
+                        setEditVisible(true);
+                      }}
+                    >
+                      {t("edit")}
+                    </Button>
+                  </div>
                 </Col>
                 <Col span={24}>
-                  <Card bordered={false} className="bg-white dark:bg-[#23232a]">
+                  <Card bordered={false} className={styles.infoCard}>
                     <IdPInfo data={{
                       name: activeIdP.name,
                       provider: activeIdP.provider

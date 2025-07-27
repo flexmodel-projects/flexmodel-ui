@@ -8,17 +8,27 @@ const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", height: "100vh", overflow: "hidden" }}>
       <Sidebar />
-      <Layout>
+      <Layout style={{ height: "100vh", overflow: "hidden" }}>
         <Header />
-        <Layout.Content className="overflow-x-auto">
+        <Layout.Content 
+          className="overflow-hidden" 
+          style={{ 
+            height: `calc(100vh - ${token.controlHeight * 1.5}px)`,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden"
+          }}
+        >
           <div 
             style={{ 
               padding: token.padding,
               display: 'flex',
-              height: `calc(100vh - ${token.controlHeight * 1.5}px)`,
-              gap: token.marginSM
+              flex: 1,
+              height: '100%',
+              gap: token.marginSM,
+              overflow: "hidden"
             }}
           >
             <RenderRoutes />
@@ -29,4 +39,4 @@ const PageLayout: React.FC = () => {
   );
 };
 
-export default React.memo(PageLayout);
+export default PageLayout;

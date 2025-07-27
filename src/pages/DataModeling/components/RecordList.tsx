@@ -13,6 +13,7 @@ import {
   Row,
   Switch,
   Table,
+  theme,
   Tooltip
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
@@ -21,22 +22,24 @@ import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/service
 import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
+import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
+  const { token } = theme.useToken();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [records, setRecords] = useState<{list: MRecord[]; total: number}>({list: [], total: 0});
-  const [form] = Form.useForm();
   const [query, setQuery] = useState({current: 1, pageSize: 10});
+  const [form] = Form.useForm();
 
-  const idField = model?.fields?.find((f: Field) => f.type === 'id');
+  const fieldMap = model?.fields?.reduce((acc, field) => {
+    acc[field.name] = field;
+    return acc;
+  }, {} as Record<string, Field>) || {};
 
-  const fieldMap: Record<string, Field> = model.fields.reduce((p: Record<string, Field>, c: Field) => {
-    p[c.name] = c;
-    return p;
-  }, {} as Record<string, Field>);
+  const idField = model?.fields?.find(f => f.type === 'ID');
 
   useEffect(() => {
     if (model) fetchRecords();
@@ -84,45 +87,29 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       }
     }
     return formattedValues;
-  }
-
-  const formatValues = (changedValues: Record<string, any>) => {
-    const formattedValues: Record<string, any> = {};
-    for (const [key, value] of Object.entries(changedValues)) {
-      const field = fieldMap[key];
-      switch (field.type) {
-        case "Date":
-          formattedValues[key] = value?.format('YYYY-MM-DD');
-          break;
-        case "DateTime":
-          formattedValues[key] = value?.format('YYYY-MM-DDThh:mm');
-          break;
-        case "JSON":
-          formattedValues[key] = JSON.parse(value as string);
-          break;
-        default:
-          formattedValues[key] = value;
-      }
-    }
-    return formattedValues;
-  }
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      const formattedValues = formatFormFieldsValue(values);
+
       if (editMode) {
         if (!idField) {
           message.warning("Can't edit a record without ID!");
           return;
         }
-        await updateRecord(datasource, model.name, values[idField.name], formatValues(values));
+        await updateRecord(datasource, model.name, formattedValues[idField.name], formattedValues);
       } else {
-        await createRecord(datasource, model.name, formatValues(values));
+        await createRecord(datasource, model.name, formattedValues);
       }
-      await fetchRecords();
+
       setDialogFormVisible(false);
-    } catch (errorInfo) {
-      console.error('Failed:', errorInfo);
+      form.resetFields();
+      await fetchRecords();
+      message.success(editMode ? 'Record updated successfully' : 'Record created successfully');
+    } catch (error) {
+      console.error('Form validation failed:', error);
     }
   };
 
@@ -130,24 +117,24 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     const inputProps = {placeholder: field.comment};
     switch (field.type) {
       case 'ID':
-        return <Input disabled={editMode}/>;
+        return <Input disabled={editMode} size="small"/>;
       case 'String':
-        return <Input {...inputProps} />;
+        return <Input {...inputProps} size="small" />;
       case 'Text':
       case 'JSON':
-        return <Input.TextArea {...inputProps} />;
+        return <Input.TextArea {...inputProps} size="small" />;
       case 'Decimal':
       case 'INT':
       case 'Long':
-        return <Input type="number" {...inputProps} />;
+        return <Input type="number" {...inputProps} size="small" />;
       case 'Boolean':
         return <Switch/>;
       case 'Date':
-        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} />;
+        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} size="small" />;
       case 'DateTime':
-        return <DatePicker showTime style={{width: '100%'}}  {...inputProps} />;
+        return <DatePicker showTime style={{width: '100%'}}  {...inputProps} size="small" />;
       default:
-        return <Input/>;
+        return <Input size="small"/>;
     }
   }, [editMode]);
 
@@ -182,9 +169,32 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     ),
   });
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: ` ${token.colorBorder}`,
+  };
+
+  const headerStyle = {
+    ...getCompactButtonGroupStyle(token),
+    justifyContent: 'space-between',
+  };
+
+  const tableStyle = {
+    ...getCompactTableStyle(token),
+    marginTop: token.marginSM,
+  };
+
+  const paginationStyle = {
+    marginTop: token.marginSM,
+  };
+
   return model ? (
-    <div className="p-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
-      <Row justify="space-between">
+    <div style={containerStyle}>
+      <Row justify="space-between" style={headerStyle}>
         <Col></Col>
         <Col>
           <Button type="primary"
@@ -192,7 +202,8 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
                   onClick={() => {
                     setDialogFormVisible(true);
                     setEditMode(false);
-                  }}>
+                  }}
+                  size="small">
             {t('new_record')}
           </Button>
         </Col>
@@ -206,7 +217,8 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         dataSource={records.list}
         pagination={false}
         rowKey={idField?.name}
-        className="mt-4 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5]"
+        style={tableStyle}
+        size="small"
       />
 
       <Pagination
@@ -216,7 +228,8 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         total={records.total}
         showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
         onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
-        className="mt-4"
+        style={paginationStyle}
+        size="small"
       />
 
       <Modal

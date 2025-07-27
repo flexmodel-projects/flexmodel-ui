@@ -1,34 +1,75 @@
-import type {NativeQueryModel} from "@/types/data-modeling";
-import NativeQueryView from "./NativeQueryView.tsx";
-import {Drawer} from "antd";
-import {createModel} from "../../../services/model.ts";
-import {useTranslation} from "react-i18next";
+import React from 'react';
+import {Button, Drawer, Form, Input, notification, theme} from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import {createModel} from '../../../services/model.ts';
+import {useTranslation} from 'react-i18next';
+import {getCompactFormStyle} from '@/utils/theme';
 
-interface Props {
-  datasource: string;
-  onConfirm: (model: NativeQueryModel) => void;
-  onCancel: () => void;
+interface CreateNativeQueryModelProps {
   visible: boolean;
+  datasource: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
-const CreateNativeQueryModel = ({datasource, onConfirm, onCancel, visible}: Props) => {
+const CreateNativeQueryModel: React.FC<CreateNativeQueryModelProps> = ({
+  visible,
+  datasource,
+  onConfirm,
+  onCancel,
+}) => {
   const {t} = useTranslation();
-  const onSubmit = async (data: NativeQueryModel) => {
-    await createModel(datasource, data);
-    onConfirm(data);
-  }
+  const { token } = theme.useToken();
+  const [form] = Form.useForm();
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const queryData = {
+        ...values,
+        type: 'NATIVE_QUERY',
+      };
+      await createModel(datasource, queryData);
+      notification.success({message: t('form_save_success')});
+      onConfirm();
+    } catch (error) {
+      console.error(error);
+      notification.error({message: t('form_save_failed')});
+    }
+  };
+
+  // 紧凑主题样式
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
   return (
-    <>
-      <Drawer
-        title={t('new_native_query')}
-        width={"60%"}
-        onClose={() => onCancel()}
-        open={visible}
-        className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] transition-colors duration-300"
-      >
-        <NativeQueryView datasource={datasource} onConfirm={onSubmit}/>
-      </Drawer>
-    </>);
-}
+    <Drawer
+      title={t('new_native_query')}
+      open={visible}
+      onClose={onCancel}
+      width={600}
+      footer={
+        <div style={{textAlign: 'right'}}>
+          <Button onClick={onCancel} style={{marginRight: 8}}>
+            {t('cancel')}
+          </Button>
+          <Button onClick={handleSubmit} type="primary">
+            {t('confirm')}
+          </Button>
+        </div>
+      }
+    >
+      <Form form={form} layout="vertical" style={formStyle}>
+        <Form.Item name="name" label={t('name')} rules={[{required: true}]}>
+          <Input size="small"/>
+        </Form.Item>
+        <Form.Item name="statement" label={t('statement')} rules={[{required: true}]}>
+          <TextArea rows={4} size="small"/>
+        </Form.Item>
+      </Form>
+    </Drawer>
+  );
+};
 
 export default CreateNativeQueryModel;

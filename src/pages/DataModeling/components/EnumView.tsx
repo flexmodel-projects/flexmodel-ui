@@ -1,8 +1,9 @@
 import React, {useEffect} from "react";
-import {Button, Form, Input, Space} from "antd";
+import {Button, Form, Input, Space, theme} from "antd";
 import {useTranslation} from "react-i18next";
 import type {Enum} from "@/types/data-modeling";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {getCompactCardStyle, getCompactFormStyle} from '@/utils/theme';
 
 interface EnumViewProps {
   datasource: string;
@@ -12,6 +13,7 @@ interface EnumViewProps {
 
 const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
   const {t} = useTranslation();
+  const { token } = theme.useToken();
 
   const [form] = Form.useForm();
 
@@ -35,14 +37,40 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
     }
   };
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: ` ${token.colorBorder}`,
+  };
+
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
+  const inputStyle = {
+    width: '60%',
+    fontSize: token.fontSizeSM,
+  };
+
+  const buttonStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const spaceStyle = {
+    gap: token.marginXS,
+  };
+
   return (
-    <div className="bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300 p-4">
-      <Form form={form} initialValues={model} layout="vertical">
+    <div style={containerStyle}>
+      <Form form={form} initialValues={model} layout="vertical" style={formStyle}>
         <Form.Item name="name" label={t("name")} rules={[{required: true}]}>
-          <Input disabled={!!model}/>
+          <Input disabled={!!model} size="small"/>
         </Form.Item>
         <Form.Item name="comment" label={t("comment")} rules={[{required: true}]}>
-          <Input/>
+          <Input size="small"/>
         </Form.Item>
         <Form.List
           name="elements"
@@ -69,25 +97,27 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
                     validateTrigger={['onChange', 'onBlur']}
                     noStyle
                   >
-                    <Input style={{width: '60%'}}/>
+                    <Input style={inputStyle} size="small"/>
                   </Form.Item>
                   {fields.length > 1 ? (
                     <MinusCircleOutlined
                       className="dynamic-delete-button"
                       onClick={() => remove(field.name)}
+                      style={{ marginLeft: token.marginXS, color: token.colorTextSecondary }}
                     />
                   ) : null}
                 </Form.Item>
               ))}
               <Form.Item>
-                <Space>
+                <Space style={spaceStyle}>
                   <Button
                     type="dashed"
                     onClick={() => {
-
                       add('', 0);
                     }}
                     icon={<PlusOutlined/>}
+                    size="small"
+                    style={buttonStyle}
                   >
                     {t('add_element_at_top')}
                   </Button>
@@ -95,6 +125,8 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
                     type="dashed"
                     onClick={() => add()}
                     icon={<PlusOutlined/>}
+                    size="small"
+                    style={buttonStyle}
                   >
                     {t('add_element_at_bottom')}
                   </Button>
@@ -106,8 +138,8 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
           )}
         </Form.List>
         <Form.Item>
-          <Space align="end" style={{float: "right"}}>
-            <Button type="primary" onClick={handleSave}>
+          <Space align="end" style={{float: "right", gap: token.marginXS}}>
+            <Button type="primary" onClick={handleSave} size="small">
               {t("save")}
             </Button>
           </Space>

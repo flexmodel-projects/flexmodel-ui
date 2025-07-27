@@ -1,5 +1,5 @@
 import {api} from '@/utils/request'
-import {DatasourceSchema} from '@/types/data-source'
+import {DatasourceSchema, ScriptImportPayload} from '@/types/data-source'
 import {EntitySchema} from '@/types/data-modeling'
 
 /**
@@ -19,7 +19,7 @@ export const syncModels = (datasourceName: string, models: string[]): Promise<En
 /**
  * 导入模型
  */
-export const importModels = (datasourceName: string, data: {script: string; type: 'JSON' | 'IDL'}): Promise<void> => {
+export const importModels = (datasourceName: string, data: ScriptImportPayload): Promise<void> => {
   return api.post(`/datasources/${datasourceName}/import`, data)
 }
 

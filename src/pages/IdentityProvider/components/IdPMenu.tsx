@@ -17,10 +17,7 @@ const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setAc
   const { token } = antdTheme.useToken();
 
   return (
-  <div
-    className="idp-menu-panel bg-white dark:bg-[#23232a]"
-    style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', padding: 8, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 200, maxWidth: 260 }}
-  >
+  <div style={{ minWidth: 200 }}>
     <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginBottom: 8 }}>
       <span style={{ fontWeight: 400, fontSize: "16px", fontFamily: token.fontFamily }}>{t("idp_management")}</span>
     </div>
@@ -29,7 +26,6 @@ const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setAc
       <Menu
         mode="inline"
         selectedKeys={activeIdP ? [activeIdP.name] : []}
-        className="idp-menu-list bg-white dark:bg-[#23232a]"
         style={{ borderRadius: 8, flex: 1 }}
         onClick={({ key }) => {
           const found = idPList.find((item) => item.name === key);

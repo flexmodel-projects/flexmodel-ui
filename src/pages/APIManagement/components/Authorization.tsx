@@ -47,13 +47,14 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
   }, [formData]);
 
   return (
-    <Card>
+    <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Form
         form={form}
         initialValues={data}
         labelCol={{span: 4}}
         wrapperCol={{span: 20}}
         layout="horizontal"
+        style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
         onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
       >
         <Form.Item name="auth" label={t('api_auth')}>

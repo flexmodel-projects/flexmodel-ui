@@ -23,7 +23,7 @@ const ERNodeView: React.FC<ERNodeViewProps> = ({ entity }) => {
     <div
       style={{
         background: isDark ? '#23232a' : '#ffffff',
-        border: `1px solid ${isDark ? '#333842' : '#d9d9d9'}`,
+        border: ` ${isDark ? '#333842' : '#d9d9d9'}`,
         borderRadius: 4,
         minWidth: 220,
         minHeight: 40,
@@ -47,7 +47,7 @@ const ERNodeView: React.FC<ERNodeViewProps> = ({ entity }) => {
           letterSpacing: 0.2,
           background: isDark ? '#18181c' : '#f5f5f5',
           padding: '8px 0',
-          borderBottom: `1px solid ${isDark ? '#333842' : '#d9d9d9'}`,
+          borderBottom: ` ${isDark ? '#333842' : '#d9d9d9'}`,
           marginLeft: '-16px',
           marginRight: '-16px',
           paddingLeft: '16px',
@@ -67,7 +67,7 @@ const ERNodeView: React.FC<ERNodeViewProps> = ({ entity }) => {
               padding: '4px 0',
               fontSize: 14,
               color: isDark ? '#b5b5b5' : '#595959',
-              borderBottom: idx !== showFields.length - 1 ? `1px solid ${isDark ? '#23232a' : '#f0f0f0'}` : 'none',
+              borderBottom: idx !== showFields.length - 1 ? ` ${isDark ? '#23232a' : '#f0f0f0'}` : 'none',
             }}
           >
             <span style={{ color: isDark ? '#36a3f7' : '#1890ff', fontWeight: 500 }}>{f.name}</span>

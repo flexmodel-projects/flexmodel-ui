@@ -4,8 +4,8 @@ import DataModeling from "@/pages/DataModeling";
 import DataSource from "@/pages/DataSource";
 import ERView from "./components/ERView";
 import {BranchesOutlined, ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
-import TabMenu, {TabMenuItem} from "@/components/common/TabMenu";
-import styles from "@/pages/DataView/index.module.scss";
+import TabPageContainer from "@/components/layouts/TabPageContainer";
+import {TabMenuItem} from "@/components/common/TabMenu";
 
 const DataView: React.FC = () => {
   const { t } = useTranslation();
@@ -36,11 +36,10 @@ const DataView: React.FC = () => {
   ];
 
   return (
-    <TabMenu
+    <TabPageContainer
       items={tabItems}
       defaultActiveKey="modeling"
-      className={styles.root}
-      style={{ flex: 1 }}
+      style={{ height: '100%' }}
       compact={true}
     />
   );

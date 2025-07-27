@@ -1,111 +1,159 @@
-import React, {useEffect} from 'react';
-import {Form, Input, Modal, Select, Switch} from 'antd';
-import type {Index} from "@/types/data-modeling";
+import React, {useEffect} from "react";
+import {Button, Form, Input, Modal, Select, Switch, theme} from "antd";
+import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
+import {Index} from "@/types/data-modeling";
+import {getCompactFormStyle} from '@/utils/theme';
 
-interface ChangeIndexProps {
+interface IndexFormProps {
   visible: boolean;
   datasource: string;
   model: any;
-  currentValue: Index | undefined;
-  onConfirm: (data: Index) => void;
+  currentValue: Index;
+  onConfirm: (form: Index) => void;
   onCancel: () => void;
 }
 
-const IndexForm: React.FC<ChangeIndexProps> = ({visible, model, currentValue, onConfirm, onCancel}) => {
-  const {t} = useTranslation();
+const IndexForm: React.FC<IndexFormProps> = ({
+  visible,
+  model,
+  currentValue,
+  onConfirm,
+  onCancel,
+}) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (currentValue) {
-      form.setFieldsValue({
-        name: currentValue.name || '',
-        fields: currentValue.fields?.map(field => field.direction ? `${field.fieldName}:${field.direction}` : field.fieldName) || [],
-        unique: currentValue.unique || false
-      });
+    if (visible) {
+      if (currentValue) {
+        form.setFieldsValue(currentValue);
+      } else {
+        form.setFieldsValue({
+          name: '',
+          fields: [],
+          unique: false,
+        });
+      }
     }
-  }, [currentValue, form]);
+  }, [visible, currentValue]);
 
-  const handleSubmit = () => {
-    form.validateFields().then(values => {
-      const fields = values.fields.map((f: string) => {
-        let fieldName = f;
-        let direction: 'ASC' | 'DESC' | undefined;
-        if (f.endsWith('ASC')) {
-          fieldName = f.replace(':ASC', '');
-          direction = 'ASC';
-        } else if (f.endsWith('DESC')) {
-          fieldName = f.replace(':DESC', '');
-          direction = 'DESC';
-        }
-        return {
-          fieldName,
-          direction,
-        };
-      });
-
-      onConfirm({
-        name: values.name,
-        fields,
-        unique: values.unique,
-      });
-    }).catch(info => {
-      console.log('Validate Failed:', info);
+  const handleConfirm = () => {
+    form.validateFields().then((values) => {
+      onConfirm(values);
     });
+  };
+
+  // 紧凑主题样式
+  const formStyle = {
+    ...getCompactFormStyle(token),
+  };
+
+  const inputStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const selectStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const buttonStyle = {
+    fontSize: token.fontSizeSM,
+  };
+
+  const spaceStyle = {
+    gap: token.marginXS,
   };
 
   return (
     <Modal
-      title={currentValue?.name ? t('edit_index') : t('new_index')}
+      title={t("index_form_title")}
       open={visible}
       onCancel={onCancel}
-      onOk={handleSubmit}
-      width={580}
+      onOk={handleConfirm}
+      width={600}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{
-          name: '',
-          fields: [],
-          unique: false,
-        }}
-      >
-        <Form.Item
-          name="name"
-          label={t('name')}
-          rules={[{required: true}]}
-        >
-          <Input/>
+      <Form form={form} layout="vertical" style={formStyle}>
+        <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
+          <Input size="small" style={inputStyle} />
         </Form.Item>
-        <Form.Item
+        <Form.Item name="unique" label={t("unique")} valuePropName="checked">
+          <Switch />
+        </Form.Item>
+        <Form.List
           name="fields"
-          label={t('fields')}
-          rules={[{required: true}]}
+          rules={[
+            {
+              validator: async (_, fields) => {
+                if (!fields || fields.length < 1) {
+                  return Promise.reject(new Error(t('index_field_size_valid')));
+                }
+              },
+            },
+          ]}
         >
-          <Select mode="multiple" allowClear>
-            {model.fields.map((field: any) => (
-              <Select.Option key={field.name} value={field.name}>{field.name}</Select.Option>
-            ))}
-            <Select.OptGroup label={t('field_desc')}>
-              {model.fields.map((field: any) => (
-                <Select.Option key={`${field.name}:DESC`} value={`${field.name}:DESC`}>
-                  {`${field.name} DESC`}
-                </Select.Option>
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item
+                  label={index === 0 ? t("fields") : ""}
+                  required={false}
+                  key={field.key}
+                >
+                  <Form.Item
+                    {...field}
+                    validateTrigger={["onChange", "onBlur"]}
+                    noStyle
+                  >
+                    <div style={{ display: 'flex', gap: token.marginXS, alignItems: 'center' }}>
+                                              <Select
+                          placeholder={t("select_field")}
+                          style={{ flex: 1, ...selectStyle }}
+                          size="small"
+                        >
+                        {model?.fields?.map((field: any) => (
+                          <Select.Option key={field.name} value={field.name}>
+                            {field.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                      <Select
+                        placeholder={t("direction")}
+                        style={{ width: 120, ...selectStyle }}
+                        size="small"
+                      >
+                        <Select.Option value="ASC">ASC</Select.Option>
+                        <Select.Option value="DESC">DESC</Select.Option>
+                      </Select>
+                      {fields.length > 1 ? (
+                        <MinusCircleOutlined
+                          className="dynamic-delete-button"
+                          onClick={() => remove(field.name)}
+                          style={{ color: token.colorTextSecondary }}
+                        />
+                      ) : null}
+                    </div>
+                  </Form.Item>
+                </Form.Item>
               ))}
-            </Select.OptGroup>
-            <Select.OptGroup label={t('field_asc')}>
-              {model.fields.map((field: any) => (
-                <Select.Option key={`${field.name}:ASC`} value={`${field.name}:ASC`}>
-                  {`${field.name} ASC`}
-                </Select.Option>
-              ))}
-            </Select.OptGroup>
-          </Select>
-        </Form.Item>
-        <Form.Item name="unique" label={t('unique')} valuePropName="checked">
-          <Switch/>
-        </Form.Item>
+              <Form.Item>
+                <div style={spaceStyle}>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    icon={<PlusOutlined />}
+                    size="small"
+                    style={buttonStyle}
+                  >
+                    {t("add_field")}
+                  </Button>
+                  <Form.ErrorList errors={errors} />
+                </div>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </Form>
     </Modal>
   );

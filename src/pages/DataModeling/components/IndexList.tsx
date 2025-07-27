@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, Tag} from 'antd';
+import {Button, notification, Popconfirm, Table, Tag, theme} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../services/model.ts';
-import IndexForm from "./IndexForm";
-import type {Entity, Index} from "@/types/data-modeling";
+import IndexForm from "./IndexForm.tsx";
+import {Entity, Index} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
+import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
 
 interface IndexListProps {
   datasource: string;
@@ -13,24 +14,26 @@ interface IndexListProps {
 
 const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
+  const { token } = theme.useToken();
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
-  const [currentVal, setCurrentVal] = useState<Index>({fields: [], name: "", unique: false});
+  const [currentVal, setCurrentVal] = useState<Index>({name: '', fields: [], unique: false});
 
   const fetchIndexes = useCallback(async () => {
     // Replace this with actual fetch call
     // const res = await getIndexes(datasource, model?.name);
-    setIndexList(model.indexes);
+    setIndexList(model?.indexes || []);
   }, [datasource, model?.name]);
 
   useEffect(() => {
     fetchIndexes();
   }, [fetchIndexes]);
 
-  const handleAdd = () => {
+  const handleNewIndex = () => {
     setChangeDialogVisible(true);
     setSelectedIndexKey(-1);
+    setCurrentVal({name: '', fields: [], unique: false});
   };
 
   const handleEdit = (index: number) => {
@@ -42,8 +45,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const addOrEditIndex = async (values: Index) => {
     try {
       const indexSchema = {
-        ...values,
-        modelName: model?.name,
+        name: values.name,
         fields: values.fields.map((f: any) => ({
           fieldName: f.fieldName,
           direction: f.direction,
@@ -53,7 +55,9 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
           unique: false,
           nullable: false,
           comment: '',
-        }))
+        })),
+        unique: values.unique,
+        modelName: model?.name,
       };
       if (selectedIndexKey === -1) {
         await createIndex(datasource, model?.name as string, indexSchema);
@@ -93,7 +97,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       render: (fields: { fieldName: string; direction: string }[]) => (
         <div>
           {fields.map((field, index) => (
-            <Tag key={index} color="default">
+            <Tag key={index} color="default" style={{fontSize: token.fontSizeSM}}>
               {field.fieldName} {field.direction}
             </Tag>
           ))}
@@ -110,6 +114,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
             type="link"
             icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
+            size="small"
           >
             {t('edit')}
           </Button>
@@ -121,6 +126,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
               type="link"
               danger
               icon={<DeleteOutlined/>}
+              size="small"
             >
               {t('delete')}
             </Button>
@@ -130,28 +136,46 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
     },
   ];
 
+  // 紧凑主题样式
+  const containerStyle = {
+    ...getCompactCardStyle(token),
+    padding: token.paddingSM,
+    backgroundColor: token.colorBgContainer,
+    borderRadius: token.borderRadius,
+    border: ` ${token.colorBorder}`,
+  };
+
+  const headerStyle = {
+    ...getCompactButtonGroupStyle(token),
+    justifyContent: 'space-between',
+  };
+
+  const tableStyle = {
+    ...getCompactTableStyle(token),
+    marginTop: token.marginSM,
+  };
+
   return (
-    <div className="p-5 bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300">
-      <div>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <div></div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined/>}
-            onClick={handleAdd}
-          >
-            {t('new_index')}
-          </Button>
-        </div>
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <div></div>
+        <Button
+          type="primary"
+          icon={<PlusOutlined/>}
+          onClick={handleNewIndex}
+          size="small"
+        >
+          {t('new_index')}
+        </Button>
       </div>
-      <div style={{marginTop: 16}}>
+      <div style={{marginTop: token.marginSM}}>
         <Table
           size="small"
           rowKey="name"
           dataSource={indexList}
           columns={columns}
           pagination={false}
-          className="w-full bg-white dark:bg-[#23232a] dark:text-[#f5f5f5]"
+          style={tableStyle}
         />
       </div>
       <IndexForm
@@ -160,7 +184,8 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         model={model}
         currentValue={currentVal}
         onConfirm={addOrEditIndex}
-        onCancel={() => setChangeDialogVisible(false)}/>
+        onCancel={() => setChangeDialogVisible(false)}
+      />
     </div>
   );
 };

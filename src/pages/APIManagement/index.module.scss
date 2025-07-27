@@ -61,61 +61,74 @@
   }
 }
 
-// 数据源管理特定样式
-.sidebar {
- 
-  // 夜间模式侧边栏样式
-  html.dark & {
-    :global {
-      .ant-menu-item {
-        &:hover {
-          background: rgba(255, 255, 255, 0.08);
-        }
-        
-        &.ant-menu-item-selected {
-          background: var(--ant-color-primary-bg);
-          color: var(--ant-color-primary);
-        }
-      }
-    }
-  }
-}
-
-.content {
+// API管理特定样式
+.apiTree {
   :global {
-    .ant-layout-content {
-      background: transparent;
+    .ant-tree-node-content-wrapper {
+      display: flex;
+    }
+    
+    .ant-tree-treenode {
+      gap: 4px;
+    }
+    
+    &.ant-tree-block-node .ant-tree-treenode .ant-tree-node-content-wrapper {
+      overflow: hidden;
+      flex: 1;
+      gap: 4px;
+    }
+    
+    &.ant-tree-block-node .ant-tree-treenode .ant-tree-title {
+      width: calc(100% - 14px);
+    }
+    
+    .ant-tree-title div span:first-child {
+      max-width: 130px;
     }
   }
 }
 
-.header {
+.graphiqlContainer {
+  border-radius: 8px;
+}
+
+.graphiqlSessionHeader {
+  height: 2px;
+}
+
+.searchContainer {
+  width: 100%;
+  margin-bottom: 8px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ant-color-border);
-  margin-bottom: 16px;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--ant-color-text);
-}
-
-.actions {
-  display: flex;
   gap: 8px;
-  align-items: center;
 }
 
-.menuMoreBtn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: none;
-  z-index: 2;
+// 简化的Tab页样式
+.tabContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
+.apiFormContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.apiFormHeader {
+  margin-bottom: 8px;
+}
+
+.apiFormContent {
+  flex: 1;
+  overflow: hidden;
+}
+
+.folderInfo {
+  padding: 16px;
+  color: var(--ant-color-text-secondary);
+  font-size: var(--ant-font-size-sm);
+} 

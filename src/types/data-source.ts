@@ -14,7 +14,10 @@ export type DatasourceType = 'SYSTEM' | 'USER';
 /**
  * 导入模型脚本类型枚举
  */
-export type ScriptType = 'JSON' | 'IDL';
+export enum ScriptType {
+  JSON = 'JSON',
+  IDL = 'IDL',
+}
 
 /**
  * 导入模型脚本表单类型

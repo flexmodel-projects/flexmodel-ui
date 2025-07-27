@@ -138,6 +138,8 @@ const ERView: React.FC = () => {
             </div>
           </div>
         }
+        bodyStyle={{ padding: 0, height: '100%' }}
+        style={{ height: '100%', margin: 0 }}
       >
         {loading ? (
           <div className={styles.loading}>

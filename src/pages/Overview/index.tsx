@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic} from "antd";
+import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic, theme} from "antd";
 import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
-import Title from "antd/lib/typography/Title";
 import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
 import {getOverview} from "@/services/overview.ts";
 import {useTranslation} from "react-i18next";
@@ -13,6 +12,7 @@ const { RangePicker } = DatePicker;
 
 const StatisticsPage: React.FC = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [loading, setLoading] = useState<boolean>(true);
   const [stats, setStats] = useState<Statistics>({
     queryCount: 0,
@@ -32,6 +32,8 @@ const StatisticsPage: React.FC = () => {
     dayjs().startOf("week"),
     dayjs().endOf("week"),
   ]);
+
+
 
   useEffect(() => {
     const loadData = async () => {
@@ -87,25 +89,73 @@ const StatisticsPage: React.FC = () => {
     setDateRange([start, end]);
   };
 
-  // ECharts 配置
+  // ECharts 配置 - 使用 Ant Design token
   const chartConfig = {
-    tooltip: { trigger: "axis" },
-    legend: { data: [t("success"), t("fail")] },
-    grid: { top: "3%", left: "3%", right: "3%", containLabel: true },
-    xAxis: { type: "category", data: apiStat.dateList },
-    yAxis: { type: "value" },
+    backgroundColor: 'transparent',
+    textStyle: {
+      color: token.colorText,
+    },
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: token.colorBgElevated,
+      borderColor: token.colorBorder,
+      textStyle: {
+        color: token.colorText,
+      },
+    },
+    legend: {
+      data: [t("success"), t("fail")],
+      textStyle: {
+        color: token.colorText,
+      },
+    },
+    grid: {
+      top: "3%",
+      left: "3%",
+      right: "3%",
+      containLabel: true,
+      borderColor: token.colorBorder,
+    },
+    xAxis: {
+      type: "category",
+      data: apiStat.dateList,
+      axisLine: {
+        lineStyle: {
+          color: token.colorBorder,
+        },
+      },
+      axisLabel: {
+        color: token.colorText,
+      },
+    },
+    yAxis: {
+      type: "value",
+      axisLine: {
+        lineStyle: {
+          color: token.colorBorder,
+        },
+      },
+      axisLabel: {
+        color: token.colorText,
+      },
+      splitLine: {
+        lineStyle: {
+          color: token.colorBorderSecondary,
+        },
+      },
+    },
     series: [
       {
         name: t("success"),
         type: "line",
         data: apiStat.successData,
-        itemStyle: { color: "#52c41a" },
+        itemStyle: { color: token.colorSuccess },
       },
       {
         name: t("fail"),
         type: "line",
         data: apiStat.failData,
-        itemStyle: { color: "#ff4d4f" },
+        itemStyle: { color: token.colorError },
       },
     ],
   };
@@ -186,23 +236,24 @@ const StatisticsPage: React.FC = () => {
                   <ReactECharts option={chartConfig} style={{ height: "100%" }} />
                 </Col>
                 <Col span={6} className="flex flex-col">
-                  <Title level={5}>{t("api_ranking")}</Title>
-                  <List
-                    style={{ overflowY: "scroll", maxHeight: "56vh" }}
-                    className="flex flex-1 relative"
-                    dataSource={rankingData}
-                    renderItem={(item, index) => (
-                      <List.Item style={{ padding: "10px 16px" }}>
-                        <div className="flex w-full justify-between">
-                          <Space className="overflow-hidden w-60">
-                            <Badge count={index + 1} showZero color="green" />{" "}
-                            {item.name}
-                          </Space>
-                          <span>{item.total}</span>
-                        </div>
-                      </List.Item>
-                    )}
-                  />
+                  <Card title={t("api_ranking")} variant="borderless">
+                    <List
+                      style={{ overflowY: "scroll",overflowX: "hidden", maxHeight: "62vh" }}
+                      className="flex flex-1 relative"
+                      dataSource={rankingData}
+                      renderItem={(item, index) => (
+                        <List.Item style={{ padding: "10px 16px" }}>
+                          <div className="flex w-full justify-between">
+                            <Space className="overflow-hidden w-60">
+                              <Badge count={index + 1} showZero color="green" />{" "}
+                              <span style={{ color: token.colorText }}>{item.name}</span>
+                            </Space>
+                            <span style={{ color: token.colorText }}>{item.total}</span>
+                          </div>
+                        </List.Item>
+                      )}
+                    />
+                  </Card>
                 </Col>
               </Row>
             </Card>
