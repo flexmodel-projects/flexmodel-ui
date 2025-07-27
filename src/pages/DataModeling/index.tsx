@@ -9,7 +9,7 @@ import {useTranslation} from "react-i18next";
 import EnumView from "@/pages/DataModeling/components/EnumView.tsx";
 import type {Enum} from '@/types/data-modeling.d.ts';
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView.tsx";
-import {getCompactPanelStyle, getCompactSplitterStyle} from '@/utils/theme';
+
 
 const ModelingPage: React.FC = () => {
   const {t} = useTranslation();
@@ -65,9 +65,7 @@ const ModelingPage: React.FC = () => {
     }
   };
 
-  const splitterStyle = {
-    ...getCompactSplitterStyle(token),
-  };
+  const splitterStyle = {};
 
   const leftPanelStyle = {
     height: '100%',
@@ -81,9 +79,7 @@ const ModelingPage: React.FC = () => {
     boxSizing: 'border-box' as const,
   };
 
-  const panelContainerStyle = {
-    ...getCompactPanelStyle(token),
-  };
+  const panelContainerStyle = {};
 
   return (
     <Card>

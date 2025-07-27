@@ -1,6 +1,6 @@
 import React from 'react';
 import {theme} from 'antd';
-import {getCompactCardStyle} from '@/utils/theme';
+
 
 interface ModelGroupViewProps {
   datasource: string;
@@ -12,7 +12,7 @@ const ModelGroupView: React.FC<ModelGroupViewProps> = ({model}) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -30,3 +30,4 @@ const ModelGroupView: React.FC<ModelGroupViewProps> = ({model}) => {
 };
 
 export default ModelGroupView;
+

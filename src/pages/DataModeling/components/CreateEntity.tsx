@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import FieldForm from './FieldForm.tsx';
 import IndexForm from './IndexForm.tsx';
 import {Entity, Field, Index} from '@/types/data-modeling';
-import {getCompactFormStyle} from '@/utils/theme';
+
 
 interface CreateEntityProps {
   visible: boolean;
@@ -128,9 +128,7 @@ const CreateEntity: React.FC<CreateEntityProps> = ({
   ];
 
   // 紧凑主题样式
-  const formStyle = {
-    ...getCompactFormStyle(token),
-  };
+  const formStyle = {};
 
   const tableStyle = {
     marginTop: token.marginSM,
@@ -214,3 +212,4 @@ const CreateEntity: React.FC<CreateEntityProps> = ({
 };
 
 export default CreateEntity;
+

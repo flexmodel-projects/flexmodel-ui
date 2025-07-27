@@ -22,7 +22,7 @@ import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/service
 import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
-import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
+
 
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
@@ -171,7 +171,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -179,12 +179,12 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   };
 
   const headerStyle = {
-    ...getCompactButtonGroupStyle(token),
+    
     justifyContent: 'space-between',
   };
 
   const tableStyle = {
-    ...getCompactTableStyle(token),
+    
     marginTop: token.marginSM,
   };
 
@@ -255,3 +255,4 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
 };
 
 export default RecordList;
+

@@ -3,7 +3,7 @@ import {Button, Drawer, Form, Input, notification, Space, theme} from 'antd';
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {createModel} from '../../../services/model.ts';
 import {useTranslation} from 'react-i18next';
-import {getCompactFormStyle} from '@/utils/theme';
+
 
 interface CreateEnumProps {
   visible: boolean;
@@ -40,7 +40,7 @@ const CreateEnum: React.FC<CreateEnumProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   const buttonStyle = {
@@ -145,3 +145,4 @@ const CreateEnum: React.FC<CreateEnumProps> = ({
 };
 
 export default CreateEnum;
+

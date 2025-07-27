@@ -3,7 +3,7 @@ import {Button, Form, Input, Space, theme} from "antd";
 import {useTranslation} from "react-i18next";
 import type {Enum} from "@/types/data-modeling";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
-import {getCompactCardStyle, getCompactFormStyle} from '@/utils/theme';
+
 
 interface EnumViewProps {
   datasource: string;
@@ -39,7 +39,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -47,7 +47,7 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
   };
 
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   const inputStyle = {
@@ -150,3 +150,4 @@ const EnumView: React.FC<EnumViewProps> = ({model, onConfirm}) => {
 };
 
 export default EnumView;
+

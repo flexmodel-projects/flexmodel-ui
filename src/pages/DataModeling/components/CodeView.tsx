@@ -114,7 +114,7 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
                   type="default"
                   onClick={() => downloadZip()}
                 >
-                  下载源码包
+                  下载源码�?
                 </Button>
                 <a
                   onClick={() => {
@@ -149,3 +149,4 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
 };
 
 export default CodeView;
+

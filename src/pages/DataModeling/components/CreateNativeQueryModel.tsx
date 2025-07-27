@@ -3,7 +3,7 @@ import {Button, Drawer, Form, Input, notification, theme} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import {createModel} from '../../../services/model.ts';
 import {useTranslation} from 'react-i18next';
-import {getCompactFormStyle} from '@/utils/theme';
+
 
 interface CreateNativeQueryModelProps {
   visible: boolean;
@@ -40,7 +40,7 @@ const CreateNativeQueryModel: React.FC<CreateNativeQueryModelProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   return (
@@ -73,3 +73,4 @@ const CreateNativeQueryModel: React.FC<CreateNativeQueryModelProps> = ({
 };
 
 export default CreateNativeQueryModel;
+

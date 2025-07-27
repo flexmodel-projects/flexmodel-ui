@@ -7,7 +7,7 @@ import CodeView from './CodeView';
 import FieldList from './FieldList';
 import IndexList from './IndexList';
 import RecordList from './RecordList';
-import {getCompactCardStyle} from '@/utils/theme';
+
 
 interface Props {
   datasource: string;
@@ -29,7 +29,7 @@ const EntityView = ({ datasource, model }: Props) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -132,3 +132,4 @@ const EntityView = ({ datasource, model }: Props) => {
 };
 
 export default EntityView;
+

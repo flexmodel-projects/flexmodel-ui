@@ -5,7 +5,7 @@ import {createIndex, dropIndex, modifyIndex} from '../../../services/model.ts';
 import IndexForm from "./IndexForm.tsx";
 import {Entity, Index} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
-import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
+
 
 interface IndexListProps {
   datasource: string;
@@ -138,7 +138,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -146,12 +146,12 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   };
 
   const headerStyle = {
-    ...getCompactButtonGroupStyle(token),
+    
     justifyContent: 'space-between',
   };
 
   const tableStyle = {
-    ...getCompactTableStyle(token),
+    
     marginTop: token.marginSM,
   };
 
@@ -191,3 +191,4 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
 };
 
 export default IndexList;
+

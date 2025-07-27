@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, message, Modal, Row, theme} from "antd";
+import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/IdentityProvider/index.module.scss";
-import {getCompactCardStyle, getCompactPanelStyle} from '@/utils/theme';
 import type {IdentityProvider} from "@/types/identity-provider";
 import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
 import {
@@ -17,7 +16,6 @@ import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider.t
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [idPList, setIdPList] = useState<IdentityProvider[]>([]);
   const [activeIdP, setActiveIdP] = useState<IdentityProvider | null>(null);
   const [idPLoading, setIdPLoading] = useState<boolean>(false);
@@ -76,15 +74,12 @@ const IdPManagement: React.FC = () => {
 
   // 紧凑主题样式
   const cardStyle = {
-    ...getCompactCardStyle(token),
     height: '100%',
     display: 'flex',
     flexDirection: 'column' as const,
   };
 
-  const panelContainerStyle = {
-    ...getCompactPanelStyle(token),
-  };
+  const panelContainerStyle = {};
 
   return (
     <>

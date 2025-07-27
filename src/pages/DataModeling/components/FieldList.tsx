@@ -5,7 +5,7 @@ import {createField, dropField, modifyField} from '../../../services/model.ts';
 import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
 import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
-import {getCompactButtonGroupStyle, getCompactCardStyle, getCompactTableStyle} from '@/utils/theme';
+
 
 interface FieldListProps {
   datasource: string;
@@ -167,7 +167,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -175,12 +175,12 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   };
 
   const headerStyle = {
-    ...getCompactButtonGroupStyle(token),
+    
     justifyContent: 'space-between',
   };
 
   const tableStyle = {
-    ...getCompactTableStyle(token),
+    
     marginTop: token.marginSM,
   };
 
@@ -220,3 +220,4 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
 };
 
 export default FieldList;
+

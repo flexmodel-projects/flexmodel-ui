@@ -3,7 +3,7 @@ import {Button, Form, Input, Modal, Select, Switch, theme} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
 import {Index} from "@/types/data-modeling";
-import {getCompactFormStyle} from '@/utils/theme';
+
 
 interface IndexFormProps {
   visible: boolean;
@@ -47,7 +47,7 @@ const IndexForm: React.FC<IndexFormProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   const inputStyle = {
@@ -160,3 +160,4 @@ const IndexForm: React.FC<IndexFormProps> = ({
 };
 
 export default IndexForm;
+

@@ -4,7 +4,7 @@ import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
 import {executeNativeQuery} from "../../../services/datasource.ts";
 import type {NativeQueryModel} from "@/types/data-modeling";
-import {getCompactCardStyle, getCompactFormStyle, getCompactTableStyle} from '@/utils/theme';
+
 
 interface NativeQueryViewProps {
   datasource: string;
@@ -104,7 +104,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
 
   // 紧凑主题样式
   const containerStyle = {
-    ...getCompactCardStyle(token),
+    
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -112,7 +112,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
   };
 
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   const spaceStyle = {
@@ -125,7 +125,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
   };
 
   const tableStyle = {
-    ...getCompactTableStyle(token),
+    
     marginTop: token.marginSM,
   };
 
@@ -188,3 +188,4 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
 };
 
 export default NativeQueryView;
+

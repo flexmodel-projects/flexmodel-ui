@@ -4,7 +4,7 @@ import {getModelList} from "../../../services/model.ts";
 import {useTranslation} from "react-i18next";
 import FieldInput from "./FieldInput.tsx";
 import {Field} from "@/types/data-modeling";
-import {getCompactFormStyle} from '@/utils/theme';
+
 
 interface FieldFormProps {
   visible: boolean;
@@ -55,7 +55,7 @@ export const BasicFieldTypes = [
   },
 ];
 
-// 字段初始值常量
+// 字段初始值常�?
 export const FieldInitialValues: any = {
   STRING: {
     type: 'String',
@@ -186,7 +186,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         type: "Relation",
         from: value.replace("Relation:", ""),
         multiple: false,
-        defaultValue: undefined, // 清空默认值
+        defaultValue: undefined, // 清空默认�?
       });
     } else if (value.startsWith("Enum")) {
       form.setFieldsValue({
@@ -194,14 +194,14 @@ const FieldForm: React.FC<FieldFormProps> = ({
         type: "Enum",
         from: value.replace("Enum:", ""),
         multiple: false,
-        defaultValue: undefined, // 清空默认值
+        defaultValue: undefined, // 清空默认�?
       })
     } else {
       form.setFieldsValue({
         ...FieldInitialValues[value],
         type: value,
         multiple: false,
-        defaultValue: undefined, // 清空默认值
+        defaultValue: undefined, // 清空默认�?
       });
     }
   };
@@ -212,7 +212,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     });
   };
 
-  // 处理表单值变化
+  // 处理表单值变�?
   const handleFormChange = (
     changedValues: Partial<Field>,
     allValues: Field
@@ -233,7 +233,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             defaultValue: _defaultValue,
           });
         } else {
-          // 切换到非multiple时，取数组的第一个值，并确保重置表单状态
+          // 切换到非multiple时，取数组的第一个值，并确保重置表单状�?
           const _defaultValue = Array.isArray(allValues.defaultValue)
             ? allValues.defaultValue[0]
             : allValues.defaultValue;
@@ -248,7 +248,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    ...getCompactFormStyle(token),
+    
   };
 
   const inputStyle = {
@@ -404,3 +404,4 @@ const FieldForm: React.FC<FieldFormProps> = ({
 };
 
 export default FieldForm;
+

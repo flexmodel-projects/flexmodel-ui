@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Button, Dropdown, Input, Menu, Modal, Select, Spin, theme} from "antd";
+import {Button, Dropdown, Input, Menu, Modal, Select, Spin} from "antd";
 import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import {getDatasourceList} from "@/services/datasource.ts";
-import {createModel as reqCreateModel, dropModel, getModelList,} from "@/services/model.ts";
+import {dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
 import CreateEntity from "@/pages/DataModeling/components/CreateEntity.tsx";
 import type {DatasourceSchema} from '@/types/data-source';
@@ -52,7 +52,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
   version,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { locale } = useSelector((state: RootState) => state.locale);
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
@@ -71,10 +70,8 @@ const SelectModel: React.FC<SelectModelProps> = ({
   ] = useState(false);
   const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
-
   // 添加模型
-  const addEntity = async (item: any) => {
-    await reqCreateModel(activeDs, item);
+  const addEntity = async () => {
     setCreateDrawerVisible(false);
     await reqModelList();
   };
@@ -224,7 +221,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
       return acc;
     }, {});
 
-    // 自定义排序：先 ENTITY，再 ENUM，最后 NATIVE_QUERY
+    // 自定义排序：先ENTITY，再ENUM，最后NATIVE_QUERY
     const order = ["ENTITY", "ENUM", "NATIVE_QUERY"];
     return order.map((type) => groups[type]).filter(Boolean);
   };
@@ -240,7 +237,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
         filename: item.name,
         path: ((group as any).key || group.name) + '/' + item.name,
         data: item.data,
-        modelType: item.data?.type, // 新增字段，标记模型类型 ENTITY/ENUM/NATIVE_QUERY
+        modelType: item.data?.type, // 新增字段，标记模型类型ENTITY/ENUM/NATIVE_QUERY
       })),
     }));
   }
@@ -250,14 +247,12 @@ const SelectModel: React.FC<SelectModelProps> = ({
 
   const selectRowStyle = {
     display: 'flex',
-    gap: token.marginXS,
     alignItems: 'center',
-    marginBottom: token.marginXS,
+    paddingBottom: '10px',
   };
 
   const searchRowStyle = {
     display: 'flex',
-    gap: token.marginXS,
     alignItems: 'center',
     width: '100%',
   };
@@ -265,26 +260,27 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const treeContainerStyle = {
     flex: 1,
     minHeight: 0,
-    overflow: 'hidden',
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    padding: token.paddingXS,
+    maxHeight: 'calc(100vh - 200px)', // 设置最大高度
+    overflow: 'auto',
   };
 
   const selectStyle = {
     width: "100%",
-    height: token.controlHeightSM,
-    fontSize: token.fontSizeSM,
   };
 
   const inputStyle = {
     width: '100%',
-    height: token.controlHeightSM,
-    fontSize: token.fontSizeSM,
+    marginRight: '5px',
+  };
+
+  const containerStyle = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column' as const,
   };
 
   return (
-    <>
+    <div style={containerStyle}>
       <div style={selectRowStyle}>
         <Select
           value={activeDs}
@@ -297,7 +293,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
               <div style={{
                 display: "flex",
                 alignItems: "center",
-                fontSize: token.fontSizeSM
               }}>
                 {item.name}
               </div>
@@ -309,9 +304,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
               icon={<EditOutlined />}
               style={{
                 width: "100%",
-                height: token.controlHeightSM,
                 padding: 0,
-                fontSize: token.fontSizeSM
               }}
               onClick={() => navigate("/datasource")}
             >
@@ -329,12 +322,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
           allowClear
           size="small"
           prefix={
-            <SearchOutlined
-              style={{
-                color: token.colorTextSecondary,
-                fontSize: token.fontSizeSM
-              }}
-            />
+            <SearchOutlined/>
           }
         />
         {editable && (
@@ -365,7 +353,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
 
       {/* 树形组件区域 */}
       <div style={treeContainerStyle}>
-        <div className={styles.antScrollbar}>
+        <div className={styles.antScrollbar} style={{ height: '100%', overflow: 'auto', maxHeight: '100%' }}>
           <Spin spinning={modelLoading} size="small">
             <Tree
               tree={treeData}
@@ -387,13 +375,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
                       <Menu.Item key="delete" onClick={() => setDeleteDialogVisible(true)}>删除</Menu.Item>
                     </Menu>
                   } trigger={["click"]}>
-                    <MoreOutlined
-                      style={{
-                        cursor: "pointer",
-                        marginRight: token.marginXS,
-                        fontSize: token.fontSizeSM
-                      }}
-                      onClick={e => e.stopPropagation()}
+                    <MoreOutlined onClick={e => e.stopPropagation()}
                     />
                   </Dropdown>
                 );
@@ -432,23 +414,24 @@ const SelectModel: React.FC<SelectModelProps> = ({
       <CreateNativeQueryModel
         visible={createNativeQueryModelDrawerVisible}
         datasource={activeDs}
-        onConfirm={async () => {
+        onConfirm={() => {
           setCreateNativeQueryModelDrawerVisible(false);
-          await reqModelList();
+          reqModelList();
         }}
         onCancel={() => setCreateNativeQueryModelDrawerVisible(false)}
       />
       <CreateEnum
         visible={createEnumDrawerVisible}
         datasource={activeDs}
-        onConfirm={async () => {
+        onConfirm={() => {
           setCreateEnumDrawerVisible(false);
-          await reqModelList();
+          reqModelList();
         }}
         onCancel={() => setCreateEnumDrawerVisible(false)}
       />
-    </>
+    </div>
   );
 };
 
 export default SelectModel;
+

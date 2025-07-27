@@ -30,7 +30,7 @@ import {DbsMap} from "@/pages/DataSource/common.ts";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/DataSource/index.module.scss";
-import {getCompactCardStyle, getCompactPanelStyle} from '@/utils/theme';
+
 import type {DatasourceSchema} from '@/types/data-source';
 import {ScriptImportForm, ScriptType} from '@/types/data-source';
 import {EntitySchema, EnumSchema, NativeQuerySchema} from "@/types/data-modeling";
@@ -172,7 +172,6 @@ const DatasourceManagement: React.FC = () => {
 
   // 紧凑主题样式
   const cardStyle = {
-    ...getCompactCardStyle(token),
     height: '100%',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -192,9 +191,7 @@ const DatasourceManagement: React.FC = () => {
     height: '100%',
   };
 
-  const panelContainerStyle = {
-    ...getCompactPanelStyle(token),
-  };
+  const panelContainerStyle = {};
 
   return (
     <>
