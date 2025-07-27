@@ -1,5 +1,5 @@
 import {DownloadOutlined, DownOutlined, ReloadOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Col, Form, Row, Select, Space, Spin} from 'antd';
+import {Button, Card, Col, Form, Row, Select, Space, Spin} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import {t} from 'i18next';
 import React, {useEffect, useRef, useState} from 'react';
@@ -69,26 +69,21 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
   }, []);
 
   return (
-    <Space
-      className="w-full bg-white dark:bg-[#23232a] dark:text-[#f5f5f5] rounded-lg transition-colors duration-300 p-4"
-      direction="vertical"
-    >
-      <>
+    <Card size="small" bodyStyle={{ padding: 12 }}>
+      <Space direction="vertical" style={{ width: '100%' }} size="small">
         {isExpand && (
-          <Row>
-            <Form.Item
-              label="配置模板变量"
-              style={{ width: '100%' }}
-            >
-              <TextArea value={variables} />
-            </Form.Item>
-          </Row>
+          <Form.Item
+            label="配置模板变量"
+            style={{ marginBottom: 8 }}
+          >
+            <TextArea value={variables} />
+          </Form.Item>
         )}
-        <Row>
+        <Row gutter={8}>
           <Col span={14}>
             <Form.Item
               label="选择代码模板"
-              style={{ width: '100%' }}
+              style={{ marginBottom: 8 }}
             >
               <Select
                 options={options}
@@ -100,23 +95,26 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
             </Form.Item>
           </Col>
           <Col span={10}>
-            <Form.Item>
-              <Space style={{ paddingLeft: '10px' }}>
+            <Form.Item style={{ marginBottom: 8 }}>
+              <Space>
                 <Button
                   icon={<ReloadOutlined />}
                   type="primary"
+                  size="small"
                   onClick={() => handleExplore(templateName)}
                 >
                   重新生成
                 </Button>
                 <Button
                   icon={<DownloadOutlined />}
-                  type="default"
+                  size="small"
                   onClick={() => downloadZip()}
                 >
-                  下载源码�?
+                  下载源码
                 </Button>
-                <a
+                <Button
+                  type="link"
+                  size="small"
                   onClick={() => {
                     setIsExpand(!isExpand);
                   }}
@@ -127,11 +125,10 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
                     </>
                   ) : (
                     <>
-                      {t('expand')}
-                      <DownOutlined />
+                      {t('expand')} <DownOutlined />
                     </>
                   )}
-                </a>
+                </Button>
               </Space>
             </Form.Item>
           </Col>
@@ -143,8 +140,8 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
             ref={exploreRef}
           />
         </Spin>
-      </>
-    </Space>
+      </Space>
+    </Card>
   );
 };
 

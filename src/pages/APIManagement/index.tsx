@@ -1,6 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
+  Card,
   Dropdown,
   Flex,
   Form,
@@ -9,24 +10,23 @@ import {
   message,
   Modal,
   Select,
+  Space,
   Splitter,
   Switch,
   Tabs,
   TabsProps,
-  theme as antdTheme,
+  Typography,
 } from "antd";
 import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../services/api-info.ts";
 import GraphQL from "./components/GraphQL.tsx";
 import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
-import {ApiInfo, TreeNode} from "@/types/api-management";
+import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate.tsx";
 import {useSelector} from "react-redux";
-import {RootState} from "../../store/configStore.ts";
-// @ts-expect-error: no type definition for Tree.jsx
+import {RootState} from "@/store/configStore.ts";
 import Tree from '@/components/explore/explore/Tree.jsx';
-// @ts-expect-error: no type definition for Icons.jsx
 import {
   ApiFolder,
   ApiMethodDelete,
@@ -38,31 +38,23 @@ import {
   IconFolder
 } from '@/components/explore/icons/Icons.jsx';
 
-
 const ApiManagement: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useSelector((state: RootState) => state.config);
-  const { token } = antdTheme.useToken();
 
   // 状态定义
-  const [apiList, setApiList] = useState<ApiInfo[]>([]);
+  const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
     useState<boolean>(false);
 
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
-  const treeRef = useRef<any>(null); // 使用 `any` 类型避免过于严格的类型检查
-  const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
+  const [editForm, setEditForm] = useState<ApiDefinition | null>(null);
   const [renameDialogVisible, setRenameDialogVisible] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [renameTarget, setRenameTarget] = useState<any>(null);
 
   // 新建接口弹窗逻辑
-  const [createApiMethod, setCreateApiMethod] = useState("GET");
-  const [createApiPath, setCreateApiPath] = useState("");
   const [createApiDialogVisible, setCreateApiDialogVisible] = useState(false);
-  const [createApiName, setCreateApiName] = useState("");
   const [createApiParentId, setCreateApiParentId] = useState<string | null>(null);
   const [createApiLoading, setCreateApiLoading] = useState(false);
   const [createApiError, setCreateApiError] = useState("");
@@ -86,65 +78,80 @@ const ApiManagement: React.FC = () => {
   const [createApiForm] = Form.useForm();
 
   useEffect(() => {
-    setEditForm(selectedNode?.data);
+    if (selectedNode?.data) {
+      // 确保graphql字段存在，如果不存在则初始化为空对象
+      let graphqlData: GraphQLData = selectedNode.data.graphql || {
+        operationName: "MyQuery",
+        query: "",
+        variables: null,
+        headers: null
+      };
+
+      // 如果选中的是API类型且有meta.execution数据，则使用meta.execution的内容
+      if (selectedNode.data.type === "API" && selectedNode.data.meta?.execution) {
+        const execution = selectedNode.data.meta.execution;
+        graphqlData = {
+          operationName: execution.operationName || "MyQuery",
+          query: execution.query || "",
+          variables: execution.variables || null,
+          headers: execution.headers || null
+        };
+      }
+
+      const data: ApiDefinition = {
+        id: selectedNode.data.id || '',
+        name: selectedNode.data.name || '',
+        parentId: selectedNode.data.parentId || null,
+        type: selectedNode.data.type || '',
+        method: selectedNode.data.method || '',
+        path: selectedNode.data.path || '',
+        children: selectedNode.data.children || [],
+        data: selectedNode.data.data || {},
+        meta: selectedNode.data.meta || {},
+        enabled: selectedNode.data.enabled ?? true,
+        graphql: graphqlData
+      };
+      setEditForm(data);
+    }
   }, [selectedNode]);
 
-  useEffect(() => {}, [editForm]);
+  // 移除空的useEffect，避免不必要的渲染
 
   // 请求 API 列表数据
   useEffect(() => {
     reqApiList().then((apis) => {
-      const getDefaultSelectedApi = (apis: any) => {
+      const getDefaultSelectedApi = (apis: any): any => {
         for (const api of apis) {
           if (api.type === "API") {
             return api;
           }
           if (api.children) {
-            const child: any = getDefaultSelectedApi(api?.children);
-            if (child) {
-              return child;
-            }
+            const result: any = getDefaultSelectedApi(api.children);
+            if (result) return result;
           }
         }
         return null;
       };
 
-      const defaultSelectedApi = getDefaultSelectedApi(apis);
-      setExpandedKeys([defaultSelectedApi.parentId]); // 展开第一项
-      setSelectedKeys([defaultSelectedApi.id]);
-      setSelectedNode({
-        children: [],
-        data: defaultSelectedApi,
-        isLeaf: false,
-        key: defaultSelectedApi.id,
-        settingVisible: false,
-        title: defaultSelectedApi.name,
-      });
+      const defaultApi = getDefaultSelectedApi(apis);
+      if (defaultApi) {
+        setSelectedNode({
+          children: [],
+          data: defaultApi,
+          isLeaf: true,
+          key: defaultApi.id,
+          settingVisible: false,
+          title: defaultApi.name,
+        });
+      }
     });
   }, []);
 
-  // 渲染树节点
-  const onExpand = (expandedKeys: any) => {
-    setExpandedKeys(expandedKeys);
-  };
-
-  // 请求 API 列表数据
   const reqApiList = async () => {
     const apis = await getApis();
     setApiList(apis);
-    setFilteredApiList(apis); // 初始时展示完整数据
     return apis;
   };
-
-  // 节点点击处理
-  const handleNodeClick = (nodeData: TreeNode) => {
-    setSelectedNode(nodeData);
-  };
-
-  // 删除确认弹窗逻辑
-  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const showDeleteConfirm = (id: string, name: string) => {
     setDeleteTarget({ id, name });
@@ -152,158 +159,153 @@ const ApiManagement: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!deleteTarget?.id) return;
-    setDeleteLoading(true);
-    try {
-      await deleteApi(deleteTarget.id);
-      await reqApiList();
-      setDeleteConfirmVisible(false);
-      setDeleteTarget(null);
-    } finally {
-      setDeleteLoading(false);
+    if (deleteTarget) {
+      setDeleteLoading(true);
+      try {
+        await deleteApi(deleteTarget.id);
+        message.success(t("delete_success"));
+        reqApiList();
+        setDeleteConfirmVisible(false);
+      } catch {
+        message.error(t("delete_failed"));
+      } finally {
+        setDeleteLoading(false);
+      }
     }
   };
 
-  // 替换showEditInput
-  const showEditInput = (data: ApiInfo) => {
+  const showEditInput = (data: ApiDefinition) => {
     setRenameTarget(data);
     setRenameValue(data.name);
     setRenameDialogVisible(true);
   };
 
-  // 编辑 API
   const renameApi = async (name: string) => {
-    if (renameTarget.id) {
+    if (renameTarget) {
       await updateApiName(renameTarget.id, name);
-      await reqApiList();
+      message.success(t("rename_success"));
+      reqApiList();
     }
   };
 
-  // 新建接口弹窗触发
   const showCreateApiDialog = (parentId?: string | null) => {
     setCreateApiParentId(parentId || null);
     setCreateApiDialogVisible(true);
     setCreateApiError("");
-    setTimeout(() => {
-      createApiForm.resetFields();
-      createApiForm.setFieldsValue({ method: "GET" });
-    }, 0);
+    createApiForm.resetFields();
   };
 
-  // 表单提交
   const handleCreateApiForm = async () => {
-    try {
-      const values = await createApiForm.validateFields();
-      await addApi(createApiParentId, values.name, values.method, values.path);
-    } catch (e) {
-      // 校验失败不处理
-    }
+    const values = await createApiForm.validateFields();
+    await addApi(createApiParentId, values.name, values.method, values.path);
   };
 
-  // 修改addApi逻辑，支持传入名称、method、path
   const addApi = async (parentId?: string | null, name?: string, method?: string, path?: string) => {
-    if (!name || !name.trim()) {
-      setCreateApiError('名称不能为空');
-      return;
-    }
-    if (!path || !path.trim()) {
-      setCreateApiError('接口地址不能为空');
-      return;
-    }
     setCreateApiLoading(true);
+    setCreateApiError("");
     try {
-      const reqData = {
-        parentId: parentId,
-        name: name,
-        type: "API",
+      await createApi({
+        name: name || "",
         method: method || "GET",
-        path: path,
-        meta: { auth: false },
+        path: path || "",
+        parentId: parentId,
         enabled: true,
-      };
-      const newApi = await createApi(reqData);
-      await reqApiList();
-      setExpandedKeys([parentId]);
-      setSelectedKeys([newApi.id]);
+        type: "API",
+      });
+      message.success(t("create_success"));
       setCreateApiDialogVisible(false);
-      setCreateApiName("");
-      setCreateApiPath("");
-      setCreateApiError("");
-    } catch (e) {
-      setCreateApiError('提交失败，请重试');
+      reqApiList();
+    } catch (error: any) {
+      setCreateApiError(error.message || t("create_failed"));
     } finally {
       setCreateApiLoading(false);
     }
   };
 
   const addFolder = async (parentId?: string | null) => {
-    const reqData = {
-      parentId: parentId,
-      name: t("new_folder"),
-      type: "FOLDER",
-    };
-    const newApi = await createApi(reqData);
-    await reqApiList();
-    showEditInput(newApi);
-  };
-
-  const showCreateFolderDialog = (parentId?: string | null) => {
-    setCreateFolderParentId(parentId || null);
-    setCreateFolderName("");
-    setCreateFolderDialogVisible(true);
-    setCreateFolderError("");
-  };
-
-  const handleCreateFolder = async () => {
     if (!createFolderName.trim()) {
-      setCreateFolderError("名称不能为空");
+      setCreateFolderError(t("folder_name_required"));
       return;
     }
     setCreateFolderLoading(true);
+    setCreateFolderError("");
     try {
-      const reqData = {
-        parentId: createFolderParentId,
+      await createApi({
         name: createFolderName,
+        parentId: parentId,
         type: "FOLDER",
-      };
-      await createApi(reqData);
-      await reqApiList();
+      });
+      message.success(t("create_success"));
       setCreateFolderDialogVisible(false);
       setCreateFolderName("");
-      setCreateFolderError("");
-    } catch (e) {
-      setCreateFolderError("提交失败，请重试");
+      reqApiList();
+    } catch (error: any) {
+      setCreateFolderError(error.message || t("create_failed"));
     } finally {
       setCreateFolderLoading(false);
     }
   };
 
-  // 转换apiList为Tree.jsx需要的数据结构
-  function convertApiListToTreeData(list: any[]) {
-    return list.map((item: any) => {
-      if (item.type === 'FOLDER') {
-        return {
-          type: 'folder',
-          filename: item.name,
-          path: item.id,
-          children: item.children ? convertApiListToTreeData(item.children) : [],
-          data: item,
-        };
-      } else {
-        return {
-          type: 'file',
-          filename: item.name,
-          path: item.id,
-          data: item,
-        };
-      }
-    });
+  const showCreateFolderDialog = (parentId?: string | null) => {
+    setCreateFolderParentId(parentId || null);
+    setCreateFolderDialogVisible(true);
+    setCreateFolderName("");
+    setCreateFolderError("");
+  };
+
+  const handleCreateFolder = async () => {
+    await addFolder(createFolderParentId);
+  };
+
+  function convertApiListToTreeData(list: any[]): any[] {
+    return list.map((item) => ({
+      path: item.id,
+      filename: item.name,
+      type: item.type === "FOLDER" ? "folder" : "file",
+      data: item,
+      children: item.children ? convertApiListToTreeData(item.children) : [],
+    }));
   }
 
+  // 根据ID获取上级目录名称
+  const getParentFolderName = (parentId: string | null): string => {
+    if (!parentId) return "根目录";
+
+    const findFolder = (apis: ApiDefinition[], targetId: string): ApiDefinition | null => {
+      for (const api of apis) {
+        if (api.id === targetId) {
+          return api;
+        }
+        if (api.children) {
+          const found = findFolder(api.children, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const parent = findFolder(apiList, parentId);
+    return parent ? parent.name : "未知目录";
+  };
+
   const handleSaveApi = async () => {
-    await updateApi(editForm.id, editForm);
-    message.success(t("saved"));
-    await reqApiList();
+    if (editForm) {
+      // 构造保存数据，确保包含parentId
+      const saveData = {
+        name: editForm.name,
+        method: editForm.method,
+        path: editForm.path || "",
+        parentId: editForm.parentId,
+        enabled: editForm.enabled,
+        type: editForm.type,
+        meta: editForm.meta,
+        graphql: editForm.graphql
+      };
+
+      await updateApi(editForm.id, saveData);
+      message.success(t("form_save_success"));
+      reqApiList();
+    }
   };
 
   const onChange = (key: string) => {
@@ -316,52 +318,51 @@ const ApiManagement: React.FC = () => {
       label: "GraphQL",
       children: (
         <GraphQL
-          onChange={(value) =>
-            setEditForm({
-              ...editForm,
-              meta: { ...editForm?.meta, execution: value },
-            })
+          data={editForm?.graphql}
+          onChange={(data) =>
+            setEditForm({ ...editForm, graphql: data })
           }
-          data={selectedNode?.data?.meta?.execution}
         />
       ),
     },
     {
       key: "authorization",
-      label: t("config"),
+      label: t("authorization"),
       children: (
         <Authorization
-          data={selectedNode?.data.meta}
-          onChange={(data) => {
-            console.debug("auth onchange", data);
-            setEditForm({ ...editForm, meta: { ...editForm.meta, ...data } });
-          }}
+          data={editForm?.meta || {}}
+          onChange={(data) =>
+            setEditForm({ ...editForm, meta: data })
+          }
         />
       ),
     },
   ];
 
-  const [searchText, setSearchText] = useState<string>(""); // 搜索文本状态
-  const [filteredApiList, setFilteredApiList] = useState<ApiInfo[]>([]); // 新增的状态，用于保存过滤后的数据
-  // 搜索 API 列表数据
-  const filterApiList = (apis: ApiInfo[], searchText: string): ApiInfo[] => {
-    if (!searchText) return apis; // 如果没有输入搜索词，返回原始数据
+  const [searchText, setSearchText] = useState("");
+  const [filteredApiList, setFilteredApiList] = useState<ApiDefinition[]>([]);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // 过滤 API 列表数据
+  const filterApiList = (apis: ApiDefinition[], searchText: string): ApiDefinition[] => {
+    if (!searchText) return apis;
 
     return apis
       .map((api) => {
-        // 递归遍历子节点
-        const children = api.children
-          ? filterApiList(api.children, searchText)
-          : [];
-        if (
-          api.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          children.length > 0
-        ) {
-          return { ...api, children };
+        if (api.name.toLowerCase().includes(searchText.toLowerCase())) {
+          return api;
+        }
+        if (api.children) {
+          const filteredChildren = filterApiList(api.children, searchText);
+          if (filteredChildren.length > 0) {
+            return { ...api, children: filteredChildren };
+          }
         }
         return null;
       })
-      .filter(Boolean) as ApiInfo[];
+      .filter(Boolean) as ApiDefinition[];
   };
 
   // 监听搜索输入框变化
@@ -369,212 +370,192 @@ const ApiManagement: React.FC = () => {
     const value = e.target.value;
     setSearchText(value);
     const filteredData = filterApiList(apiList, value);
-    setFilteredApiList(filteredData); // 更新过滤后的数据
+    setFilteredApiList(filteredData);
+  };
+
+  // 初始化过滤后的数据
+  useEffect(() => {
+    setFilteredApiList(apiList);
+  }, [apiList]);
+
+// 紧凑主题样式
+  const cardStyle = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column' as const,
   };
 
   return (
-    <div
-      className="api-management-wrapper h-full bg-white text-black dark:bg-[#18181c] dark:text-[#f5f5f5]"
-      style={{
-        background: token.colorBgContainer,
-        color: token.colorText,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <Card
+        className={`h-full w-full`}
+        style={cardStyle}
+      >
       <Splitter className="h-full">
         <Splitter.Panel
           defaultSize="20%"
           max="40%"
           collapsible
-          style={{
-            height: '100%',
-            paddingRight: token.marginXS,
-            boxSizing: 'border-box'
-          }}
         >
-          <div
-            className="bg-white dark:bg-[#23232a]"
-            style={{
-              height: '100%',
-              overflow: 'hidden',
-              borderRadius: token.borderRadius,
-              padding: token.paddingSM
-            }}
-          >
-            <div className="w-full mb-2 flex items-center gap-2">
-              <Input
-                size="small"
-                placeholder={t("search_apis")}
-                value={searchText}
-                onChange={handleSearchChange}
-                allowClear
-                prefix={<SearchOutlined />}
-                className="flex-1"
-              />
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item onClick={() => showCreateApiDialog()}>
-                      {t("new_api")}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => showCreateFolderDialog()}>
-                      {t("new_folder")}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>
-                      {t("batch_new_api")}
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button size="small" icon={<PlusOutlined />} />
-              </Dropdown>
-            </div>
-            <div className="flex-1 overflow-auto">
-              <Tree
-                tree={{ children: convertApiListToTreeData(apiList) }}
-                selected={selectedNode ? { path: selectedNode.data.id } : { path: '' }}
-                onClickItem={(item: any) => {
-                  setSelectedNode({
-                    children: [],
-                    data: item.data,
-                    isLeaf: item.type === 'file',
-                    key: item.path,
-                    settingVisible: false,
-                    title: item.filename,
-                  });
-                  setSelectedKeys([item.path]);
-                }}
-                renderMore={(item: any) => {
-                  // 仅文件和文件夹都显示更多按钮
-                  return (
-                    <Dropdown
-                      overlay={
-                        <Menu>
-                          {item.type === 'folder' && (
-                            <Menu.Item onClick={() => showCreateApiDialog(item.data.id)}>
-                              {t('new_api')}
-                            </Menu.Item>
-                          )}
-                          <Menu.Item onClick={() => showEditInput(item.data)}>
-                            {t('rename')}
-                          </Menu.Item>
-                          <Menu.Item style={{ color: 'red' }} onClick={e => { e.domEvent.stopPropagation(); showDeleteConfirm(item.data.id, item.data.name); }}>
-                            {t('delete')}
-                          </Menu.Item>
-                        </Menu>
-                      }
-                      trigger={["hover"]}
-                    >
-                      <MoreOutlined onClick={e => e.stopPropagation()} />
-                    </Dropdown>
-                  );
-                }}
-                renderIcon={(item: any, nodeType: any) => {
-                  if (nodeType === 'file') {
-                    const method = item.data?.method;
-                    if (method === 'GET') return <ApiMethodGet key={`get${item.path}`} />;
-                    if (method === 'POST') return <ApiMethodPost key={`post${item.path}`} />;
-                    if (method === 'PUT') return <ApiMethodPut key={`put${item.path}`} />;
-                    if (method === 'DELETE') return <ApiMethodDelete key={`delete${item.path}`} />;
-                    if (method === 'PATCH') return <ApiMethodPatch key={`patch${item.path}`} />;
-                    return <IconFile key={`file${item.path}`} />;
+          <Card bodyStyle={{ padding: 12, height: '100%' }}>
+            <Space direction="vertical" size="small" className="w-full">
+              <Flex gap="small" align="center">
+                <Input
+                  placeholder={t("search_apis")}
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  allowClear
+                  prefix={<SearchOutlined />}
+                  className="flex-1"
+                />
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item onClick={() => showCreateApiDialog()}>
+                        {t("new_api")}
+                      </Menu.Item>
+                      <Menu.Item onClick={() => showCreateFolderDialog()}>
+                        {t("new_folder")}
+                      </Menu.Item>
+                      <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>
+                        {t("batch_new_api")}
+                      </Menu.Item>
+                    </Menu>
                   }
-                  // API分组文件夹特殊icon
-                  if (item.data && item.data.type === 'FOLDER') return <ApiFolder key={`apifolder${item.path}`} />;
-                  return <IconFolder key={`folder${item.path}`} />;
-                }}
-              />
-            </div>
-          </div>
+                >
+                  <Button icon={<PlusOutlined />} />
+                </Dropdown>
+              </Flex>
+              <div className="flex-1 overflow-auto">
+                <Tree
+                  tree={{ children: convertApiListToTreeData(filteredApiList) }}
+                  selected={selectedNode ? { path: selectedNode.data.id } : { path: '' }}
+                  onClickItem={(item: any) => {
+                    setSelectedNode({
+                      children: [],
+                      data: item.data,
+                      isLeaf: item.type === 'file',
+                      key: item.path,
+                      settingVisible: false,
+                      title: item.filename,
+                    });
+
+                  }}
+                  renderMore={(item: any) => {
+                    return (
+                      <Dropdown
+                        overlay={
+                          <Menu>
+                            {item.type === 'folder' && (
+                              <>
+                                <Menu.Item onClick={() => showCreateApiDialog(item.data.id)}>
+                                  {t('new_api')}
+                                </Menu.Item>
+                                <Menu.Item onClick={() => showCreateFolderDialog(item.data.id)}>
+                                  {t('new_folder')}
+                                </Menu.Item>
+                                <Menu.Divider />
+                              </>
+                            )}
+                            <Menu.Item onClick={() => showEditInput(item.data)}>
+                              {t('rename')}
+                            </Menu.Item>
+                            <Menu.Item style={{ color: 'red' }} onClick={e => { e.domEvent.stopPropagation(); showDeleteConfirm(item.data.id, item.data.name); }}>
+                              {t('delete')}
+                            </Menu.Item>
+                          </Menu>
+                        }
+                        trigger={["hover"]}
+                      >
+                        <MoreOutlined onClick={e => e.stopPropagation()} />
+                      </Dropdown>
+                    );
+                  }}
+                  renderIcon={(item: any, nodeType: any) => {
+                    if (nodeType === 'file') {
+                      const method = item.data?.method;
+                      if (method === 'GET') return <ApiMethodGet key={`get${item.path}`} />;
+                      if (method === 'POST') return <ApiMethodPost key={`post${item.path}`} />;
+                      if (method === 'PUT') return <ApiMethodPut key={`put${item.path}`} />;
+                      if (method === 'DELETE') return <ApiMethodDelete key={`delete${item.path}`} />;
+                      if (method === 'PATCH') return <ApiMethodPatch key={`patch${item.path}`} />;
+                      return <IconFile key={`file${item.path}`} />;
+                    }
+                    if (item.data && item.data.type === 'FOLDER') return <ApiFolder key={`apifolder${item.path}`} />;
+                    return <IconFolder key={`folder${item.path}`} />;
+                  }}
+                />
+              </div>
+            </Space>
+          </Card>
         </Splitter.Panel>
-                 <Splitter.Panel
-           style={{
-             height: '100%',
-             paddingLeft: token.marginXS,
-             boxSizing: 'border-box'
-           }}
-         >
-           <div
-             className="bg-white dark:bg-[#23232a]"
-             style={{
-               height: '100%',
-               overflow: 'hidden',
-               borderRadius: token.borderRadius,
-               padding: token.paddingSM
-             }}
-           >
-             {editForm?.type == "API" ? (
-               <div className="flex flex-col h-full">
-                 <div className="mb-2">
-                   <Flex gap="small" justify="flex-start" align="center" wrap>
-                     <Input
-                       size="small"
-                       addonBefore={
-                         <Select
-                           size="small"
-                           value={editForm?.method}
-                           onChange={(value) =>
-                             setEditForm({ ...editForm, method: value })
-                           }
-                           options={methodOptions}
-                           style={{ minWidth: 80 }}
-                         />
-                       }
-                       prefix={<span style={{ fontSize: token.fontSizeSM }}>{config?.application['flexmodel.context-path']}</span>}
-                       className="flex-1"
-                       value={editForm?.path}
-                       onChange={(e) =>
-                         setEditForm({ ...editForm, path: e?.target?.value })
-                       }
-                     />
-                     <Button
-                       size="small"
-                       type="primary"
-                       onClick={handleSaveApi}
-                       icon={<SaveOutlined />}
-                     >
-                       {t("save")}
-                     </Button>
-                     <Switch
-                       size="small"
-                       value={editForm?.enabled}
-                       onChange={(val) => {
-                         setEditForm({ ...editForm, enabled: val });
-                         updateApiStatus(editForm.id, val).then(() => {
-                           message.success(val ? t("enabled") : t("closed"));
-                           reqApiList();
-                         });
-                       }}
-                     />
-                   </Flex>
-                 </div>
-                                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-                    <Tabs
-                      size="small"
-                      defaultActiveKey="graphql"
-                      items={items}
-                      onChange={onChange}
-                      style={{ 
-                        height: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        minHeight: 0
-                      }}
-                      tabBarStyle={{ marginBottom: token.marginSM }}
+        <Splitter.Panel>
+          <Card bodyStyle={{ padding: 12, height: '100%' }}>
+            {editForm?.type == "API" ? (
+              <div className="flex flex-col h-full">
+                <Space direction="vertical" size="small" className="mb-2">
+                  <Flex gap="small" justify="flex-start" align="center" wrap>
+                    <Input
+                      addonBefore={
+                        <Select
+                          value={editForm?.method}
+                          onChange={(value) =>
+                            setEditForm({ ...editForm, method: value })
+                          }
+                          options={methodOptions}
+                          style={{ minWidth: 80 }}
+                        />
+                      }
+                      prefix={<span>{config?.application['flexmodel.context-path']}</span>}
+                      className="flex-1"
+                      value={editForm?.path}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, path: e?.target?.value })
+                      }
                     />
-                  </div>
-               </div>
-             ) : (
-               <div>
-                 <div>
-                   {t("folder_name")}: {editForm?.name}
-                 </div>
-               </div>
-             )}
-           </div>
-         </Splitter.Panel>
+                    <Button
+                      type="primary"
+                      onClick={handleSaveApi}
+                      icon={<SaveOutlined />}
+                    >
+                      {t("save")}
+                    </Button>
+                    <Switch
+                      value={editForm?.enabled}
+                      onChange={(val) => {
+                        if (editForm) {
+                          setEditForm({ ...editForm, enabled: val });
+                          updateApiStatus(editForm.id, val).then(() => {
+                            message.success(val ? t("enabled") : t("closed"));
+                            reqApiList();
+                          });
+                        }
+                      }}
+                    />
+                  </Flex>
+                </Space>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+                  <Tabs
+                    defaultActiveKey="graphql"
+                    items={items}
+                    onChange={onChange}
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      minHeight: 0
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Typography.Text>
+                  {t("folder_name")}: {editForm?.name}
+                </Typography.Text>
+              </div>
+            )}
+          </Card>
+        </Splitter.Panel>
       </Splitter>
       {/* 删除确认弹窗 */}
       <Modal
@@ -614,8 +595,16 @@ const ApiManagement: React.FC = () => {
           layout="vertical"
           onFinish={handleCreateApiForm}
           autoComplete="off"
-          size="small"
         >
+          <Form.Item
+            label="上级目录"
+          >
+            <Input
+              value={getParentFolderName(createApiParentId)}
+              disabled
+              style={{ backgroundColor: '#f5f5f5' }}
+            />
+          </Form.Item>
           <Form.Item
             label={t('name')}
             name="name"
@@ -649,12 +638,23 @@ const ApiManagement: React.FC = () => {
         onOk={handleCreateFolder}
         confirmLoading={createFolderLoading}
       >
-        <Input
-          placeholder={t("folder_name")}
-          value={createFolderName}
-          onChange={e => setCreateFolderName(e.target.value)}
-          maxLength={32}
-        />
+        <Form layout="vertical">
+          <Form.Item label="上级目录">
+            <Input
+              value={getParentFolderName(createFolderParentId)}
+              disabled
+              style={{ backgroundColor: '#f5f5f5' }}
+            />
+          </Form.Item>
+          <Form.Item label={t("folder_name")}>
+            <Input
+              placeholder={t("folder_name")}
+              value={createFolderName}
+              onChange={e => setCreateFolderName(e.target.value)}
+              maxLength={32}
+            />
+          </Form.Item>
+        </Form>
         {createFolderError && <div style={{ color: 'red', marginTop: 8 }}>{createFolderError}</div>}
       </Modal>
       <BatchCreate
@@ -666,7 +666,7 @@ const ApiManagement: React.FC = () => {
         onCancel={() => setBatchCreateDrawerVisible(false)}
         visible={batchCreateDialogDrawer}
       />
-    </div>
+    </Card>
   );
 };
 

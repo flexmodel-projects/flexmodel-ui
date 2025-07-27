@@ -126,6 +126,8 @@
   "select_group_basic_field": "Basic field",
   "select_group_relation": "Relation",
   "select_group_enumeration": "Enumeration",
+  "type_relation": "Relation",
+  "type_enum": "Enum",
   "field_asc": "ASC",
   "field_desc": "DESC",
   "input_valid_msg": "Please input {{name}}",
@@ -158,6 +160,8 @@
   "form_save_failed": "Failed to save",
   "form_delete_success": "Deleted successfully",
   "form_delete_fail": "Failed to delete",
+  "field_delete_success": "Field deleted successfully",
+  "field_delete_failed": "Failed to delete field",
   "app_description": "All-in-one API design platform",
   "pagination_total_text": "{{start}}-{{end}} of {{total}} items",
   "help": "Help",
@@ -207,5 +211,6 @@
   "toggle_dark_mode": "Toggle dark mode",
   "dark_mode": "Dark",
   "light_mode": "Light",
-  "code": "Code"
+  "code": "Code",
+  "authorization": "Authorization"
 }

@@ -46,7 +46,7 @@ export const IconFolder = () => (
     className='icon-folder'
   >
     <path
-      fill='currentColor'
+      fill='#FAAD14'
       d='M464 128H272l-64-64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48z'
     />
   </svg>
@@ -375,9 +375,9 @@ export const IconEntityFolder = () => (
     width='18' height='18'
   >
     {/* 文件夹主体 */}
-    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#36CFC9' />
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
     {/* 文件夹盖子 */}
-    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#5EEAD4' />
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
     {/* 叠加一条白色线条装饰 */}
     <rect x='6' y='13' width='12' height='1.2' rx='0.6' fill='#fff' />
   </svg>
@@ -441,9 +441,9 @@ export const ApiFolder = () => (
     width='18' height='18'
   >
     {/* 文件夹主体，API专属色 */}
-    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#1890FF' />
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
     {/* 文件夹盖子 */}
-    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#91D5FF' />
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
     {/* API字母 */}
     <text x='12' y='16' textAnchor='middle' fontSize='8' fill='#fff' fontFamily='Arial' fontWeight='bold'>API</text>
   </svg>

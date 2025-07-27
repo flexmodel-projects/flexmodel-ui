@@ -119,7 +119,6 @@ const Header: React.FC = () => {
         <div style={{ paddingLeft: token.padding }}>
           <Breadcrumb
             items={breadcrumbItems}
-            style={{ fontSize: token.fontSizeSM }}
           />
         </div>
 

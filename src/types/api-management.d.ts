@@ -1,13 +1,44 @@
-export interface ApiInfo {
+export interface Execution {
+  query: string;
+  variables?: Record<string, any>;
+  operationName?: string;
+  headers?: Record<string, any>;
+}
+
+export interface GraphQLData {
+  operationName: string;
+  query: string;
+  variables: Record<string, any> | null;
+  headers: Record<string, any> | null;
+}
+
+export interface ApiMeta {
+  // 接口鉴权
+  auth?: boolean;
+  // 身份源
+  identityProvider?: string;
+  // 是否启用限流
+  rateLimitingEnabled?: boolean;
+  // 最大请求数
+  maxRequestCount?: number;
+  // 间隔时间
+  intervalInSeconds?: number;
+  execution?: Execution;
+}
+
+export interface ApiDefinition {
   id: string;
   name: string;
+  parentId?: string | null;
   type?: string;
   method?: string;
-  children?: ApiInfo[];
+  path?: string;
+  children?: ApiDefinition[];
   settingVisible?: boolean;
   data: any;
-  meta: any;
+  meta: ApiMeta;
   enabled: boolean;
+  graphql?: GraphQLData;
 }
 
 export interface TreeNode {
@@ -16,14 +47,14 @@ export interface TreeNode {
   isLeaf?: boolean;
   children?: TreeNode[];
   settingVisible?: boolean;
-  data: ApiInfo;
+  data: ApiDefinition;
 }
 
 export interface ApiDefinitionSchema {
   id: string;
   type: ApiType;
   path: string;
-  meta: any; // 根据需要细化
+  meta: ApiMeta;
   name: string;
   createdAt: string; // 使用ISO日期字符串
   updatedAt: string;
@@ -41,7 +72,7 @@ export interface ApiDefinitionTreeDTO {
   path: string;
   createdAt: string;
   updatedAt: string;
-  meta: any;
+  meta: ApiMeta;
   enabled: boolean;
   children: ApiDefinitionTreeDTO[];
 }
@@ -58,4 +89,4 @@ export interface GenerateAPIsDTO {
   generateAPIs: string[];
 }
 
-export type ApiType = 'FOLDER' | 'API'; 
+export type ApiType = 'FOLDER' | 'API';

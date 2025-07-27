@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {Button, Typography} from 'antd';
 import {EyeInvisibleOutlined, EyeOutlined} from '@ant-design/icons';
 
-interface HidePasswordProps {
+interface SensitiveTextProps {
   text: string | undefined;
 }
 
-const HidePassword: React.FC<HidePasswordProps> = ({text}) => {
+const SensitiveText: React.FC<SensitiveTextProps> = ({text}) => {
   const [isHide, setIsHide] = useState<boolean>(true);
 
   const toggleHide = () => {
@@ -27,4 +27,4 @@ const HidePassword: React.FC<HidePasswordProps> = ({text}) => {
   );
 };
 
-export default HidePassword;
+export default SensitiveText;

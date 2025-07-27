@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Card, notification, Row, Splitter, theme} from "antd";
-import SelectModel from "@/pages/DataModeling/components/SelectModel.tsx";
+import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser.tsx";
 import styles from "@/pages/DataModeling/index.module.scss";
 import EntityView from "@/pages/DataModeling/components/EntityView.tsx";
 import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView.tsx";
@@ -91,7 +91,7 @@ const ModelingPage: React.FC = () => {
             collapsible
             style={leftPanelStyle}
           >
-            <SelectModel datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
+            <ModelBrowser datasource={activeDs} editable onSelect={handleItemChange} version={selectModelVersion}/>
           </Splitter.Panel>
           <Splitter.Panel
             style={rightPanelStyle}

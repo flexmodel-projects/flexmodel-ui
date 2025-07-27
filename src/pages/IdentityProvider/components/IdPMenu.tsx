@@ -2,6 +2,7 @@ import React from "react";
 import {Button, Divider, Dropdown, Menu, Spin, theme as antdTheme} from "antd";
 import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
 import type {IdentityProvider} from "@/types/identity-provider";
+import Title from "antd/lib/typography/Title";
 
 interface IdPMenuProps {
   idPList: IdentityProvider[];
@@ -18,15 +19,14 @@ const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setAc
 
   return (
   <div style={{ minWidth: 200 }}>
-    <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginBottom: 8 }}>
-      <span style={{ fontWeight: 400, fontSize: "16px", fontFamily: token.fontFamily }}>{t("idp_management")}</span>
-    </div>
+    <Title level={5}>
+      <span style={{ fontFamily: token.fontFamily }}>{t("idp_management")}</span>
+    </Title>
     <Divider style={{margin: '8px 0'}} />
     <Spin spinning={idPLoading}>
       <Menu
         mode="inline"
         selectedKeys={activeIdP ? [activeIdP.name] : []}
-        style={{ borderRadius: 8, flex: 1 }}
         onClick={({ key }) => {
           const found = idPList.find((item) => item.name === key);
           if (found) setActiveIdP(found);
@@ -35,9 +35,8 @@ const IdPMenu: React.FC<IdPMenuProps> = ({ idPList, activeIdP, idPLoading, setAc
         {idPList.map((item) => (
           <Menu.Item
             key={item.name}
-            style={{ display: 'flex', alignItems: 'center', borderRadius: 8, marginBottom: 2, position: 'relative', paddingRight: 32 }}
           >
-            <span style={{ flex: 1 }}>{item.name}</span>
+            <span className="flex-1">{item.name}</span>
             {item.type !== "system" && (
               <span
                 style={{

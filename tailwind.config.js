@@ -6,6 +6,30 @@ export default {
       colors: {
         "border-gray": "#dee2e6",
       },
+      fontFamily: {
+        'mono': [
+          'JetBrains Mono',
+          'Fira Code',
+          'Source Code Pro',
+          'Consolas',
+          'Monaco',
+          'Menlo',
+          'Ubuntu Mono',
+          'DejaVu Sans Mono',
+          'monospace'
+        ],
+        'code': [
+          'JetBrains Mono',
+          'Fira Code',
+          'Source Code Pro',
+          'Consolas',
+          'Monaco',
+          'Menlo',
+          'Ubuntu Mono',
+          'DejaVu Sans Mono',
+          'monospace'
+        ],
+      },
     },
     container: {
       center: true,

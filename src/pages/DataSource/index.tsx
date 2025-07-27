@@ -2,20 +2,21 @@ import React, {useEffect, useState} from "react";
 import {
   Button,
   Card,
+  Col,
   Divider,
   Dropdown,
   Form,
   Input,
-  Layout,
   Menu,
   message,
   Modal,
   Radio,
+  Row,
   Space,
   Spin,
-  theme
+  Typography
 } from "antd";
-import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
+import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
 import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer.tsx";
@@ -26,18 +27,43 @@ import {
   updateDatasource,
   validateDatasource,
 } from "@/services/datasource.ts";
-import {DbsMap} from "@/pages/DataSource/common.ts";
+// 数据库图标映射
+import MySQL from "@/assets/icons/svg/mysql.svg?react";
+import MariaDB from "@/assets/icons/svg/mariadb.svg?react";
+import Oracle from "@/assets/icons/svg/oracle.svg?react";
+import SqlServer from "@/assets/icons/svg/sqlserver.svg?react";
+import PostgreSQL from "@/assets/icons/svg/postgresql.svg?react";
+import DB2 from "@/assets/icons/svg/db2.svg?react";
+import SQLite from "@/assets/icons/svg/sqlite.svg?react";
+import GBase from "@/assets/icons/svg/gbase.svg?react";
+import DM8 from "@/assets/icons/svg/dm.svg?react";
+import TiDB from "@/assets/icons/svg/tidb.svg?react";
+import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
-import styles from "@/pages/DataSource/index.module.scss";
 
 import type {DatasourceSchema} from '@/types/data-source';
 import {ScriptImportForm, ScriptType} from '@/types/data-source';
 import {EntitySchema, EnumSchema, NativeQuerySchema} from "@/types/data-modeling";
 
+const DbsMap: Record<string, any> = {
+  mysql: MySQL,
+  mariadb: MariaDB,
+  oracle: Oracle,
+  sqlserver: SqlServer,
+  postgresql: PostgreSQL,
+  db2: DB2,
+  sqlite: SQLite,
+  gbase: GBase,
+  dm: DM8,
+  tidb: TiDB,
+  mongodb: MongoDB
+};
+
+const { Title } = Typography;
+
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [activeDs, setActiveDs] = useState<DatasourceSchema>({
@@ -57,10 +83,9 @@ const DatasourceManagement: React.FC = () => {
   const [importVisible, setImportVisible] = useState<boolean>(false);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
 
-  // 修复 useForm 的用法，去掉无效的初始参数，改为 setFieldsValue 设置初始值
   const [scriptForm] = Form.useForm<ScriptImportForm>();
+
   useEffect(() => {
-    // 根据当前选择的type设置相应的script内容
     const currentType = scriptForm.getFieldValue('type') || ScriptType.IDL;
     if (currentType === ScriptType.IDL) {
       const idls = modelList.map((m: any) => m.idl);
@@ -153,7 +178,6 @@ const DatasourceManagement: React.FC = () => {
     const models = await getModelList(activeDs.name);
     setModelList(models);
     setExportVisible(true);
-    // 重置表单并设置默认值
     scriptForm.resetFields();
     scriptForm.setFieldValue('type', ScriptType.IDL);
   };
@@ -162,6 +186,7 @@ const DatasourceManagement: React.FC = () => {
     scriptForm.resetFields();
     setImportVisible(true);
   };
+
   const importModels = async () => {
     const values = await scriptForm.validateFields();
     reqImportModels(activeDs.name, values).then(() =>
@@ -170,147 +195,140 @@ const DatasourceManagement: React.FC = () => {
     setImportVisible(false);
   };
 
-  // 紧凑主题样式
-  const cardStyle = {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column' as const,
-  };
-
-  const layoutStyle = {
-    height: '100%',
-  };
-
-  const siderStyle = {
-    background: 'transparent',
-    borderRight: `1px solid ${token.colorBorder}`,
-  };
-
-  const contentStyle = {
-    paddingLeft: token.marginSM,
-    height: '100%',
-  };
-
-  const panelContainerStyle = {};
-
   return (
-    <>
-      <Card
-        className={`${styles.root} h-full`}
-        style={cardStyle}
-      >
-        <Layout style={layoutStyle}>
-          <Layout.Sider
-            width={300}
-            className={styles.sidebar}
-            style={siderStyle}
+    <div style={{ height: '100%',width: '100%' }}>
+      <Row gutter={16} style={{ height: '100%' }}>
+        {/* 左侧边栏 */}
+        <Col span={6} style={{ height: '100%' }}>
+          <Card
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
           >
-            <div className={styles.panelContainer} style={panelContainerStyle}>
-              <div style={{ padding: token.paddingSM }}>
-                <span className={styles.title}>
-                  {t("datasource_management")}
-                </span>
-              </div>
-              <Divider style={{ margin: `${token.marginSM} 0` }} />
+            <Title level={5} style={{ margin: 0, marginBottom: '16px' }}>
+              {t("datasource_management")}
+            </Title>
+
+            <Divider style={{ margin: '16px 0' }} />
+
+            <div style={{ flex: 1, overflow: 'auto', marginBottom: '16px' }}>
               <Spin spinning={dsLoading}>
                 <Menu
                   mode="inline"
                   selectedKeys={[activeDs.name]}
+                  style={{ border: 'none' }}
                 >
                   {dsList.map(ds => (
                     <Menu.Item
                       key={ds.name}
                       icon={<Icon component={DbsMap[ds.config?.dbKind]} />}
                       onClick={() => handleTreeClick(ds)}
-                      className={styles.menuItem}
+                      style={{ position: 'relative', marginBottom: '4px' }}
                     >
-                      <span className={styles.menuItemText}>{ds.name}</span>
-                      <span className={styles.menuMoreBtn}>
-                        <Dropdown
-                          overlay={
-                            <Menu>
-                              <Menu.Item
-                                className="text-red"
-                                icon={<DeleteOutlined />}
-                                disabled={ds.type === 'SYSTEM'}
-                                onClick={e => {
-                                  e.domEvent.stopPropagation();
-                                  setDeleteVisible(true);
-                                }}
-                              >
-                                {t("delete")}
-                              </Menu.Item>
-                            </Menu>
-                          }
-                          trigger={["hover"]}
-                          placement="bottomRight"
-                        >
-                          <MoreOutlined className="cursor-pointer" onClick={e => e.stopPropagation()} />
-                        </Dropdown>
-                      </span>
+                      <span>{ds.name}</span>
+                      <Dropdown
+                        overlay={
+                          <Menu>
+                            <Menu.Item
+                              className="text-red"
+                              icon={<DeleteOutlined />}
+                              disabled={ds.type === 'SYSTEM'}
+                              onClick={e => {
+                                e.domEvent.stopPropagation();
+                                setDeleteVisible(true);
+                              }}
+                            >
+                              {t("delete")}
+                            </Menu.Item>
+                          </Menu>
+                        }
+                        trigger={["hover"]}
+                        placement="bottomRight"
+                      >
+                        <MoreOutlined
+                          className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={e => e.stopPropagation()}
+                        />
+                      </Dropdown>
                     </Menu.Item>
                   ))}
                 </Menu>
               </Spin>
-              <Divider style={{ margin: `${token.marginSM} 0` }} />
-              <Button
-                type="primary"
-                icon={<BlockOutlined />}
-                onClick={() => setDrawerVisible(true)}
-                style={{ width: '100%' }}
-                ghost
-              >
-                {t("connect_datasource")}
-              </Button>
             </div>
-          </Layout.Sider>
-          <Layout.Content
-            className={styles.content}
-            style={contentStyle}
+
+            <Divider style={{ margin: '16px 0' }} />
+
+            <Button
+              type="primary"
+              icon={<BlockOutlined />}
+              onClick={() => setDrawerVisible(true)}
+              style={{ width: '100%' }}
+              ghost
+            >
+              {t("connect_datasource")}
+            </Button>
+          </Card>
+        </Col>
+
+        {/* 右侧内容区域 */}
+        <Col span={18} style={{ height: '100%', paddingLeft: '0x' }}>
+          <Card
+            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            bodyStyle={{ height: '100%', display: 'flex', flexDirection: 'column' }}
           >
-            <div className={styles.panelContainer} style={panelContainerStyle}>
-              <div className={styles.header}>
-                <div className={styles.title}>{activeDs.name}</div>
-                <div className={styles.actions}>
-                  <Space>
-                    <Button onClick={handleImport}>{t("import")}</Button>
-                    <Button onClick={handleExport}>{t("export")}</Button>
-                    <Button onClick={handleTestConnection} loading={testLoading}>
-                      {t("test")}
-                    </Button>
-                    <Button
-                      type="primary"
-                      disabled={activeDs.type === 'SYSTEM'}
-                      onClick={() => setEditVisible(true)}
-                    >
-                      {t("edit")}
-                    </Button>
-                  </Space>
-                </div>
-              </div>
-              <div>
-                <DatabaseInfo datasource={activeDs} />
-              </div>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '24px'
+            }}>
+              <Title level={4} style={{ margin: 0 }}>
+                {activeDs.name}
+              </Title>
+
+              <Space>
+                <Button onClick={handleImport}>
+                  {t("import")}
+                </Button>
+                <Button onClick={handleExport}>
+                  {t("export")}
+                </Button>
+                <Button onClick={handleTestConnection} loading={testLoading}>
+                  {t("test")}
+                </Button>
+                <Button
+                  type="primary"
+                  disabled={activeDs.type === 'SYSTEM'}
+                  onClick={() => setEditVisible(true)}
+                >
+                  {t("edit")}
+                </Button>
+              </Space>
             </div>
-          </Layout.Content>
-        </Layout>
-        <ConnectDatabaseDrawer
-          visible={drawerVisible}
-          onChange={(data) => {
-            getDatasourceListHandler();
-            setActiveDs(data);
-          }}
-          onClose={() => {
-            setDrawerVisible(false);
-          }}
-        />
-        <EditDSConfig
-          visible={editVisible}
-          datasource={activeDs}
-          onConfirm={handleEdit}
-          onCancel={() => setEditVisible(false)}
-        />
-      </Card>
+
+            <div style={{ flex: 1, overflow: 'auto' }}>
+              <DatabaseInfo datasource={activeDs} />
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+      <ConnectDatabaseDrawer
+        visible={drawerVisible}
+        onChange={(data) => {
+          getDatasourceListHandler();
+          setActiveDs(data);
+        }}
+        onClose={() => {
+          setDrawerVisible(false);
+        }}
+      />
+
+      <EditDSConfig
+        visible={editVisible}
+        datasource={activeDs}
+        onConfirm={handleEdit}
+        onCancel={() => setEditVisible(false)}
+      />
+
       <Modal
         open={deleteVisible}
         title={`${t("delete")} '${activeDs?.name}?'`}
@@ -319,6 +337,7 @@ const DatasourceManagement: React.FC = () => {
       >
         {t("delete_dialog_text", { name: activeDs?.name })}
       </Modal>
+
       <Modal
         width={600}
         open={exportVisible}
@@ -326,25 +345,27 @@ const DatasourceManagement: React.FC = () => {
         onCancel={() => setExportVisible(false)}
         title={`Export ${activeDs.name} models`}
       >
-        <Form form={scriptForm} onValuesChange={(changed) => {
-          if (changed.type) {
-            if (changed.type === 'IDL') {
-              const idls = modelList.map((m: any) => m.idl);
-              // 当type为IDL时，使用字符串拼接而不是JSON格式
-              const idlString = idls.join('\n\n');
-              scriptForm.setFieldValue("script", idlString);
-            } else {
-              const script = {
-                schema: modelList.map((m: any) => ({
-                  ...m,
-                  idl: undefined,
-                })),
-                data: [],
-              };
-              scriptForm.setFieldValue("script", JSON.stringify(script));
+        <Form
+          form={scriptForm}
+          onValuesChange={(changed) => {
+            if (changed.type) {
+              if (changed.type === 'IDL') {
+                const idls = modelList.map((m: any) => m.idl);
+                const idlString = idls.join('\n\n');
+                scriptForm.setFieldValue("script", idlString);
+              } else {
+                const script = {
+                  schema: modelList.map((m: any) => ({
+                    ...m,
+                    idl: undefined,
+                  })),
+                  data: [],
+                };
+                scriptForm.setFieldValue("script", JSON.stringify(script));
+              }
             }
-          }
-        }}>
+          }}
+        >
           <Form.Item label="type" name="type">
             <Radio.Group>
               <Radio value="IDL">IDL</Radio>
@@ -356,6 +377,7 @@ const DatasourceManagement: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
+
       <Modal
         width={600}
         open={importVisible}
@@ -375,7 +397,7 @@ const DatasourceManagement: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

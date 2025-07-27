@@ -37,7 +37,7 @@ src/
 - 模型版本控制
 
 ### 2. ER图可视化
-- 使用 xyflow/react 渲染交互式ER图
+- 使用 antv/x6 渲染交互式ER图
 - 拖拽式节点编辑
 - 关系线可视化
 - 实时布局调整
@@ -73,7 +73,7 @@ src/
 - React: ^18.0.0
 - TypeScript: ^5.0.0
 - Ant Design: ^5.0.0
-- xyflow/react: ^11.0.0
+- antv/x6: ^11.0.0
 - Vite: ^4.0.0
 - Tailwind CSS: ^3.0.0
 

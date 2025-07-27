@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, theme, Tooltip} from 'antd';
+import {Button, Card, notification, Popconfirm, Space, Table, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createField, dropField, modifyField} from '../../../services/model.ts';
 import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
 import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
-
 
 interface FieldListProps {
   datasource: string;
@@ -14,7 +13,6 @@ interface FieldListProps {
 
 const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
-  const { token } = theme.useToken();
   const [fieldList, setFieldList] = useState<Field[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
@@ -58,9 +56,9 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
         const res = await createField(datasource, model?.name, typedField);
         setFieldList([...fieldList, res as unknown as Field]);
       } else {
-        const res = await modifyField(datasource, model?.name, values.name, typedField);
+        await modifyField(datasource, model?.name, values.name, typedField);
         const updatedFields = [...fieldList];
-
+        updatedFields[selectedFieldIndex] = values;
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);
@@ -76,10 +74,10 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       const field = fieldList[index];
       await dropField(datasource, model?.name, field.name);
       setFieldList(fieldList.filter((_, i) => i !== index));
-      notification.success({message: 'Field deleted successfully'});
+      notification.success({message: t('field_delete_success')});
     } catch (error) {
       console.log(error)
-      notification.error({message: 'Failed to delete field'});
+      notification.error({message: t('field_delete_failed')});
     }
   };
 
@@ -138,7 +136,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
       title: t('operations'),
       key: 'operations',
       render: (_: any, _record: Field, index: number) => (
-        <div>
+        <Space size="small">
           <Button
             type="link"
             icon={<EditOutlined/>}
@@ -160,34 +158,14 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
               {t('delete')}
             </Button>
           </Popconfirm>
-        </div>
+        </Space>
       ),
     },
   ];
 
-  // 紧凑主题样式
-  const containerStyle = {
-    
-    padding: token.paddingSM,
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    border: ` ${token.colorBorder}`,
-  };
-
-  const headerStyle = {
-    
-    justifyContent: 'space-between',
-  };
-
-  const tableStyle = {
-    
-    marginTop: token.marginSM,
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div></div>
+    <Card size="small" bodyStyle={{ padding: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <Button
           type="primary"
           icon={<PlusOutlined/>}
@@ -197,16 +175,12 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
           {t('new_field')}
         </Button>
       </div>
-      <div style={{marginTop: token.marginSM}}>
-        <Table
-          size="small"
-          rowKey="name"
-          dataSource={fieldList}
-          columns={columns}
-          pagination={false}
-          style={tableStyle}
-        />
-      </div>
+      <Table
+        rowKey={(record, index) => `${record.name}-${index}`}
+        dataSource={fieldList}
+        columns={columns}
+        pagination={false}
+      />
       <FieldForm
         visible={changeDialogVisible}
         datasource={datasource}
@@ -215,7 +189,7 @@ const FieldList: React.FC<FieldListProps> = ({datasource, model}) => {
         onConfirm={addOrEditField}
         onCancel={() => setChangeDialogVisible(false)}
       />
-    </div>
+    </Card>
   );
 };
 

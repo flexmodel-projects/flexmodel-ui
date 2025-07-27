@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, notification, Popconfirm, Table, Tag, theme} from 'antd';
+import {Button, Card, notification, Popconfirm, Space, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '../../../services/model.ts';
 import IndexForm from "./IndexForm.tsx";
 import {Entity, Index} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";
-
 
 interface IndexListProps {
   datasource: string;
@@ -14,7 +13,6 @@ interface IndexListProps {
 
 const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
-  const { token } = theme.useToken();
   const [indexList, setIndexList] = useState<Index[]>([]);
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
@@ -95,13 +93,13 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       dataIndex: 'fields',
       key: 'fields',
       render: (fields: { fieldName: string; direction: string }[]) => (
-        <div>
+        <Space>
           {fields.map((field, index) => (
-            <Tag key={index} color="default" style={{fontSize: token.fontSizeSM}}>
+            <Tag key={index} color="default">
               {field.fieldName} {field.direction}
             </Tag>
           ))}
-        </div>
+        </Space>
       ),
     },
     {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
@@ -109,12 +107,11 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       title: t('operations'),
       key: 'operations',
       render: (_: any, _record: Index, index: number) => (
-        <div>
+        <Space>
           <Button
             type="link"
             icon={<EditOutlined/>}
             onClick={() => handleEdit(index)}
-            size="small"
           >
             {t('edit')}
           </Button>
@@ -126,39 +123,18 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
               type="link"
               danger
               icon={<DeleteOutlined/>}
-              size="small"
             >
               {t('delete')}
             </Button>
           </Popconfirm>
-        </div>
+        </Space>
       ),
     },
   ];
 
-  // 紧凑主题样式
-  const containerStyle = {
-    
-    padding: token.paddingSM,
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    border: ` ${token.colorBorder}`,
-  };
-
-  const headerStyle = {
-    
-    justifyContent: 'space-between',
-  };
-
-  const tableStyle = {
-    
-    marginTop: token.marginSM,
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div></div>
+    <Card size="small" bodyStyle={{ padding: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <Button
           type="primary"
           icon={<PlusOutlined/>}
@@ -168,16 +144,12 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
           {t('new_index')}
         </Button>
       </div>
-      <div style={{marginTop: token.marginSM}}>
-        <Table
-          size="small"
-          rowKey="name"
-          dataSource={indexList}
-          columns={columns}
-          pagination={false}
-          style={tableStyle}
-        />
-      </div>
+      <Table
+        rowKey="name"
+        dataSource={indexList}
+        columns={columns}
+        pagination={false}
+      />
       <IndexForm
         visible={changeDialogVisible}
         datasource={datasource}
@@ -186,7 +158,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         onConfirm={addOrEditIndex}
         onCancel={() => setChangeDialogVisible(false)}
       />
-    </div>
+    </Card>
   );
 };
 

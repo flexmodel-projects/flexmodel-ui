@@ -55,7 +55,7 @@ export const BasicFieldTypes = [
   },
 ];
 
-// 字段初始值常�?
+// 字段初始值常�?
 export const FieldInitialValues: any = {
   STRING: {
     type: 'String',
@@ -186,7 +186,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         type: "Relation",
         from: value.replace("Relation:", ""),
         multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: undefined, // 清空默认�?
       });
     } else if (value.startsWith("Enum")) {
       form.setFieldsValue({
@@ -194,14 +194,14 @@ const FieldForm: React.FC<FieldFormProps> = ({
         type: "Enum",
         from: value.replace("Enum:", ""),
         multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: undefined, // 清空默认�?
       })
     } else {
       form.setFieldsValue({
         ...FieldInitialValues[value],
         type: value,
         multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: undefined, // 清空默认�?
       });
     }
   };
@@ -212,7 +212,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     });
   };
 
-  // 处理表单值变�?
+  // 处理表单值变�?
   const handleFormChange = (
     changedValues: Partial<Field>,
     allValues: Field
@@ -233,7 +233,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             defaultValue: _defaultValue,
           });
         } else {
-          // 切换到非multiple时，取数组的第一个值，并确保重置表单状�?
+          // 切换到非multiple时，取数组的第一个值，并确保重置表单状�?
           const _defaultValue = Array.isArray(allValues.defaultValue)
             ? allValues.defaultValue[0]
             : allValues.defaultValue;
@@ -248,7 +248,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    
+
   };
 
   const inputStyle = {
@@ -274,10 +274,10 @@ const FieldForm: React.FC<FieldFormProps> = ({
         style={formStyle}
       >
         <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
-          <Input size="small" style={inputStyle} />
+          <Input style={inputStyle} />
         </Form.Item>
         <Form.Item name="comment" label={t("comment")}>
-          <Input size="small" style={inputStyle} />
+          <Input style={inputStyle} />
         </Form.Item>
         <Form.Item name="type" hidden>
           <Input />
@@ -290,7 +290,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
           name="tmpType"
           rules={[{ required: true }]}
         >
-          <Select value={tmpType} onChange={handleTypeChange} size="small" style={selectStyle}>
+          <Select value={tmpType} onChange={handleTypeChange} style={selectStyle}>
             <Select.OptGroup label={t("select_group_basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>
@@ -324,17 +324,17 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
         {form.getFieldValue("tmpType") === "String" && (
           <Form.Item label={t("length")} name="length">
-            <Input type="number" size="small" style={inputStyle} />
+            <Input type="number" style={inputStyle} />
           </Form.Item>
         )}
 
         {form.getFieldValue("tmpType") === "Decimal" && (
           <>
             <Form.Item label={t("precision")} name="precision">
-              <Input type="number" size="small" style={inputStyle} />
+              <Input type="number" style={inputStyle} />
             </Form.Item>
             <Form.Item label={t("scale")} name="scale">
-              <Input type="number" size="small" style={inputStyle} />
+              <Input type="number" style={inputStyle} />
             </Form.Item>
           </>
         )}
@@ -346,7 +346,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="localField"
               rules={[{ required: true }]}
             >
-              <Select size="small" style={selectStyle}>
+              <Select style={selectStyle}>
                 {model?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>
                     {field.name}
@@ -359,7 +359,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
               name="foreignField"
               rules={[{ required: true }]}
             >
-              <Select size="small" style={selectStyle}>
+              <Select style={selectStyle}>
                 {RelationModel?.fields?.map((field: any) => (
                   <Select.Option key={field.name} value={field.name}>
                     {field.name}

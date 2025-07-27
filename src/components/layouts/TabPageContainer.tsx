@@ -1,6 +1,5 @@
 import React from "react";
 import {Layout, theme} from "antd";
-import styles from "./TabPageContainer.module.scss";
 import TabMenu, {TabMenuItem} from "./TabMenu";
 
 interface TabPageContainerProps {
@@ -30,24 +29,22 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
 
   return (
     <Layout
-      className={`${styles.tabPageContainer} ${className || ''}`}
+      className={`${className || ''}`}
       style={{
+        height: '100% !important',
         background: token.colorBgContainer,
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         ...style
       }}
     >
         {showHeader && headerContent && (
-          <Layout.Header className={styles.header}>
+          <Layout.Header>
             {headerContent}
           </Layout.Header>
         )}
 
-        <Layout.Content
-          className={styles.content}
-          style={{
+        <Layout.Content style={{
             background: token.colorBgContainer,
             height: '100%',
             flex: 1,
@@ -61,7 +58,6 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
             type={type}
             size={size}
             compact={compact}
-            className={styles.tabMenu}
             style={{
               background: token.colorBgContainer,
               height: '100%',

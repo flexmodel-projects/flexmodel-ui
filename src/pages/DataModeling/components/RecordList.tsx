@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
-  Col,
+  Card,
   DatePicker,
   Empty,
   Form,
@@ -10,10 +10,9 @@ import {
   Modal,
   Pagination,
   Popconfirm,
-  Row,
+  Space,
   Switch,
   Table,
-  theme,
   Tooltip
 } from 'antd';
 import {ColumnsType} from 'antd/es/table';
@@ -23,10 +22,8 @@ import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
 
-
 const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
-  const { token } = theme.useToken();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -34,12 +31,12 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const [query, setQuery] = useState({current: 1, pageSize: 10});
   const [form] = Form.useForm();
 
-  const fieldMap = model?.fields?.reduce((acc, field) => {
+  const fieldMap = model?.fields?.reduce((acc: Record<string, Field>, field: Field) => {
     acc[field.name] = field;
     return acc;
   }, {} as Record<string, Field>) || {};
 
-  const idField = model?.fields?.find(f => f.type === 'ID');
+  const idField = model?.fields?.find((f: Field) => f.type === 'ID');
 
   useEffect(() => {
     if (model) fetchRecords();
@@ -160,54 +157,30 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     fixed: 'right',
     width: 180,
     render: (_, record) => (
-      <>
+      <Space size="small">
         <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>{t('edit')}</Button>
         <Popconfirm title={t('table_selection_delete_text')} onConfirm={() => handleDelete(record)}>
           <Button size="small" type="link" icon={<DeleteOutlined/>} danger>{t('delete')}</Button>
         </Popconfirm>
-      </>
+      </Space>
     ),
   });
 
-  // 紧凑主题样式
-  const containerStyle = {
-    
-    padding: token.paddingSM,
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    border: ` ${token.colorBorder}`,
-  };
-
-  const headerStyle = {
-    
-    justifyContent: 'space-between',
-  };
-
-  const tableStyle = {
-    
-    marginTop: token.marginSM,
-  };
-
-  const paginationStyle = {
-    marginTop: token.marginSM,
-  };
-
   return model ? (
-    <div style={containerStyle}>
-      <Row justify="space-between" style={headerStyle}>
-        <Col></Col>
-        <Col>
-          <Button type="primary"
-                  icon={<PlusOutlined/>}
-                  onClick={() => {
-                    setDialogFormVisible(true);
-                    setEditMode(false);
-                  }}
-                  size="small">
-            {t('new_record')}
-          </Button>
-        </Col>
-      </Row>
+    <Card size="small" bodyStyle={{ padding: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <Button 
+          type="primary"
+          icon={<PlusOutlined/>}
+          onClick={() => {
+            setDialogFormVisible(true);
+            setEditMode(false);
+          }}
+          size="small"
+        >
+          {t('new_record')}
+        </Button>
+      </div>
 
       <Table
         sticky
@@ -217,20 +190,18 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         dataSource={records.list}
         pagination={false}
         rowKey={idField?.name}
-        style={tableStyle}
-        size="small"
       />
 
-      <Pagination
-        align="end"
-        current={query.current}
-        pageSize={query.pageSize}
-        total={records.total}
-        showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
-        onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
-        style={paginationStyle}
-        size="small"
-      />
+      <div style={{ marginTop: 8, textAlign: 'right' }}>
+        <Pagination
+          current={query.current}
+          pageSize={query.pageSize}
+          total={records.total}
+          showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
+          onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
+          size="small"
+        />
+      </div>
 
       <Modal
         title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
@@ -250,7 +221,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
           ))}
         </Form>
       </Modal>
-    </div>
+    </Card>
   ) : <Empty/>;
 };
 

@@ -30,7 +30,6 @@ const HoverEditInput: React.FC<HoverEditInputProps> = ({value, onChange}) => {
       value={val}
       onChange={(e) => setVal(e.target.value)}
       onPressEnter={handleKeyEnter}
-      size="small"
     />
   );
 };

@@ -26,9 +26,19 @@ const App = () => {
   return (
     <ConfigProvider
       locale={locale}
-      componentSize="small"
       theme={{
         algorithm: isDark ? [antdTheme.darkAlgorithm, antdTheme.compactAlgorithm] : [antdTheme.compactAlgorithm],
+        token: {
+          borderRadius: 0,
+          colorPrimary: '#096dd9',
+          colorSuccess: '#52c41a',
+          colorWarning: '#faad14',
+          colorError: '#ff4d4f',
+          colorInfo: '#096dd9',
+          colorLink: '#096dd9',
+          colorLinkHover: '#40a9ff',
+          colorLinkActive: '#0050b3',
+        },
       }}
     >
       <HashRouter>

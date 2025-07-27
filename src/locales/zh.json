@@ -126,6 +126,8 @@
   "select_group_basic_field": "基础字段",
   "select_group_relation": "关联实体",
   "select_group_enumeration": "枚举字段",
+  "type_relation": "关联",
+  "type_enum": "枚举",
   "field_asc": "正序",
   "field_desc": "倒叙",
   "input_valid_msg": "请输入{{name}}",
@@ -157,7 +159,9 @@
   "form_save_success": "保存成功",
   "form_save_failed": "保存失败",
   "form_delete_success": "删除成功",
-  "form_delete_fail": "删除成功",
+  "form_delete_fail": "删除失败",
+  "field_delete_success": "字段删除成功",
+  "field_delete_failed": "字段删除失败",
   "app_description": "面向下一代应用程序的统一数据访问层，开源、免费、支持私有化部署",
   "pagination_total_text": "显示{{start}}-{{end}}条 总共{{total}}条",
   "help": "帮助",
@@ -208,5 +212,6 @@
   "dark_mode": "夜间",
   "light_mode": "白天",
   "code": "代码",
-  "confirm": "确认"
+  "confirm": "确认",
+  "authorization": "鉴权"
 }

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Col, Input, Row, Table} from 'antd';
 import {getVariables} from "@/services/environment.ts";
-import HidePassword from "@/components/HidePassword.tsx";
+import SensitiveText from "@/components/SensitiveText.tsx";
 
 
 const Variables: React.FC = () => {
@@ -42,7 +42,7 @@ const Variables: React.FC = () => {
       title: 'Variable Value',
       dataIndex: 'value',
       key: 'value',
-      render: (text: string) => <HidePassword text={text}/>,
+      render: (text: string) => <SensitiveText text={text}/>,
     },
   ];
 
@@ -67,7 +67,6 @@ const Variables: React.FC = () => {
       <div style={{height: '540px', overflow: 'auto'}}>
         <h3>Environment Variables</h3>
         <Table
-          size="small"
           dataSource={environmentVariables}
           columns={columns}
           pagination={false}
@@ -75,7 +74,6 @@ const Variables: React.FC = () => {
         />
         <h3>System Variables</h3>
         <Table
-          size="small"
           dataSource={systemVariables}
           columns={columns}
           pagination={false}

@@ -321,7 +321,6 @@ const LogViewer: React.FC = () => {
               bordered={false}
               virtual
               scroll={{ y: expand ? 270 : 325 }}
-              size="small"
               columns={columns}
               dataSource={tableData?.list}
               rowKey="id"

@@ -12,20 +12,16 @@ interface FieldInputProps {
 }
 
 const FieldInput: React.FC<FieldInputProps> = ({
-  fieldFn,
-  value,
-  onChange,
-  modelList = [],
-}) => {
-  const { token } = theme.useToken();
+                                                 fieldFn,
+                                                 value,
+                                                 onChange,
+                                                 modelList = [],
+                                               }) => {
+  const {token} = theme.useToken();
   const field = fieldFn();
 
   // 紧凑主题样式
   const inputStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const selectStyle = {
     fontSize: token.fontSizeSM,
   };
 
@@ -37,7 +33,6 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            size="small"
             style={inputStyle}
           />
         );
@@ -49,12 +44,11 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(val) => onChange(val)}
-            style={{ width: "100%", ...inputStyle }}
-            size="small"
+            style={{width: "100%", ...inputStyle}}
           />
         );
       case "Boolean":
-        return <Switch checked={value} onChange={(val) => onChange(val)} />;
+        return <Switch checked={value} onChange={(val) => onChange(val)}/>;
       case "Date":
         return (
           <DatePicker
@@ -63,8 +57,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(date) =>
               onChange(date ? date.format("YYYY-MM-DD") : null)
             }
-            style={{ width: "100%" }}
-            size="small"
+            style={{width: "100%"}}
           />
         );
       case "Time":
@@ -75,8 +68,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(time) =>
               onChange(time ? time.format("HH:mm:ss") : null)
             }
-            style={{ width: "100%" }}
-            size="small"
+            style={{width: "100%"}}
           />
         );
       case "DateTime":
@@ -88,8 +80,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             onChange={(date) =>
               onChange(date ? date.format("YYYY-MM-DD HH:mm:ss") : null)
             }
-            style={{ width: "100%" }}
-            size="small"
+            style={{width: "100%"}}
           />
         );
       case "JSON":
@@ -98,7 +89,6 @@ const FieldInput: React.FC<FieldInputProps> = ({
             placeholder={field.comment}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            size="small"
             style={inputStyle}
           />
         );
@@ -107,7 +97,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
         return (
           <Select
             mode={field?.multiple ? "multiple" : undefined}
-            style={{ width: "100%" }}
+            style={{width: "100%"}}
             placeholder={field.comment}
             options={fromEnum?.elements?.map((val: any) => ({
               value: val,
@@ -116,7 +106,6 @@ const FieldInput: React.FC<FieldInputProps> = ({
             value={field.defaultValue}
             defaultValue={field.defaultValue}
             onChange={(e) => onChange(e)}
-            size="small"
           />
         );
       }
@@ -125,7 +114,6 @@ const FieldInput: React.FC<FieldInputProps> = ({
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            size="small"
             style={inputStyle}
           />
         );

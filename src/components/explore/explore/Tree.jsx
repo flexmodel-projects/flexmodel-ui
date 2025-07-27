@@ -50,7 +50,11 @@ function Tree({ tree, selected, onClickItem, renderMore, renderIcon }) {
           onMouseEnter={() => setHoverFilePath(item.path)}
           onMouseLeave={() => setHoverFilePath(null)}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <div 
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+            onMouseEnter={() => setHoverFilePath(item.path)}
+            onMouseLeave={() => setHoverFilePath(null)}
+          >
             <a
               href='/#'
               key={`s1${item.path}`}
@@ -95,7 +99,11 @@ function Tree({ tree, selected, onClickItem, renderMore, renderIcon }) {
         onMouseEnter={() => setHoverFilePath(item.path)}
         onMouseLeave={() => setHoverFilePath(null)}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div 
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+          onMouseEnter={() => setHoverFilePath(item.path)}
+          onMouseLeave={() => setHoverFilePath(null)}
+        >
           <a
             href='/#'
             key={`s1${item.path}`}

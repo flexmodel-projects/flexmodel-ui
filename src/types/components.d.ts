@@ -3,6 +3,12 @@
 declare module '@/components/explore/icons/Icons.jsx' {
   import {ReactElement} from 'react';
 
+  export const ApiFolder: () => ReactElement;
+  export const ApiMethodDelete: () => ReactElement;
+  export const ApiMethodGet: () => ReactElement;
+  export const ApiMethodPatch: () => ReactElement;
+  export const ApiMethodPost: () => ReactElement;
+  export const ApiMethodPut: () => ReactElement;
   export const IconEntityFolder: () => ReactElement;
   export const IconEnum: () => ReactElement;
   export const IconEnumFolder: () => ReactElement;

@@ -38,14 +38,14 @@ interface TreeItem {
   modelType?: string;
 }
 
-interface SelectModelProps {
+interface ModelBrowserProps {
   datasource?: string;
   editable: boolean;
   onSelect: (ds: string, model: Model) => void;
   version?: number;
 }
 
-const SelectModel: React.FC<SelectModelProps> = ({
+const ModelBrowser: React.FC<ModelBrowserProps> = ({
   datasource,
   editable,
   onSelect,
@@ -248,7 +248,7 @@ const SelectModel: React.FC<SelectModelProps> = ({
   const selectRowStyle = {
     display: 'flex',
     alignItems: 'center',
-    paddingBottom: '10px',
+    paddingBottom: '5px',
   };
 
   const searchRowStyle = {
@@ -286,7 +286,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
           value={activeDs}
           onChange={onSelectDatasource}
           style={selectStyle}
-          size="small"
         >
           {dsList.map((item) => (
             <Select.Option key={item.name} value={item.name}>
@@ -320,7 +319,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
           onChange={handleSearchChange}
           style={inputStyle}
           allowClear
-          size="small"
           prefix={
             <SearchOutlined/>
           }
@@ -345,7 +343,6 @@ const SelectModel: React.FC<SelectModelProps> = ({
           >
             <Button
               icon={<PlusOutlined />}
-              size="small"
             />
           </Dropdown>
         )}
@@ -433,5 +430,5 @@ const SelectModel: React.FC<SelectModelProps> = ({
   );
 };
 
-export default SelectModel;
+export default ModelBrowser;
 

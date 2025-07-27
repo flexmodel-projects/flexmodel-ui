@@ -1,26 +1,32 @@
 import React, {useEffect, useState} from "react";
 import "graphiql/graphiql.css";
 import "@graphiql/plugin-explorer/dist/style.css";
+import {Card} from "antd";
 import {executeQuery} from "../../../services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
+import {GraphQLData} from "@/types/api-management";
 
 interface GraphQLProps {
-  data: any;
-  onChange: (data: any) => void | undefined;
+  data: GraphQLData | undefined;
+  onChange: (data: GraphQLData) => void | undefined;
 }
 
 const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
 
   useEffect(() => {
-    setOperationName(data?.operationName);
-    setQuery(data?.query);
+    setOperationName(data?.operationName || "MyQuery");
+    setQuery(data?.query || "");
     if (data?.headers) {
-      setHeaders(JSON.stringify(data?.headers));
+      setHeaders(JSON.stringify(data.headers));
+    } else {
+      setHeaders("{}");
     }
     if (data?.variables) {
-      setVariables(JSON.stringify(data?.variables));
+      setVariables(JSON.stringify(data.variables));
+    } else {
+      setVariables("{}");
     }
   }, [data]);
 
@@ -32,7 +38,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   const explorer = explorerPlugin();
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+    <Card>
       <GraphiQL
         className="text-[12px] [&_h2]:text-[18px] [&_h3]:text-[17px] [&_h4]:text-[16px]"
         query={query}
@@ -79,7 +85,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
         plugins={[explorer]}
         /*visiblePlugin={explorer}*/
       ></GraphiQL>
-    </div>
+    </Card>
   );
 };
 

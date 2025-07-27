@@ -1,6 +1,6 @@
 import React from 'react';
 import {Descriptions} from 'antd';
-import HidePassword from "@/components/HidePassword.tsx";
+import SensitiveText from "@/components/SensitiveText.tsx";
 import {useTranslation} from "react-i18next";
 
 interface IdpInfoProps {
@@ -45,7 +45,7 @@ const IdpInfo: React.FC<IdpInfoProps> = ({data}) => {
 
       {/* Client Secret */}
       <Descriptions.Item label={t('idp_client_secret')}>
-        <HidePassword text={data.provider?.clientSecret}/>
+        <SensitiveText text={data.provider?.clientSecret}/>
       </Descriptions.Item>
     </Descriptions>
   );

@@ -1,9 +1,9 @@
 import type {Field, Model} from '@/types/data-modeling';
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {Button, Checkbox, Divider, Drawer, Form, Input, message, Select, Splitter} from "antd";
-import SelectModel from "../../DataModeling/components/SelectModel.tsx";
-import {generateAPIs} from "../../../services/api-info.ts";
+import {Button, Card, Checkbox, Divider, Drawer, Form, Input, message, Select, Space, Splitter} from "antd";
+import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser.tsx";
+import {generateAPIs} from "@/services/api-info.ts";
 
 interface Props {
   onConfirm: (data: any) => void;
@@ -38,8 +38,8 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
       open={visible}
       width="80%"
       footer={
-        <div style={{textAlign: 'right'}}>
-          <Button onClick={onCancel} style={{marginRight: 8}}>
+        <Space>
+          <Button onClick={onCancel}>
             {t('cancel')}
           </Button>
           <Button onClick={async () => {
@@ -50,23 +50,23 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
           }} type="primary">
             {t('conform')}
           </Button>
-        </div>
+        </Space>
       }
     >
       <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-        <SelectModel
-              datasource={datasource}
-              editable={false}
-              onSelect={(ds: string, model: Model) => {
-                setDatasource(ds);
-                setModel(model);
-              }}
-            />
-            <Divider/>
+          <ModelBrowser
+            datasource={datasource}
+            editable={false}
+            onSelect={(ds: string, model: Model) => {
+              setDatasource(ds);
+              setModel(model);
+            }}
+          />
+          <Divider/>
         </Splitter.Panel>
         <Splitter.Panel>
-          <div style={{padding: 8, borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s, border-radius 0.3s', height: '100%', boxSizing: 'border-box'}}>
+          <Card bodyStyle={{ padding: 12 }}>
             <Form form={form} layout="vertical">
               <Form.Item name="datasourceName" hidden>
                 <Input/>
@@ -82,28 +82,30 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
               </Form.Item>
               <Form.Item label={t('generate_apis')} name="generateAPIs" required>
                 <Checkbox.Group>
-                  <Checkbox value="list" style={{lineHeight: '32px'}} defaultChecked>
-                    List
-                  </Checkbox>
-                  <Checkbox value="view" style={{lineHeight: '32px'}} defaultChecked>
-                    View
-                  </Checkbox>
-                  <Checkbox value="create" style={{lineHeight: '32px'}} defaultChecked>
-                    Create
-                  </Checkbox>
-                  <Checkbox value="update" style={{lineHeight: '32px'}} defaultChecked>
-                    Update
-                  </Checkbox>
-                  <Checkbox value="delete" style={{lineHeight: '32px'}} defaultChecked>
-                    Delete
-                  </Checkbox>
-                  <Checkbox value="pagination" style={{lineHeight: '32px'}} defaultChecked>
-                    Pagination
-                  </Checkbox>
+                  <Space direction="vertical" size="small">
+                    <Checkbox value="list" defaultChecked>
+                      List
+                    </Checkbox>
+                    <Checkbox value="view" defaultChecked>
+                      View
+                    </Checkbox>
+                    <Checkbox value="create" defaultChecked>
+                      Create
+                    </Checkbox>
+                    <Checkbox value="update" defaultChecked>
+                      Update
+                    </Checkbox>
+                    <Checkbox value="delete" defaultChecked>
+                      Delete
+                    </Checkbox>
+                    <Checkbox value="pagination" defaultChecked>
+                      Pagination
+                    </Checkbox>
+                  </Space>
                 </Checkbox.Group>
               </Form.Item>
             </Form>
-          </div>
+          </Card>
         </Splitter.Panel>
       </Splitter>
     </Drawer>

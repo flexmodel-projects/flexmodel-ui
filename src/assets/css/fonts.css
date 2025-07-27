@@ -1,0 +1,69 @@
+/* 编程字体配置 */
+
+/* 导入Google Fonts编程字体 */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* 字体变量定义 */
+:root {
+  --font-mono-primary: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', Consolas, Monaco, 'Courier New', monospace;
+  --font-mono-secondary: 'Fira Code', 'Source Code Pro', 'JetBrains Mono', Consolas, Monaco, 'Courier New', monospace;
+  --font-mono-fallback: Consolas, Monaco, 'Menlo', 'Ubuntu Mono', 'DejaVu Sans Mono', monospace;
+}
+
+/* 全局代码字体应用 */
+code, pre, .code-block, .prism-code {
+  font-family: var(--font-mono-primary);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+  -webkit-font-feature-settings: 'liga' 1, 'calt' 1;
+  -moz-font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+/* 代码编辑器相关元素 */
+.explorer-ul,
+.code-editor,
+.syntax-highlight,
+.json-viewer,
+.sql-editor {
+  font-family: var(--font-mono-primary);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+}
+
+/* 终端样式 */
+.terminal,
+.console,
+.command-line {
+  font-family: var(--font-mono-primary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* 代码注释样式 */
+.code-comment {
+  font-family: var(--font-mono-primary);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* 等宽字体工具类 */
+.font-mono {
+  font-family: var(--font-mono-primary);
+}
+
+.font-code {
+  font-family: var(--font-mono-primary);
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
+}
+
+/* 字体优化 */
+* {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} 

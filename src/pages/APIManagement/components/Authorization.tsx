@@ -1,28 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Card, Form, InputNumber, Select, Switch} from "antd";
 import {SelectProps} from "rc-select/lib/Select";
-import {getIdentityProviders} from "../../../services/identity-provider.ts";
+import {getIdentityProviders} from "@/services/identity-provider.ts";
 import {useTranslation} from "react-i18next";
+import {ApiMeta} from "@/types/api-management";
 
 interface AuthProps {
-  data: {
-    auth: boolean;
-    rateLimitingEnabled: boolean;
-    identityProvider: string;
-    intervalInSeconds: number;
-    maxRequestCount: number;
-  }
-  onChange: (data: any) => void;
+  data: ApiMeta;
+  onChange: (data: ApiMeta) => void;
 }
 
 const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
 
-  const [formData, setFormData] = useState(data);
+  const [formData, setFormData] = useState<ApiMeta>(data);
   const [form] = Form.useForm();
+  const prevDataRef = useRef<ApiMeta>(data);
 
   const [options, setOptions] = useState<SelectProps['options']>([]);
   const { t } = useTranslation();
 
+  // 获取身份源列表
   useEffect(() => {
     getIdentityProviders()
       .then(res => setOptions(res.map((d: { name: string }) => ({
@@ -31,31 +28,51 @@ const Authorization: React.FC<AuthProps> = ({data, onChange}: AuthProps) => {
       }))));
   }, []);
 
+  // 表单数据回填 - 只在data真正变化时执行
   useEffect(() => {
-    form.setFieldsValue(data);
-    setFormData(data);
+    // 深度比较，避免不必要的更新
+    const isDataChanged = JSON.stringify(data) !== JSON.stringify(prevDataRef.current);
+
+    if (isDataChanged && data && Object.keys(data).length > 0) {
+      form.setFieldsValue(data);
+      setFormData(data);
+      prevDataRef.current = data;
+    }
   }, [data, form]);
 
-  useEffect(() => {
-    onChange({
-      auth: formData?.auth,
-      identityProvider: formData?.auth ? formData.identityProvider : undefined,
-      rateLimitingEnabled: formData?.rateLimitingEnabled,
-      intervalInSeconds: formData?.intervalInSeconds ? formData.intervalInSeconds : undefined,
-      maxRequestCount: formData?.maxRequestCount ? formData.maxRequestCount : undefined,
-    });
-  }, [formData]);
+  // 数据变化时通知父组件 - 使用useCallback避免无限循环
+  const handleDataChange = useCallback((newData: ApiMeta) => {
+    const processedData = {
+      auth: newData?.auth,
+      identityProvider: newData?.auth ? newData.identityProvider : undefined,
+      rateLimitingEnabled: newData?.rateLimitingEnabled,
+      intervalInSeconds: newData?.rateLimitingEnabled ? newData.intervalInSeconds : undefined,
+      maxRequestCount: newData?.rateLimitingEnabled ? newData.maxRequestCount : undefined,
+      execution: newData?.execution
+    };
+
+    // 避免重复调用onChange
+    if (JSON.stringify(processedData) !== JSON.stringify(prevDataRef.current)) {
+      onChange(processedData);
+    }
+  }, [onChange]);
+
+  // 表单值变化处理
+  const handleFormValuesChange = useCallback((changedValues: Partial<ApiMeta>) => {
+    const newFormData = {...formData, ...changedValues};
+    setFormData(newFormData);
+    handleDataChange(newFormData);
+  }, [formData, handleDataChange]);
 
   return (
-    <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card>
       <Form
         form={form}
         initialValues={data}
         labelCol={{span: 4}}
         wrapperCol={{span: 20}}
         layout="horizontal"
-        style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
-        onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
+        onValuesChange={handleFormValuesChange}
       >
         <Form.Item name="auth" label={t('api_auth')}>
           <Switch/>

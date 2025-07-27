@@ -186,8 +186,8 @@ $placeholder-border: #e4e4e4;
     padding: 0;
     margin: 0;
     list-style: none;
-    font-size: 14px;
-    line-height: 30px;
+    font-size: 12px;
+    line-height: 25px;
   }
   span {
     display: block;
@@ -254,7 +254,7 @@ $placeholder-border: #e4e4e4;
     &.selected {
       background: #e6f7ff;
       color: #1677ff;
-      border-radius: 6px;
+      border-radius: 0px;
       outline: none;
     }
   }
@@ -359,7 +359,9 @@ pre.prism-code {
   padding: 0;
   line-height: 24px;
   font-size: 13px;
-  font-family: Monaco, Menlo, Consolas, 'courier new', monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', Consolas, Monaco, 'Courier New', monospace;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: contextual;
   span.explorer-number {
     position: relative;
     display: inline-block;
@@ -449,7 +451,7 @@ pre.prism-code {
       &.selected {
         background: #1677ff;
         color: #fff;
-        border-radius: 6px;
+        border-radius: 0px;
         outline: none;
       }
       &:focus {
@@ -544,7 +546,7 @@ pre.prism-code {
     &.selected {
       background: #e6f7ff;
       color: #1677ff;
-      border-radius: 4px;
+      border-radius: 0px;
       outline: none;
     }
   }

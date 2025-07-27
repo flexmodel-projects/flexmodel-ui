@@ -1,5 +1,5 @@
 import {CodeOutlined} from '@ant-design/icons';
-import {Button, Col, Dropdown, Menu, Row, Segmented, theme, Typography} from 'antd';
+import {Button, Card, Col, Dropdown, Menu, Row, Segmented, Space, Typography} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
@@ -8,7 +8,6 @@ import FieldList from './FieldList';
 import IndexList from './IndexList';
 import RecordList from './RecordList';
 
-
 interface Props {
   datasource: string;
   model: any;
@@ -16,7 +15,6 @@ interface Props {
 
 const EntityView = ({ datasource, model }: Props) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [selectedItem, setSelectedItem] = useState<string>('field');
 
   // 选项设置
@@ -27,107 +25,64 @@ const EntityView = ({ datasource, model }: Props) => {
     { label: t('code'), value: 'code' }
   ];
 
-  // 紧凑主题样式
-  const containerStyle = {
-    
-    padding: token.paddingSM,
-    backgroundColor: token.colorBgContainer,
-    borderRadius: token.borderRadius,
-    border: ` ${token.colorBorder}`,
-  };
-
-  const headerStyle = {
-    marginBottom: token.marginSM,
-  };
-
-  const titleStyle = {
-    fontSize: token.fontSizeLG,
-    fontWeight: token.fontWeightStrong,
-    color: token.colorText,
-    display: 'flex',
-    alignItems: 'center',
-    gap: token.marginXS,
-  };
-
-  const segmentedStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const contentStyle = {
-    marginTop: token.marginSM,
+  const renderContent = () => {
+    switch (selectedItem) {
+      case 'field':
+        return <FieldList datasource={datasource} model={model} />;
+      case 'index':
+        return <IndexList datasource={datasource} model={model} />;
+      case 'record':
+        return <RecordList datasource={datasource} model={model} />;
+      case 'code':
+        return <CodeView datasource={datasource} model={model} />;
+      default:
+        return null;
+    }
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <Row>
-          <Col span={12}>
-            <div style={titleStyle}>
+    <Card size="small">
+      <Row align="middle" justify="space-between" style={{ marginBottom: 16 }}>
+        <Col>
+          <Space align="center">
+            <Typography.Title level={5} style={{ margin: 0 }}>
               {model?.name} {model?.comment}
-              <Dropdown
-                arrow
-                overlay={
-                  <Menu>
-                    <p>接口描述信息:</p>
-                    <p>---</p>
+            </Typography.Title>
+            <Dropdown
+              arrow
+              overlay={
+                <Menu>
+                  <Menu.Item key="description">
+                    <Typography.Text strong>接口描述信息:</Typography.Text>
                     <Typography.Paragraph
                       copyable
-                      style={{ whiteSpace: 'pre-wrap' }}
+                      style={{ whiteSpace: 'pre-wrap', margin: '8px 0 0 0' }}
                     >
                       {model?.idl}
                     </Typography.Paragraph>
-                  </Menu>
-                }
-              >
-                <Button
-                  icon={<CodeOutlined />}
-                  type="text"
-                  size="small"
-                />
-              </Dropdown>
-            </div>
-          </Col>
-          <Col
-            className="text-right"
-            span={12}
-          >
-            <Segmented
-              options={options}
-              value={selectedItem}
-              onChange={val => setSelectedItem(val as string)}
-              size="small"
-              style={segmentedStyle}
-            />
-          </Col>
-        </Row>
-      </div>
-      <div style={contentStyle}>
-        {selectedItem === 'field' && (
-          <FieldList
-            datasource={datasource}
-            model={model}
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button
+                icon={<CodeOutlined />}
+                type="text"
+                size="small"
+              />
+            </Dropdown>
+          </Space>
+        </Col>
+        <Col>
+          <Segmented
+            options={options}
+            value={selectedItem}
+            onChange={val => setSelectedItem(val as string)}
+            size="small"
           />
-        )}
-        {selectedItem === 'index' && (
-          <IndexList
-            datasource={datasource}
-            model={model}
-          />
-        )}
-        {selectedItem === 'record' && (
-          <RecordList
-            datasource={datasource}
-            model={model}
-          />
-        )}
-        {selectedItem === 'code' && (
-          <CodeView
-            datasource={datasource}
-            model={model}
-          />
-        )}
-      </div>
-    </div>
+        </Col>
+      </Row>
+      {renderContent()}
+    </Card>
   );
 };
 
