@@ -62,9 +62,8 @@ const Header: React.FC = () => {
     const fullRoutePath = getFullRoutePath(pathname);
 
     // 为每个路由段生成面包屑项
-    fullRoutePath.forEach((route, index) => {
+    fullRoutePath.forEach((route) => {
       const IconComponent = route.icon;
-      const isLast = index === fullRoutePath.length - 1;
 
       items.push({
         title: (
@@ -72,8 +71,8 @@ const Header: React.FC = () => {
             <IconComponent style={{ marginRight: token.marginXS }} />
             {t(route.translationKey)}
           </span>
-        ),
-        href: isLast ? undefined : route.path // 最后一项不添加链接
+        )
+        // 移除 href 属性，使面包屑不可点击
       });
     });
 
