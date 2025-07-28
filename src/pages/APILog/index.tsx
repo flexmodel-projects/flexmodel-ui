@@ -320,7 +320,7 @@ const LogViewer: React.FC = () => {
             <Table
               bordered={false}
               virtual
-              scroll={{ y: expand ? 320 : 365 }}
+              scroll={{ y: expand ? 200  : 200 }}
               columns={columns}
               dataSource={tableData?.list}
               rowKey="id"

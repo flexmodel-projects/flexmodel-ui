@@ -3,6 +3,23 @@
 <head>
   <meta charset="utf-8"> <!-- Important: rapi-doc uses utf8 characters -->
   <script type="module" src="./rapidoc-min.js"></script>
+  <script>
+    // 从 URL 参数中获取主题设置
+    function getThemeFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const theme = urlParams.get('theme');
+      return theme || 'dark'; // 默认使用 dark 主题
+    }
+    
+    // 页面加载完成后设置主题
+    document.addEventListener('DOMContentLoaded', function() {
+      const theme = getThemeFromUrl();
+      const rapiDoc = document.querySelector('rapi-doc');
+      if (rapiDoc) {
+        rapiDoc.setAttribute('theme', theme);
+      }
+    });
+  </script>
 </head>
 <body>
 <rapi-doc

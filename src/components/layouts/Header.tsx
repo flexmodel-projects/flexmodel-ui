@@ -1,9 +1,10 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useMemo} from "react";
 import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme, Tooltip} from "antd";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
 import {setLocale} from "@/actions/langAction.ts";
+import {setDarkMode} from "@/actions/themeAction.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/store/configStore.ts";
 import {useTranslation} from "react-i18next";
@@ -16,7 +17,7 @@ import {
   QuestionCircleOutlined,
   SunOutlined
 } from "@ant-design/icons";
-import {applyDarkMode, getDarkModeFromStorage, setDarkModeToStorage} from "@/utils/darkMode.ts";
+import {applyDarkMode, setDarkModeToStorage} from "@/utils/darkMode.ts";
 import {useLocation} from "react-router-dom";
 import {getFullRoutePath} from "@/routes.tsx";
 
@@ -24,25 +25,17 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { locale } = useSelector((state: RootState) => state.locale);
+  const { isDark } = useSelector((state: RootState) => state.theme);
   const { i18n } = useTranslation();
   const location = useLocation();
-  const [isDark, setIsDark] = useState(() => getDarkModeFromStorage());
   const { token } = theme.useToken();
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
 
   const toggleDarkMode = useCallback(() => {
     const newDarkMode = !isDark;
     applyDarkMode(newDarkMode);
     setDarkModeToStorage(newDarkMode);
-    setIsDark(newDarkMode);
-  }, [isDark]);
+    dispatch(setDarkMode(newDarkMode));
+  }, [isDark, dispatch]);
 
   const changeLocale = useCallback((localeValue: Locale) => {
     dispatch(setLocale(localeValue));

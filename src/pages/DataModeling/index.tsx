@@ -61,7 +61,7 @@ const ModelingPage: React.FC = () => {
         // return <ModelGroupView datasource={activeDs} model={activeModel}/>;
         return <ERDiagram datasource={activeDs} data={activeModel?.children}/>;
       default:
-        return <div style={{padding: token.paddingSM, color: token.colorTextSecondary, fontSize: token.fontSizeSM}}>Please select a model to operate.</div>;
+        return <div>Please select a model to operate.</div>;
     }
   };
 

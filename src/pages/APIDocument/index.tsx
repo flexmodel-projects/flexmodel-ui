@@ -1,8 +1,11 @@
 import React from 'react';
 import {theme} from 'antd';
+import {RootState} from '@/store/configStore';
+import {useSelector} from 'react-redux';
 
 const SwaggerUI: React.FC = () => {
   const { token } = theme.useToken();
+  const { isDark } = useSelector((state: RootState) => state.theme);
 
   // 计算内容区域的高度：100vh - 头部高度 - padding
   const contentHeight = `calc(100vh - ${token.controlHeight * 1.5}px - ${token.padding * 2}px)`;
@@ -22,7 +25,7 @@ const SwaggerUI: React.FC = () => {
           border: 'none',
           flex: 1
         }}
-        src={`${import.meta.env.BASE_URL}/rapi-doc/index.html`}
+        src={`${import.meta.env.BASE_URL}/rapi-doc/index.html?theme=${isDark ? 'dark' : 'light'}`}
         title="Rapi Doc"
       />
     </div>

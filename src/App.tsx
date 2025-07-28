@@ -3,8 +3,9 @@ import {ConfigProvider, theme as antdTheme} from "antd";
 import PageLayout from "./components/layouts/PageLayout.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "./store/configStore.ts";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {fetchConfig} from "./actions/configAction.ts";
+import {setDarkMode} from "./actions/themeAction.ts";
 import {initializeDarkMode} from "./utils/darkMode.ts";
 
 const App = () => {
@@ -14,14 +15,14 @@ const App = () => {
   }, [dispatch]);
 
   const {locale} = useSelector((state: RootState) => state.locale);
-  const [isDark, setIsDark] = useState(() => initializeDarkMode());
+  const {isDark} = useSelector((state: RootState) => state.theme);
+  
   useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
-    observer.observe(document.documentElement, {attributes: true, attributeFilter: ["class"]});
-    return () => observer.disconnect();
-  }, []);
+    dispatch(fetchConfig());
+    // 初始化夜间模式状态
+    const initialDarkMode = initializeDarkMode();
+    dispatch(setDarkMode(initialDarkMode));
+  }, [dispatch]);
 
   return (
     <ConfigProvider

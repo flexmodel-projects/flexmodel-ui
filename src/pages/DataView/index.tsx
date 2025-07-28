@@ -4,7 +4,7 @@ import DataModeling from "@/pages/DataModeling";
 import DataSource from "@/pages/DataSource";
 import ERView from "./components/ERView";
 import {BranchesOutlined, ContainerOutlined, DatabaseOutlined} from "@ant-design/icons";
-import TabPageContainer from "@/components/layouts/TabPageContainer";
+import TabPageContainer from "@/components/common/TabPageContainer";
 import {TabMenuItem} from "@/components/common/TabMenu";
 
 const DataView: React.FC = () => {

@@ -6,6 +6,8 @@ import {executeQuery} from "../../../services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
 import {GraphQLData} from "@/types/api-management";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store/configStore.ts";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
@@ -14,6 +16,12 @@ interface GraphQLProps {
 
 const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
+
+  const { isDark } = useSelector((state: RootState) => state.theme);
+  const [operationName, setOperationName] = useState<string>("MyQuery");
+  const [query, setQuery] = useState<string>("");
+  const [headers, setHeaders] = useState<string>("{}");
+  const [variables, setVariables] = useState<string>("{}");
 
   useEffect(() => {
     setOperationName(data?.operationName || "MyQuery");
@@ -30,11 +38,6 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     }
   }, [data]);
 
-  const [operationName, setOperationName] = useState<string>("MyQuery");
-  const [query, setQuery] = useState<string>("");
-  const [headers, setHeaders] = useState<string>("{}");
-  const [variables, setVariables] = useState<string>("{}");
-
   const explorer = explorerPlugin();
 
   return (
@@ -45,6 +48,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
         operationName={operationName}
         headers={headers}
         variables={variables}
+        forcedTheme={isDark ? "dark" : "light"}
         onEditQuery={(value) => {
           setQuery(value);
           onChange({

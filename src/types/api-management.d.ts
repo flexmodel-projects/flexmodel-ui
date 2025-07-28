@@ -90,3 +90,22 @@ export interface GenerateAPIsDTO {
 }
 
 export type ApiType = 'FOLDER' | 'API';
+
+// GraphQL 响应类型定义
+export interface GraphQLResponse<T = any> {
+  errors: any[];
+  data: T;
+  extensions: any | null;
+  dataPresent: boolean;
+}
+
+export interface GraphQLIntrospectionResponse extends GraphQLResponse<{
+  __schema: any;
+}> {}
+
+// GraphQL 查询参数类型
+export interface GraphQLQueryParams {
+  query: string;
+  variables?: Record<string, any>;
+  operationName?: string;
+}

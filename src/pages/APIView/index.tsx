@@ -4,8 +4,8 @@ import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined} from "@ant-
 import APIDocument from "../APIDocument";
 import APILog from "../APILog";
 import APIManagement from "../APIManagement";
-import TabPageContainer from "@/components/layouts/TabPageContainer";
-import {TabMenuItem} from "@/components/layouts/TabMenu";
+import TabPageContainer from "@/components/common/TabPageContainer";
+import {TabMenuItem} from "@/components/common/TabMenu";
 
 const ApiView: React.FC = () => {
   const { t } = useTranslation();
