@@ -21,7 +21,7 @@ import {getFullRoutePath} from "@/routes.tsx";
 const Header: React.FC = () => {
   const { t } = useTranslation();
   const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
-  const { locale, setLocale: setLocaleStore, currentLang } = useLocale();
+  const {setLocale: setLocaleStore, currentLang } = useLocale();
   const { i18n } = useTranslation();
   const location = useLocation();
   const { token } = theme.useToken();
