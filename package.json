@@ -38,13 +38,11 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.0",
     "react-markdown": "^10.1.0",
-    "react-redux": "^7.2.2",
     "react-router-dom": "^6.26.1",
     "react-toastify": "^11.0.5",
     "react-transition-group": "^4.4.5",
-    "redux": "4.0.5",
-    "redux-thunk": "2.3.0",
-    "x6-html-shape": "^0.4.9"
+    "x6-html-shape": "^0.4.9",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
@@ -60,7 +58,6 @@
     "globals": "^15.9.0",
     "i18next-browser-languagedetector": "^8.0.0",
     "postcss": "^8.4.49",
-    "redux-devtools-extension": "^2.13.9",
     "sass": "^1.81.0",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.5.3",

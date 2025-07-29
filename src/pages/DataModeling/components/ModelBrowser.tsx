@@ -7,8 +7,7 @@ import {useNavigate} from "react-router-dom";
 import CreateEntity from "@/pages/DataModeling/components/CreateEntity.tsx";
 import type {DatasourceSchema} from '@/types/data-source';
 import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {RootState} from "@/store/configStore.ts";
+import {useLocale} from "@/store/appStore.ts";
 import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel.tsx";
 import CreateEnum from "@/pages/DataModeling/components/CreateEnum.tsx";
 import type {Model} from '@/types/data-modeling';
@@ -52,7 +51,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
   version,
 }) => {
   const { t } = useTranslation();
-  const { locale } = useSelector((state: RootState) => state.locale);
+  const { locale } = useLocale();
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "system");
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);

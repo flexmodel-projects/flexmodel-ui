@@ -1,28 +1,17 @@
 import {HashRouter, Route, Routes} from "react-router-dom";
 import {ConfigProvider, theme as antdTheme} from "antd";
 import PageLayout from "./components/layouts/PageLayout.tsx";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "./store/configStore.ts";
 import {useEffect} from "react";
-import {fetchConfig} from "./actions/configAction.ts";
-import {setDarkMode} from "./actions/themeAction.ts";
-import {initializeDarkMode} from "./utils/darkMode.ts";
+import {useConfig, useLocale, useTheme} from "./store/appStore.ts";
 
 const App = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchConfig());
-  }, [dispatch]);
+  const { fetchConfig } = useConfig();
+  const { isDark } = useTheme();
+  const { locale } = useLocale();
 
-  const {locale} = useSelector((state: RootState) => state.locale);
-  const {isDark} = useSelector((state: RootState) => state.theme);
-  
   useEffect(() => {
-    dispatch(fetchConfig());
-    // 初始化夜间模式状态
-    const initialDarkMode = initializeDarkMode();
-    dispatch(setDarkMode(initialDarkMode));
-  }, [dispatch]);
+    fetchConfig();
+  }, [fetchConfig]);
 
   return (
     <ConfigProvider

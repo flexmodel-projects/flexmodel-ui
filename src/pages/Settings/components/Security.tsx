@@ -3,8 +3,7 @@ import {Button, Form, Input, InputNumber, Select, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
 import {SelectProps} from "rc-select/lib/Select";
 import {getIdentityProviders} from "@/services/identity-provider.ts";
-import {RootState} from "@/store/configStore.ts";
-import {useSelector} from "react-redux";
+import {useConfig} from "@/store/appStore.ts";
 
 interface SecurityProps {
   settings: any;
@@ -23,7 +22,7 @@ interface SecurityData {
 const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
   const {t} = useTranslation();
 
-  const { config } = useSelector((state: RootState) => state.config);
+  const { config } = useConfig();
 
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<SecurityData>({

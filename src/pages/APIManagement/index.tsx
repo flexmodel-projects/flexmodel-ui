@@ -24,8 +24,7 @@ import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate.tsx";
-import {useSelector} from "react-redux";
-import {RootState} from "@/store/configStore.ts";
+import {useConfig} from "@/store/appStore.ts";
 import Tree from '@/components/explore/explore/Tree.jsx';
 import {
   ApiFolder,
@@ -40,7 +39,7 @@ import {
 
 const ApiManagement: React.FC = () => {
   const { t } = useTranslation();
-  const { config } = useSelector((state: RootState) => state.config);
+  const { config } = useConfig();
 
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);

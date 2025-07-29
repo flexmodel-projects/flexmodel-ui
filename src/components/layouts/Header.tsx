@@ -3,10 +3,7 @@ import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme, T
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
-import {setLocale} from "@/actions/langAction.ts";
-import {setDarkMode} from "@/actions/themeAction.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/store/configStore.ts";
+import {useLocale, useTheme} from "@/store/appStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {
@@ -23,9 +20,8 @@ import {getFullRoutePath} from "@/routes.tsx";
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const { locale } = useSelector((state: RootState) => state.locale);
-  const { isDark } = useSelector((state: RootState) => state.theme);
+  const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
+  const { locale, setLocale: setLocaleStore, currentLang } = useLocale();
   const { i18n } = useTranslation();
   const location = useLocation();
   const { token } = theme.useToken();
@@ -34,18 +30,19 @@ const Header: React.FC = () => {
     const newDarkMode = !isDark;
     applyDarkMode(newDarkMode);
     setDarkModeToStorage(newDarkMode);
-    dispatch(setDarkMode(newDarkMode));
-  }, [isDark, dispatch]);
+    toggleDarkModeStore();
+  }, [isDark, toggleDarkModeStore]);
 
   const changeLocale = useCallback((localeValue: Locale) => {
-    dispatch(setLocale(localeValue));
-    i18n.changeLanguage(localeValue == zhCN ? "zh" : "en");
-    if (!localeValue) {
-      dayjs.locale("en");
-    } else {
+    const lang = localeValue === zhCN ? 'zh' : 'en';
+    setLocaleStore(localeValue, lang);
+    i18n.changeLanguage(lang);
+    if (lang === 'zh') {
       dayjs.locale("zh-cn");
+    } else {
+      dayjs.locale("en");
     }
-  }, [dispatch, i18n]);
+  }, [setLocaleStore, i18n]);
 
   // 使用 useMemo 缓存面包屑数据，避免每次渲染都重新计算
   const breadcrumbItems = useMemo(() => {
@@ -93,8 +90,8 @@ const Header: React.FC = () => {
 
   // 使用 useMemo 缓存当前语言显示文本
   const currentLocaleText = useMemo(() =>
-    locale == enUS ? "English" : "中文",
-    [locale]
+    currentLang === 'zh' ? "中文" : "English",
+    [currentLang]
   );
 
   return (

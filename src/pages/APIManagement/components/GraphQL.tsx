@@ -6,8 +6,7 @@ import {executeQuery} from "@/services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
 import {GraphQLData} from "@/types/api-management";
-import {useSelector} from "react-redux";
-import {RootState} from "@/store/configStore.ts";
+import {useTheme} from "@/store/appStore.ts";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
@@ -17,7 +16,7 @@ interface GraphQLProps {
 const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
 
-  const { isDark } = useSelector((state: RootState) => state.theme);
+  const { isDark } = useTheme();
   const [operationName, setOperationName] = useState<string>("MyQuery");
   const [query, setQuery] = useState<string>("");
   const [headers, setHeaders] = useState<string>("{}");
