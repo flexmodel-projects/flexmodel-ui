@@ -14,7 +14,6 @@
 ## 核心开发规则
 
 ### 1. 技术选择偏好
-- **图表库**: 使用 xyflow/react 渲染交互式 ER 图
 - **UI组件**: 优先使用官方 Ant Design 组件，避免自定义包装器如 Sidebar
 - **API设计**: API 定义直接返回业务数据类型（如 Promise<Job[]>），使用 api.get/post/put/delete 方法，不暴露 BaseResponse 包装器
 - **类型安全**: 复杂返回结构使用 PagedResult<T> 类型和具体参数类型，避免 any

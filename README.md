@@ -80,8 +80,7 @@ src/
 - **UI框架**: Ant Design 5 (紧凑主题)
 - **状态管理**: Redux Toolkit
 - **路由**: React Router DOM
-- **图表**: xyflow/react (替代 reactflow)
-- **图形可视化**: xyflow/react
+- **图表**: antv/x6
 - **样式**: Tailwind CSS + Ant Design Token系统
 - **国际化**: i18next
 
