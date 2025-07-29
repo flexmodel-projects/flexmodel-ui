@@ -1,7 +1,7 @@
 import React from 'react';
-import {Button, Drawer, Form, Input, notification, theme} from 'antd';
+import {Button, Drawer, Form, Input, notification} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import {createModel} from '../../../services/model.ts';
+import {createModel} from '@/services/model.ts';
 import {useTranslation} from 'react-i18next';
 
 
@@ -19,7 +19,6 @@ const CreateNativeQueryModel: React.FC<CreateNativeQueryModelProps> = ({
   onCancel,
 }) => {
   const {t} = useTranslation();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
 
   const handleSubmit = async () => {
@@ -40,7 +39,7 @@ const CreateNativeQueryModel: React.FC<CreateNativeQueryModelProps> = ({
 
   // 紧凑主题样式
   const formStyle = {
-    
+
   };
 
   return (

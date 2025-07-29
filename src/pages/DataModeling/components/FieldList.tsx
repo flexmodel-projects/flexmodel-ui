@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Card, notification, Popconfirm, Space, Table, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {createField, dropField, modifyField} from '../../../services/model.ts';
+import {createField, dropField, modifyField} from '@/services/model.ts';
 import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
 import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";

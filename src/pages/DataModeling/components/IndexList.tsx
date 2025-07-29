@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Card, notification, Popconfirm, Space, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {createIndex, dropIndex, modifyIndex} from '../../../services/model.ts';
+import {createIndex, dropIndex, modifyIndex} from '@/services/model.ts';
 import IndexForm from "./IndexForm.tsx";
 import {Entity, Index} from "@/types/data-modeling";
 import {useTranslation} from "react-i18next";

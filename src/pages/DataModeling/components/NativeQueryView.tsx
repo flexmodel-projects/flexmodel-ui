@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Modal, notification, Space, Table, theme} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
-import {executeNativeQuery} from "../../../services/datasource.ts";
+import {executeNativeQuery} from "@/services/datasource.ts";
 import type {NativeQueryModel} from "@/types/data-modeling";
 
 
@@ -104,7 +104,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
 
   // 紧凑主题样式
   const containerStyle = {
-    
+
     padding: token.paddingSM,
     backgroundColor: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -112,7 +112,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
   };
 
   const formStyle = {
-    
+
   };
 
   const spaceStyle = {
@@ -125,7 +125,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
   };
 
   const tableStyle = {
-    
+
     marginTop: token.marginSM,
   };
 
@@ -153,11 +153,11 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
         </Form.Item>
       </Form>
 
-      <Table 
-        size="small" 
-        columns={columns} 
-        dataSource={execResult.result} 
-        rowKey="id" 
+      <Table
+        size="small"
+        columns={columns}
+        dataSource={execResult.result}
+        rowKey="id"
         style={tableStyle}
         pagination={{
           size: 'small',

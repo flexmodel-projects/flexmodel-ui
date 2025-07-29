@@ -1,6 +1,6 @@
 import {Form, InputNumber, Modal, Switch} from "antd";
 import React, {useEffect, useState} from "react";
-import {getSettings, saveSettings} from "../../../services/settings.ts";
+import {getSettings, saveSettings} from "@/services/settings.ts";
 import {useTranslation} from "react-i18next";
 
 interface LogSettingsProps {

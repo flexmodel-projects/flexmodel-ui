@@ -6,8 +6,8 @@ import React, {useEffect, useRef, useState} from 'react';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import Explore from '../../../components/Explore/explore/Explore.jsx';
-import {getFileAsBlob, getTemplateNames} from '../../../services/codegen.js';
+import Explore from '@/components/Explore/explore/Explore.jsx';
+import {getFileAsBlob, getTemplateNames} from '@/services/codegen.js';
 
 import type {Model} from '@/types/data-modeling';
 

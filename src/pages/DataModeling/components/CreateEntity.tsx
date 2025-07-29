@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Drawer, Form, Input, notification, Table, theme} from 'antd';
 import {PlusOutlined} from '@ant-design/icons';
-import {createModel} from '../../../services/model.ts';
+import {createModel} from '@/services/model.ts';
 import {useTranslation} from 'react-i18next';
 import FieldForm from './FieldForm.tsx';
 import IndexForm from './IndexForm.tsx';

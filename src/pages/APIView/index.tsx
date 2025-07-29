@@ -1,9 +1,9 @@
 import React from "react";
 import {useTranslation} from "react-i18next";
 import {DeploymentUnitOutlined, FileTextOutlined, LineChartOutlined} from "@ant-design/icons";
-import APIDocument from "../APIDocument";
-import APILog from "../APILog";
-import APIManagement from "../APIManagement";
+import APIDocument from "@/pages/APIDocument";
+import APILog from "@/pages/APILog";
+import APIManagement from "@/pages/APIManagement";
 import TabPageContainer from "@/components/common/TabPageContainer";
 import {TabMenuItem} from "@/components/common/TabMenu";
 

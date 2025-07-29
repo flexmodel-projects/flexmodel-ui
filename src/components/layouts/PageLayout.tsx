@@ -2,7 +2,7 @@ import React from "react";
 import {Layout, theme} from "antd";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import {RenderRoutes} from "../../routes.tsx";
+import {RenderRoutes} from "@/routes.tsx";
 
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();

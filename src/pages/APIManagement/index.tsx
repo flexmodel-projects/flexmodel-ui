@@ -18,7 +18,7 @@ import {
   Typography,
 } from "antd";
 import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "../../services/api-info.ts";
+import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
 import GraphQL from "./components/GraphQL.tsx";
 import Authorization from "./components/Authorization.tsx";
 import {useTranslation} from "react-i18next";
@@ -319,9 +319,9 @@ const ApiManagement: React.FC = () => {
       children: (
         <GraphQL
           data={editForm?.graphql}
-          onChange={(data) =>
-            setEditForm({ ...editForm, graphql: data })
-          }
+          onChange={(data) => {
+            setEditForm(prev => prev ? { ...prev, graphql: data } : null);
+          }}
         />
       ),
     },
@@ -331,9 +331,9 @@ const ApiManagement: React.FC = () => {
       children: (
         <Authorization
           data={editForm?.meta || {}}
-          onChange={(data) =>
-            setEditForm({ ...editForm, meta: data })
-          }
+          onChange={(data) => {
+            setEditForm(prev => prev ? { ...prev, meta: data } : null);
+          }}
         />
       ),
     },
