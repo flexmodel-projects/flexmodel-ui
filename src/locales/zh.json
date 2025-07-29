@@ -162,7 +162,7 @@
   "form_delete_fail": "删除失败",
   "field_delete_success": "字段删除成功",
   "field_delete_failed": "字段删除失败",
-  "app_description": "面向下一代应用程序的统一数据访问层，开源、免费、支持私有化部署",
+  "app_description": "让数据访问更简单、更高效、更灵活！",
   "pagination_total_text": "显示{{start}}-{{end}}条 总共{{total}}条",
   "help": "帮助",
   "overview": "概述",
