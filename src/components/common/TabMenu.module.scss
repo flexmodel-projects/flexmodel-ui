@@ -3,13 +3,23 @@
   background: var(--ant-color-bg-container) !important;
   border-radius: 8px !important;
   padding: 4px !important;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
   border: 1px solid var(--ant-color-border) !important;
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
 
+  :global {
+    // ant-tabs-content 和 ant-tabs-content-top 样式覆盖 - 确保全屏高度
+    .ant-tabs-content {
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+  }
   // 标签导航容器 - 只对当前组件内的tabs生效
   .ant-tabs-nav {
     margin-bottom: 4px !important;
@@ -59,8 +69,9 @@
   .ant-tabs-tab-active {
     background: var(--ant-color-primary-bg) !important;
     border-color: var(--ant-color-primary-border) !important;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
-    
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+
     .ant-tabs-tab-btn {
       color: var(--ant-color-primary) !important;
       font-weight: 600 !important;
@@ -71,7 +82,7 @@
   .ant-tabs-tab:hover {
     background: var(--ant-color-fill-tertiary) !important;
     border-color: var(--ant-color-border) !important;
-    
+
     .ant-tabs-tab-btn {
       color: var(--ant-color-text) !important;
     }
@@ -158,7 +169,7 @@
   }
 
   // 暗色主题适配
-  :global([data-theme='dark']) & {
+  :global([data-theme="dark"]) & {
     background: var(--ant-color-bg-container) !important;
     border-color: var(--ant-color-border) !important;
 
@@ -186,4 +197,4 @@
       border-color: var(--ant-color-border) !important;
     }
   }
-} 
+}

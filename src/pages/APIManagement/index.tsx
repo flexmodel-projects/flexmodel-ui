@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -17,15 +17,28 @@ import {
   TabsProps,
   Typography,
 } from "antd";
-import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
-import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
+import {
+  MoreOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
+  createApi,
+  deleteApi,
+  getApis,
+  updateApi,
+  updateApiName,
+  updateApiStatus,
+} from "@/services/api-info.ts";
+import styles from "./index.module.scss";
 import GraphQL from "./components/GraphQL.tsx";
 import Authorization from "./components/Authorization.tsx";
-import {useTranslation} from "react-i18next";
-import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
+import { useTranslation } from "react-i18next";
+import { ApiDefinition, GraphQLData, TreeNode } from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate.tsx";
-import {useConfig} from "@/store/appStore.ts";
-import Tree from '@/components/explore/explore/Tree.jsx';
+import { useConfig } from "@/store/appStore.ts";
+import Tree from "@/components/explore/explore/Tree.jsx";
 import {
   ApiFolder,
   ApiMethodDelete,
@@ -34,8 +47,8 @@ import {
   ApiMethodPost,
   ApiMethodPut,
   IconFile,
-  IconFolder
-} from '@/components/explore/icons/Icons.jsx';
+  IconFolder,
+} from "@/components/explore/icons/Icons.jsx";
 
 const ApiManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -54,14 +67,19 @@ const ApiManagement: React.FC = () => {
 
   // 新建接口弹窗逻辑
   const [createApiDialogVisible, setCreateApiDialogVisible] = useState(false);
-  const [createApiParentId, setCreateApiParentId] = useState<string | null>(null);
+  const [createApiParentId, setCreateApiParentId] = useState<string | null>(
+    null
+  );
   const [createApiLoading, setCreateApiLoading] = useState(false);
   const [createApiError, setCreateApiError] = useState("");
 
   // 新建文件夹弹窗逻辑
-  const [createFolderDialogVisible, setCreateFolderDialogVisible] = useState(false);
+  const [createFolderDialogVisible, setCreateFolderDialogVisible] =
+    useState(false);
   const [createFolderName, setCreateFolderName] = useState("");
-  const [createFolderParentId, setCreateFolderParentId] = useState<string | null>(null);
+  const [createFolderParentId, setCreateFolderParentId] = useState<
+    string | null
+  >(null);
   const [createFolderLoading, setCreateFolderLoading] = useState(false);
   const [createFolderError, setCreateFolderError] = useState("");
 
@@ -83,32 +101,35 @@ const ApiManagement: React.FC = () => {
         operationName: "MyQuery",
         query: "",
         variables: null,
-        headers: null
+        headers: null,
       };
 
       // 如果选中的是API类型且有meta.execution数据，则使用meta.execution的内容
-      if (selectedNode.data.type === "API" && selectedNode.data.meta?.execution) {
+      if (
+        selectedNode.data.type === "API" &&
+        selectedNode.data.meta?.execution
+      ) {
         const execution = selectedNode.data.meta.execution;
         graphqlData = {
           operationName: execution.operationName || "MyQuery",
           query: execution.query || "",
           variables: execution.variables || null,
-          headers: execution.headers || null
+          headers: execution.headers || null,
         };
       }
 
       const data: ApiDefinition = {
-        id: selectedNode.data.id || '',
-        name: selectedNode.data.name || '',
+        id: selectedNode.data.id || "",
+        name: selectedNode.data.name || "",
         parentId: selectedNode.data.parentId || null,
-        type: selectedNode.data.type || '',
-        method: selectedNode.data.method || '',
-        path: selectedNode.data.path || '',
+        type: selectedNode.data.type || "",
+        method: selectedNode.data.method || "",
+        path: selectedNode.data.path || "",
         children: selectedNode.data.children || [],
         data: selectedNode.data.data || {},
         meta: selectedNode.data.meta || {},
         enabled: selectedNode.data.enabled ?? true,
-        graphql: graphqlData
+        graphql: graphqlData,
       };
       setEditForm(data);
     }
@@ -199,7 +220,12 @@ const ApiManagement: React.FC = () => {
     await addApi(createApiParentId, values.name, values.method, values.path);
   };
 
-  const addApi = async (parentId?: string | null, name?: string, method?: string, path?: string) => {
+  const addApi = async (
+    parentId?: string | null,
+    name?: string,
+    method?: string,
+    path?: string
+  ) => {
     setCreateApiLoading(true);
     setCreateApiError("");
     try {
@@ -270,7 +296,10 @@ const ApiManagement: React.FC = () => {
   const getParentFolderName = (parentId: string | null): string => {
     if (!parentId) return "根目录";
 
-    const findFolder = (apis: ApiDefinition[], targetId: string): ApiDefinition | null => {
+    const findFolder = (
+      apis: ApiDefinition[],
+      targetId: string
+    ): ApiDefinition | null => {
       for (const api of apis) {
         if (api.id === targetId) {
           return api;
@@ -298,7 +327,7 @@ const ApiManagement: React.FC = () => {
         enabled: editForm.enabled,
         type: editForm.type,
         meta: editForm.meta,
-        graphql: editForm.graphql
+        graphql: editForm.graphql,
       };
 
       await updateApi(editForm.id, saveData);
@@ -315,11 +344,12 @@ const ApiManagement: React.FC = () => {
     {
       key: "graphql",
       label: "GraphQL",
+      className: "h-full",
       children: (
         <GraphQL
           data={editForm?.graphql}
           onChange={(data) => {
-            setEditForm(prev => prev ? { ...prev, graphql: data } : null);
+            setEditForm((prev) => (prev ? { ...prev, graphql: data } : null));
           }}
         />
       ),
@@ -327,11 +357,12 @@ const ApiManagement: React.FC = () => {
     {
       key: "authorization",
       label: t("authorization"),
+      className: "h-full",
       children: (
         <Authorization
           data={editForm?.meta || {}}
           onChange={(data) => {
-            setEditForm(prev => prev ? { ...prev, meta: data } : null);
+            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
           }}
         />
       ),
@@ -345,7 +376,10 @@ const ApiManagement: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   // 过滤 API 列表数据
-  const filterApiList = (apis: ApiDefinition[], searchText: string): ApiDefinition[] => {
+  const filterApiList = (
+    apis: ApiDefinition[],
+    searchText: string
+  ): ApiDefinition[] => {
     if (!searchText) return apis;
 
     return apis
@@ -377,25 +411,21 @@ const ApiManagement: React.FC = () => {
     setFilteredApiList(apiList);
   }, [apiList]);
 
-// 紧凑主题样式
+  // 紧凑主题样式
   const cardStyle = {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column' as const,
+    height: "100%",
+    display: "flex",
+    flexDirection: "column" as const,
   };
 
   return (
     <Card
-        className={`h-full w-full`}
-        style={cardStyle}
-      >
+      className={`${styles.apiManagementWrapper} h-full w-full`}
+      style={cardStyle}
+    >
       <Splitter className="h-full">
-        <Splitter.Panel
-          defaultSize="20%"
-          max="40%"
-          collapsible
-        >
-          <Card bodyStyle={{ padding: 12, height: '100%' }}>
+        <Splitter.Panel defaultSize="20%" max="40%" collapsible>
+          <Card className={`${styles.apiManagementWrapper} h-full`}>
             <Space direction="vertical" size="small" className="w-full">
               <Flex gap="small" align="center">
                 <Input
@@ -415,7 +445,9 @@ const ApiManagement: React.FC = () => {
                       <Menu.Item onClick={() => showCreateFolderDialog()}>
                         {t("new_folder")}
                       </Menu.Item>
-                      <Menu.Item onClick={() => setBatchCreateDrawerVisible(true)}>
+                      <Menu.Item
+                        onClick={() => setBatchCreateDrawerVisible(true)}
+                      >
                         {t("batch_new_api")}
                       </Menu.Item>
                     </Menu>
@@ -427,59 +459,80 @@ const ApiManagement: React.FC = () => {
               <div className="flex-1 overflow-auto">
                 <Tree
                   tree={{ children: convertApiListToTreeData(filteredApiList) }}
-                  selected={selectedNode ? { path: selectedNode.data.id } : { path: '' }}
+                  selected={
+                    selectedNode ? { path: selectedNode.data.id } : { path: "" }
+                  }
                   onClickItem={(item: any) => {
                     setSelectedNode({
                       children: [],
                       data: item.data,
-                      isLeaf: item.type === 'file',
+                      isLeaf: item.type === "file",
                       key: item.path,
                       settingVisible: false,
                       title: item.filename,
                     });
-
                   }}
                   renderMore={(item: any) => {
                     return (
                       <Dropdown
                         overlay={
                           <Menu>
-                            {item.type === 'folder' && (
+                            {item.type === "folder" && (
                               <>
-                                <Menu.Item onClick={() => showCreateApiDialog(item.data.id)}>
-                                  {t('new_api')}
+                                <Menu.Item
+                                  onClick={() =>
+                                    showCreateApiDialog(item.data.id)
+                                  }
+                                >
+                                  {t("new_api")}
                                 </Menu.Item>
-                                <Menu.Item onClick={() => showCreateFolderDialog(item.data.id)}>
-                                  {t('new_folder')}
+                                <Menu.Item
+                                  onClick={() =>
+                                    showCreateFolderDialog(item.data.id)
+                                  }
+                                >
+                                  {t("new_folder")}
                                 </Menu.Item>
                                 <Menu.Divider />
                               </>
                             )}
                             <Menu.Item onClick={() => showEditInput(item.data)}>
-                              {t('rename')}
+                              {t("rename")}
                             </Menu.Item>
-                            <Menu.Item style={{ color: 'red' }} onClick={e => { e.domEvent.stopPropagation(); showDeleteConfirm(item.data.id, item.data.name); }}>
-                              {t('delete')}
+                            <Menu.Item
+                              style={{ color: "red" }}
+                              onClick={(e) => {
+                                e.domEvent.stopPropagation();
+                                showDeleteConfirm(item.data.id, item.data.name);
+                              }}
+                            >
+                              {t("delete")}
                             </Menu.Item>
                           </Menu>
                         }
                         trigger={["hover"]}
                       >
-                        <MoreOutlined onClick={e => e.stopPropagation()} />
+                        <MoreOutlined onClick={(e) => e.stopPropagation()} />
                       </Dropdown>
                     );
                   }}
                   renderIcon={(item: any, nodeType: any) => {
-                    if (nodeType === 'file') {
+                    if (nodeType === "file") {
                       const method = item.data?.method;
-                      if (method === 'GET') return <ApiMethodGet key={`get${item.path}`} />;
-                      if (method === 'POST') return <ApiMethodPost key={`post${item.path}`} />;
-                      if (method === 'PUT') return <ApiMethodPut key={`put${item.path}`} />;
-                      if (method === 'DELETE') return <ApiMethodDelete key={`delete${item.path}`} />;
-                      if (method === 'PATCH') return <ApiMethodPatch key={`patch${item.path}`} />;
+                      if (method === "GET")
+                        return <ApiMethodGet key={`get${item.path}`} />;
+                      if (method === "POST")
+                        return <ApiMethodPost key={`post${item.path}`} />;
+                      if (method === "PUT")
+                        return <ApiMethodPut key={`put${item.path}`} />;
+                      if (method === "DELETE")
+                        return <ApiMethodDelete key={`delete${item.path}`} />;
+                      if (method === "PATCH")
+                        return <ApiMethodPatch key={`patch${item.path}`} />;
                       return <IconFile key={`file${item.path}`} />;
                     }
-                    if (item.data && item.data.type === 'FOLDER') return <ApiFolder key={`apifolder${item.path}`} />;
+                    if (item.data && item.data.type === "FOLDER")
+                      return <ApiFolder key={`apifolder${item.path}`} />;
                     return <IconFolder key={`folder${item.path}`} />;
                   }}
                 />
@@ -488,7 +541,7 @@ const ApiManagement: React.FC = () => {
           </Card>
         </Splitter.Panel>
         <Splitter.Panel>
-          <Card bodyStyle={{ padding: 12, height: '100%' }}>
+          <Card className={`${styles.apiManagementWrapper} h-full`}>
             {editForm?.type == "API" ? (
               <div className="flex flex-col h-full">
                 <Space direction="vertical" size="small" className="mb-2">
@@ -504,7 +557,11 @@ const ApiManagement: React.FC = () => {
                           style={{ minWidth: 80 }}
                         />
                       }
-                      prefix={<span>{config?.application['flexmodel.context-path']}</span>}
+                      prefix={
+                        <span>
+                          {config?.application["flexmodel.context-path"]}
+                        </span>
+                      }
                       className="flex-1"
                       value={editForm?.path}
                       onChange={(e) =>
@@ -532,16 +589,25 @@ const ApiManagement: React.FC = () => {
                     />
                   </Flex>
                 </Space>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    minHeight: 0,
+                    overflow: "hidden",
+                  }}
+                >
                   <Tabs
+                    className={styles.apiManagementTab}
                     defaultActiveKey="graphql"
                     items={items}
                     onChange={onChange}
                     style={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      minHeight: 0
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      minHeight: 0,
                     }}
                   />
                 </div>
@@ -558,20 +624,22 @@ const ApiManagement: React.FC = () => {
       </Splitter>
       {/* 删除确认弹窗 */}
       <Modal
-        title={t('delete')}
+        title={t("delete")}
         open={deleteConfirmVisible}
         onOk={handleDelete}
         onCancel={() => setDeleteConfirmVisible(false)}
         confirmLoading={deleteLoading}
-        okText={t('delete')}
+        okText={t("delete")}
         okButtonProps={{ danger: true }}
-        cancelText={t('cancel')}
+        cancelText={t("cancel")}
       >
-        <span>{t('delete_dialog_text', { name: deleteTarget?.name || '' })}</span>
+        <span>
+          {t("delete_dialog_text", { name: deleteTarget?.name || "" })}
+        </span>
       </Modal>
       {/* 新增重命名弹窗 */}
       <Modal
-        title={t('rename')}
+        title={t("rename")}
         open={renameDialogVisible}
         onCancel={() => setRenameDialogVisible(false)}
         onOk={async () => {
@@ -579,13 +647,19 @@ const ApiManagement: React.FC = () => {
           setRenameDialogVisible(false);
         }}
       >
-        <Input value={renameValue} onChange={e => setRenameValue(e.target.value)} />
+        <Input
+          value={renameValue}
+          onChange={(e) => setRenameValue(e.target.value)}
+        />
       </Modal>
       {/* 新建接口弹窗 */}
       <Modal
-        title={t('new_api')}
+        title={t("new_api")}
         open={createApiDialogVisible}
-        onCancel={() => { setCreateApiDialogVisible(false); setCreateApiError(""); }}
+        onCancel={() => {
+          setCreateApiDialogVisible(false);
+          setCreateApiError("");
+        }}
         onOk={handleCreateApiForm}
         confirmLoading={createApiLoading}
       >
@@ -595,38 +669,38 @@ const ApiManagement: React.FC = () => {
           onFinish={handleCreateApiForm}
           autoComplete="off"
         >
-          <Form.Item
-            label="上级目录"
-          >
+          <Form.Item label="上级目录">
             <Input
               value={getParentFolderName(createApiParentId)}
               disabled
-              style={{ backgroundColor: '#f5f5f5' }}
+              style={{ backgroundColor: "#f5f5f5" }}
             />
           </Form.Item>
           <Form.Item
-            label={t('name')}
+            label={t("name")}
             name="name"
-            rules={[{ required: true, message: '名称不能为空' }]}
+            rules={[{ required: true, message: "名称不能为空" }]}
           >
             <Input placeholder="请输入接口名称" autoFocus />
           </Form.Item>
           <Form.Item
-            label={t('method')}
+            label={t("method")}
             name="method"
             initialValue="GET"
-            rules={[{ required: true, message: '请选择请求方法' }]}
+            rules={[{ required: true, message: "请选择请求方法" }]}
           >
             <Select options={methodOptions} style={{ width: 120 }} />
           </Form.Item>
           <Form.Item
-            label={t('path')}
+            label={t("path")}
             name="path"
-            rules={[{ required: true, message: '接口地址不能为空' }]}
+            rules={[{ required: true, message: "接口地址不能为空" }]}
           >
             <Input placeholder="请输入接口地址" />
           </Form.Item>
-          {createApiError && <div style={{ color: 'red', marginTop: 8 }}>{createApiError}</div>}
+          {createApiError && (
+            <div style={{ color: "red", marginTop: 8 }}>{createApiError}</div>
+          )}
         </Form>
       </Modal>
       {/* 新建文件夹弹窗 */}
@@ -642,19 +716,21 @@ const ApiManagement: React.FC = () => {
             <Input
               value={getParentFolderName(createFolderParentId)}
               disabled
-              style={{ backgroundColor: '#f5f5f5' }}
+              style={{ backgroundColor: "#f5f5f5" }}
             />
           </Form.Item>
           <Form.Item label={t("folder_name")}>
             <Input
               placeholder={t("folder_name")}
               value={createFolderName}
-              onChange={e => setCreateFolderName(e.target.value)}
+              onChange={(e) => setCreateFolderName(e.target.value)}
               maxLength={32}
             />
           </Form.Item>
         </Form>
-        {createFolderError && <div style={{ color: 'red', marginTop: 8 }}>{createFolderError}</div>}
+        {createFolderError && (
+          <div style={{ color: "red", marginTop: 8 }}>{createFolderError}</div>
+        )}
       </Modal>
       <BatchCreate
         onConfirm={(data: any) => {

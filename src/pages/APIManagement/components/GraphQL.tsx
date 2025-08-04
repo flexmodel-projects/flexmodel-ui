@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "graphiql/graphiql.css";
 import "@graphiql/plugin-explorer/dist/style.css";
-import {Card} from "antd";
-import {executeQuery} from "@/services/api-management.ts";
-import {explorerPlugin} from "@graphiql/plugin-explorer";
-import {GraphiQL} from "graphiql";
-import {GraphQLData} from "@/types/api-management";
-import {useTheme} from "@/store/appStore.ts";
+import { Card } from "antd";
+import { executeQuery } from "@/services/api-management.ts";
+import { explorerPlugin } from "@graphiql/plugin-explorer";
+import { GraphiQL } from "graphiql";
+import { GraphQLData } from "@/types/api-management";
+import { useTheme } from "@/store/appStore.ts";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
@@ -40,7 +40,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   const explorer = explorerPlugin();
 
   return (
-    <Card>
+    <Card className="h-full">
       <GraphiQL
         className="text-[12px] [&_h2]:text-[18px] [&_h3]:text-[17px] [&_h4]:text-[16px]"
         query={query}

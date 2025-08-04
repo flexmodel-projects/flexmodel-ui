@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -14,9 +14,13 @@ import {
   Row,
   Space,
   Spin,
-  Typography
+  Typography,
 } from "antd";
-import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
+import Icon, {
+  BlockOutlined,
+  DeleteOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
 import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
 import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer.tsx";
@@ -39,12 +43,16 @@ import GBase from "@/assets/icons/svg/gbase.svg?react";
 import DM8 from "@/assets/icons/svg/dm.svg?react";
 import TiDB from "@/assets/icons/svg/tidb.svg?react";
 import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
-import {getModelList} from "@/services/model.ts";
-import {useTranslation} from "react-i18next";
+import { getModelList } from "@/services/model.ts";
+import { useTranslation } from "react-i18next";
 
-import type {DatasourceSchema} from '@/types/data-source';
-import {ScriptImportForm, ScriptType} from '@/types/data-source';
-import {EntitySchema, EnumSchema, NativeQuerySchema} from "@/types/data-modeling";
+import type { DatasourceSchema } from "@/types/data-source";
+import { ScriptImportForm, ScriptType } from "@/types/data-source";
+import {
+  EntitySchema,
+  EnumSchema,
+  NativeQuerySchema,
+} from "@/types/data-modeling";
 
 const DbsMap: Record<string, any> = {
   mysql: MySQL,
@@ -57,7 +65,7 @@ const DbsMap: Record<string, any> = {
   gbase: GBase,
   dm: DM8,
   tidb: TiDB,
-  mongodb: MongoDB
+  mongodb: MongoDB,
 };
 
 const { Title } = Typography;
@@ -67,14 +75,16 @@ const DatasourceManagement: React.FC = () => {
 
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [activeDs, setActiveDs] = useState<DatasourceSchema>({
-    name: '',
-    type: 'USER',
-    config: { dbKind: '' },
+    name: "",
+    type: "USER",
+    config: { dbKind: "" },
     enabled: true,
-    createdAt: '',
-    updatedAt: ''
+    createdAt: "",
+    updatedAt: "",
   });
-  const [modelList, setModelList] = useState<(EntitySchema | EnumSchema | NativeQuerySchema)[]>([]);
+  const [modelList, setModelList] = useState<
+    (EntitySchema | EnumSchema | NativeQuerySchema)[]
+  >([]);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
@@ -86,10 +96,10 @@ const DatasourceManagement: React.FC = () => {
   const [scriptForm] = Form.useForm<ScriptImportForm>();
 
   useEffect(() => {
-    const currentType = scriptForm.getFieldValue('type') || ScriptType.IDL;
+    const currentType = scriptForm.getFieldValue("type") || ScriptType.IDL;
     if (currentType === ScriptType.IDL) {
       const idls = modelList.map((m: any) => m.idl);
-      const idlString = idls.join('\n\n');
+      const idlString = idls.join("\n\n");
       scriptForm.setFieldValue("script", idlString);
     } else {
       const script = {
@@ -148,11 +158,11 @@ const DatasourceManagement: React.FC = () => {
     try {
       const res = await updateDatasource(formData.name, {
         name: formData.name,
-        type: 'USER' as import('@/types/data-source').DatasourceType,
+        type: "USER" as import("@/types/data-source").DatasourceType,
         config: formData.config,
         enabled: formData.enabled,
-        createdAt: '',
-        updatedAt: ''
+        createdAt: "",
+        updatedAt: "",
       });
       setEditVisible(false);
       setActiveDs(res);
@@ -179,7 +189,7 @@ const DatasourceManagement: React.FC = () => {
     setModelList(models);
     setExportVisible(true);
     scriptForm.resetFields();
-    scriptForm.setFieldValue('type', ScriptType.IDL);
+    scriptForm.setFieldValue("type", ScriptType.IDL);
   };
 
   const handleImport = () => {
@@ -196,32 +206,32 @@ const DatasourceManagement: React.FC = () => {
   };
 
   return (
-    <div style={{ height: '100%',width: '100%' }}>
-      <Row gutter={16} style={{ height: '100%' }}>
+    <div className="h-full w-full">
+      <Row gutter={16} className="h-full">
         {/* 左侧边栏 */}
-        <Col span={6} style={{ height: '100%' }}>
+        <Col span={6} className="h-full">
           <Card
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            style={{ height: "100%", display: "flex", flexDirection: "column" }}
           >
-            <Title level={5} style={{ margin: 0, marginBottom: '16px' }}>
+            <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
               {t("datasource_management")}
             </Title>
 
-            <Divider style={{ margin: '16px 0' }} />
+            <Divider style={{ margin: "16px 0" }} />
 
-            <div style={{ flex: 1, overflow: 'auto', marginBottom: '16px' }}>
+            <div style={{ flex: 1, overflow: "auto", marginBottom: "16px" }}>
               <Spin spinning={dsLoading}>
                 <Menu
                   mode="inline"
                   selectedKeys={[activeDs.name]}
-                  style={{ border: 'none' }}
+                  style={{ border: "none" }}
                 >
-                  {dsList.map(ds => (
+                  {dsList.map((ds) => (
                     <Menu.Item
                       key={ds.name}
                       icon={<Icon component={DbsMap[ds.config?.dbKind]} />}
                       onClick={() => handleTreeClick(ds)}
-                      style={{ position: 'relative', marginBottom: '4px' }}
+                      style={{ position: "relative", marginBottom: "4px" }}
                     >
                       <span>{ds.name}</span>
                       <Dropdown
@@ -230,8 +240,8 @@ const DatasourceManagement: React.FC = () => {
                             <Menu.Item
                               className="text-red"
                               icon={<DeleteOutlined />}
-                              disabled={ds.type === 'SYSTEM'}
-                              onClick={e => {
+                              disabled={ds.type === "SYSTEM"}
+                              onClick={(e) => {
                                 e.domEvent.stopPropagation();
                                 setDeleteVisible(true);
                               }}
@@ -245,7 +255,7 @@ const DatasourceManagement: React.FC = () => {
                       >
                         <MoreOutlined
                           className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={e => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
                         />
                       </Dropdown>
                     </Menu.Item>
@@ -254,13 +264,13 @@ const DatasourceManagement: React.FC = () => {
               </Spin>
             </div>
 
-            <Divider style={{ margin: '16px 0' }} />
+            <Divider style={{ margin: "16px 0" }} />
 
             <Button
               type="primary"
               icon={<BlockOutlined />}
               onClick={() => setDrawerVisible(true)}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               ghost
             >
               {t("connect_datasource")}
@@ -269,34 +279,36 @@ const DatasourceManagement: React.FC = () => {
         </Col>
 
         {/* 右侧内容区域 */}
-        <Col span={18} style={{ height: '100%', paddingLeft: '0x' }}>
+        <Col span={18} style={{ height: "100%", paddingLeft: "0x" }}>
           <Card
-            style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-            bodyStyle={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+            style={{ height: "100%", display: "flex", flexDirection: "column" }}
+            bodyStyle={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px'
-            }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "24px",
+              }}
+            >
               <Title level={4} style={{ margin: 0 }}>
                 {activeDs.name}
               </Title>
 
               <Space>
-                <Button onClick={handleImport}>
-                  {t("import")}
-                </Button>
-                <Button onClick={handleExport}>
-                  {t("export")}
-                </Button>
+                <Button onClick={handleImport}>{t("import")}</Button>
+                <Button onClick={handleExport}>{t("export")}</Button>
                 <Button onClick={handleTestConnection} loading={testLoading}>
                   {t("test")}
                 </Button>
                 <Button
                   type="primary"
-                  disabled={activeDs.type === 'SYSTEM'}
+                  disabled={activeDs.type === "SYSTEM"}
                   onClick={() => setEditVisible(true)}
                 >
                   {t("edit")}
@@ -304,7 +316,7 @@ const DatasourceManagement: React.FC = () => {
               </Space>
             </div>
 
-            <div style={{ flex: 1, overflow: 'auto' }}>
+            <div style={{ flex: 1, overflow: "auto" }}>
               <DatabaseInfo datasource={activeDs} />
             </div>
           </Card>
@@ -349,9 +361,9 @@ const DatasourceManagement: React.FC = () => {
           form={scriptForm}
           onValuesChange={(changed) => {
             if (changed.type) {
-              if (changed.type === 'IDL') {
+              if (changed.type === "IDL") {
                 const idls = modelList.map((m: any) => m.idl);
-                const idlString = idls.join('\n\n');
+                const idlString = idls.join("\n\n");
                 scriptForm.setFieldValue("script", idlString);
               } else {
                 const script = {

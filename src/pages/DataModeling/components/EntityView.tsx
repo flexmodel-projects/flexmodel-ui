@@ -1,12 +1,22 @@
-import {CodeOutlined} from '@ant-design/icons';
-import {Button, Card, Col, Dropdown, Menu, Row, Segmented, Space, Typography} from 'antd';
-import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import { CodeOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Col,
+  Dropdown,
+  Menu,
+  Row,
+  Segmented,
+  Space,
+  Typography,
+} from "antd";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import CodeView from './CodeView';
-import FieldList from './FieldList';
-import IndexList from './IndexList';
-import RecordList from './RecordList';
+import CodeView from "./CodeView";
+import FieldList from "./FieldList";
+import IndexList from "./IndexList";
+import RecordList from "./RecordList";
 
 interface Props {
   datasource: string;
@@ -15,25 +25,25 @@ interface Props {
 
 const EntityView = ({ datasource, model }: Props) => {
   const { t } = useTranslation();
-  const [selectedItem, setSelectedItem] = useState<string>('field');
+  const [selectedItem, setSelectedItem] = useState<string>("field");
 
   // 选项设置
   const options = [
-    { label: t('field'), value: 'field' },
-    { label: t('index'), value: 'index' },
-    { label: t('record'), value: 'record' },
-    { label: t('code'), value: 'code' }
+    { label: t("field"), value: "field" },
+    { label: t("index"), value: "index" },
+    { label: t("record"), value: "record" },
+    { label: t("code"), value: "code" },
   ];
 
   const renderContent = () => {
     switch (selectedItem) {
-      case 'field':
+      case "field":
         return <FieldList datasource={datasource} model={model} />;
-      case 'index':
+      case "index":
         return <IndexList datasource={datasource} model={model} />;
-      case 'record':
+      case "record":
         return <RecordList datasource={datasource} model={model} />;
-      case 'code':
+      case "code":
         return <CodeView datasource={datasource} model={model} />;
       default:
         return null;
@@ -41,7 +51,7 @@ const EntityView = ({ datasource, model }: Props) => {
   };
 
   return (
-    <Card size="small">
+    <Card size="small" className="h-full">
       <Row align="middle" justify="space-between" style={{ marginBottom: 16 }}>
         <Col>
           <Space align="center">
@@ -56,7 +66,7 @@ const EntityView = ({ datasource, model }: Props) => {
                     <Typography.Text strong>接口描述信息:</Typography.Text>
                     <Typography.Paragraph
                       copyable
-                      style={{ whiteSpace: 'pre-wrap', margin: '8px 0 0 0' }}
+                      style={{ whiteSpace: "pre-wrap", margin: "8px 0 0 0" }}
                     >
                       {model?.idl}
                     </Typography.Paragraph>
@@ -64,11 +74,7 @@ const EntityView = ({ datasource, model }: Props) => {
                 </Menu>
               }
             >
-              <Button
-                icon={<CodeOutlined />}
-                type="text"
-                size="small"
-              />
+              <Button icon={<CodeOutlined />} type="text" size="small" />
             </Dropdown>
           </Space>
         </Col>
@@ -76,7 +82,7 @@ const EntityView = ({ datasource, model }: Props) => {
           <Segmented
             options={options}
             value={selectedItem}
-            onChange={val => setSelectedItem(val as string)}
+            onChange={(val) => setSelectedItem(val as string)}
             size="small"
           />
         </Col>
@@ -87,4 +93,3 @@ const EntityView = ({ datasource, model }: Props) => {
 };
 
 export default EntityView;
-

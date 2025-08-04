@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
-import {useTranslation} from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Empty, message, Modal, Row } from "antd";
+import { useTranslation } from "react-i18next";
 import styles from "@/pages/IdentityProvider/index.module.scss";
-import type {IdentityProvider} from "@/types/identity-provider";
+import type { IdentityProvider } from "@/types/identity-provider";
 import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
 import {
   deleteIdentityProvider,
@@ -12,7 +12,6 @@ import {
 import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo.tsx";
 import EditProvider from "@/pages/IdentityProvider/components/EditProvider.tsx";
 import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider.tsx";
-
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -60,8 +59,8 @@ const IdPManagement: React.FC = () => {
       await updateIdentityProvider(formData.name, {
         ...formData,
         provider: formData,
-        createdAt: '',
-        updatedAt: ''
+        createdAt: "",
+        updatedAt: "",
       });
       setEditVisible(false);
       await getIdentityProviders();
@@ -74,18 +73,19 @@ const IdPManagement: React.FC = () => {
 
   // 紧凑主题样式
   const cardStyle = {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column' as const,
+    height: "100%",
+    display: "flex",
+    flexDirection: "column" as const,
   };
 
   const panelContainerStyle = {};
 
   return (
     <>
-      <Card 
+      <Card
         className={`${styles.root} h-full w-full`}
         style={cardStyle}
+        styles={{ body: { height: "100%" } }}
       >
         <div className={styles.container}>
           <IdPMenu
@@ -97,7 +97,10 @@ const IdPManagement: React.FC = () => {
             setDrawerVisible={setDrawerVisible}
             t={t}
           />
-          <div className={`${styles.content} ${styles.panelContainer}`} style={panelContainerStyle}>
+          <div
+            className={`${styles.content} ${styles.panelContainer}`}
+            style={panelContainerStyle}
+          >
             {idPList.length > 0 && activeIdP ? (
               <Row>
                 <Col span={24}>
@@ -117,10 +120,12 @@ const IdPManagement: React.FC = () => {
                 </Col>
                 <Col span={24}>
                   <Card bordered={false} className={styles.infoCard}>
-                    <IdPInfo data={{
-                      name: activeIdP.name,
-                      provider: activeIdP.provider
-                    }} />
+                    <IdPInfo
+                      data={{
+                        name: activeIdP.name,
+                        provider: activeIdP.provider,
+                      }}
+                    />
                   </Card>
                 </Col>
               </Row>
