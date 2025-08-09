@@ -1,15 +1,7 @@
 import React from "react";
-import {
-  Button,
-  Divider,
-  Dropdown,
-  Menu,
-  Spin,
-  theme as antdTheme,
-} from "antd";
-import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
-import type { IdentityProvider } from "@/types/identity-provider";
-import Title from "antd/lib/typography/Title";
+import {Button, Divider, Dropdown, Menu, Spin,} from "antd";
+import {MoreOutlined, PlusOutlined} from "@ant-design/icons";
+import type {IdentityProvider} from "@/types/identity-provider";
 import styles from "@/pages/IdentityProvider/index.module.scss";
 
 interface IdPMenuProps {
@@ -31,16 +23,8 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
   setDrawerVisible,
   t,
 }) => {
-  const { token } = antdTheme.useToken();
-
   return (
     <div className={`${styles["idp-menu-wrapper"]}`} style={{ minWidth: 200 }}>
-      <Title level={5}>
-        <span style={{ fontFamily: token.fontFamily }}>
-          {t("idp_management")}
-        </span>
-      </Title>
-      <Divider style={{ margin: "8px 0" }} />
       <Spin spinning={idPLoading}>
         <Menu
           mode="inline"
