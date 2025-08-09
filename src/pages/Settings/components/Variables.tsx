@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Col, Input, Row, Table} from 'antd';
 import {getVariables} from "@/services/environment.ts";
-import SensitiveText from "@/components/SensitiveText.tsx";
+import SensitiveText from "@/components/SensitiveText";
 
 
 const Variables: React.FC = () => {

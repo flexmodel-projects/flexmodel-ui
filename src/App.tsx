@@ -1,6 +1,6 @@
 import {HashRouter, Route, Routes} from "react-router-dom";
 import {ConfigProvider, theme as antdTheme} from "antd";
-import PageLayout from "./components/layouts/PageLayout.tsx";
+import PageLayout from "./components/layouts/PageLayout";
 import {useEffect} from "react";
 import {useConfig, useLocale, useTheme} from "./store/appStore.ts";
 

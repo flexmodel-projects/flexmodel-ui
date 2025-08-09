@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Card,
@@ -16,14 +16,10 @@ import {
   Spin,
   Typography,
 } from "antd";
-import Icon, {
-  BlockOutlined,
-  DeleteOutlined,
-  MoreOutlined,
-} from "@ant-design/icons";
-import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo.tsx";
-import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal.tsx";
-import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer.tsx";
+import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
+import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo";
+import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal";
+import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer";
 import {
   deleteDatasource,
   getDatasourceList,
@@ -43,16 +39,12 @@ import GBase from "@/assets/icons/svg/gbase.svg?react";
 import DM8 from "@/assets/icons/svg/dm.svg?react";
 import TiDB from "@/assets/icons/svg/tidb.svg?react";
 import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
-import { getModelList } from "@/services/model.ts";
-import { useTranslation } from "react-i18next";
+import {getModelList} from "@/services/model.ts";
+import {useTranslation} from "react-i18next";
 
-import type { DatasourceSchema } from "@/types/data-source";
-import { ScriptImportForm, ScriptType } from "@/types/data-source";
-import {
-  EntitySchema,
-  EnumSchema,
-  NativeQuerySchema,
-} from "@/types/data-modeling";
+import type {DatasourceSchema} from "@/types/data-source";
+import {ScriptImportForm, ScriptType} from "@/types/data-source";
+import {EntitySchema, EnumSchema, NativeQuerySchema,} from "@/types/data-modeling";
 
 const DbsMap: Record<string, any> = {
   mysql: MySQL,

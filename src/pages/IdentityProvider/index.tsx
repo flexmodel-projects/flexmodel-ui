@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Empty, message, Modal, Row } from "antd";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
+import {useTranslation} from "react-i18next";
 import styles from "@/pages/IdentityProvider/index.module.scss";
-import type { IdentityProvider } from "@/types/identity-provider";
-import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu.tsx";
+import type {IdentityProvider} from "@/types/identity-provider";
+import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu";
 import {
   deleteIdentityProvider,
   getIdentityProviders as getIdentityProvidersApi,
   updateIdentityProvider,
 } from "@/services/identity-provider.ts";
-import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo.tsx";
-import EditProvider from "@/pages/IdentityProvider/components/EditProvider.tsx";
-import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider.tsx";
+import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo";
+import EditProvider from "@/pages/IdentityProvider/components/EditProvider";
+import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider";
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();

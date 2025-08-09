@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd';
 import {createIdentityProvider} from "@/services/identity-provider.ts";
-import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo.tsx";
+import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo";
 import {useTranslation} from "react-i18next";
 
 interface CreateProviderProps {

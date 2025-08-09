@@ -1,6 +1,6 @@
 import React from 'react';
 import {Descriptions} from 'antd';
-import SensitiveText from "@/components/SensitiveText.tsx";
+import SensitiveText from "@/components/SensitiveText";
 import {useTranslation} from "react-i18next";
 
 interface Datasource {

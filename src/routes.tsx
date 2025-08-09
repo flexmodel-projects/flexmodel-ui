@@ -7,9 +7,7 @@ import ApiView from "./pages/APIView";
 import DataModeling from "./pages/DataModeling";
 import DataSource from "./pages/DataSource";
 import ERView from "./pages/DataView/components/ERView";
-import APIDocument from "./pages/APIDocument";
 import APILog from "./pages/APILog";
-import APIManagement from "./pages/APIManagement";
 import {
   ApiOutlined,
   BranchesOutlined,
@@ -23,6 +21,9 @@ import {
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import GraphQLAPI from "@/pages/GraphQLAPI";
+import UserDefineAPI from "@/pages/UserDefineAPI";
+import OpenAPI from "@/pages/OpenAPI";
 
 export interface RouteConfig {
   path: string;
@@ -39,6 +40,38 @@ export const routes: RouteConfig[] = [
     element: <Overview />,
     icon: HomeOutlined,
     translationKey: "overview",
+  },
+  {
+    path: "/api",
+    element: <ApiView />,
+    icon: ApiOutlined,
+    translationKey: "api",
+    children: [
+      {
+        path: "/api/user-define",
+        element: <UserDefineAPI />,
+        icon: DeploymentUnitOutlined,
+        translationKey: "user-define",
+      },
+      {
+        path: "/api/graphql",
+        element: <GraphQLAPI />,
+        icon: DeploymentUnitOutlined,
+        translationKey: "graphql",
+      },
+      {
+        path: "/api/open-api",
+        element: <OpenAPI />,
+        icon: FileTextOutlined,
+        translationKey: "open_api",
+      },
+      {
+        path: "/api/log",
+        element: <APILog />,
+        icon: LineChartOutlined,
+        translationKey: "api_log",
+      },
+    ],
   },
   {
     path: "/data",
@@ -64,33 +97,6 @@ export const routes: RouteConfig[] = [
         element: <ERView />,
         icon: BranchesOutlined,
         translationKey: "er_view",
-      },
-    ],
-  },
-  {
-    path: "/api",
-    element: <ApiView />,
-    icon: ApiOutlined,
-    translationKey: "api",
-    defaultChild: "management",
-    children: [
-      {
-        path: "/api/management",
-        element: <APIManagement />,
-        icon: DeploymentUnitOutlined,
-        translationKey: "api_management",
-      },
-      {
-        path: "/api/document",
-        element: <APIDocument />,
-        icon: FileTextOutlined,
-        translationKey: "api_document",
-      },
-      {
-        path: "/api/log",
-        element: <APILog />,
-        icon: LineChartOutlined,
-        translationKey: "api_log",
       },
     ],
   },

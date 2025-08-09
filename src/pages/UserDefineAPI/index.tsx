@@ -20,7 +20,7 @@ import {
 import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined,} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
 import styles from "./index.module.scss";
-import GraphQL from "./components/GraphQL";
+import APIDetail from "./components/APIDetail";
 import Authorization from "./components/Authorization";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
@@ -38,7 +38,7 @@ import {
   IconFolder,
 } from "@/components/explore/icons/Icons.jsx";
 
-const ApiManagement: React.FC = () => {
+const UserDefineAPI: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useConfig();
 
@@ -330,15 +330,11 @@ const ApiManagement: React.FC = () => {
 
   const items: TabsProps["items"] = [
     {
-      key: "graphql",
-      label: "GraphQL",
+      key: "detail",
+      label: "接口详情",
       className: "h-full",
       children: (
-        <GraphQL
-          data={editForm?.graphql}
-          onChange={(data) => {
-            setEditForm((prev) => (prev ? { ...prev, graphql: data } : null));
-          }}
+        <APIDetail data={editForm || undefined}
         />
       ),
     },
@@ -588,7 +584,7 @@ const ApiManagement: React.FC = () => {
                 >
                   <Tabs
                     className={styles.apiManagementTab}
-                    defaultActiveKey="graphql"
+                    defaultActiveKey="detail"
                     items={items}
                     onChange={onChange}
                     style={{
@@ -733,4 +729,4 @@ const ApiManagement: React.FC = () => {
   );
 };
 
-export default ApiManagement;
+export default UserDefineAPI;

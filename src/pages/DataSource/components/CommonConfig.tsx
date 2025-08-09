@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import {Form, Input} from 'antd';
 import {useTranslation} from "react-i18next";
 
 interface Config {
@@ -13,7 +13,7 @@ interface DatabaseConfigProps {
   onChange?: (changedConfig: Config) => void;
 }
 
-const DatabaseConfig: React.FC<DatabaseConfigProps> = () => {
+const CommonConfig: React.FC<DatabaseConfigProps> = () => {
 
   const {t} = useTranslation();
 
@@ -37,4 +37,4 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = () => {
   );
 };
 
-export default DatabaseConfig;
+export default CommonConfig;

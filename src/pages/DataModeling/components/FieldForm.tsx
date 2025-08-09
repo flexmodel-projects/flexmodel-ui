@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Form, Input, Modal, Select, Switch, theme} from "antd";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
-import FieldInput from "./FieldInput.tsx";
+import FieldInput from "./FieldInput";
 import {Field} from "@/types/data-modeling";
 
 

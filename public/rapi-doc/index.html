@@ -10,7 +10,7 @@
       const theme = urlParams.get('theme');
       return theme || 'dark'; // 默认使用 dark 主题
     }
-    
+
     // 页面加载完成后设置主题
     document.addEventListener('DOMContentLoaded', function() {
       const theme = getThemeFromUrl();

@@ -1,6 +1,8 @@
-import React from "react";
-import {Layout, theme} from "antd";
-import TabMenu, {TabMenuItem} from "./TabMenu";
+import React, {useRef} from "react";
+import {Button, Layout, theme} from "antd";
+import {FullscreenExitOutlined, FullscreenOutlined, ReloadOutlined} from "@ant-design/icons";
+import TabMenu, {TabMenuItem, TabMenuRef} from "./TabMenu";
+import {useFullscreen} from "../../hooks/useFullscreen";
 
 interface TabPageContainerProps {
   items: TabMenuItem[];
@@ -26,10 +28,13 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
   headerContent
 }) => {
   const { token } = theme.useToken();
+  const { isFullscreen, toggle, ref } = useFullscreen(token.colorBgContainer);
+  const tabMenuRef = useRef<TabMenuRef>(null);
 
   return (
     <Layout
-      className={`${className || ''}`}
+      ref={ref}
+      className={`${className || ''} relative transition-all duration-300`}
       style={{
         height: '100%',
         background: token.colorBgContainer,
@@ -38,6 +43,8 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
         ...style
       }}
     >
+
+
         {showHeader && headerContent && (
           <Layout.Header>
             {headerContent}
@@ -53,6 +60,7 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
           }}
         >
           <TabMenu
+            ref={tabMenuRef}
             items={items}
             defaultActiveKey={defaultActiveKey}
             type={type}
@@ -65,7 +73,25 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
               flexDirection: 'column',
               flex: 1
             }}
-          />
+            tabBarExtraContent={
+              <div className="flex items-center gap-1">
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<ReloadOutlined />}
+                  onClick={() => tabMenuRef.current?.refreshCurrentTab()}
+                  title="刷新标签页"
+                />
+                <Button
+                  type="text"
+                  size="small"
+                  icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                  onClick={toggle}
+                  title={isFullscreen ? "退出全屏" : "全屏"}
+                />
+              </div>
+            }
+           />
         </Layout.Content>
       </Layout>
   );

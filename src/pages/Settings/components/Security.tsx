@@ -19,7 +19,7 @@ interface SecurityData {
   graphqlEndpointIdentityProvider?: string | null;
 }
 
-const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
+const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
   const {t} = useTranslation();
 
   const { config } = useConfig();
@@ -89,4 +89,4 @@ const Base: React.FC<SecurityProps> = ({settings, onChange}) => {
   );
 };
 
-export default Base;
+export default Security;

@@ -4,12 +4,12 @@ import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-des
 import {getDatasourceList} from "@/services/datasource.ts";
 import {dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
-import CreateEntity from "@/pages/DataModeling/components/CreateEntity.tsx";
+import CreateEntity from "@/pages/DataModeling/components/CreateEntity";
 import type {DatasourceSchema} from '@/types/data-source';
 import {useTranslation} from "react-i18next";
 import {useLocale} from "@/store/appStore.ts";
-import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel.tsx";
-import CreateEnum from "@/pages/DataModeling/components/CreateEnum.tsx";
+import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel";
+import CreateEnum from "@/pages/DataModeling/components/CreateEnum";
 import type {Model} from '@/types/data-modeling';
 import {
   IconEntityFolder,

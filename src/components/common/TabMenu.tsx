@@ -1,6 +1,6 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { Tabs } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {forwardRef, ReactNode, useEffect, useImperativeHandle, useState} from "react";
+import {Tabs} from "antd";
+import {useLocation, useNavigate} from "react-router-dom";
 import styles from "./TabMenu.module.scss";
 
 export interface TabMenuItem {
@@ -19,9 +19,15 @@ interface TabMenuProps {
   type?: "card" | "line";
   size?: "small" | "middle" | "large";
   compact?: boolean;
+  tabBarExtraContent?: ReactNode;
+  onRefresh?: () => void;
 }
 
-const TabMenu: React.FC<TabMenuProps> = ({
+export interface TabMenuRef {
+  refreshCurrentTab: () => void;
+}
+
+const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
   items,
   defaultActiveKey,
   className,
@@ -29,10 +35,13 @@ const TabMenu: React.FC<TabMenuProps> = ({
   type = "card",
   size = "small",
   compact = false,
-}) => {
+  tabBarExtraContent,
+  onRefresh,
+}, ref) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeKey, setActiveKey] = useState(defaultActiveKey);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // 根据当前路径设置激活的标签页
   useEffect(() => {
@@ -58,6 +67,19 @@ const TabMenu: React.FC<TabMenuProps> = ({
     }
   };
 
+  // 刷新当前标签页
+  const refreshCurrentTab = () => {
+    setRefreshKey(prev => prev + 1);
+    if (onRefresh) {
+      onRefresh();
+    }
+  };
+
+  // 暴露方法给父组件
+  useImperativeHandle(ref, () => ({
+    refreshCurrentTab,
+  }));
+
   return (
     <Tabs
       className={`${styles.compactTabs} ${compact ? styles.compact : ""} ${
@@ -71,6 +93,7 @@ const TabMenu: React.FC<TabMenuProps> = ({
       tabBarGutter={4}
       popupClassName="h-full"
       destroyInactiveTabPane={true}
+      tabBarExtraContent={tabBarExtraContent}
       items={items.map((content) => {
         const { label, key, icon, element: Element } = content;
 
@@ -78,12 +101,12 @@ const TabMenu: React.FC<TabMenuProps> = ({
           label,
           key,
           className: "h-full",
-          children: <Element className="h-full" />,
+          children: <Element key={key === activeKey ? `${key}-${refreshKey}` : key} className="h-full" />,
           icon,
         };
       })}
     />
   );
-};
+});
 
 export default TabMenu;

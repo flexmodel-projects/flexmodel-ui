@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import {applyDarkMode, setDarkModeToStorage} from "@/utils/darkMode.ts";
 import {useLocation} from "react-router-dom";
-import {getFullRoutePath} from "@/routes.tsx";
+import {getFullRoutePath} from "@/routes";
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -128,7 +128,7 @@ const Header: React.FC = () => {
             >
               <Button size="small" type="default" icon={<GlobalOutlined />}>{currentLocaleText}</Button>
             </Dropdown>
-            <Tooltip title={t("api_document") as string}>
+            <Tooltip title={t("open_api") as string}>
               <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
                 <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />
               </a>

@@ -1,0 +1,19 @@
+// Ant Design 风格的滚动条样式
+.apiManagementWrapper {
+  :global {
+    .ant-card-body {
+      height: 100%;
+    }
+  }
+}
+
+.apiManagementTab {
+  :global {
+    .ant-tabs-content {
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+  }
+}

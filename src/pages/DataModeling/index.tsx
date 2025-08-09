@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { Card, notification, Row, Splitter, theme } from "antd";
-import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser.tsx";
+import React, {useState} from "react";
+import {Card, notification, Row, Splitter, theme} from "antd";
+import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser";
 import styles from "@/pages/DataModeling/index.module.scss";
-import EntityView from "@/pages/DataModeling/components/EntityView.tsx";
-import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView.tsx";
-import { modifyModel } from "@/services/model.ts";
-import { useTranslation } from "react-i18next";
-import EnumView from "@/pages/DataModeling/components/EnumView.tsx";
-import type { Enum } from "@/types/data-modeling.d.ts";
-import ERDiagram from "@/pages/DataModeling/components/ERDiagramView.tsx";
+import EntityView from "@/pages/DataModeling/components/EntityView";
+import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView";
+import {modifyModel} from "@/services/model.ts";
+import {useTranslation} from "react-i18next";
+import EnumView from "@/pages/DataModeling/components/EnumView";
+import type {Enum} from "@/types/data-modeling.d.ts";
+import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
 
 const ModelingPage: React.FC = () => {
   const { t } = useTranslation();

@@ -2,7 +2,7 @@ import React from 'react';
 import {theme} from 'antd';
 import {useTheme} from '@/store/appStore';
 
-const SwaggerUI: React.FC = () => {
+const OpenAPI: React.FC = () => {
   const { token } = theme.useToken();
   const { isDark } = useTheme();
 
@@ -31,4 +31,4 @@ const SwaggerUI: React.FC = () => {
   );
 };
 
-export default SwaggerUI;
+export default OpenAPI;

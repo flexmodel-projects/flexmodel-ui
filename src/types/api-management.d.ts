@@ -6,10 +6,10 @@ export interface Execution {
 }
 
 export interface GraphQLData {
-  operationName: string;
+  operationName?: string;
   query: string;
-  variables: Record<string, any> | null;
-  headers: Record<string, any> | null;
+  variables?: Record<string, any> | null;
+  headers?: Record<string, any> | null;
 }
 
 export interface ApiMeta {
@@ -101,7 +101,8 @@ export interface GraphQLResponse<T = any> {
 
 export interface GraphQLIntrospectionResponse extends GraphQLResponse<{
   __schema: any;
-}> {}
+}> {
+}
 
 // GraphQL 查询参数类型
 export interface GraphQLQueryParams {

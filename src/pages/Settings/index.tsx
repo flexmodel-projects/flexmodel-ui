@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Card, Menu, message } from "antd";
-import About from "@/pages/Settings/components/About.tsx";
-import Base from "@/pages/Settings/components/Base.tsx";
-import Proxy from "@/pages/Settings/components/Proxy.tsx";
-import {
-  getSettings,
-  saveSettings as reqSaveSettings,
-} from "@/services/settings.ts";
-import Security from "@/pages/Settings/components/Security.tsx";
-import { useTranslation } from "react-i18next";
-import type { Settings } from "@/types/settings";
+import React, {useEffect, useState} from "react";
+import {Card, Menu, message} from "antd";
+import About from "@/pages/Settings/components/About";
+import Base from "@/pages/Settings/components/Base";
+import Proxy from "@/pages/Settings/components/Proxy";
+import {getSettings, saveSettings as reqSaveSettings,} from "@/services/settings.ts";
+import Security from "@/pages/Settings/components/Security";
+import {useTranslation} from "react-i18next";
+import type {Settings} from "@/types/settings";
 import Title from "antd/es/typography/Title";
 
 type OnChangeHandler = (data: Partial<Settings>) => void;

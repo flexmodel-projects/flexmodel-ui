@@ -9,3 +9,17 @@
 .custom-sidebar-menu .ant-menu-item-selected {
   @apply text-[#1677ff] bg-[#e6f4ff] dark:bg-[#23232a] dark:text-[#1677ff];
 }
+
+/* 页面内全屏样式 */
+.page-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 50 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* 为了支持主题，背景色通过组件内联样式设置 */

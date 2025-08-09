@@ -3,7 +3,7 @@ import {Layout, Menu, theme as antdTheme} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
 import {MenuFoldOutlined, MenuUnfoldOutlined,} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
-import {routes} from "@/routes.tsx";
+import {routes} from "@/routes";
 
 // 预计算路由映射表，避免每次查找
 const routeMap = new Map<string, string>();

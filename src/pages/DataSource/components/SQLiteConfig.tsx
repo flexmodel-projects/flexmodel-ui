@@ -13,7 +13,7 @@ interface DatabaseConfigProps {
   onChange?: (changedConfig: Config) => void;
 }
 
-const DatabaseConfig: React.FC<DatabaseConfigProps> = () => {
+const SQLiteConfig: React.FC<DatabaseConfigProps> = () => {
 
   const {t} = useTranslation();
 
@@ -37,4 +37,4 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = () => {
   );
 };
 
-export default DatabaseConfig;
+export default SQLiteConfig;
