@@ -109,7 +109,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange, endpointUrl }: GraphQ
           executeQuery as any
         }
         plugins={[explorer]}
-        /*visiblePlugin={explorer}*/
+        visiblePlugin={explorer}
       ></GraphiQL>
     </Card>
   );
