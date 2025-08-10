@@ -101,11 +101,6 @@ const GraphQLAPI: React.FC = () => {
 
 `,
         }}
-        endpointUrl={
-          settings?.security.graphqlEndpointPath
-            ? `${config?.application?.['flexmodel.context-path'] || ''}${settings.security.graphqlEndpointPath}`
-            : undefined
-        }
         onChange={(data) => {
           console.log('graphql onChange: ', data);
         }}

@@ -27,6 +27,10 @@ import {
   updateDatasource,
   validateDatasource,
 } from "@/services/datasource.ts";
+// 导入Tree组件
+import Tree from "@/components/explore/explore/Tree.jsx";
+// 导入Tree样式
+import "@/components/explore/styles/explore.scss";
 // 数据库图标映射
 import MySQL from "@/assets/icons/svg/mysql.svg?react";
 import MariaDB from "@/assets/icons/svg/mariadb.svg?react";
@@ -86,6 +90,66 @@ const DatasourceManagement: React.FC = () => {
   const [exportVisible, setExportVisible] = useState<boolean>(false);
 
   const [scriptForm] = Form.useForm<ScriptImportForm>();
+
+  // 将数据源列表转换为Tree组件需要的数据结构
+  const treeData = {
+    children: dsList.map((ds) => ({
+      type: 'file' as const,
+      filename: ds.name,
+      path: ds.name,
+      datasource: ds, // 保存原始数据源对象
+    }))
+  };
+
+  // 当前选中的数据源
+  const selectedItem = {
+    path: activeDs.name
+  };
+
+  // 自定义图标渲染函数
+  const renderIcon = (item: any, nodeType: any) => {
+    if (nodeType === 'file' && item.datasource) {
+      const dbKind = item.datasource.config?.dbKind;
+      const IconComponent = DbsMap[dbKind];
+      return IconComponent ? <Icon component={IconComponent} /> : <div />;
+    }
+    return <div />;
+  };
+
+  // 更多按钮渲染函数
+  const renderMore = (item: any) => {
+    if (item.datasource) {
+      return (
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item
+                className="text-red"
+                icon={<DeleteOutlined />}
+                disabled={item.datasource.type === "SYSTEM"}
+                onClick={(e) => {
+                  e.domEvent.stopPropagation();
+                  setActiveDs(item.datasource);
+                  setDeleteVisible(true);
+                }}
+              >
+                {t("delete")}
+              </Menu.Item>
+            </Menu>
+          }
+          trigger={["hover"]}
+          placement="bottomRight"
+        >
+          <MoreOutlined
+            className="cursor-pointer opacity-100 transition-opacity"
+            onClick={(e) => e.stopPropagation()}
+            style={{ marginLeft: '8px' }}
+          />
+        </Dropdown>
+      );
+    }
+    return null;
+  };
 
   useEffect(() => {
     const currentType = scriptForm.getFieldValue("type") || ScriptType.IDL;
@@ -213,46 +277,13 @@ const DatasourceManagement: React.FC = () => {
 
             <div style={{ flex: 1, overflow: "auto", marginBottom: "16px" }}>
               <Spin spinning={dsLoading}>
-                <Menu
-                  mode="inline"
-                  selectedKeys={[activeDs.name]}
-                  style={{ border: "none" }}
-                >
-                  {dsList.map((ds) => (
-                    <Menu.Item
-                      key={ds.name}
-                      icon={<Icon component={DbsMap[ds.config?.dbKind]} />}
-                      onClick={() => handleTreeClick(ds)}
-                      style={{ position: "relative", marginBottom: "4px" }}
-                    >
-                      <span>{ds.name}</span>
-                      <Dropdown
-                        overlay={
-                          <Menu>
-                            <Menu.Item
-                              className="text-red"
-                              icon={<DeleteOutlined />}
-                              disabled={ds.type === "SYSTEM"}
-                              onClick={(e) => {
-                                e.domEvent.stopPropagation();
-                                setDeleteVisible(true);
-                              }}
-                            >
-                              {t("delete")}
-                            </Menu.Item>
-                          </Menu>
-                        }
-                        trigger={["hover"]}
-                        placement="bottomRight"
-                      >
-                        <MoreOutlined
-                          className="cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                      </Dropdown>
-                    </Menu.Item>
-                  ))}
-                </Menu>
+                <Tree
+                  tree={treeData}
+                  selected={selectedItem}
+                  onClickItem={(item) => handleTreeClick(item.datasource)}
+                  renderIcon={renderIcon}
+                  renderMore={renderMore}
+                />
               </Spin>
             </div>
 
