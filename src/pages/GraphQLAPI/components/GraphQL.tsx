@@ -98,7 +98,6 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
         forcedTheme={isDark ? "dark" : "light"}
         fetcher={executeQuery as any}
         plugins={[explorer]}
-        defaultEditorToolsVisibility={true}
       >
         <GraphiQLInitializer
           query={query}
