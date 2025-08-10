@@ -96,7 +96,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     <Card className="h-full">
       <GraphiQL
         forcedTheme={isDark ? "dark" : "light"}
-        fetcher={executeQuery}
+        fetcher={executeQuery as any}
         plugins={[explorer]}
         defaultEditorToolsVisibility={true}
       >
