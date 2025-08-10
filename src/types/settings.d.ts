@@ -7,7 +7,6 @@ interface SecuritySettings {
   rateLimitingEnabled: boolean;
   intervalInSeconds: number;
   maxRequestCount: number;
-  graphqlEndpointEnabled: boolean;
   graphqlEndpointPath?: string;
   graphqlEndpointIdentityProvider?: string | null;
 }
@@ -33,7 +32,6 @@ export interface Security {
   rateLimitingEnabled: boolean;
   maxRequestCount: number;
   intervalInSeconds: number;
-  graphqlEndpointEnabled: boolean;
   graphqlEndpointPath: string;
   graphqlEndpointIdentityProvider: string;
 }
@@ -46,4 +44,4 @@ export interface Proxy {
 export interface Route {
   path: string;
   to: string;
-} 
+}

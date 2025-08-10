@@ -14,7 +14,6 @@ interface SecurityData {
   rateLimitingEnabled: boolean;
   intervalInSeconds: number;
   maxRequestCount: number;
-  graphqlEndpointEnabled: boolean;
   graphqlEndpointPath?: string;
   graphqlEndpointIdentityProvider?: string | null;
 }
@@ -29,7 +28,6 @@ const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
     rateLimitingEnabled: false,
     intervalInSeconds: 60,
     maxRequestCount: 500,
-    graphqlEndpointEnabled: false,
     graphqlEndpointPath: '/graphql',
     graphqlEndpointIdentityProvider: null
   });
@@ -71,17 +69,12 @@ const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
             <InputNumber min={1} addonAfter={t('times')}/>
           </Form.Item>
         </>}
-        <Form.Item name="graphqlEndpointEnabled" label={t('graphql_endpoint_enabled')}>
-          <Switch/>
+        <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
+          <Input addonBefore={config?.application['flexmodel.context-path']}/>
         </Form.Item>
-        {formData?.graphqlEndpointEnabled && <>
-          <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
-            <Input addonBefore={config?.application['flexmodel.context-path']}/>
-          </Form.Item>
-          <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
-            <Select options={options} placeholder={t('select_a_provider')} allowClear/>
-          </Form.Item>
-        </>}
+        <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
+          <Select options={options} placeholder={t('select_a_provider')} allowClear/>
+        </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={submit}>{t('save')}</Button>
         </Form.Item>

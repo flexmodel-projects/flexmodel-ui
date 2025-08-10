@@ -1,17 +1,70 @@
-import React, { useEffect, useState } from "react";
-import "graphiql/graphiql.css";
-import "@graphiql/plugin-explorer/dist/style.css";
-import { Card } from "antd";
-import { executeQuery } from "@/services/api-management.ts";
-import { explorerPlugin } from "@graphiql/plugin-explorer";
-import { GraphiQL } from "graphiql";
-import { GraphQLData } from "@/types/api-management";
-import { useTheme } from "@/store/appStore.ts";
+import React, {useEffect, useState} from "react";
+import "graphiql/style.css";
+import "@graphiql/react/style.css";
+import "@graphiql/plugin-explorer/style.css";
+import {Card} from "antd";
+import {executeQuery} from "@/services/api-management.ts";
+import {explorerPlugin} from "@graphiql/plugin-explorer";
+import {GraphiQL} from "graphiql";
+import {GraphQLData} from "@/types/api-management";
+import {useTheme} from "@/store/appStore.ts";
+import {useGraphiQL} from "@graphiql/react";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
   onChange: (data: GraphQLData) => void | undefined;
 }
+
+// 内部组件用于设置初始值
+const GraphiQLInitializer: React.FC<{
+  query: string;
+  operationName: string;
+  headers: string;
+  variables: string;
+  onChange: (data: GraphQLData) => void;
+}> = ({ query, operationName, headers, variables, onChange }) => {
+  const queryEditor = useGraphiQL(state => state.queryEditor);
+  const variableEditor = useGraphiQL(state => state.variableEditor);
+  const headerEditor = useGraphiQL(state => state.headerEditor);
+
+  useEffect(() => {
+    if (queryEditor) {
+      queryEditor.setValue(query);
+    }
+  }, [query, queryEditor]);
+
+  useEffect(() => {
+    if (variableEditor) {
+      variableEditor.setValue(variables);
+    }
+  }, [variables, variableEditor]);
+
+  useEffect(() => {
+    if (headerEditor) {
+      headerEditor.setValue(headers);
+    }
+  }, [headers, headerEditor]);
+
+  // 简化的变化监听 - 使用定时器定期检查
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentQuery = queryEditor?.getValue() || "";
+      const currentVariables = variableEditor?.getValue() || "{}";
+      const currentHeaders = headerEditor?.getValue() || "{}";
+
+      onChange({
+        operationName: operationName,
+        query: currentQuery,
+        variables: currentVariables ? JSON.parse(currentVariables) : null,
+        headers: currentHeaders ? JSON.parse(currentHeaders) : null,
+      });
+    }, 1000); // 每秒检查一次
+
+    return () => clearInterval(interval);
+  }, [queryEditor, variableEditor, headerEditor, onChange, operationName]);
+
+  return null;
+};
 
 const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
@@ -43,51 +96,19 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     <Card className="h-full">
       <GraphiQL
         className="text-[12px] [&_h2]:text-[18px] [&_h3]:text-[17px] [&_h4]:text-[16px]"
-        query={query}
-        operationName={operationName}
-        headers={headers}
-        variables={variables}
         forcedTheme={isDark ? "dark" : "light"}
-        onEditQuery={(value) => {
-          setQuery(value);
-          onChange({
-            operationName: operationName,
-            query: value,
-            variables: variables ? JSON.parse(variables) : null,
-            headers: headers ? JSON.parse(headers) : null,
-          });
-        }}
-        onEditVariables={(value) => {
-          setVariables(value);
-          onChange({
-            operationName: operationName,
-            query: query,
-            variables: value ? JSON.parse(value) : null,
-            headers: headers ? JSON.parse(headers) : null,
-          });
-        }}
-        onEditOperationName={(value) => {
-          setOperationName(value);
-          onChange({
-            operationName: value,
-            query: query,
-            variables: variables ? JSON.parse(variables) : null,
-            headers: headers ? JSON.parse(headers) : null,
-          });
-        }}
-        onEditHeaders={(value) => {
-          setHeaders(value);
-          onChange({
-            operationName: operationName,
-            query: query,
-            variables: variables ? JSON.parse(variables) : null,
-            headers: value ? JSON.parse(value) : null,
-          });
-        }}
         fetcher={executeQuery as any}
         plugins={[explorer]}
-        /*visiblePlugin={explorer}*/
-      ></GraphiQL>
+        defaultEditorToolsVisibility={true}
+      >
+        <GraphiQLInitializer
+          query={query}
+          operationName={operationName}
+          headers={headers}
+          variables={variables}
+          onChange={onChange}
+        />
+      </GraphiQL>
     </Card>
   );
 };

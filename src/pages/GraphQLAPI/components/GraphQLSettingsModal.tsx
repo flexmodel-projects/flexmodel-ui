@@ -62,8 +62,7 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
         ...settings,
         security: {
           ...settings.security,
-          ...values,
-          graphqlEndpointEnabled: true // 默认启用
+          ...values
         }
       };
 
