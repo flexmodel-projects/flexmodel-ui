@@ -31,7 +31,7 @@ const ERROR_CODES = {
 } as const
 
 // API 基础路径
-export const BASE_URI = "/fm-api"
+export const BASE_URI = "/api"
 
 /**
  * 统一错误处理

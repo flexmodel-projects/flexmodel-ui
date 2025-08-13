@@ -304,7 +304,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
                 width: "100%",
                 padding: 0,
               }}
-              onClick={() => navigate("/datasource")}
+              onClick={() => navigate("/data/source")}
             >
               {t("management")}
             </Button>

@@ -7,7 +7,7 @@ import {fileURLToPath} from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/fm-ui',
+  base: '/api/flexmodel-ui',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -22,7 +22,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     proxy: {
-      "/fm-api": {
+      "/api": {
         target: `http://localhost:8080`,
       },
     },
