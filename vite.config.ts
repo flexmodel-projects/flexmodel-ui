@@ -7,7 +7,7 @@ import {fileURLToPath} from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/api/flexmodel-ui',
+  base: '/flexmodel-ui',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
