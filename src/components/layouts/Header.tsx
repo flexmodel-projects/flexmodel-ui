@@ -3,13 +3,15 @@ import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme, T
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
-import {useLocale, useTheme} from "@/store/appStore.ts";
+import {useLocale, useSidebar, useTheme} from "@/store/appStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {
   FileSearchOutlined,
   GlobalOutlined,
   HomeOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   MoonOutlined,
   QuestionCircleOutlined,
   SunOutlined
@@ -22,6 +24,7 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
   const {setLocale: setLocaleStore, currentLang } = useLocale();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const { i18n } = useTranslation();
   const location = useLocation();
   const { token } = theme.useToken();
@@ -44,10 +47,15 @@ const Header: React.FC = () => {
     }
   }, [setLocaleStore, i18n]);
 
+  // 使用 useCallback 缓存侧边栏折叠切换函数
+  const handleSidebarToggle = useCallback(() => {
+    toggleSidebar();
+  }, [toggleSidebar]);
+
   // 使用 useMemo 缓存面包屑数据，避免每次渲染都重新计算
   const breadcrumbItems = useMemo(() => {
     const pathname = location.pathname;
-    const items = [];
+    const items: any[] = [];
 
     // 添加首页
     items.push({
@@ -104,8 +112,19 @@ const Header: React.FC = () => {
       }}
     >
       <Row justify="space-between" align="middle" style={{ height: '100%' }}>
-        {/* 左侧面包屑 */}
-        <div style={{ paddingLeft: token.padding }}>
+        {/* 左侧面包屑和折叠按钮 */}
+        <div style={{ paddingLeft: token.padding, display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={isSidebarCollapsed ? t("expand_menu") : t("collapse_menu")}>
+            <Button
+              type="text"
+              icon={isSidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={handleSidebarToggle}
+              style={{
+                marginRight: token.marginSM,
+                fontSize: token.fontSizeLG
+              }}
+            />
+          </Tooltip>
           <Breadcrumb
             items={breadcrumbItems}
           />

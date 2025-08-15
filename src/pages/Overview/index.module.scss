@@ -16,3 +16,48 @@
     }
   }
 }
+
+// 统计卡片样式
+.statCardWrapper {
+  :global(.ant-card-body) {
+    padding: 20px;
+  }
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statTitle {
+  font-size: 14px;
+  color: var(--ant-color-text-secondary);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ant-color-text);
+  line-height: 1.2;
+}

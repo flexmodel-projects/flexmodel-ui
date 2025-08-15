@@ -51,13 +51,13 @@ export const routes: RouteConfig[] = [
         path: "/api/user-define",
         element: <UserDefineAPI />,
         icon: DeploymentUnitOutlined,
-        translationKey: "user-define",
+        translationKey: "user_define_api",
       },
       {
         path: "/api/graphql",
         element: <GraphQLAPI />,
         icon: DeploymentUnitOutlined,
-        translationKey: "graphql",
+        translationKey: "graphql_api",
       },
       {
         path: "/api/open-api",

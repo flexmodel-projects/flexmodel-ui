@@ -14,15 +14,15 @@ const ApiView: React.FC = () => {
   // 标签页配置
   const tabItems: TabMenuItem[] = [
     {
-      key: "user-define",
-      label: "自定义接口",
+      key: "user_define_api",
+      label: t("user_define_api"),
       element: UserDefineAPI,
       icon: <DeploymentUnitOutlined/>,
       path: "/api/user-define",
     },
     {
-      key: "graphql",
-      label: "GraphQL",
+      key: "graphql_api",
+      label: t("graphql_api"),
       element: GraphQLAPI,
       icon: <DeploymentUnitOutlined/>,
       path: "/api/graphql",
@@ -46,7 +46,7 @@ const ApiView: React.FC = () => {
   return (
     <TabPageContainer
       items={tabItems}
-      defaultActiveKey="user-define"
+      defaultActiveKey="user_define_api"
       style={{height: '100%'}}
       compact={true}
     />

@@ -21,7 +21,11 @@ export interface LocaleState {
   currentLang: 'zh' | 'en';
 }
 
-export interface AppState extends ConfigState, ThemeState, LocaleState {
+export interface SidebarState {
+  isSidebarCollapsed: boolean;
+}
+
+export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState {
   // 配置相关
   setConfig: (config: Record<string, any>) => void;
   fetchConfig: () => Promise<void>;
@@ -35,6 +39,10 @@ export interface AppState extends ConfigState, ThemeState, LocaleState {
   // 语言相关
   setLocale: (locale: typeof zhCN | typeof enUS, lang: 'zh' | 'en') => void;
   toggleLanguage: () => void;
+
+  // 侧边栏相关
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleSidebar: () => void;
 }
 
 // 创建store
@@ -49,6 +57,7 @@ export const useAppStore = create<AppState>()(
         isDark: getDarkModeFromStorage(),
         locale: localStorage.getItem('i18nextLng') === 'zh' ? zhCN : enUS,
         currentLang: (localStorage.getItem('i18nextLng') as 'zh' | 'en') || 'zh',
+        isSidebarCollapsed: false, // 初始化侧边栏折叠状态
 
         // 配置相关actions
         setConfig: (config) => set({ config }),
@@ -91,12 +100,23 @@ export const useAppStore = create<AppState>()(
           set({ locale: newLocale, currentLang: newLang });
           localStorage.setItem('i18nextLng', newLang);
         },
+
+        // 侧边栏相关actions
+        setSidebarCollapsed: (collapsed) => {
+          set({ isSidebarCollapsed: collapsed });
+        },
+        toggleSidebar: () => {
+          const { isSidebarCollapsed } = get();
+          const newCollapsed = !isSidebarCollapsed;
+          set({ isSidebarCollapsed: newCollapsed });
+        },
       }),
       {
         name: 'app-storage',
         partialize: (state) => ({
           isDark: state.isDark,
           currentLang: state.currentLang,
+          isSidebarCollapsed: state.isSidebarCollapsed,
         }),
       }
     ),
@@ -126,4 +146,10 @@ export const useLocale = () => useAppStore((state) => ({
   currentLang: state.currentLang,
   setLocale: state.setLocale,
   toggleLanguage: state.toggleLanguage,
+}));
+
+export const useSidebar = () => useAppStore((state) => ({
+  isSidebarCollapsed: state.isSidebarCollapsed,
+  setSidebarCollapsed: state.setSidebarCollapsed,
+  toggleSidebar: state.toggleSidebar,
 }));

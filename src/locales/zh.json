@@ -3,6 +3,8 @@
   "api_management": "接口管理",
   "open_api": "Open API",
   "api_log": "接口日志",
+  "user_define_api": "自定义接口",
+  "graphql_api": "GraphQL",
   "data": "数据",
   "data_source": "数据源",
   "data_modeling": "数据建模",

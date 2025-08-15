@@ -1,14 +1,36 @@
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, Statistic, theme} from "antd";
+import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, theme} from "antd";
 import ReactECharts from "echarts-for-react";
 import dayjs, {Dayjs} from "dayjs";
-import {DatabaseTwoTone, FlagTwoTone, HourglassTwoTone, RocketTwoTone} from "@ant-design/icons";
+import {DatabaseOutlined, FlagOutlined, HourglassOutlined, RocketOutlined} from "@ant-design/icons";
 import {getOverview} from "@/services/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/Overview/index.module.scss";
 import type {ApiStat, OverviewResponse, RankingData, Statistics} from '@/types/overview.d.ts';
 
 const { RangePicker } = DatePicker;
+
+// 自定义统计卡片组件
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => {
+  return (
+    <div className={styles.statCard}>
+      <div className={styles.statIcon} style={{ backgroundColor: color }}>
+        {icon}
+      </div>
+      <div className={styles.statContent}>
+        <div className={styles.statTitle}>{title}</div>
+        <div className={styles.statValue}>{value}</div>
+      </div>
+    </div>
+  );
+};
 
 const StatisticsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -168,42 +190,42 @@ const StatisticsPage: React.FC = () => {
       <Spin spinning={loading}>
         <Row gutter={12}>
           <Col span={6}>
-            <Card>
-              <Statistic
+            <Card className={styles.statCardWrapper}>
+              <StatCard
                 title={t("query")}
                 value={stats.queryCount}
-                prefix={<HourglassTwoTone />}
-                precision={0}
+                icon={<HourglassOutlined style={{ fontSize: '24px', color: token.colorPrimary }} />}
+                color={token.colorPrimaryBg}
               />
             </Card>
           </Col>
           <Col span={6}>
-            <Card>
-              <Statistic
+            <Card className={styles.statCardWrapper}>
+              <StatCard
                 title={t("mutation")}
                 value={stats.mutationCount}
-                prefix={<FlagTwoTone />}
-                precision={0}
+                icon={<FlagOutlined style={{ fontSize: '24px', color: token.colorSuccess }} />}
+                color={token.colorSuccessBg}
               />
             </Card>
           </Col>
           <Col span={6}>
-            <Card>
-              <Statistic
+            <Card className={styles.statCardWrapper}>
+              <StatCard
                 title={t("subscription")}
                 value={stats.subscribeCount}
-                prefix={<RocketTwoTone />}
-                precision={0}
+                icon={<RocketOutlined style={{ fontSize: '24px', color: token.colorError }} />}
+                color={token.colorErrorBg}
               />
             </Card>
           </Col>
           <Col span={6}>
-            <Card>
-              <Statistic
+            <Card className={styles.statCardWrapper}>
+              <StatCard
                 title={t("datasource")}
                 value={stats.dataSourceCount}
-                prefix={<DatabaseTwoTone />}
-                precision={0}
+                icon={<DatabaseOutlined style={{ fontSize: '24px', color: token.colorInfo }} />}
+                color={token.colorInfoBg}
               />
             </Card>
           </Col>
@@ -238,7 +260,7 @@ const StatisticsPage: React.FC = () => {
                 <Col span={6} className="flex flex-col">
                   <Card title={t("api_ranking")} variant="borderless">
                     <List
-                      style={{ overflowY: "scroll",overflowX: "hidden", maxHeight: "62vh" }}
+                      style={{ overflowY: "scroll",overflowX: "hidden", maxHeight: "48vh" }}
                       className="flex flex-1 relative"
                       dataSource={rankingData}
                       renderItem={(item, index) => (

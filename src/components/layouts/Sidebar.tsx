@@ -1,9 +1,9 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useMemo} from "react";
 import {Layout, Menu, theme as antdTheme} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
-import {MenuFoldOutlined, MenuUnfoldOutlined,} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
 import {routes} from "@/routes";
+import {useSidebar} from "@/store/appStore";
 
 // 预计算路由映射表，避免每次查找
 const routeMap = new Map<string, string>();
@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const { token } = antdTheme.useToken();
 
   // 使用 useMemo 缓存菜单数据，避免每次渲染都重新创建
@@ -61,10 +61,7 @@ const Sidebar: React.FC = () => {
     }
   }, [location.pathname, navigate]);
 
-  // 使用 useCallback 缓存折叠切换函数
-  const handleCollapse = useCallback(() => {
-    setCollapsed(prev => !prev);
-  }, []);
+
 
   // 使用 useMemo 缓存样式对象，避免每次渲染都重新创建
   const siderStyle = useMemo(() => ({
@@ -78,16 +75,16 @@ const Sidebar: React.FC = () => {
     height: token.controlHeight * 1.5,
     display: "flex",
     alignItems: "center",
-    justifyContent: collapsed ? "center" : "flex-start",
-    paddingLeft: collapsed ? 0 : token.padding,
+    justifyContent: isSidebarCollapsed ? "center" : "flex-start",
+    paddingLeft: isSidebarCollapsed ? 0 : token.padding,
     overflow: 'hidden'
-  }), [collapsed, token.controlHeight, token.padding]);
+  }), [isSidebarCollapsed, token.controlHeight, token.padding]);
 
   const logoStyle = useMemo(() => ({
     transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
-    transform: collapsed ? 'scale(1)' : 'scale(1.1)',
+    transform: isSidebarCollapsed ? 'scale(1)' : 'scale(1.1)',
     flexShrink: 0
-  }), [collapsed]);
+  }), [isSidebarCollapsed]);
 
   const logoTextStyle = useMemo(() => ({
     marginLeft: token.marginSM,
@@ -95,39 +92,29 @@ const Sidebar: React.FC = () => {
     fontSize: token.fontSizeXL,
     letterSpacing: 1,
     fontFamily: token.fontFamily,
-    opacity: collapsed ? 0 : 1,
-    transform: collapsed ? 'translateX(-10px) scale(0.95)' : 'translateX(0) scale(1)',
+    opacity: isSidebarCollapsed ? 0 : 1,
+    transform: isSidebarCollapsed ? 'translateX(-10px) scale(0.95)' : 'translateX(0) scale(1)',
     transition: 'opacity 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1), max-width 0.3s cubic-bezier(0.4,0,0.2,1)',
     whiteSpace: 'nowrap' as const,
     pointerEvents: 'none' as const,
-    maxWidth: collapsed ? 0 : 120,
+    maxWidth: isSidebarCollapsed ? 0 : 120,
     overflow: 'hidden',
     display: 'inline-block',
     verticalAlign: 'middle',
     color: token.colorText,
-  }), [collapsed, token.fontFamily, token.colorText, token.marginSM, token.fontSizeXL]);
+  }), [isSidebarCollapsed, token.fontFamily, token.colorText, token.marginSM, token.fontSizeXL]);
 
   const menuStyle = useMemo(() => ({
     flex: 1,
     borderRight: 0
   }), []);
 
-  const triggerStyle = useMemo(() => ({
-    cursor: "pointer",
-    fontSize: token.fontSizeLG
-  }), [token.fontSizeLG]);
-
-  const triggerContainerStyle = useMemo(() => ({
-    padding: token.padding,
-    textAlign: "right" as const
-  }), [token.padding]);
-
   return (
     <Layout.Sider
       theme="light"
       collapsible
-      collapsed={collapsed}
-      onCollapse={setCollapsed}
+      collapsed={isSidebarCollapsed}
+      onCollapse={toggleSidebar}
       collapsedWidth={56}
       width={180}
       trigger={null}
@@ -149,19 +136,10 @@ const Sidebar: React.FC = () => {
           mode="inline"
           selectedKeys={selectedKeys}
           onClick={handleMenuClick}
-          inlineCollapsed={collapsed}
+          inlineCollapsed={isSidebarCollapsed}
           style={menuStyle}
           items={menuData}
         />
-        <div style={triggerContainerStyle}>
-          <span
-            onClick={handleCollapse}
-            style={triggerStyle}
-            className="dark:text-white"
-          >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          </span>
-        </div>
       </div>
     </Layout.Sider>
   );

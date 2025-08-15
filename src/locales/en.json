@@ -3,6 +3,8 @@
   "api_management": "API Management",
   "open_api": "Open API",
   "api_log": "API Log",
+  "user_define_api": "User Define API",
+  "graphql_api": "GraphQL",
   "data": "Data",
   "data_source": "Data source",
   "data_modeling": "Data modeling",
