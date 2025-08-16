@@ -171,13 +171,33 @@ const StatisticsPage: React.FC = () => {
         name: t("success"),
         type: "line",
         data: apiStat.successData,
-        itemStyle: { color: token.colorSuccess },
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: token.colorSuccess
+        },
+        itemStyle: { 
+          color: token.colorSuccess
+        },
+        areaStyle: {
+          color: token.colorSuccess + '20'
+        }
       },
       {
         name: t("fail"),
         type: "line",
         data: apiStat.failData,
-        itemStyle: { color: token.colorError },
+        smooth: true,
+        lineStyle: {
+          width: 2,
+          color: token.colorError
+        },
+        itemStyle: { 
+          color: token.colorError
+        },
+        areaStyle: {
+          color: token.colorError + '20'
+        }
       },
     ],
   };
@@ -260,14 +280,14 @@ const StatisticsPage: React.FC = () => {
                 <Col span={6} className="flex flex-col">
                   <Card title={t("api_ranking")} variant="borderless">
                     <List
-                      style={{ overflowY: "scroll", overflowX: "hidden", maxHeight: "48vh" }}
+                      style={{ overflowY: "scroll", overflowX: "hidden", maxHeight: "55vh" }}
                       className="flex flex-1 relative"
                       dataSource={rankingData}
                       renderItem={(item, index) => (
                         <List.Item style={{ padding: "10px 16px" }}>
                           <div className="flex w-full justify-between">
                             <Space className="overflow-hidden w-60">
-                              <Badge count={index + 1} showZero color="green" />{" "}
+                              <Badge count={index + 1} showZero color={index < 3 ? "red" : "green"} />{" "}
                               <span style={{ color: token.colorText }}>{item.name}</span>
                             </Space>
                             <span style={{ color: token.colorText }}>{item.total}</span>
