@@ -255,12 +255,12 @@ const StatisticsPage: React.FC = () => {
             >
               <Row gutter={16} className="h-full">
                 <Col span={18}>
-                  <ReactECharts option={chartConfig} style={{ height: "100%" }} />
+                  <ReactECharts option={chartConfig} style={{ height: "100%", minHeight: "400px" }} />
                 </Col>
                 <Col span={6} className="flex flex-col">
                   <Card title={t("api_ranking")} variant="borderless">
                     <List
-                      style={{ overflowY: "scroll",overflowX: "hidden", maxHeight: "48vh" }}
+                      style={{ overflowY: "scroll", overflowX: "hidden", maxHeight: "48vh" }}
                       className="flex flex-1 relative"
                       dataSource={rankingData}
                       renderItem={(item, index) => (

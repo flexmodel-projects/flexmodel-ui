@@ -114,17 +114,15 @@ const Header: React.FC = () => {
       <Row justify="space-between" align="middle" style={{ height: '100%' }}>
         {/* 左侧面包屑和折叠按钮 */}
         <div style={{ paddingLeft: token.padding, display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={isSidebarCollapsed ? t("expand_menu") : t("collapse_menu")}>
-            <Button
-              type="text"
-              icon={isSidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={handleSidebarToggle}
-              style={{
-                marginRight: token.marginSM,
-                fontSize: token.fontSizeLG
-              }}
-            />
-          </Tooltip>
+          <Button
+            type="text"
+            icon={isSidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={handleSidebarToggle}
+            style={{
+              marginRight: token.marginSM,
+              fontSize: token.fontSizeLG
+            }}
+          />
           <Breadcrumb
             items={breadcrumbItems}
           />
