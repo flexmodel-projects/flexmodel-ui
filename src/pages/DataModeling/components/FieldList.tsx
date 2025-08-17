@@ -4,9 +4,9 @@ import {
   CalendarOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  CodeOutlined,
   DeleteOutlined,
   EditOutlined,
+  FileTextOutlined,
   FontSizeOutlined,
   KeyOutlined,
   LinkOutlined,
@@ -116,7 +116,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
       case 'DateTime':
         return <CalendarOutlined style={{ color: '#fa8c16', marginRight: 4 }} />;
       case 'JSON':
-        return <CodeOutlined style={{ color: '#f5222d', marginRight: 4 }} />;
+        return <FileTextOutlined style={{ color: '#f5222d', marginRight: 4 }} />;
       case 'Relation':
         return <LinkOutlined style={{ color: '#2f54eb', marginRight: 4 }} />;
       case 'Enum':
