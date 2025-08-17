@@ -1,6 +1,6 @@
 code[class*='language-'],
 pre[class*='language-'] {
-  color: #393a34;
+  color: var(--ant-color-text);
   font-family: 'Consolas', 'Bitstream Vera Sans Mono', 'Courier New', Courier,
     monospace;
   font-size: 14px;
@@ -10,14 +10,14 @@ pre[class*='language-']::-moz-selection,
 pre[class*='language-'] ::-moz-selection,
 code[class*='language-']::-moz-selection,
 code[class*='language-'] ::-moz-selection {
-  background: #b3d4fc;
+  background: var(--ant-color-primary-bg);
 }
 
 pre[class*='language-']::selection,
 pre[class*='language-'] ::selection,
 code[class*='language-']::selection,
 code[class*='language-'] ::selection {
-  background: #b3d4fc;
+  background: var(--ant-color-primary-bg);
 }
 
 :not(pre) > code[class*='language-'],
@@ -28,7 +28,7 @@ pre[class*='language-'] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #999988;
+  color: var(--ant-color-text-secondary);
   font-style: italic;
 }
 
@@ -38,11 +38,11 @@ pre[class*='language-'] {
 
 .token.string,
 .token.attr-value {
-  color: #e3116c;
+  color: var(--ant-color-success);
 }
 .token.punctuation,
 .token.operator {
-  color: #393a34; /* no highlight */
+  color: var(--ant-color-text); /* no highlight */
 }
 
 .token.entity,
@@ -55,26 +55,26 @@ pre[class*='language-'] {
 .token.property,
 .token.regex,
 .token.inserted {
-  color: #36acaa;
+  color: var(--ant-color-info);
 }
 
 .token.atrule,
 .token.keyword,
 .token.attr-name,
 .language-autohotkey .token.selector {
-  color: #00bfff;
+  color: var(--ant-color-primary);
 }
 
 .token.function,
 .token.deleted,
 .language-autohotkey .token.tag {
-  color: #f14f00;
+  color: var(--ant-color-warning);
 }
 
 .token.tag,
 .token.selector,
 .language-autohotkey .token.keyword {
-  color: #00009f;
+  color: var(--ant-color-link);
 }
 
 .token.important,
@@ -89,12 +89,12 @@ pre[class*='language-'] {
 
 .language-java {
   .token.annotation {
-    color: #e3116c; /* no highlight */
+    color: var(--ant-color-success); /* no highlight */
   }
 }
 
 .gatsby-highlight-code-line {
-  background-color: #f9f9f9;
+  background-color: var(--ant-color-fill-tertiary);
   display: block;
   margin-right: -1em;
   margin-left: -1em;
@@ -106,17 +106,17 @@ pre.language-xml {
   .token.tag,
   .token.selector,
   .language-autohotkey .token.keyword {
-    color: #e3116c;
+    color: var(--ant-color-success);
   }
   .token {
     &.attr-value {
-      color: rgb(80, 161, 79);
+      color: var(--ant-color-success);
     }
     &.attr-name {
-      color: rgb(193, 132, 1);
+      color: var(--ant-color-warning);
     }
     &.punctuation {
-      color: #888;
+      color: var(--ant-color-text-secondary);
     }
   }
 }
