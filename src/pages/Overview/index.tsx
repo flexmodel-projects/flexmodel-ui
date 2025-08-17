@@ -20,15 +20,17 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => {
   return (
-    <div className={styles.statCard}>
-      <div className={styles.statIcon} style={{ backgroundColor: color }}>
-        {icon}
+    <Card className={styles.statCardWrapper}>
+      <div className={styles.statCard}>
+        <div className={styles.statIcon} style={{ backgroundColor: color }}>
+          {icon}
+        </div>
+        <div className={styles.statContent}>
+          <div className={styles.statTitle}>{title}</div>
+          <div className={styles.statValue}>{value}</div>
+        </div>
       </div>
-      <div className={styles.statContent}>
-        <div className={styles.statTitle}>{title}</div>
-        <div className={styles.statValue}>{value}</div>
-      </div>
-    </div>
+    </Card>
   );
 };
 
@@ -55,6 +57,8 @@ const StatisticsPage: React.FC = () => {
     dayjs().endOf("week"),
   ]);
 
+  // 添加选中状态管理
+  const [selectedQuickSelect, setSelectedQuickSelect] = useState<"today" | "week" | "month" | "year" | "custom">("week");
 
 
   useEffect(() => {
@@ -81,6 +85,7 @@ const StatisticsPage: React.FC = () => {
   const handleDateChange = (dates: [any, any] | null) => {
     if (dates) {
       setDateRange(dates);
+      setSelectedQuickSelect("custom"); // 当用户手动选择日期时，设置为自定义状态
     }
   };
 
@@ -109,6 +114,7 @@ const StatisticsPage: React.FC = () => {
         end = now.endOf("day");
     }
     setDateRange([start, end]);
+    setSelectedQuickSelect(type); // 设置选中状态
   };
 
   // ECharts 配置 - 使用 Ant Design token
@@ -176,7 +182,7 @@ const StatisticsPage: React.FC = () => {
           width: 2,
           color: token.colorSuccess
         },
-        itemStyle: { 
+        itemStyle: {
           color: token.colorSuccess
         },
         areaStyle: {
@@ -192,7 +198,7 @@ const StatisticsPage: React.FC = () => {
           width: 2,
           color: token.colorError
         },
-        itemStyle: { 
+        itemStyle: {
           color: token.colorError
         },
         areaStyle: {
@@ -210,81 +216,102 @@ const StatisticsPage: React.FC = () => {
       <Spin spinning={loading}>
         <Row gutter={12}>
           <Col span={6}>
-            <Card className={styles.statCardWrapper}>
-              <StatCard
-                title={t("query")}
-                value={stats.queryCount}
-                icon={<HourglassOutlined style={{ fontSize: '24px', color: token.colorPrimary }} />}
-                color={token.colorPrimaryBg}
-              />
-            </Card>
+            <StatCard
+              title={t("query")}
+              value={stats.queryCount}
+              icon={<HourglassOutlined style={{ fontSize: '24px', color: token.colorPrimary }} />}
+              color={token.colorPrimaryBg}
+            />
           </Col>
           <Col span={6}>
-            <Card className={styles.statCardWrapper}>
-              <StatCard
-                title={t("mutation")}
-                value={stats.mutationCount}
-                icon={<FlagOutlined style={{ fontSize: '24px', color: token.colorSuccess }} />}
-                color={token.colorSuccessBg}
-              />
-            </Card>
+            <StatCard
+              title={t("mutation")}
+              value={stats.mutationCount}
+              icon={<FlagOutlined style={{ fontSize: '24px', color: token.colorSuccess }} />}
+              color={token.colorSuccessBg}
+            />
           </Col>
           <Col span={6}>
-            <Card className={styles.statCardWrapper}>
-              <StatCard
-                title={t("subscription")}
-                value={stats.subscribeCount}
-                icon={<RocketOutlined style={{ fontSize: '24px', color: token.colorError }} />}
-                color={token.colorErrorBg}
-              />
-            </Card>
+            <StatCard
+              title={t("subscription")}
+              value={stats.subscribeCount}
+              icon={<RocketOutlined style={{ fontSize: '24px', color: token.colorError }} />}
+              color={token.colorErrorBg}
+            />
           </Col>
           <Col span={6}>
-            <Card className={styles.statCardWrapper}>
-              <StatCard
-                title={t("datasource")}
-                value={stats.dataSourceCount}
-                icon={<DatabaseOutlined style={{ fontSize: '24px', color: token.colorInfo }} />}
-                color={token.colorInfoBg}
-              />
-            </Card>
+            <StatCard
+              title={t("datasource")}
+              value={stats.dataSourceCount}
+              icon={<DatabaseOutlined style={{ fontSize: '24px', color: token.colorInfo }} />}
+              color={token.colorInfoBg}
+            />
           </Col>
         </Row>
         <Row style={{ marginTop: 10, flex: 1 }} gutter={16}>
           <Col span={24}>
             <Card
-              className="flex flex-1 h-full flex-col overflow-hidden"
+              className="flex flex-1 flex-col overflow-hidden"
+              style={{ height: "550px" }}
               title={t("trend_analysis")}
               extra={
                 <Space>
-                  <Button onClick={() => handleQuickSelect("today")} type="text">
+                  <Button
+                    onClick={() => handleQuickSelect("today")}
+                    type={selectedQuickSelect === "today" ? "primary" : "text"}
+                    size="small"
+                  >
                     {t("today")}
                   </Button>
-                  <Button onClick={() => handleQuickSelect("week")} type="text">
+                  <Button
+                    onClick={() => handleQuickSelect("week")}
+                    type={selectedQuickSelect === "week" ? "primary" : "text"}
+                    size="small"
+                  >
                     {t("week")}
                   </Button>
-                  <Button onClick={() => handleQuickSelect("month")} type="text">
+                  <Button
+                    onClick={() => handleQuickSelect("month")}
+                    type={selectedQuickSelect === "month" ? "primary" : "text"}
+                    size="small"
+                  >
                     {t("month")}
                   </Button>
-                  <Button onClick={() => handleQuickSelect("year")} type="text">
+                  <Button
+                    onClick={() => handleQuickSelect("year")}
+                    type={selectedQuickSelect === "year" ? "primary" : "text"}
+                    size="small"
+                  >
                     {t("year")}
                   </Button>
-                  <RangePicker value={dateRange} onChange={handleDateChange} />
+                  <RangePicker
+                    value={dateRange}
+                    onChange={handleDateChange}
+                    style={selectedQuickSelect === "custom" ? { borderColor: token.colorPrimary } : {}}
+                    size="small"
+                  />
                 </Space>
               }
             >
               <Row gutter={16} className="h-full">
                 <Col span={18}>
-                  <ReactECharts option={chartConfig} style={{ height: "100%", minHeight: "400px" }} />
+                  <ReactECharts option={chartConfig} style={{ height: "100%" }} />
                 </Col>
                 <Col span={6} className="flex flex-col">
-                  <Card title={t("api_ranking")} variant="borderless">
+                  <div>
+                    <div style={{ fontSize: "16px", fontWeight: "500", marginBottom: "16px", color: token.colorText }}>
+                      {t("api_ranking")}
+                    </div>
                     <List
-                      style={{ overflowY: "scroll", overflowX: "hidden", maxHeight: "55vh" }}
+                      style={{
+                        height: "450px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                      }}
                       className="flex flex-1 relative"
                       dataSource={rankingData}
                       renderItem={(item, index) => (
-                        <List.Item style={{ padding: "10px 16px" }}>
+                        <List.Item style={{ padding: "10px 0" }}>
                           <div className="flex w-full justify-between">
                             <Space className="overflow-hidden w-60">
                               <Badge count={index + 1} showZero color={index < 3 ? "red" : "green"} />{" "}
@@ -295,7 +322,7 @@ const StatisticsPage: React.FC = () => {
                         </List.Item>
                       )}
                     />
-                  </Card>
+                  </div>
                 </Col>
               </Row>
             </Card>
