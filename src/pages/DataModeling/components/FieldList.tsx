@@ -1,18 +1,23 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
+import {Button, Card, notification, Popconfirm, Space, Table, Tooltip,} from "antd";
 import {
-  Button,
-  Card,
-  notification,
-  Popconfirm,
-  Space,
-  Table,
-  Tooltip,
-} from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { createField, dropField, modifyField } from "@/services/model.ts";
-import FieldForm, { FieldInitialValues } from "./FieldForm.tsx";
-import { Entity, Field, TypedFieldSchema } from "@/types/data-modeling";
-import { useTranslation } from "react-i18next";
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FontSizeOutlined,
+  KeyOutlined,
+  LinkOutlined,
+  NumberOutlined,
+  PlusOutlined,
+  TagsOutlined
+} from "@ant-design/icons";
+import {createField, dropField, modifyField} from "@/services/model.ts";
+import FieldForm, {FieldInitialValues} from "./FieldForm.tsx";
+import {Entity, Field, TypedFieldSchema} from "@/types/data-modeling";
+import {useTranslation} from "react-i18next";
 
 interface FieldListProps {
   datasource: string;
@@ -92,8 +97,54 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
     }
   };
 
+  // 根据字段类型获取对应的图标
+  const getFieldTypeIcon = (type: string) => {
+    switch (type) {
+      case 'String':
+        return <FontSizeOutlined style={{ color: '#1890ff', marginRight: 4 }} />;
+      case 'Int':
+      case 'Long':
+      case 'Float':
+      case 'Decimal':
+        return <NumberOutlined style={{ color: '#52c41a', marginRight: 4 }} />;
+      case 'Boolean':
+        return <CheckCircleOutlined style={{ color: '#722ed1', marginRight: 4 }} />;
+      case 'Date':
+        return <CalendarOutlined style={{ color: '#13c2c2', marginRight: 4 }} />;
+      case 'Time':
+        return <ClockCircleOutlined style={{ color: '#eb2f96', marginRight: 4 }} />;
+      case 'DateTime':
+        return <CalendarOutlined style={{ color: '#fa8c16', marginRight: 4 }} />;
+      case 'JSON':
+        return <CodeOutlined style={{ color: '#f5222d', marginRight: 4 }} />;
+      case 'Relation':
+        return <LinkOutlined style={{ color: '#2f54eb', marginRight: 4 }} />;
+      case 'Enum':
+        return <TagsOutlined style={{ color: '#fa541c', marginRight: 4 }} />;
+      default:
+        return null;
+    }
+  };
+
   const columns = [
-    { title: t("name"), dataIndex: "name", key: "name" },
+    {
+      title: t("name"),
+      dataIndex: "name",
+      key: "name",
+      render: (name: string, record: Field) => (
+        <span>
+          {record.identity ? (
+            <KeyOutlined
+              style={{ color: '#faad14', marginRight: 4 }}
+              title={t("identity_field")}
+            />
+          ) : (
+            getFieldTypeIcon(record.type)
+          )}
+          {name}
+        </span>
+      )
+    },
     {
       title: t("type"),
       dataIndex: "type",

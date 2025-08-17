@@ -96,6 +96,7 @@
   "enums": "枚举",
   "native_queries": "本地查询",
   "field": "字段",
+  "identity_field": "主键字段",
   "index": "索引",
   "record": "记录",
   "name": "名称",

@@ -96,6 +96,7 @@
   "enums": "Enums",
   "native_queries": "Native queries",
   "field": "Field",
+  "identity_field": "Identity Field",
   "index": "Index",
   "record": "Record",
   "name": "Name",
