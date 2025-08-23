@@ -106,7 +106,8 @@ const Sidebar: React.FC = () => {
 
   const menuStyle = useMemo(() => ({
     flex: 1,
-    borderRight: 0
+    borderRight: 0,
+    fontWeight: 'bold',
   }), []);
 
   return (

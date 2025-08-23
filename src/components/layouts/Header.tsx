@@ -23,7 +23,7 @@ import {getFullRoutePath} from "@/routes";
 const Header: React.FC = () => {
   const { t } = useTranslation();
   const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
-  const {setLocale: setLocaleStore, currentLang } = useLocale();
+  const { setLocale: setLocaleStore, currentLang } = useLocale();
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -108,14 +108,13 @@ const Header: React.FC = () => {
       style={{
         padding: 0,
         height: token.controlHeight * 1.5,
-        lineHeight: `${token.controlHeight * 1.5}px`
+        lineHeight: `${token.controlHeight * 1.5}px`,
       }}
     >
       <Row justify="space-between" align="middle" style={{ height: '100%' }}>
         {/* 左侧面包屑和折叠按钮 */}
         <div style={{ paddingLeft: token.padding, display: 'flex', alignItems: 'center' }}>
           <Button
-            type="text"
             icon={isSidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={handleSidebarToggle}
             style={{
@@ -129,33 +128,31 @@ const Header: React.FC = () => {
         </div>
 
         {/* 右侧功能按钮 */}
-        <Space style={{ paddingRight: token.padding }} size={token.marginLG}>
-          <Space size={token.marginSM}>
-            <Switch
-              checked={isDark}
-              onChange={toggleDarkMode}
-              checkedChildren={<SunOutlined />}
-              unCheckedChildren={<MoonOutlined />}
-              style={{ marginRight: token.marginXS }}
-            />
-            <Dropdown
-              overlay={localeMenu}
-              placement="bottomRight"
-              trigger={["click"]}
-            >
-              <Button size="small" type="default" icon={<GlobalOutlined />}>{currentLocaleText}</Button>
-            </Dropdown>
-            <Tooltip title={t("open_api") as string}>
-              <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
-                <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />
-              </a>
-            </Tooltip>
-            <Tooltip title={t("help") as string}>
-              <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
-                <QuestionCircleOutlined style={{ fontSize: token.fontSizeLG }} />
-              </a>
-            </Tooltip>
-          </Space>
+        <Space style={{ paddingRight: token.padding }} size={token.marginSM}>
+          <Switch
+            checked={isDark}
+            onChange={toggleDarkMode}
+            checkedChildren={<SunOutlined />}
+            unCheckedChildren={<MoonOutlined />}
+            style={{ marginRight: token.marginXS }}
+          />
+          <Dropdown
+            overlay={localeMenu}
+            placement="bottomRight"
+            trigger={["click"]}
+          >
+            <Button size="small" icon={<GlobalOutlined />}>{currentLocaleText}</Button>
+          </Dropdown>
+          <Tooltip title={t("open_api") as string}>
+            <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
+              <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />
+            </a>
+          </Tooltip>
+          <Tooltip title={t("help") as string}>
+            <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
+              <QuestionCircleOutlined style={{ fontSize: token.fontSizeLG }} />
+            </a>
+          </Tooltip>
         </Space>
       </Row>
     </Layout.Header>
