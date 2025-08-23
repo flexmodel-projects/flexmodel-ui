@@ -13,7 +13,7 @@
   "no_model_data": "No model data",
   "select_datasource": "Select datasource",
   "refresh_models": "Refresh model data",
-  "identity_providers": "Identity Providers",
+  "identity_providers": "IdP",
   "settings": "Settings",
   "new_api": "New API",
   "new_folder": "New Folder",

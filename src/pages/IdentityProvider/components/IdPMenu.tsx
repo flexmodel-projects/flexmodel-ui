@@ -101,7 +101,7 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
   return (
     <div className={`${styles["idp-menu-wrapper"]}`} style={{ minWidth: 200 }}>
       <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
-        身份源管理
+        {t('idp_management')}
       </Title>
       <Divider style={{ margin: "16px 0" }} />
       <Spin spinning={idPLoading}>

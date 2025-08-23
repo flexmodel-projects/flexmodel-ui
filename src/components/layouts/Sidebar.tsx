@@ -68,7 +68,12 @@ const Sidebar: React.FC = () => {
     minHeight: "100vh",
     transition: "width 0.3s cubic-bezier(0.4,0,0.2,1)",
     boxShadow: "2px 0 8px 0 rgba(0,0,0,0.04)",
-    zIndex: 10
+    zIndex: 10,
+    position: "fixed" as const, // 固定定位
+    left: 0,
+    top: 0,
+    bottom: 0,
+    overflow: "hidden" // 防止sidebar内部滚动
   }), []);
 
   const logoContainerStyle = useMemo(() => ({
@@ -107,7 +112,6 @@ const Sidebar: React.FC = () => {
   const menuStyle = useMemo(() => ({
     flex: 1,
     borderRight: 0,
-    fontWeight: 'bold',
   }), []);
 
   return (

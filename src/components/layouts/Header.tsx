@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo} from "react";
-import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme, Tooltip} from "antd";
+import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme} from "antd";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
@@ -109,6 +109,11 @@ const Header: React.FC = () => {
         padding: 0,
         height: token.controlHeight * 1.5,
         lineHeight: `${token.controlHeight * 1.5}px`,
+        position: "fixed" as const, // 固定定位
+        top: 0,
+        left: isSidebarCollapsed ? 56 : 180, // 根据sidebar状态调整左边距
+        right: 0,
+        transition: "left 0.3s cubic-bezier(0.4,0,0.2,1)" // 与sidebar动画同步
       }}
     >
       <Row justify="space-between" align="middle" style={{ height: '100%' }}>
@@ -143,16 +148,12 @@ const Header: React.FC = () => {
           >
             <Button size="small" icon={<GlobalOutlined />}>{currentLocaleText}</Button>
           </Dropdown>
-          <Tooltip title={t("open_api") as string}>
-            <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
-              <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />
-            </a>
-          </Tooltip>
-          <Tooltip title={t("help") as string}>
-            <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
-              <QuestionCircleOutlined style={{ fontSize: token.fontSizeLG }} />
-            </a>
-          </Tooltip>
+          <a href={`${import.meta.env.BASE_URL}/rapi-doc/index.html`} target="_blank" rel="noopener noreferrer">
+            <FileSearchOutlined style={{ fontSize: token.fontSizeLG }} />
+          </a>
+          <a href="https://flexmodel.wetech.tech" target="_blank" rel="noopener noreferrer">
+            <QuestionCircleOutlined style={{ fontSize: token.fontSizeLG }} />
+          </a>
         </Space>
       </Row>
     </Layout.Header>
