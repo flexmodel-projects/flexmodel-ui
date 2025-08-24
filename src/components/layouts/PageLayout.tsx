@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {FloatButton, Layout, Splitter, theme} from "antd";
-import {MessageOutlined} from "@ant-design/icons";
+import {RobotOutlined} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "@/routes";
@@ -82,7 +82,7 @@ const PageLayout: React.FC = () => {
       {/* 悬浮按钮 - 只在AI聊天面板隐藏时显示 */}
       {!isAIChatVisible && (
         <FloatButton
-          icon={<MessageOutlined />}
+          icon={<RobotOutlined />}
           type="primary"
           onClick={() => setIsAIChatVisible(true)}
           style={{
