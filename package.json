@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
+    "@ant-design/x": "^1.6.0",
     "@antv/x6": "^2.18.1",
     "@antv/x6-plugin-scroller": "^2.0.10",
     "@antv/x6-react-shape": "^2.2.3",

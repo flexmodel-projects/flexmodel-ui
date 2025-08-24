@@ -181,7 +181,16 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
       title: t("default_value"),
       dataIndex: "defaultValue",
       key: "defaultValue",
-      render: (value: any) => JSON.stringify(value),
+      render: (value: { type: "generated" | "fixed"; value: string | number | boolean | null; name: string | null; } | undefined) => {
+        if (!value) return '-';
+        if (value.type === 'fixed') {
+          return value.value !== null ? value.value : 'null';
+        }
+        if (value.type === 'generated') {
+          return value.name ? `Generated: ${value.name}` : 'Generated';
+        }
+        return '-';
+      },
     },
     {
       title: t("unique"),

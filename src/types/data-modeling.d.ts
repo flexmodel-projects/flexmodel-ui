@@ -1,5 +1,3 @@
-export type IdP = { name: string; icon: any }; 
-
 export interface Datasource {
   name: string;
   type: string;
@@ -43,7 +41,7 @@ export interface Field extends Record<string, any> {
   nullable: boolean;
   comment?: string;
   multiple?: boolean;
-  defaultValue?: any;
+  defaultValue?: DefaultValue;
   from?: string;
   tmpType?: string;
 }
@@ -72,7 +70,7 @@ export interface IdentifyProvider {
   };
   createdAt?: string;
   updatedAt?: string;
-} 
+}
 
 export interface MRecord {
   [key: string]: any;
@@ -81,7 +79,7 @@ export interface MRecord {
 export interface RecordListProps {
   datasource: string;
   model: any; // Entity类型建议在实际使用时import
-} 
+}
 
 export interface EntitySchema {
   name: string;
@@ -119,7 +117,7 @@ export interface TypedFieldSchema {
   comment?: string;
   unique: boolean;
   nullable: boolean;
-  defaultValue?: any;
+  defaultValue?: DefaultValue;
   additionalProperties?: Record<string, any>;
   modelName: string;
   identity?: boolean;
@@ -138,10 +136,16 @@ export interface Field {
   direction: Direction;
 }
 
-export type Direction = 'ASC' | 'DESC';
+export type Direction = "ASC" | "DESC";
 
 export interface QueryField {
   name: string;
   aliasName?: string;
   fieldName?: string;
-} 
+}
+
+export interface DefaultValue {
+  type: "generated" | "fixed";
+  value: string | number | boolean | null;
+  name: string | null;
+}
