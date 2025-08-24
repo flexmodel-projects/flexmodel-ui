@@ -4,14 +4,22 @@ import {RobotOutlined} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "@/routes";
-import {useSidebar} from "@/store/appStore";
-import AIChatBox from "../AIChatBox";
+import {useChat, useSidebar} from "@/store/appStore";
+import AIChatBox from "@/components/ai-chatbox/index";
+import {Message} from "@/components/ai-chatbox/types";
 
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   const { isSidebarCollapsed } = useSidebar();
+  const { messages, setMessages } = useChat();
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
+
+  // 处理消息变更的回调函数
+  const handleMessagesChange = (newMessages: Message[]) => {
+    console.log('消息已更新:', newMessages);
+    setMessages(newMessages);
+  };
 
   return (
     <Layout style={{
@@ -58,10 +66,12 @@ const PageLayout: React.FC = () => {
                 }}
               >
                 <AIChatBox
+                  messages={messages}
                   isVisible={isAIChatVisible}
                   onToggle={setIsAIChatVisible}
                   isFloating={isAIChatFloating}
                   onToggleFloating={setIsAIChatFloating}
+                  onMessages={handleMessagesChange}
                 />
               </Splitter.Panel>
             )}
@@ -72,10 +82,12 @@ const PageLayout: React.FC = () => {
       {/* 悬浮模式下的AI聊天面板 */}
       {isAIChatFloating && (
         <AIChatBox
+          messages={messages}
           isVisible={isAIChatVisible}
           onToggle={setIsAIChatVisible}
           isFloating={isAIChatFloating}
           onToggleFloating={setIsAIChatFloating}
+          onMessages={handleMessagesChange}
         />
       )}
 
