@@ -1,13 +1,6 @@
-import {
-  CloseOutlined,
-  MessageOutlined,
-  PushpinFilled,
-  PushpinOutlined,
-  RobotOutlined,
-  UserOutlined
-} from '@ant-design/icons';
+import {CloseOutlined, PushpinFilled, PushpinOutlined, RobotOutlined, UserOutlined} from '@ant-design/icons';
 import {Bubble, Sender, XProvider} from '@ant-design/x';
-import {Button, FloatButton, Space, theme} from 'antd';
+import {Button, Space, theme} from 'antd';
 import React, {useEffect, useRef, useState} from 'react';
 
 interface Message {
@@ -247,20 +240,6 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   if (isFloating) {
     return (
       <>
-        {/* 悬浮按钮 */}
-        <FloatButton
-          icon={<MessageOutlined />}
-          type="primary"
-          onClick={() => onToggle?.(true)}
-          style={{
-            right: 24,
-            bottom: 24,
-            zIndex: 1000
-          }}
-          tooltip="AI助手 (悬浮模式)"
-        />
-
-        {/* 可拖动的悬浮聊天窗口 */}
         <div
           ref={floatingRef}
           style={{
