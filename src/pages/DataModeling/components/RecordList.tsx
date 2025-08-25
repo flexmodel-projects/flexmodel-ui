@@ -169,7 +169,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   return model ? (
     <Card size="small" bodyStyle={{ padding: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-        <Button 
+        <Button
           type="primary"
           icon={<PlusOutlined/>}
           onClick={() => {

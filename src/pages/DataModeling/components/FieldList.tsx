@@ -232,11 +232,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   ];
 
   return (
-    <Card
-      size="small"
-      className="overflow-auto"
-      bodyStyle={{ padding: 12 }}
-      style={{ maxHeight: "calc(100vh - 180px)" }}
+    <Card size="small" bodyStyle={{ padding: 12 }}
     >
       <div
         style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}
@@ -252,6 +248,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
       </div>
       <Table
         rowKey={(record, index) => `${record.name}-${index}`}
+        scroll={{y: 450}}
         dataSource={fieldList}
         columns={columns}
         pagination={false}
