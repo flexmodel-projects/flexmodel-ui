@@ -97,7 +97,7 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
         </Button>
       ]}
       width={600}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}
