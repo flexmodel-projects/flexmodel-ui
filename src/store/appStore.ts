@@ -183,10 +183,3 @@ export const useSidebar = () => useAppStore((state) => ({
   setSidebarCollapsed: state.setSidebarCollapsed,
   toggleSidebar: state.toggleSidebar,
 }));
-
-export const useChat = () => useAppStore((state) => ({
-  messages: state.messages,
-  setMessages: state.setMessages,
-  addMessage: state.addMessage,
-  clearMessages: state.clearMessages,
-}));

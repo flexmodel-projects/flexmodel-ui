@@ -9,7 +9,8 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
   isLoading,
   onSendMessage,
   onToggleFloating,
-  onClose
+  onClose,
+  onSelectConversation
 }) => {
   const { token } = theme.useToken();
   const [floatingPosition, setFloatingPosition] = useState({ x: window.innerWidth - 420, y: 20 });
@@ -107,6 +108,7 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
           onToggleFloating={onToggleFloating}
           onClose={onClose}
           showCloseButton={true}
+          onSelectConversation={onSelectConversation}
         />
       </div>
 

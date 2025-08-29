@@ -13,6 +13,7 @@ export interface AIChatBoxProps {
   onToggleFloating?: (floating: boolean) => void;
   messages?: Message[];
   onMessages?: (messages: Message[]) => void;
+  onSelectConversation?: (conversationId: string) => void;
 }
 
 export interface ChatHeaderProps {
@@ -20,6 +21,7 @@ export interface ChatHeaderProps {
   onToggleFloating?: (floating: boolean) => void;
   onClose?: () => void;
   showCloseButton?: boolean;
+  onSelectConversation?: (conversationId: string) => void;
 }
 
 export interface ChatContentProps {
@@ -34,6 +36,7 @@ export interface FloatingChatProps {
   onSendMessage: (content: string) => void;
   onToggleFloating: (floating: boolean) => void;
   onClose: () => void;
+  onSelectConversation?: (conversationId: string) => void;
 }
 
 export interface FixedChatProps {
@@ -43,4 +46,5 @@ export interface FixedChatProps {
   onToggleFloating: (floating: boolean) => void;
   onClose?: () => void;
   style?: React.CSSProperties;
+  onSelectConversation?: (conversationId: string) => void;
 }

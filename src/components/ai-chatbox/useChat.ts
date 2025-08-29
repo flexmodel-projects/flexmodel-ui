@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import {message} from 'antd';
 import {XStream} from '@ant-design/x';
-import {ChatRequestParams, sendChatMessage} from '@/services/chat';
+import {sendChatMessage} from '@/services/chat';
 import {Message} from './types';
 
 export const useChat = (initialMessages?: Message[], onMessages?: (messages: Message[]) => void) => {
@@ -45,7 +45,7 @@ export const useChat = (initialMessages?: Message[], onMessages?: (messages: Mes
 
     try {
       // 准备请求数据
-      const requestData: ChatRequestParams = {
+      const requestData: any = {
         messages: [
           ...initialMessages.map(msg => ({
             role: msg.role,

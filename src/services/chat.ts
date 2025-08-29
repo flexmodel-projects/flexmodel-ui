@@ -30,6 +30,7 @@ export interface Conversation {
   title?: string;
   createdAt?: string;
   updatedAt?: string;
+  messages?: ChatMessage[];
 }
 
 // API 响应基础类型
@@ -37,12 +38,6 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   success?: boolean;
-}
-
-// 分页响应
-export interface PagedResponse<T> {
-  total: number;
-  list: T[];
 }
 
 
@@ -62,7 +57,7 @@ export const sendChatMessage = async (params: ChatRequest): Promise<Response> =>
 /**
  * 获取对话列表
  */
-export const getConversations = async (): Promise<PagedResponse<Conversation>> => {
+export const getConversations = async (): Promise<Conversation[]> => {
   const response = await fetch('/api/chat/conversations', {
     method: 'GET',
     headers: {
@@ -133,7 +128,7 @@ export const deleteConversation = async (id: string): Promise<void> => {
 /**
  * 获取对话消息列表
  */
-export const getConversationMessages = async (id: string): Promise<PagedResponse<ChatMessage>> => {
+export const getConversationMessages = async (id: string): Promise<ChatMessage[]> => {
   const response = await fetch(`/api/chat/conversations/${id}/messages`, {
     method: 'GET',
     headers: {

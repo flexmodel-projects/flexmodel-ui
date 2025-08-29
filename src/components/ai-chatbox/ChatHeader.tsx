@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ClockCircleOutlined,
   CloseOutlined,
@@ -8,54 +8,68 @@ import {
   PushpinOutlined,
   RobotOutlined
 } from '@ant-design/icons';
-import {Button, Divider, Dropdown, GetProp, Input, message, Space, theme} from 'antd';
+import {Button, Divider, Dropdown, Input, Menu, message, Space, Spin, theme} from 'antd';
 import {ChatHeaderProps} from './types';
-import {Conversations, ConversationsProps} from '@ant-design/x';
+import {Conversation, deleteConversation, getConversations} from '@/services/chat';
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   isFloating = false,
   onToggleFloating,
   onClose,
-  showCloseButton = true
+  showCloseButton = true,
+  onSelectConversation
 }) => {
   const { token } = theme.useToken();
   const [keyword, setKeyword] = useState('');
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const items: GetProp<ConversationsProps, 'items'> = [
-    { key: 'conv-2024-09-12-1432', timestamp: 122243334343, label: '模型同步问题' },
-    { key: 'conv-2024-09-11-2010', timestamp: 122243334343, label: 'GraphQL 字段命名规范讨论' },
-    { key: 'conv-2024-09-10-0935', timestamp: 122243334343, label: '接口限流策略（每 60 秒 100 次）' },
-    { key: 'conv-2024-09-09-2216', timestamp: 122243334343, label: '数据源连接失败排查（PostgreSQL）' },
-    { key: 'conv-2024-09-08-1711', timestamp: 122243334343, label: 'AI 助手提示词优化（上下文长度' },
-    { key: 'conv-2024-09-07-1124', timestamp: 122243334343, label: 'OpenAPI 转换 GraphQL 的映射规则' },
-    { key: 'conv-2024-09-06-0842', timestamp: 122243334343, label: '前端错误上报与埋点方案' },
-    { key: 'conv-2024-09-05-194q82', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-194w338', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-19s4348', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-19q4w348', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-194q8', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-19s48', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-1x948', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-19as48', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-1a948', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-    { key: 'conv-2024-09-05-19f48', timestamp: 122243334343, label: '模型字段类型变更影响评估' },
-  ];
+  // 获取对话列表
+  const fetchConversations = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getConversations();
+      setConversations(response);
+    } catch (error) {
+      console.error('获取对话列表失败:', error);
+      message.error('获取对话列表失败');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // 删除对话
+  const handleDeleteConversation = useCallback(async (conversationId: string) => {
+    try {
+      await deleteConversation(conversationId);
+      message.success('删除成功');
+      // 重新获取对话列表
+      fetchConversations();
+    } catch (error) {
+      console.error('删除对话失败:', error);
+      message.error('删除对话失败');
+    }
+  }, [fetchConversations]);
 
-  const menuConfig: ConversationsProps['menu'] = (conversation) => ({
-    items: [
-      {
-        label: '删除',
-        key: 'delete',
-        icon: <DeleteOutlined />,
-        danger: true,
-      },
-    ],
-    onClick: (menuInfo) => {
-      menuInfo.domEvent.stopPropagation();
-      message.info(`Click ${conversation.key} - ${menuInfo.key}`);
-    },
-  });
+  // 选择对话
+  const handleSelectConversation = useCallback((conversationId: string) => {
+    onSelectConversation?.(conversationId);
+    setDropdownOpen(false);
+    setKeyword('');
+  }, [onSelectConversation]);
+
+  // 搜索过滤对话
+  const filteredConversations = conversations.filter(conv =>
+    conv.title?.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  // 当下拉框打开时获取对话列表
+  useEffect(() => {
+    if (dropdownOpen) {
+      fetchConversations();
+    }
+  }, [dropdownOpen, fetchConversations]);
 
   return (
     <>
@@ -82,13 +96,16 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             title="新聊天"
           />
           <Dropdown
+            open={dropdownOpen}
+            onOpenChange={setDropdownOpen}
             dropdownRender={() => (
               <div style={{
                 backgroundColor: token.colorBgElevated,
                 borderRadius: token.borderRadius,
                 boxShadow: token.boxShadow,
                 padding: token.paddingSM,
-                maxHeight: 400
+                maxHeight: 400,
+                minWidth: 300
               }}>
                 <div style={{
                   position: 'sticky',
@@ -98,14 +115,99 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
                   paddingBottom: token.paddingXS
                 }}>
                   <Input
-                    placeholder="搜索..."
+                    placeholder="搜索对话..."
                     allowClear
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                   />
                 </div>
                 <div style={{ maxHeight: 340, overflow: 'auto' }}>
-                  <Conversations menu={menuConfig} items={items} />
+                  {loading ? (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      padding: token.paddingLG,
+                      color: token.colorTextSecondary
+                    }}>
+                      <Spin size="small" />
+                      <span style={{ marginLeft: token.marginXS }}>加载中...</span>
+                    </div>
+                  ) : filteredConversations.length > 0 ? (
+                    <div>
+                      {filteredConversations.map(conv => (
+                        <div
+                          key={conv.id}
+                          onClick={() => handleSelectConversation(conv.id)}
+                          style={{
+                            padding: token.paddingSM,
+                            cursor: 'pointer',
+                            borderBottom: `1px solid ${token.colorBorderSecondary}`,
+                            transition: 'background-color 0.2s',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = token.colorBgLayout;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          <div style={{ flex: 1 }}>
+                            <div style={{
+                              fontWeight: 500,
+                              color: token.colorText,
+                              marginBottom: token.marginXS
+                            }}>
+                              {conv.title || '未命名对话'}
+                            </div>
+                            <div style={{
+                              fontSize: token.fontSizeSM,
+                              color: token.colorTextSecondary
+                            }}>
+                              {conv.createdAt ? new Date(conv.createdAt).toLocaleString() : ''}
+                            </div>
+                          </div>
+                          <Dropdown
+                            overlay={
+                              <Menu
+                                items={[
+                                  {
+                                    label: '删除',
+                                    key: 'delete',
+                                    icon: <DeleteOutlined />,
+                                    danger: true,
+                                    onClick: (e) => {
+                                      e.domEvent.stopPropagation();
+                                      handleDeleteConversation(conv.id);
+                                    }
+                                  }
+                                ]}
+                              />
+                            }
+                            trigger={['click']}
+                          >
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<DeleteOutlined />}
+                              style={{ color: token.colorTextSecondary }}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </Dropdown>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{
+                      textAlign: 'center',
+                      padding: token.paddingLG,
+                      color: token.colorTextSecondary
+                    }}>
+                      {keyword ? '没有找到匹配的对话' : '暂无对话记录'}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

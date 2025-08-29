@@ -10,7 +10,8 @@ const FixedChat: React.FC<FixedChatProps> = ({
   onSendMessage,
   onToggleFloating,
   onClose,
-  style
+  style,
+  onSelectConversation
 }) => {
   const { token } = theme.useToken();
 
@@ -34,6 +35,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
           onToggleFloating={onToggleFloating}
           onClose={onClose}
           showCloseButton={!!onClose}
+          onSelectConversation={onSelectConversation}
         />
       </div>
 

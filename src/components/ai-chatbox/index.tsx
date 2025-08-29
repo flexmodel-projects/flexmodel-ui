@@ -3,7 +3,6 @@ import {AIChatBoxProps} from './types';
 import {useChat} from './useChat';
 import FloatingChat from './FloatingChat';
 import FixedChat from './FixedChat';
-import {useChat as useChatStore} from '@/store/appStore';
 
 const AIChatBox: React.FC<AIChatBoxProps> = ({
   isVisible = true,
@@ -12,14 +11,13 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   isFloating = false,
   onToggleFloating,
   messages,
-  onMessages
+  onMessages,
+  onSelectConversation
 }) => {
   const { messages: chatMessages, isLoading, handleSendMessage } = useChat(messages, onMessages);
-  const { clearMessages } = useChatStore();
 
   // 处理关闭事件，同时清空消息
   const handleClose = () => {
-    clearMessages();
     onToggle?.(false);
   };
 
@@ -36,6 +34,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
         onSendMessage={handleSendMessage}
         onToggleFloating={onToggleFloating || (() => {})}
         onClose={handleClose}
+        onSelectConversation={onSelectConversation}
       />
     );
   }
@@ -49,6 +48,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
       onToggleFloating={onToggleFloating || (() => {})}
       onClose={onToggle ? handleClose : undefined}
       style={style}
+      onSelectConversation={onSelectConversation}
     />
   );
 };
