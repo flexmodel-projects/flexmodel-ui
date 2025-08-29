@@ -11,8 +11,6 @@ export interface AIChatBoxProps {
   style?: React.CSSProperties;
   isFloating?: boolean;
   onToggleFloating?: (floating: boolean) => void;
-  messages?: Message[];
-  onMessages?: (messages: Message[]) => void;
   onSelectConversation?: (conversationId: string) => void;
 }
 
@@ -20,6 +18,7 @@ export interface ChatHeaderProps {
   isFloating?: boolean;
   onToggleFloating?: (floating: boolean) => void;
   onClose?: () => void;
+  onNewChat?: () => void;
   showCloseButton?: boolean;
   onSelectConversation?: (conversationId: string) => void;
 }
@@ -36,6 +35,7 @@ export interface FloatingChatProps {
   onSendMessage: (content: string) => void;
   onToggleFloating: (floating: boolean) => void;
   onClose: () => void;
+  onNewChat?: () => void;
   onSelectConversation?: (conversationId: string) => void;
 }
 
@@ -45,6 +45,7 @@ export interface FixedChatProps {
   onSendMessage: (content: string) => void;
   onToggleFloating: (floating: boolean) => void;
   onClose?: () => void;
+  onNewChat?: () => void;
   style?: React.CSSProperties;
   onSelectConversation?: (conversationId: string) => void;
 }

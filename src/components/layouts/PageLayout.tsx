@@ -1,38 +1,17 @@
-import React, {useCallback, useState} from "react";
-import {FloatButton, Layout, message, Splitter, theme} from "antd";
+import React, {useState} from "react";
+import {FloatButton, Layout, Splitter, theme} from "antd";
 import {RobotOutlined} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "@/routes";
 import {useSidebar} from "@/store/appStore";
 import AIChatBox from "@/components/ai-chatbox/index";
-import {Message} from "@/components/ai-chatbox/types";
-import {getConversationMessages} from "@/services/chat";
 
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   const { isSidebarCollapsed } = useSidebar();
-  const [ messages, setMessages ] = useState<Message[]>();
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
-
-  // 处理消息变更的回调函数
-  const handleMessagesChange = (newMessages: Message[]) => {
-    console.log('消息已更新:', newMessages);
-    setMessages(newMessages);
-  };
-
-  // 处理选择对话的回调函数
-  const handleSelectConversation = useCallback(async (conversationId: string) => {
-    try {
-      // 从对话列表中查找对应的对话
-      const messages:any[] = await getConversationMessages(conversationId);
-      setMessages(messages);
-    } catch (error) {
-      console.error('加载对话消息失败:', error);
-      message.error('加载对话消息失败');
-    }
-  }, [setMessages]);
 
   return (
     <Layout style={{
@@ -79,13 +58,10 @@ const PageLayout: React.FC = () => {
                 }}
               >
                 <AIChatBox
-                  messages={messages}
                   isVisible={isAIChatVisible}
                   onToggle={setIsAIChatVisible}
                   isFloating={isAIChatFloating}
                   onToggleFloating={setIsAIChatFloating}
-                  onMessages={handleMessagesChange}
-                  onSelectConversation={handleSelectConversation}
                 />
               </Splitter.Panel>
             )}
@@ -96,13 +72,10 @@ const PageLayout: React.FC = () => {
       {/* 悬浮模式下的AI聊天面板 */}
       {isAIChatFloating && (
         <AIChatBox
-          messages={messages}
           isVisible={isAIChatVisible}
           onToggle={setIsAIChatVisible}
           isFloating={isAIChatFloating}
           onToggleFloating={setIsAIChatFloating}
-          onMessages={handleMessagesChange}
-          onSelectConversation={handleSelectConversation}
         />
       )}
 

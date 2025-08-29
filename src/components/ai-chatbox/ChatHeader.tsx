@@ -16,6 +16,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   isFloating = false,
   onToggleFloating,
   onClose,
+  onNewChat,
   showCloseButton = true,
   onSelectConversation
 }) => {
@@ -94,6 +95,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             size="small"
             style={{ color: token.colorTextSecondary }}
             title="新聊天"
+            onClick={onNewChat}
           />
           <Dropdown
             open={dropdownOpen}

@@ -1,8 +1,9 @@
-import React from 'react';
-import {AIChatBoxProps} from './types';
+import React, {useCallback, useState} from 'react';
+import {AIChatBoxProps, Message} from './types';
 import {useChat} from './useChat';
 import FloatingChat from './FloatingChat';
 import FixedChat from './FixedChat';
+import {getConversationMessages} from '@/services/chat';
 
 const AIChatBox: React.FC<AIChatBoxProps> = ({
   isVisible = true,
@@ -10,16 +11,39 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   style,
   isFloating = false,
   onToggleFloating,
-  messages,
-  onMessages,
   onSelectConversation
 }) => {
-  const { messages: chatMessages, isLoading, handleSendMessage } = useChat(messages, onMessages);
+  // 内部维护消息状态（从外部迁移进来）
+  const [messages, setMessages] = useState<Message[] | undefined>(undefined);
+
+  const handleMessagesChange = useCallback((newMessages: Message[]) => {
+    setMessages(newMessages);
+  }, []);
+
+  const { messages: chatMessages, isLoading, handleSendMessage } = useChat(messages, handleMessagesChange);
 
   // 处理关闭事件，同时清空消息
   const handleClose = () => {
     onToggle?.(false);
   };
+
+  const handleNewChat = () => {
+    setMessages([]);
+  }
+
+  // 处理选择对话：在内部拉取并更新消息
+  const handleSelectConversation = useCallback(async (conversationId: string) => {
+    try {
+      const fetched = await getConversationMessages(conversationId);
+      handleMessagesChange(fetched as any);
+      onSelectConversation?.(conversationId);
+    } catch (e) {
+      // 交给上层的 message 机制处理或静默失败
+      // 此处不引入 antd 的 message，保持组件纯净
+      // 可根据需要增强错误处理
+      console.error(e);
+    }
+  }, [handleMessagesChange, onSelectConversation]);
 
   if (!isVisible) {
     return null;
@@ -27,14 +51,17 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
 
   // 悬浮模式
   if (isFloating) {
+
+
     return (
       <FloatingChat
         messages={chatMessages}
         isLoading={isLoading}
         onSendMessage={handleSendMessage}
-        onToggleFloating={onToggleFloating || (() => {})}
+        onToggleFloating={onToggleFloating || (() => { })}
         onClose={handleClose}
-        onSelectConversation={onSelectConversation}
+        onNewChat={handleNewChat}
+        onSelectConversation={handleSelectConversation}
       />
     );
   }
@@ -45,10 +72,11 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
       messages={chatMessages}
       isLoading={isLoading}
       onSendMessage={handleSendMessage}
-      onToggleFloating={onToggleFloating || (() => {})}
+      onToggleFloating={onToggleFloating || (() => { })}
       onClose={onToggle ? handleClose : undefined}
+      onNewChat={handleNewChat}
       style={style}
-      onSelectConversation={onSelectConversation}
+      onSelectConversation={handleSelectConversation}
     />
   );
 };

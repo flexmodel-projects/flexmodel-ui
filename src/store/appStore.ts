@@ -25,12 +25,7 @@ export interface LocaleState {
 export interface SidebarState {
   isSidebarCollapsed: boolean;
 }
-
-export interface ChatState {
-  messages: Message[];
-}
-
-export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState, ChatState {
+export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState {
   // 配置相关
   setConfig: (config: Record<string, any>) => void;
   fetchConfig: () => Promise<void>;
@@ -48,11 +43,6 @@ export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarS
   // 侧边栏相关
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
-
-  // 聊天相关
-  setMessages: (messages: Message[]) => void;
-  addMessage: (message: Message) => void;
-  clearMessages: () => void;
 }
 
 // 初始消息
@@ -131,14 +121,6 @@ export const useAppStore = create<AppState>()(
           const newCollapsed = !isSidebarCollapsed;
           set({isSidebarCollapsed: newCollapsed});
         },
-
-        // 聊天相关actions
-        setMessages: (messages) => set({messages}),
-        addMessage: (message) => {
-          const {messages} = get();
-          set({messages: [...messages, message]});
-        },
-        clearMessages: () => set({messages: initialMessages}),
       }),
       {
         name: 'app-storage',
@@ -146,7 +128,6 @@ export const useAppStore = create<AppState>()(
           isDark: state.isDark,
           currentLang: state.currentLang,
           isSidebarCollapsed: state.isSidebarCollapsed,
-          messages: state.messages,
         }),
       }
     ),

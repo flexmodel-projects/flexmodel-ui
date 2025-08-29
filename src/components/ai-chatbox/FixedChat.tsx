@@ -10,6 +10,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
   onSendMessage,
   onToggleFloating,
   onClose,
+  onNewChat,
   style,
   onSelectConversation
 }) => {
@@ -34,6 +35,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
           isFloating={false}
           onToggleFloating={onToggleFloating}
           onClose={onClose}
+          onNewChat={onNewChat}
           showCloseButton={!!onClose}
           onSelectConversation={onSelectConversation}
         />
