@@ -8,6 +8,8 @@ export interface Message {
 export interface AIChatBoxProps {
   isVisible?: boolean;
   onToggle?: (visible: boolean) => void;
+  messages: Message[];
+  onMessages: (messages: Message[]) => void;
   style?: React.CSSProperties;
   isFloating?: boolean;
   onToggleFloating?: (floating: boolean) => void;

@@ -6,12 +6,14 @@ import Header from "./Header";
 import {RenderRoutes} from "@/routes";
 import {useSidebar} from "@/store/appStore";
 import AIChatBox from "@/components/ai-chatbox/index";
+import {Message} from "../ai-chatbox/types";
 
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   const { isSidebarCollapsed } = useSidebar();
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   return (
     <Layout style={{
@@ -58,6 +60,8 @@ const PageLayout: React.FC = () => {
                 }}
               >
                 <AIChatBox
+                  messages={messages}
+                  onMessages={setMessages}
                   isVisible={isAIChatVisible}
                   onToggle={setIsAIChatVisible}
                   isFloating={isAIChatFloating}
@@ -72,6 +76,8 @@ const PageLayout: React.FC = () => {
       {/* 悬浮模式下的AI聊天面板 */}
       {isAIChatFloating && (
         <AIChatBox
+          messages={messages}
+          onMessages={setMessages}
           isVisible={isAIChatVisible}
           onToggle={setIsAIChatVisible}
           isFloating={isAIChatFloating}

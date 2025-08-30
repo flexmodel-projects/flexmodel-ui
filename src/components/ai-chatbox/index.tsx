@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {AIChatBoxProps, Message} from './types';
 import {useChat} from './useChat';
 import FloatingChat from './FloatingChat';
@@ -9,15 +9,17 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   isVisible = true,
   onToggle,
   style,
+  messages,
+  onMessages,
   isFloating = false,
   onToggleFloating,
   onSelectConversation
 }) => {
   // 内部维护消息状态（从外部迁移进来）
-  const [messages, setMessages] = useState<Message[] | undefined>(undefined);
+
 
   const handleMessagesChange = useCallback((newMessages: Message[]) => {
-    setMessages(newMessages);
+    onMessages(newMessages);
   }, []);
 
   const { messages: chatMessages, isLoading, handleSendMessage } = useChat(messages, handleMessagesChange);
@@ -28,7 +30,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   };
 
   const handleNewChat = () => {
-    setMessages([]);
+    onMessages([]);
   }
 
   // 处理选择对话：在内部拉取并更新消息
@@ -51,7 +53,6 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
 
   // 悬浮模式
   if (isFloating) {
-
 
     return (
       <FloatingChat
