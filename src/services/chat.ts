@@ -1,3 +1,4 @@
+import {api} from '@/utils/request'
 
 // 聊天消息类型
 export interface ChatMessage {
@@ -34,22 +35,15 @@ export interface Conversation {
   messages?: ChatMessage[];
 }
 
-// API 响应基础类型
-export interface ApiResponse<T> {
-  data?: T;
-  message?: string;
-  success?: boolean;
-}
-
-
 /**
  * 发送聊天消息（流式响应）
  */
 export const sendChatMessage = async (params: ChatRequest): Promise<Response> => {
-  return fetch('/api/chat/completions', {
+  return fetch('/api/f/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     },
     body: JSON.stringify(params)
   });
@@ -59,99 +53,46 @@ export const sendChatMessage = async (params: ChatRequest): Promise<Response> =>
  * 获取对话列表
  */
 export const getConversations = async (): Promise<Conversation[]> => {
-  const response = await fetch('/api/chat/conversations', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`获取对话列表失败: ${response.status}`);
-  }
-
-  return response.json();
+  return api.get<Conversation[]>('/chat/conversations');
 };
 
 /**
  * 创建新对话
  */
-export const createConversation = async (params: CreateConversationRequest): Promise<ApiResponse<Conversation>> => {
-  const response = await fetch('/api/chat/conversations', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params)
-  });
-
-  if (!response.ok) {
-    throw new Error(`创建对话失败: ${response.status}`);
-  }
-
-  return response.json();
+export const createConversation = async (params: CreateConversationRequest): Promise<Conversation> => {
+  return api.post<Conversation>('/chat/conversations', params);
 };
 
 /**
  * 获取指定对话信息
  */
-export const getConversation = async (id: string): Promise<ApiResponse<Conversation>> => {
-  const response = await fetch(`/api/chat/conversations/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`获取对话失败: ${response.status}`);
-  }
-
-  return response.json();
+export const getConversation = async (id: string): Promise<Conversation> => {
+  return api.get<Conversation>(`/chat/conversations/${id}`);
 };
 
 /**
  * 删除指定对话
  */
 export const deleteConversation = async (id: string): Promise<void> => {
-  const response = await fetch(`/api/chat/conversations/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`删除对话失败: ${response.status}`);
-  }
+  return api.delete<void>(`/chat/conversations/${id}`);
 };
 
 /**
  * 获取对话消息列表
  */
 export const getConversationMessages = async (id: string): Promise<ChatMessage[]> => {
-  const response = await fetch(`/api/chat/conversations/${id}/messages`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`获取消息列表失败: ${response.status}`);
-  }
-
-  return response.json();
+  return api.get<ChatMessage[]>(`/chat/conversations/${id}/messages`);
 };
 
 /**
  * 向对话发送消息
  */
 export const sendMessage = async (conversationId: string, params: SendMessageRequest): Promise<Response> => {
-  return fetch(`/api/chat/conversations/${conversationId}/messages`, {
+  return fetch(`/api/f/chat/conversations/${conversationId}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     },
     body: JSON.stringify(params)
   });
