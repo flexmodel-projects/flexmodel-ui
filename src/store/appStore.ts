@@ -4,7 +4,6 @@ import {getSystemProfile} from '../services/system';
 import {getDarkModeFromStorage} from '../utils/darkMode';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
-import {Message} from '@/components/ai-chatbox/types';
 
 // 类型定义
 export interface ConfigState {
@@ -45,16 +44,6 @@ export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarS
   toggleSidebar: () => void;
 }
 
-// 初始消息
-const initialMessages: Message[] = [
-  {
-    id: '1',
-    role: 'assistant',
-    content: '你好！👋 我是基于 Flexmodel 构建的AI助手。我可以和你聊天、回答问题，或者只是陪你解闷。\n\n试试问我：\n• "你好" - 打个招呼\n• "天气" - 聊聊天气\n• "时间" - 查看当前时间\n• "帮助" - 了解我的功能\n• "笑话" - 听个笑话\n• "技术" - 讨论技术话题\n\n有什么想聊的吗？😊',
-    timestamp: new Date()
-  }
-];
-
 // 创建store
 export const useAppStore = create<AppState>()(
   devtools(
@@ -68,7 +57,6 @@ export const useAppStore = create<AppState>()(
         locale: localStorage.getItem('i18nextLng') === 'zh' ? zhCN : enUS,
         currentLang: (localStorage.getItem('i18nextLng') as 'zh' | 'en') || 'zh',
         isSidebarCollapsed: false, // 初始化侧边栏折叠状态
-        messages: initialMessages, // 初始化消息
 
         // 配置相关actions
         setConfig: (config) => set({config}),
