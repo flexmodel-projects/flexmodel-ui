@@ -49,7 +49,7 @@ const GraphQLAPI: React.FC = () => {
         <div className="flex justify-between items-center">
           <span>{settings?.security.graphqlEndpointPath && (
               <span>
-                                 端点: {config?.application?.['flexmodel.context-path'] || ''}{settings.security.graphqlEndpointPath}
+                                 端点: {config?.apiRootPath || ''}{settings.security.graphqlEndpointPath}
               </span>
             )}</span>
           <Space>

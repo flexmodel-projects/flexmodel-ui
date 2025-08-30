@@ -73,13 +73,6 @@ const UserInfo: React.FC<UserInfoProps> = ({
     whiteSpace: 'nowrap' as const,
   }), [token.fontSize, token.colorText]);
 
-  const helpIconStyle = useMemo(() => ({
-    color: token.colorTextSecondary,
-    fontSize: token.fontSize,
-    cursor: 'pointer',
-    transition: 'color 0.2s ease',
-  }), [token.colorTextSecondary, token.fontSize]);
-
   // 用户下拉菜单项
   const userMenuItems = useMemo(() => [
     {
@@ -147,7 +140,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
           }}
         >
           <Avatar
-            size={32}
+            size={25}
             icon={<UserOutlined/>}
             style={{
               cursor: 'pointer',
@@ -169,7 +162,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         }}
       >
         <Avatar
-          size={32}
+          size={25}
           icon={<UserOutlined/>}
           style={{flexShrink: 0, cursor: 'pointer'}}
         />
@@ -178,7 +171,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         </Typography.Text>
       </div>
     );
-  }, [isCollapsed, collapsedUserIconStyle, userInfoContentStyle, userNameStyle, helpIconStyle, token.colorBgTextHover, userName, onHelpClick]);
+  }, [isCollapsed, collapsedUserIconStyle, userInfoContentStyle, userNameStyle, token.colorBgTextHover, userName]);
 
   return (
     <div style={userInfoStyle}>
@@ -192,7 +185,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
         placement="top"
         trigger={['click']}
         overlayStyle={{
-          minWidth: '200px',
+          minWidth: '150px',
         }}
       >
         {renderUserContent()}

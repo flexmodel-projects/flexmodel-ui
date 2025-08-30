@@ -62,7 +62,7 @@ const Proxy: React.FC<BaseProps> = ({ settings, onChange }) => {
                     name={[name, 'path']}
                     rules={[{ required: true }]}
                   >
-                    <Input placeholder="path, e.g. /hello/**" prefix={config?.application['flexmodel.context-path']} />
+                    <Input placeholder="path, e.g. /hello/**" prefix={config?.apiRootPath} />
                   </Form.Item>
                   <Form.Item
                     {...restField}

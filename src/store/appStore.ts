@@ -67,7 +67,7 @@ export const useAppStore = create<AppState>()(
           set({isLoading: true, error: null});
           try {
             const profile = await getGlobalProfile();
-            set({config: profile.settings, isLoading: false});
+            set({config: {...profile.settings, apiRootPath: profile.apiRootPath}, isLoading: false});
           } catch (error) {
             set({
               error: error instanceof Error ? error.message : '获取配置失败',

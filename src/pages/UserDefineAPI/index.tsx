@@ -543,7 +543,7 @@ const UserDefineAPI: React.FC = () => {
                       }
                       prefix={
                         <span>
-                          {config?.application["flexmodel.context-path"]}
+                          {config?.apiRootPath}
                         </span>
                       }
                       className="flex-1"

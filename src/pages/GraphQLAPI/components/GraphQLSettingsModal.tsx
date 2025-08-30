@@ -108,10 +108,10 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
           name="graphqlEndpointPath"
           label="GraphQL 端点路径"
           rules={[{ required: true, message: '请输入 GraphQL 端点路径' }]}
-          extra={`完整地址: ${config?.application?.['flexmodel.context-path'] || ''}[端点路径]`}
+          extra={`完整地址: ${config?.apiRootPath || ''}[端点路径]`}
         >
           <Input
-            addonBefore={config?.application?.['flexmodel.context-path'] || ''}
+            addonBefore={config?.apiRootPath || ''}
             placeholder="/graphql"
           />
         </Form.Item>
