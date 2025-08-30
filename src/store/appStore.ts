@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
-import {getSystemProfile} from '../services/system';
+import {getGlobalProfile} from '../services/global';
 import {getDarkModeFromStorage} from '../utils/darkMode';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
@@ -24,6 +24,7 @@ export interface LocaleState {
 export interface SidebarState {
   isSidebarCollapsed: boolean;
 }
+
 export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState {
   // 配置相关
   setConfig: (config: Record<string, any>) => void;
@@ -65,7 +66,7 @@ export const useAppStore = create<AppState>()(
         fetchConfig: async () => {
           set({isLoading: true, error: null});
           try {
-            const profile = await getSystemProfile();
+            const profile = await getGlobalProfile();
             set({config: profile.settings, isLoading: false});
           } catch (error) {
             set({

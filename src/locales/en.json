@@ -215,5 +215,22 @@
   "dark_mode": "Dark",
   "light_mode": "Light",
   "code": "Code",
-  "authorization": "Authorization"
+  "authorization": "Authorization",
+  "login": "Login",
+  "logout": "Logout",
+  "username": "Username",
+  "password": "Password",
+  "login_title": "Welcome Back",
+  "login_subtitle": "Make data access easier, more efficient, and more flexible!",
+  "login_username_placeholder": "Enter your username",
+  "login_password_placeholder": "Enter your password",
+  "login_button": "Login",
+  "login_loading": "Logging in...",
+  "login_success": "Login successful",
+  "login_failed": "Login failed",
+  "login_invalid_credentials": "Invalid username or password",
+  "remember_me": "Remember me",
+  "forgot_password": "Forgot password?",
+  "demo_credentials": "Demo: admin / admin123",
+  "demo_login_button": "Login with Demo Account"
 }

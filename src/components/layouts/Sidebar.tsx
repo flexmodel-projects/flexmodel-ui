@@ -4,6 +4,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {routes} from "@/routes";
 import {useSidebar} from "@/store/appStore";
+import UserInfo from "@/components/UserInfo";
 
 // 预计算路由映射表，避免每次查找
 const routeMap = new Map<string, string>();
@@ -61,8 +62,6 @@ const Sidebar: React.FC = () => {
     }
   }, [location.pathname, navigate]);
 
-
-
   // 使用 useMemo 缓存样式对象，避免每次渲染都重新创建
   const siderStyle = useMemo(() => ({
     minHeight: "100vh",
@@ -114,6 +113,11 @@ const Sidebar: React.FC = () => {
     borderRight: 0,
   }), []);
 
+  // 处理用户相关事件
+  const handleHelpClick = useCallback(() => {
+    window.open('https://flexmodel.wetech.tech/', '_blank', 'noopener,noreferrer');
+  }, []);
+
   return (
     <Layout.Sider
       theme="light"
@@ -144,6 +148,10 @@ const Sidebar: React.FC = () => {
           inlineCollapsed={isSidebarCollapsed}
           style={menuStyle}
           items={menuData}
+        />
+        <UserInfo
+          isCollapsed={isSidebarCollapsed}
+          onHelpClick={handleHelpClick}
         />
       </div>
     </Layout.Sider>

@@ -1,5 +1,6 @@
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
 import axios from 'axios'
+import * as authService from '@/services/auth'
 
 // 错误类型
 type ApiError = {
@@ -31,13 +32,34 @@ const ERROR_CODES = {
 } as const
 
 // API 基础路径
-export const BASE_URI = "/api"
+export const BASE_URI = "/api/f"
+
+// 标记是否正在刷新token
+let isRefreshing = false
+// 存储等待刷新token完成的请求
+let failedQueue: Array<{
+  resolve: (value?: any) => void
+  reject: (reason?: any) => void
+}> = []
+
+// 处理等待队列中的请求
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error)
+    } else {
+      resolve(token)
+    }
+  })
+
+  failedQueue = []
+}
 
 /**
  * 统一错误处理
  */
 const handleApiError = async (error: AxiosError): Promise<any> => {
-  const { response, message: errorMessage } = error
+  const { response, message: errorMessage, config } = error
 
   if (!response) {
     return Promise.reject({ code: -1, message: '网络连接失败' })
@@ -62,11 +84,55 @@ const handleApiError = async (error: AxiosError): Promise<any> => {
     status
   }
 
+  // 处理401未授权错误，尝试刷新token
+  if (status === 401 && config && !config._retry) {
+    if (isRefreshing) {
+      // 如果正在刷新token，将请求加入队列
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject })
+      }).then(() => {
+        // 刷新成功后重试原请求
+        config._retry = true
+        return axiosInstance(config)
+      }).catch((err) => {
+        return Promise.reject(err)
+      })
+    }
+
+    config._retry = true
+    isRefreshing = true
+
+    try {
+      // 尝试刷新token，refreshToken通过cookie自动传递
+      const response = await authService.refreshToken()
+      localStorage.setItem('token', response.token)
+
+      // 更新当前请求的Authorization头
+      if (config.headers) {
+        config.headers.Authorization = `Bearer ${response.token}`
+      }
+
+      processQueue(null, response.token)
+      isRefreshing = false
+
+      // 重试原请求
+      return axiosInstance(config)
+    } catch (refreshError) {
+      // 刷新token失败，清除认证状态
+      authService.clearStoredToken()
+      processQueue(refreshError, null)
+      isRefreshing = false
+      return Promise.reject(apiError)
+    }
+  }
+
   if (status >= 400 && status < 500) {
     if (code === ERROR_CODES.UNAUTHORIZED) {
       // 未授权
       return Promise.reject(apiError)
     }
+    // 其他4xx错误也应该reject
+    return Promise.reject(apiError)
   } else if (status >= 500) {
     return Promise.reject(apiError)
   }
