@@ -1,6 +1,7 @@
 export interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  conversationId: string | null;
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -8,6 +9,7 @@ export interface Message {
 export interface AIChatBoxProps {
   isVisible?: boolean;
   onToggle?: (visible: boolean) => void;
+  conversationId: string | null;
   messages: Message[];
   onMessages: (messages: Message[]) => void;
   style?: React.CSSProperties;

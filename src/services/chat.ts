@@ -7,6 +7,7 @@ export interface ChatMessage {
 
 // 聊天请求参数
 export interface ChatRequest {
+  conversationId?: string;
   model?: string;
   messages: ChatMessage[];
   temperature?: number;

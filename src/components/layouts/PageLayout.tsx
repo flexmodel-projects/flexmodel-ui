@@ -14,6 +14,7 @@ const PageLayout: React.FC = () => {
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   return (
     <Layout style={{
@@ -60,8 +61,12 @@ const PageLayout: React.FC = () => {
                 }}
               >
                 <AIChatBox
+                  conversationId={conversationId}
                   messages={messages}
-                  onMessages={setMessages}
+                  onMessages={(msg: Message[]) => {
+                    setConversationId(msg[0]?.conversationId);
+                    setMessages(msg);
+                  }}
                   isVisible={isAIChatVisible}
                   onToggle={setIsAIChatVisible}
                   isFloating={isAIChatFloating}
@@ -76,8 +81,12 @@ const PageLayout: React.FC = () => {
       {/* 悬浮模式下的AI聊天面板 */}
       {isAIChatFloating && (
         <AIChatBox
+          conversationId={conversationId}
           messages={messages}
-          onMessages={setMessages}
+          onMessages={(msg: Message[]) => {
+            setConversationId(msg[0].conversationId);
+            setMessages(msg);
+          }}
           isVisible={isAIChatVisible}
           onToggle={setIsAIChatVisible}
           isFloating={isAIChatFloating}

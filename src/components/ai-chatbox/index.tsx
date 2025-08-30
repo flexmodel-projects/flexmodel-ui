@@ -9,6 +9,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
   isVisible = true,
   onToggle,
   style,
+  conversationId,
   messages,
   onMessages,
   isFloating = false,
@@ -22,7 +23,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
     onMessages(newMessages);
   }, []);
 
-  const { messages: chatMessages, isLoading, handleSendMessage } = useChat(messages, handleMessagesChange);
+  const { messages: chatMessages, isLoading, handleSendMessage } = useChat(conversationId, messages, handleMessagesChange);
 
   // 处理关闭事件，同时清空消息
   const handleClose = () => {
