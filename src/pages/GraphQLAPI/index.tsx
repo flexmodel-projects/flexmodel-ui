@@ -9,7 +9,7 @@ import {useConfig} from "@/store/appStore";
 import GraphQLSettingsModal from "./components/GraphQLSettingsModal";
 
 const GraphQLAPI: React.FC = () => {
-  const { config } = useConfig();
+  const {config} = useConfig();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
@@ -48,15 +48,15 @@ const GraphQLAPI: React.FC = () => {
       title={
         <div className="flex justify-between items-center">
           <span>{settings?.security.graphqlEndpointPath && (
-              <span>
-                                 端点: {config?.apiRootPath || ''}{settings.security.graphqlEndpointPath}
+            <span>
+                 端点: {config?.apiRootPath || ''}{settings.security.graphqlEndpointPath}
               </span>
-            )}</span>
+          )}</span>
           <Space>
 
             <Button
               type="text"
-              icon={<SettingOutlined />}
+              icon={<SettingOutlined/>}
               onClick={() => setSettingsModalVisible(true)}
             >
               设置
