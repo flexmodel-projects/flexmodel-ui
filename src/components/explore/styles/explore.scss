@@ -203,6 +203,7 @@ $placeholder-border: #e4e4e4;
     white-space: nowrap;
     &:hover {
       background: rgba(0, 0, 0, 0.03);
+      border-radius: 3px;
     }
     .text {
       position: relative;
@@ -254,7 +255,7 @@ $placeholder-border: #e4e4e4;
     &.selected {
       background: #e6f7ff;
       color: #1677ff;
-      border-radius: 0px;
+      border-radius: 3px;
       outline: none;
     }
   }
@@ -451,7 +452,7 @@ pre.prism-code {
       &.selected {
         background: #1677ff;
         color: #fff;
-        border-radius: 0px;
+        border-radius: 3px;
         outline: none;
       }
       &:focus {
@@ -546,7 +547,7 @@ pre.prism-code {
     &.selected {
       background: #e6f7ff;
       color: #1677ff;
-      border-radius: 0px;
+      border-radius: 3px;
       outline: none;
     }
   }
