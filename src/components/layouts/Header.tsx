@@ -136,8 +136,8 @@ const Header: React.FC = () => {
           <Switch
             checked={isDark}
             onChange={toggleDarkMode}
-            checkedChildren={<SunOutlined />}
-            unCheckedChildren={<MoonOutlined />}
+            checkedChildren={<MoonOutlined />}
+            unCheckedChildren={<SunOutlined />}
             style={{ marginRight: token.marginXS }}
           />
           <Dropdown

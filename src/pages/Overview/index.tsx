@@ -311,7 +311,7 @@ const StatisticsPage: React.FC = () => {
                       className="flex flex-1 relative"
                       dataSource={rankingData}
                       renderItem={(item, index) => (
-                        <List.Item style={{ padding: "10px 0" }}>
+                        <List.Item style={{ padding: "10px 10px" }}>
                           <div className="flex w-full justify-between">
                             <Space className="overflow-hidden w-60">
                               <Badge count={index + 1} showZero color={index < 3 ? "red" : "green"} />{" "}
