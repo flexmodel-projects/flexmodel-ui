@@ -23,13 +23,12 @@ const UserInfo: React.FC<UserInfoProps> = ({
 
   const userInfoStyle = useMemo(() => ({
     padding: token.padding,
-    borderTop: `1px solid ${token.colorBorderSecondary}`,
     backgroundColor: token.colorBgContainer,
     borderRadius: '0 0 0 8px',
     marginTop: 'auto',
     position: 'relative' as const,
     minHeight: '60px',
-  }), [token.padding, token.colorBorderSecondary, token.colorBgContainer]);
+  }), [token.padding, token.colorBgContainer]);
 
   const userInfoContentStyle = useMemo(() => ({
     display: 'flex',

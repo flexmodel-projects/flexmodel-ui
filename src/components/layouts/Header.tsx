@@ -17,7 +17,7 @@ import {
   SunOutlined
 } from "@ant-design/icons";
 import {applyDarkMode, setDarkModeToStorage} from "@/utils/darkMode.ts";
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {getFullRoutePath} from "@/routes";
 
 const Header: React.FC = () => {
@@ -59,8 +59,7 @@ const Header: React.FC = () => {
 
     // 添加首页
     items.push({
-      title: <HomeOutlined />,
-      href: "/"
+      title: <Link to="/"><HomeOutlined /></Link>
     });
 
     // 获取完整的路由路径（包括父路由和子路由）
