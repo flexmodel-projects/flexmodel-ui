@@ -160,14 +160,6 @@ $placeholder-border: #e4e4e4;
       }
       .explorer-content {
         bottom: 0;
-        &::-webkit-scrollbar {
-          height: 6px;
-          width: 6px;
-          background: transparent;
-        }
-        &::-webkit-scrollbar-thumb {
-          background: rgba(black, 0.3);
-        }
       }
     }
   }

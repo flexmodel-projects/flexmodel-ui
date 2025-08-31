@@ -21,7 +21,6 @@ import {
 } from '@/components/explore/icons/Icons.jsx';
 import '@/components/explore/styles/explore.scss';
 import Tree from '@/components/explore/explore/Tree.jsx';
-import styles from "@/pages/DataModeling/index.module.scss";
 
 interface ModelTree {
   name: string;
@@ -349,7 +348,7 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
 
       {/* 树形组件区域 */}
       <div style={treeContainerStyle}>
-        <div className={styles.antScrollbar} style={{ height: '100%', overflow: 'auto', maxHeight: '100%' }}>
+        <div style={{ height: '100%', overflow: 'auto', maxHeight: '100%' }}>
           <Spin spinning={modelLoading} size="small">
             <Tree
               tree={treeData}

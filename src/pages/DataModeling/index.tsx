@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {Card, notification, Row, Splitter, theme} from "antd";
 import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser";
-import styles from "@/pages/DataModeling/index.module.scss";
 import EntityView from "@/pages/DataModeling/components/EntityView";
 import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView";
 import {modifyModel} from "@/services/model.ts";
@@ -106,7 +105,7 @@ const ModelingPage: React.FC = () => {
           </Splitter.Panel>
           <Splitter.Panel style={rightPanelStyle}>
             <div
-              className={(styles.panelContainer, "h-full")}
+              className={("h-full")}
               style={panelContainerStyle}
             >
               {renderModelView()}
