@@ -112,7 +112,7 @@ const Login: React.FC = () => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      background: `linear-gradient(135deg, ${token.colorPrimaryBg} 0%, ${token.colorBgContainer} 100%)`,
+      background: `linear-gradient(135deg, ${token.colorBorderBg} 0%, ${token.colorBgContainer} 100%)`,
       padding: token.padding,
       position: 'relative',
       overflow: 'hidden'

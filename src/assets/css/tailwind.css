@@ -2,12 +2,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* 自定义Antd菜单项样式 */
-.custom-sidebar-menu .ant-menu-item {
-  @apply flex flex-col items-center mx-[7px] rounded-[5px] py-[5px] mt-[10px] cursor-pointer;
-}
-.custom-sidebar-menu .ant-menu-item-selected {
-  @apply text-[#1677ff] bg-[#e6f4ff] dark:bg-[#23232a] dark:text-[#1677ff];
+
+.ant-menu-item-selected {
+  @apply text-white bg-[#1677ff] dark:bg-[#1677ff] dark:text-white;
 }
 
 /* 页面内全屏样式 */

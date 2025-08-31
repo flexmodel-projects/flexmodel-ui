@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
 import {getGlobalProfile} from '../services/global';
-import {getDarkModeFromStorage} from '../utils/darkMode';
+import {getDarkModeFromStorage, setDarkModeToStorage} from '../utils/darkMode';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 
@@ -79,13 +79,13 @@ export const useAppStore = create<AppState>()(
         // 主题相关actions
         setDarkMode: (isDark) => {
           set({isDark});
-          localStorage.setItem('darkMode', isDark.toString());
+          setDarkModeToStorage(isDark);
         },
         toggleDarkMode: () => {
           const {isDark} = get();
           const newDarkMode = !isDark;
           set({isDark: newDarkMode});
-          localStorage.setItem('darkMode', newDarkMode.toString());
+          setDarkModeToStorage(newDarkMode);
         },
 
         // 语言相关actions

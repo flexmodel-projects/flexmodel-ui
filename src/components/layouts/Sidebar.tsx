@@ -87,8 +87,9 @@ const Sidebar: React.FC = () => {
   const logoStyle = useMemo(() => ({
     transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
     transform: isSidebarCollapsed ? 'scale(1)' : 'scale(1.1)',
-    flexShrink: 0
-  }), [isSidebarCollapsed]);
+    flexShrink: 0,
+    borderRadius: token.borderRadius // 添加圆角
+  }), [isSidebarCollapsed, token.borderRadius]);
 
   const logoTextStyle = useMemo(() => ({
     marginLeft: token.marginSM,

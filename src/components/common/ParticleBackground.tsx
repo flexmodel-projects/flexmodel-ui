@@ -90,14 +90,14 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
             const dy = particle.y - otherParticle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-                         if (distance < 100) {
-               ctx.beginPath();
-               ctx.moveTo(particle.x, particle.y);
-               ctx.lineTo(otherParticle.x, otherParticle.y);
-               ctx.strokeStyle = `rgba(24, 144, 255, ${0.1 * (1 - distance / 100)})`;
-               ctx.lineWidth = 1;
-               ctx.stroke();
-             }
+            if (distance < 100) {
+              ctx.beginPath();
+              ctx.moveTo(particle.x, particle.y);
+              ctx.lineTo(otherParticle.x, otherParticle.y);
+              ctx.strokeStyle = `rgba(24, 144, 255, ${0.1 * (1 - distance / 100)})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
           }
         });
       });

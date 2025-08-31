@@ -24,7 +24,6 @@ export const useAuthStore = create<AuthStore>()(
 
             // 存储token到本地，refreshToken通过cookie管理
             authService.storeToken(response.token);
-            debugger
             set({
               isAuthenticated: true,
               user: response.user,
