@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, Empty, notification, Segmented, Select, Spin, Tooltip} from "antd";
+import {Card, Empty, notification, Select, Spin, Tooltip} from "antd";
 import {useTranslation} from "react-i18next";
 import {getDatasourceList} from "@/services/datasource";
 import {getModelList} from "@/services/model";
@@ -15,7 +15,6 @@ const ERView: React.FC = () => {
   const [selectedDatasource, setSelectedDatasource] = useState<string>("");
   const [models, setModels] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(false);
-  const [layout, setLayout] = useState<'grid' | 'relation'>('grid');
   const [refreshKey, setRefreshKey] = useState(0);
 
   // 获取数据源列表
@@ -128,14 +127,6 @@ const ERView: React.FC = () => {
 
             {/* 右侧：操作区域 */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Segmented
-                options={[
-                  { label: '网状', value: 'grid' },
-                  { label: '关系', value: 'relation' }
-                ]}
-                value={layout}
-                onChange={(value) => setLayout(value as 'grid' | 'relation')}
-              />
               <Select
                 value={selectedDatasource}
                 onChange={handleDatasourceChange}
@@ -179,7 +170,6 @@ const ERView: React.FC = () => {
             key={refreshKey}
             datasource={selectedDatasource}
             data={models}
-            layout={layout}
           />
         ) : (
           <Empty

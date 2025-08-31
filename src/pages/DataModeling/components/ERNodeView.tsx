@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Entity} from '@/types/data-modeling';
+import {KeyOutlined} from '@ant-design/icons';
 
 interface ERNodeViewProps {
   entity: Entity;
@@ -70,7 +71,15 @@ const ERNodeView: React.FC<ERNodeViewProps> = ({ entity }) => {
               borderBottom: idx !== showFields.length - 1 ? ` ${isDark ? '#23232a' : '#f0f0f0'}` : 'none',
             }}
           >
-            <span style={{ color: isDark ? '#36a3f7' : '#1890ff', fontWeight: 500 }}>{f.name}</span>
+            <span style={{ 
+              color: isDark ? '#36a3f7' : '#1890ff', 
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              {f.identity && <KeyOutlined style={{ marginRight: 4, fontSize: 12 }} />}
+              {f.name}
+            </span>
             <span style={{ color: isDark ? '#8c8c8c' : '#8c8c8c', fontWeight: 400 }}>{f.concreteType || f.type}</span>
           </div>
         ))}
