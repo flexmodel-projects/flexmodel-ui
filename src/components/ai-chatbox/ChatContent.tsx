@@ -54,7 +54,8 @@ const ChatContent: React.FC<ChatContentProps> = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        color: token.colorText
       }}>
         {/* 对话区域 */}
         <div
