@@ -48,10 +48,11 @@ enum user_interest {
 }
  */
 
-import React from 'react';
+import React, {useRef} from 'react';
 import Editor from '@monaco-editor/react';
 import {useTheme} from '@/store/appStore';
 import {useTranslation} from 'react-i18next';
+import {theme} from 'antd';
 
 interface IDLEditorProps {
   value: string;
@@ -71,6 +72,13 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
 }) => {
   const { isDark } = useTheme();
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const editorRef = useRef<any>(null);
+  const monacoRef = useRef<any>(null);
+
+  // 获取当前主题
+  const currentTheme = isDark ? 'vs-dark' : 'vs';
+
   // IDL语法提示配置
   const idlLanguageConfig = {
     id: 'idl',
@@ -335,6 +343,10 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
   };
 
   const handleEditorDidMount = (_editor: any, monaco: any) => {
+    // 保存编辑器和monaco实例的引用
+    editorRef.current = _editor;
+    monacoRef.current = monaco;
+
     // 注册IDL语言
     monaco.languages.register(idlLanguageConfig);
     monaco.languages.setMonarchTokensProvider('idl', idlMonarchTokensProvider);
@@ -346,15 +358,15 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
       {showDocLink && (
         <div style={{
           padding: '8px 12px',
-          backgroundColor: isDark ? '#1f1f1f' : '#f5f5f5',
-          borderBottom: `1px solid ${isDark ? '#404040' : '#d9d9d9'}`,
+          backgroundColor: token.colorFillAlter,
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
           <span style={{
             fontSize: '12px',
-            color: isDark ? '#d9d9d9' : '#666'
+            color: token.colorTextSecondary
           }}>
             {t('idl_editor')}
           </span>
@@ -364,7 +376,7 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
             rel="noopener noreferrer"
             style={{
               fontSize: '12px',
-              color: '#1890ff',
+              color: token.colorPrimary,
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
@@ -382,6 +394,7 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
           value={value}
           onChange={onChange}
           onMount={handleEditorDidMount}
+          theme={currentTheme}
           options={{
             minimap: { enabled: false },
             fontSize: 14,
@@ -404,8 +417,7 @@ const IDLEditor: React.FC<IDLEditorProps> = ({
             showFoldingControls: 'always',
             foldingHighlight: true,
             foldingImportsByDefault: true,
-            unfoldOnClickAfterEndOfLine: false,
-            theme: isDark ? 'vs-dark' : 'vs'
+            unfoldOnClickAfterEndOfLine: false
           }}
         />
       </div>

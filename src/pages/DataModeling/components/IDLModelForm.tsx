@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Drawer, message} from 'antd';
+import {Button, Drawer, message, theme} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {importModels} from '@/services/datasource';
 import {ScriptImportPayload, ScriptType} from '@/types/data-source';
@@ -19,6 +19,7 @@ const IDLModelForm: React.FC<CreateModelProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [loading, setLoading] = useState(false);
   const [idlCode, setIdlCode] = useState(`// ${t('idl_syntax_example')}
 model example_model {
@@ -95,7 +96,7 @@ enum ExampleEnum {
         </div>
       }
     >
-      <div style={{ height: '600px', border: '1px solid #d9d9d9', borderRadius: '6px' }}>
+      <div style={{ height: '600px', border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius }}>
         <IDLEditor
           value={idlCode}
           onChange={(value) => setIdlCode(value || '')}
