@@ -103,8 +103,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
               value: val,
               label: val,
             }))}
-            value={field.defaultValue}
-            defaultValue={field.defaultValue}
+            value={value}
             onChange={(e) => onChange(e)}
           />
         );

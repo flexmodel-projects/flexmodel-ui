@@ -4,12 +4,11 @@ import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-des
 import {getDatasourceList} from "@/services/datasource.ts";
 import {dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
-import CreateEntity from "@/pages/DataModeling/components/CreateEntity";
+import ModelCreationDialog from "@/pages/DataModeling/components/ModelForm";
+import IDLModelForm from "@/pages/DataModeling/components/IDLModelForm";
 import type {DatasourceSchema} from '@/types/data-source';
 import {useTranslation} from "react-i18next";
 import {useLocale} from "@/store/appStore.ts";
-import CreateNativeQueryModel from "@/pages/DataModeling/components/CreateNativeQueryModel";
-import CreateEnum from "@/pages/DataModeling/components/CreateEnum";
 import type {Model} from '@/types/data-modeling';
 import {
   IconEntityFolder,
@@ -21,6 +20,46 @@ import {
 } from '@/components/explore/icons/Icons.jsx';
 import '@/components/explore/styles/explore.scss';
 import Tree from '@/components/explore/explore/Tree.jsx';
+
+// 本地查询文件夹图标组件
+const IconNativeQueryFolder = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='native-query-folder'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-native-query-folder'
+    width='18' height='18'
+  >
+    {/* 文件夹主体 - 黄色系 */}
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
+    {/* 文件夹盖子 */}
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
+    {/* 叠加一个Q字母 */}
+    <text x='12' y='16' textAnchor='middle' fontSize='9' fill='#fff' fontFamily='Arial' fontWeight='bold'>NQ</text>
+  </svg>
+);
+
+// 本地查询模型图标组件
+const IconNativeQueryModel = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='native-query-model'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-native-query-model'
+    width='18' height='18'
+  >
+    {/* 紫色圆形背景，与枚举风格一致 */}
+    <circle cx='12' cy='12' r='9' fill='#722ED1' />
+    {/* 白色字母Q */}
+    <text x='12' y='16' textAnchor='middle' fontSize='10' fill='#fff' fontFamily='Arial' fontWeight='bold'>Q</text>
+  </svg>
+);
 
 interface ModelTree {
   name: string;
@@ -43,7 +82,7 @@ interface ModelBrowserProps {
   version?: number;
 }
 
-const ModelBrowser: React.FC<ModelBrowserProps> = ({
+const ModelExplorer: React.FC<ModelBrowserProps> = ({
   datasource,
   editable,
   onSelect,
@@ -61,16 +100,13 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
-  const [createDrawerVisible, setCreateDrawerVisible] = useState(false);
-  const [
-    createNativeQueryModelDrawerVisible,
-    setCreateNativeQueryModelDrawerVisible,
-  ] = useState(false);
-  const [createEnumDrawerVisible, setCreateEnumDrawerVisible] = useState(false);
+  const [createModelDrawerVisible, setCreateModelDrawerVisible] = useState(false);
+  const [createIDLModelVisible, setCreateIDLModelVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
   // 添加模型
-  const addEntity = async () => {
-    setCreateDrawerVisible(false);
+  const addModel = async () => {
+    setCreateModelDrawerVisible(false);
+    setCreateIDLModelVisible(false);
     await reqModelList();
   };
 
@@ -325,16 +361,11 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item onClick={() => setCreateDrawerVisible(true)}>
-                  {t("new_entity")}
+                <Menu.Item onClick={() => setCreateModelDrawerVisible(true)}>
+                  {t("create_model")}
                 </Menu.Item>
-                <Menu.Item onClick={() => setCreateEnumDrawerVisible(true)}>
-                  {t("new_enum")}
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => setCreateNativeQueryModelDrawerVisible(true)}
-                >
-                  {t("new_native_query")}
+                <Menu.Item onClick={() => setCreateIDLModelVisible(true)}>
+                  {t("create_model_by_idl")}
                 </Menu.Item>
               </Menu>
             }
@@ -379,11 +410,13 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
                 if (nodeType === 'file') {
                   if (item.modelType === 'ENTITY') return <IconModel key={`model${item.path}`} />;
                   if (item.modelType === 'ENUM') return <IconEnum key={`enum${item.path}`} />;
+                  if (item.modelType === 'NATIVE_QUERY') return <IconNativeQueryModel key={`query${item.path}`} />;
                   return <IconFile key={`file${item.path}`} />;
                 }
                 // 文件夹分组特殊icon
                 if (item.path === '__entity_group') return <IconEntityFolder key={`entityfolder${item.path}`} />;
                 if (item.path === '__enum_group') return <IconEnumFolder key={`enumfolder${item.path}`} />;
+                if (item.path === '__native_query_group') return <IconNativeQueryFolder key={`queryfolder${item.path}`} />;
                 return <IconFolder key={`folder${item.path}`} />;
               }}
               compact={true}
@@ -400,33 +433,21 @@ const ModelBrowser: React.FC<ModelBrowserProps> = ({
       >
         {t("delete_dialog_text", { name: activeModel?.name })}
       </Modal>
-      <CreateEntity
-        visible={createDrawerVisible}
+      <ModelCreationDialog
+        visible={createModelDrawerVisible}
         datasource={activeDs}
-        onConfirm={addEntity}
-        onCancel={() => setCreateDrawerVisible(false)}
+        onConfirm={addModel}
+        onCancel={() => setCreateModelDrawerVisible(false)}
       />
-      <CreateNativeQueryModel
-        visible={createNativeQueryModelDrawerVisible}
+      <IDLModelForm
+        visible={createIDLModelVisible}
         datasource={activeDs}
-        onConfirm={() => {
-          setCreateNativeQueryModelDrawerVisible(false);
-          reqModelList();
-        }}
-        onCancel={() => setCreateNativeQueryModelDrawerVisible(false)}
-      />
-      <CreateEnum
-        visible={createEnumDrawerVisible}
-        datasource={activeDs}
-        onConfirm={() => {
-          setCreateEnumDrawerVisible(false);
-          reqModelList();
-        }}
-        onCancel={() => setCreateEnumDrawerVisible(false)}
+        onConfirm={addModel}
+        onCancel={() => setCreateIDLModelVisible(false)}
       />
     </div>
   );
 };
 
-export default ModelBrowser;
+export default ModelExplorer;
 

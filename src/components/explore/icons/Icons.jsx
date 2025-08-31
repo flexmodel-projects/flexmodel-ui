@@ -403,6 +403,51 @@ export const IconEnumFolder = () => (
   </svg>
 )
 
+export const IconNativeQueryFolder = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='native-query-folder'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-native-query-folder'
+    width='18' height='18'
+  >
+    {/* 文件夹主体 - 黄色系 */}
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
+    {/* 文件夹盖子 */}
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
+    {/* 叠加一个Q字母 */}
+    <text x='12' y='16' textAnchor='middle' fontSize='9' fill='#fff' fontFamily='Arial' fontWeight='bold'>Q</text>
+  </svg>
+)
+
+export const IconNativeQuery = () => (
+  <svg
+    aria-hidden='true'
+    focusable='false'
+    data-icon='native-query'
+    role='img'
+    xmlns='http://www.w3.org/2000/svg'
+    viewBox='0 0 24 24'
+    className='icon-native-query'
+    width='18' height='18'
+  >
+    {/* 数据库图标主体 */}
+    <rect x='4' y='6' width='16' height='12' rx='2' fill='#722ED1' />
+    {/* 数据库顶部装饰 */}
+    <ellipse cx='12' cy='6' rx='8' ry='2' fill='#722ED1' />
+    {/* 数据库内部线条 */}
+    <rect x='6' y='9' width='12' height='1' rx='0.5' fill='#fff' />
+    <rect x='6' y='11' width='12' height='1' rx='0.5' fill='#fff' />
+    <rect x='6' y='13' width='8' height='1' rx='0.5' fill='#fff' />
+    {/* 查询符号 */}
+    <circle cx='18' cy='8' r='1.5' fill='#FFD666' />
+    <path d='M17 8 L19 8 M18 7 L18 9' stroke='#722ED1' strokeWidth='0.8' fill='none' />
+  </svg>
+)
+
 export const ApiMethodGet = () => (
   <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
     <text x="10" y="14" textAnchor="middle" fontSize="8" fill="#52C41A" fontFamily="Arial" fontWeight="bold">GET</text>

@@ -44,6 +44,7 @@ export interface Field extends Record<string, any> {
   defaultValue?: DefaultValue;
   from?: string;
   tmpType?: string;
+  identity?: boolean;
 }
 
 export interface Index {

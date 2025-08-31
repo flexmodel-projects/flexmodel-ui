@@ -2,7 +2,7 @@ import type {Field, Model} from '@/types/data-modeling';
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Button, Card, Checkbox, Divider, Drawer, Form, Input, message, Select, Space, Splitter} from "antd";
-import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser";
+import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
 import {generateAPIs} from "@/services/api-info.ts";
 
 interface Props {
@@ -55,7 +55,7 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
     >
       <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-          <ModelBrowser
+          <ModelExplorer
             datasource={datasource}
             editable={false}
             onSelect={(ds: string, model: Model) => {

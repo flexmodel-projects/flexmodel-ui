@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Form, Input, Modal, Select, Switch, theme} from "antd";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
-import FieldInput from "./FieldInput";
+import DefaultValueInput from "./DefaultValueInput";
 import {Field} from "@/types/data-modeling";
 
 
@@ -55,23 +55,26 @@ export const BasicFieldTypes = [
   },
 ];
 
-// 字段初始值常�?
+// 字段初始值常量
 export const FieldInitialValues: any = {
   STRING: {
     type: 'String',
     length: 255,
     unique: false,
     nullable: true,
+    identity: false,
   },
   INT: {
     type: 'Int',
     unique: false,
     nullable: true,
+    identity: false,
   },
   LONG: {
     type: 'Long',
     unique: false,
     nullable: true,
+    identity: false,
   },
   DECIMAL: {
     type: 'Decimal',
@@ -79,31 +82,37 @@ export const FieldInitialValues: any = {
     scale: 2,
     unique: false,
     nullable: true,
+    identity: false,
   },
   BOOLEAN: {
     type: 'Boolean',
     unique: false,
     nullable: true,
+    identity: false,
   },
   DATE: {
     type: 'Date',
     unique: false,
     nullable: true,
+    identity: false,
   },
   TIME: {
     type: 'Time',
     unique: false,
     nullable: true,
+    identity: false,
   },
   DATETIME: {
     type: 'DateTime',
     unique: false,
     nullable: true,
+    identity: false,
   },
   JSON: {
     type: 'JSON',
     unique: false,
     nullable: true,
+    identity: false,
   },
   RELATION: {
     type: 'Relation',
@@ -112,7 +121,15 @@ export const FieldInitialValues: any = {
     foreignField: null,
     unique: false,
     nullable: true,
-    cascadeDelete: false
+    cascadeDelete: false,
+    identity: false,
+  },
+  ENUM: {
+    type: 'Enum',
+    unique: false,
+    nullable: true,
+    multiple: false,
+    identity: false,
   },
 };
 
@@ -133,12 +150,12 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   const initialValues = {
     name: "",
-    type: "",
-    concreteType: "",
+    type: "String",
+    concreteType: "String",
     unique: false,
-    nullable: false,
+    nullable: true,
     comment: "",
-    defaultValue: undefined,
+    defaultValue: { type: "fixed", value: null },
     length: 255,
     precision: 20,
     scale: 2,
@@ -147,7 +164,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     foreignField: null,
     cascadeDelete: false,
     from: "",
-    tmpType: "",
+    tmpType: "String",
   };
 
   useEffect(() => {
@@ -155,9 +172,21 @@ const FieldForm: React.FC<FieldFormProps> = ({
       reqModelList();
       if (currentValue) {
         form.setFieldsValue(currentValue);
-        setTmpType(currentValue.tmpType || currentValue.type);
+        // 根据字段类型正确设置tmpType
+        let tmpTypeValue = currentValue.tmpType;
+        if (!tmpTypeValue) {
+          if (currentValue.type === 'Relation' && currentValue.from) {
+            tmpTypeValue = `Relation:${currentValue.from}`;
+          } else if (currentValue.type === 'Enum' && currentValue.from) {
+            tmpTypeValue = `Enum:${currentValue.from}`;
+          } else {
+            tmpTypeValue = currentValue.type;
+          }
+        }
+        setTmpType(tmpTypeValue);
       } else {
         form.setFieldsValue(initialValues);
+        setTmpType("String");
       }
     }
   }, [visible, currentValue]);
@@ -174,6 +203,8 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   const reqModelList = async () => {
     const data = await getModelList(datasource);
+    console.log('ModelList data:', data);
+    console.log('Enum models:', data.filter(item => item.type === "ENUM"));
     setModelList(data);
   };
 
@@ -182,26 +213,25 @@ const FieldForm: React.FC<FieldFormProps> = ({
     console.log("----");
     if (value.startsWith("Relation")) {
       form.setFieldsValue({
-        ...FieldInitialValues[value],
+        ...FieldInitialValues["RELATION"],
         type: "Relation",
         from: value.replace("Relation:", ""),
         multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: { type: "fixed", value: null }, // 重置默认值
       });
     } else if (value.startsWith("Enum")) {
       form.setFieldsValue({
-        ...FieldInitialValues[value],
+        ...FieldInitialValues["ENUM"],
         type: "Enum",
         from: value.replace("Enum:", ""),
-        multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: { type: "fixed", value: null }, // 重置默认值
       })
     } else {
       form.setFieldsValue({
-        ...FieldInitialValues[value],
+        ...FieldInitialValues[value.toUpperCase()],
         type: value,
         multiple: false,
-        defaultValue: undefined, // 清空默认�?
+        defaultValue: { type: "fixed", value: null }, // 重置默认值
       });
     }
   };
@@ -209,7 +239,15 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const handleConfirm = () => {
     form.validateFields().then((values) => {
       onConfirm(values);
+      // 保存成功后清空表单
+      form.resetFields();
     });
+  };
+
+  // 处理表单取消
+  const handleCancel = () => {
+    form.resetFields();
+    onCancel();
   };
 
   // 处理表单值变�?
@@ -244,6 +282,13 @@ const FieldForm: React.FC<FieldFormProps> = ({
         }
       }
     }
+    
+    // 处理identity字段变化
+    if ("identity" in changedValues && changedValues.identity === true) {
+      // 当设置当前字段为identity时，需要通知父组件更新其他字段的identity状态
+      // 这里可以通过回调函数通知父组件
+      console.log("Field set as identity:", allValues.name);
+    }
   };
 
   // 紧凑主题样式
@@ -263,7 +308,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     <Modal
       title={t("field_form_title")}
       open={visible}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onOk={handleConfirm}
       width={600}
     >
@@ -290,7 +335,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
           name="tmpType"
           rules={[{ required: true }]}
         >
-          <Select value={tmpType} onChange={handleTypeChange} style={selectStyle}>
+          <Select onChange={handleTypeChange} style={selectStyle}>
             <Select.OptGroup label={t("select_group_basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>
@@ -298,7 +343,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
                 </Select.Option>
               ))}
             </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_Relation")}>
+            <Select.OptGroup label={t("select_group_relation")}>
               {modelList
                 .filter((item) => item.type === "ENTITY")
                 .map((item) => (
@@ -310,14 +355,16 @@ const FieldForm: React.FC<FieldFormProps> = ({
                   </Select.Option>
                 ))}
             </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_Enumeration")}>
-              {modelList
-                .filter((item) => item.type === "Enum")
-                .map((item) => (
+            <Select.OptGroup label={t("select_group_enumeration")}>
+              {(() => {
+                const enumModels = modelList.filter((item) => item.type === "ENUM");
+                console.log('Enum models found:', enumModels.length, enumModels);
+                return enumModels.map((item) => (
                   <Select.Option key={item.name} value={`Enum:${item.name}`}>
                     {item.name}
                   </Select.Option>
-                ))}
+                ));
+              })()}
             </Select.OptGroup>
           </Select>
         </Form.Item>
@@ -384,14 +431,47 @@ const FieldForm: React.FC<FieldFormProps> = ({
           </>
         )}
 
+        {form.getFieldValue("tmpType")?.startsWith("Enum") && (
+          <>
+            <Form.Item
+              label={t("selection_multiple")}
+              name="multiple"
+              valuePropName="checked"
+            >
+              <Switch />
+            </Form.Item>
+          </>
+        )}
+
         <Form.Item label={t("unique")} name="unique" valuePropName="checked">
           <Switch />
         </Form.Item>
         <Form.Item label={t("nullable")} name="nullable" valuePropName="checked">
           <Switch />
         </Form.Item>
+        <Form.Item label={t("identity")} name="identity" valuePropName="checked">
+          <Switch 
+            disabled={(() => {
+              // 检查当前字段是否已经是identity
+              const currentFieldName = form.getFieldValue("name");
+              const currentIdentity = form.getFieldValue("identity");
+              
+              // 如果当前字段已经是identity，则不禁用
+              if (currentIdentity) {
+                return false;
+              }
+              
+              // 检查其他字段是否已经是identity
+              const existingIdentityField = model?.fields?.find((field: any) => 
+                field.identity === true && field.name !== currentFieldName
+              );
+              
+              return !!existingIdentityField;
+            })()}
+          />
+        </Form.Item>
         <Form.Item label={t("default_value")} name="defaultValue">
-          <FieldInput
+          <DefaultValueInput
             fieldFn={() => form.getFieldsValue()}
             value={form.getFieldValue("defaultValue")}
             onChange={(val) => form.setFieldsValue({ defaultValue: val })}

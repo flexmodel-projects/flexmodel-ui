@@ -101,23 +101,33 @@ const IndexForm: React.FC<IndexFormProps> = ({
                   required={false}
                   key={field.key}
                 >
-                  <Form.Item
-                    {...field}
-                    validateTrigger={["onChange", "onBlur"]}
-                    noStyle
-                  >
-                    <div style={{ display: 'flex', gap: token.marginXS, alignItems: 'center' }}>
-                                              <Select
-                          placeholder={t("select_field")}
-                          style={{ flex: 1, ...selectStyle }}
-                          size="small"
-                        >
-                        {model?.fields?.map((field: any) => (
-                          <Select.Option key={field.name} value={field.name}>
-                            {field.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
+                  <div style={{ display: 'flex', gap: token.marginXS, alignItems: 'center' }}>
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'fieldName']}
+                      validateTrigger={["onChange", "onBlur"]}
+                      noStyle
+                    >
+                                             <Select
+                         placeholder={t("select_field")}
+                         style={{ flex: 1, ...selectStyle }}
+                         size="small"
+                       >
+                         {model?.fields
+                           ?.filter((field: any) => field.type !== 'Relation')
+                           ?.map((field: any) => (
+                             <Select.Option key={field.name} value={field.name}>
+                               {field.name}
+                             </Select.Option>
+                           ))}
+                       </Select>
+                    </Form.Item>
+                    <Form.Item
+                      {...field}
+                      name={[field.name, 'direction']}
+                      validateTrigger={["onChange", "onBlur"]}
+                      noStyle
+                    >
                       <Select
                         placeholder={t("direction")}
                         style={{ width: 120, ...selectStyle }}
@@ -126,22 +136,22 @@ const IndexForm: React.FC<IndexFormProps> = ({
                         <Select.Option value="ASC">ASC</Select.Option>
                         <Select.Option value="DESC">DESC</Select.Option>
                       </Select>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          className="dynamic-delete-button"
-                          onClick={() => remove(field.name)}
-                          style={{ color: token.colorTextSecondary }}
-                        />
-                      ) : null}
-                    </div>
-                  </Form.Item>
+                    </Form.Item>
+                    {fields.length > 1 ? (
+                      <MinusCircleOutlined
+                        className="dynamic-delete-button"
+                        onClick={() => remove(field.name)}
+                        style={{ color: token.colorTextSecondary }}
+                      />
+                    ) : null}
+                  </div>
                 </Form.Item>
               ))}
               <Form.Item>
                 <div style={spaceStyle}>
                   <Button
                     type="dashed"
-                    onClick={() => add()}
+                    onClick={() => add({ fieldName: '', direction: 'ASC' })}
                     icon={<PlusOutlined />}
                     size="small"
                     style={buttonStyle}

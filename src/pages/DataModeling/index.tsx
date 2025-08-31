@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Card, notification, Row, Splitter, theme} from "antd";
-import ModelBrowser from "@/pages/DataModeling/components/ModelBrowser";
+import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
 import EntityView from "@/pages/DataModeling/components/EntityView";
 import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView";
 import {modifyModel} from "@/services/model.ts";
@@ -96,7 +96,7 @@ const ModelingPage: React.FC = () => {
             collapsible
             style={leftPanelStyle}
           >
-            <ModelBrowser
+            <ModelExplorer
               datasource={activeDs}
               editable
               onSelect={handleItemChange}

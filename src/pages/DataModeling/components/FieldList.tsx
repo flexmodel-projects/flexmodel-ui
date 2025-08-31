@@ -47,12 +47,32 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   const handleNewField = () => {
     setChangeDialogVisible(true);
     setSelectedFieldIndex(-1);
-    setCurrentVal(FieldInitialValues["STRING"]);
+    setCurrentVal({
+      ...FieldInitialValues["STRING"],
+      tmpType: "String"
+    });
   };
 
   const handleEdit = (index: number) => {
+    const field = fieldList[index];
     setSelectedFieldIndex(index);
-    setCurrentVal(fieldList[index]);
+    
+    // 根据字段类型正确设置tmpType
+    let tmpTypeValue = field.tmpType;
+    if (!tmpTypeValue) {
+      if (field.type === 'Relation' && field.from) {
+        tmpTypeValue = `Relation:${field.from}`;
+      } else if (field.type === 'Enum' && field.from) {
+        tmpTypeValue = `Enum:${field.from}`;
+      } else {
+        tmpTypeValue = field.type;
+      }
+    }
+    
+    setCurrentVal({
+      ...field,
+      tmpType: tmpTypeValue
+    });
     setChangeDialogVisible(true);
   };
 
