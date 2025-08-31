@@ -1,15 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import {RobotOutlined, UserOutlined} from '@ant-design/icons';
-import {Bubble, Sender, Welcome, XProvider} from '@ant-design/x';
+import type {PromptProps, PromptsProps} from '@ant-design/x';
+import {Bubble, Prompts, Sender, Welcome, XProvider} from '@ant-design/x';
 import {theme} from 'antd';
 import {ChatContentProps} from './types';
 
+const items: PromptsProps['items'] = [
+  {
+    key: '5',
+    description: '你会哪些东西?',
+    disabled: false,
+  },
+  {
+    key: '6',
+    description: '帮我在[xxx]数据源下面创建财务系统模型',
+    disabled: false,
+  },
+  {
+    key: '7',
+    description: '帮我创建一个查询学生列表的接口',
+    disabled: false,
+  }
+];
+
 const ChatContent: React.FC<ChatContentProps> = ({
-  messages,
-  isLoading,
-  onSendMessage
-}) => {
-  const { token } = theme.useToken();
+                                                   messages,
+                                                   isLoading,
+                                                   onSendMessage
+                                                 }) => {
+  const {token} = theme.useToken();
   const [chatInputValue, setChatInputValue] = useState<string>();
 
   const handleSubmit = (value: string) => {
@@ -50,14 +69,18 @@ const ChatContent: React.FC<ChatContentProps> = ({
             gap: token.marginMD
           }}
         >
-          {!messages.length &&
-            <Welcome
-              style={{ padding: 20 }}
-              icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
-              title="你好, 我是Flexmodel AI助手"
-              description="Flexmodel是开源、自主可控的API设计平台，让数据接口开发更简单、更高效"
-            />
-          }
+          <Welcome
+            style={{padding: 20}}
+            icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
+            title="你好, 我是Flexmodel AI助手"
+            description="Flexmodel是开源、自主可控的API设计平台，让数据接口开发更简单、更高效"
+          />
+          <Prompts
+            title="🤔 你想做什么？"
+            items={items}
+            vertical
+            onItemClick={(info: { data: PromptProps }) => setChatInputValue(info?.data?.description as string)}
+          />
           {messages.map((message, index) => (
             <Bubble
               key={message.id}
@@ -66,13 +89,13 @@ const ChatContent: React.FC<ChatContentProps> = ({
               avatar={
                 message.role === 'assistant' ?
                   {
-                    icon: <RobotOutlined />,
+                    icon: <RobotOutlined/>,
                     style: {
                       backgroundColor: token.colorPrimary
                     }
                   } :
                   {
-                    icon: <UserOutlined />,
+                    icon: <UserOutlined/>,
                     style: {
                       backgroundColor: token.colorSuccess
                     }
@@ -80,7 +103,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
               }
               styles={
                 index > 0 && messages[index - 1].role === message.role ?
-                  { avatar: { visibility: 'hidden' } } :
+                  {avatar: {visibility: 'hidden'}} :
                   {}
               }
             />
@@ -91,7 +114,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
               content="🤔 AI正在思考中..."
               placement="start"
               avatar={{
-                icon: <RobotOutlined />,
+                icon: <RobotOutlined/>,
                 style: {
                   backgroundColor: token.colorPrimary
                 }
@@ -113,7 +136,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
             onChange={setChatInputValue}
             onSubmit={handleSubmit}
             disabled={isLoading}
-            style={{ width: '100%' }}
+            style={{width: '100%'}}
           />
         </div>
       </div>
