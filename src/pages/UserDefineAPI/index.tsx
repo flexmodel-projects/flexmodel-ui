@@ -25,6 +25,7 @@ import Authorization from "./components/Authorization";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate";
+import CreateApiDrawer from "./components/CreateApiDrawer";
 import {useConfig} from "@/store/appStore.ts";
 import Tree from "@/components/explore/explore/Tree.jsx";
 import {
@@ -54,12 +55,10 @@ const UserDefineAPI: React.FC = () => {
   const [renameTarget, setRenameTarget] = useState<any>(null);
 
   // 新建接口弹窗逻辑
-  const [createApiDialogVisible, setCreateApiDialogVisible] = useState(false);
+  const [createApiDrawerVisible, setCreateApiDrawerVisible] = useState(false);
   const [createApiParentId, setCreateApiParentId] = useState<string | null>(
     null
   );
-  const [createApiLoading, setCreateApiLoading] = useState(false);
-  const [createApiError, setCreateApiError] = useState("");
 
   // 新建文件夹弹窗逻辑
   const [createFolderDialogVisible, setCreateFolderDialogVisible] =
@@ -79,8 +78,7 @@ const UserDefineAPI: React.FC = () => {
     { value: "DELETE", label: "DELETE" },
   ];
 
-  // 新建接口弹窗表单实例
-  const [createApiForm] = Form.useForm();
+
 
   useEffect(() => {
     if (selectedNode?.data) {
@@ -198,41 +196,7 @@ const UserDefineAPI: React.FC = () => {
 
   const showCreateApiDialog = (parentId?: string | null) => {
     setCreateApiParentId(parentId || null);
-    setCreateApiDialogVisible(true);
-    setCreateApiError("");
-    createApiForm.resetFields();
-  };
-
-  const handleCreateApiForm = async () => {
-    const values = await createApiForm.validateFields();
-    await addApi(createApiParentId, values.name, values.method, values.path);
-  };
-
-  const addApi = async (
-    parentId?: string | null,
-    name?: string,
-    method?: string,
-    path?: string
-  ) => {
-    setCreateApiLoading(true);
-    setCreateApiError("");
-    try {
-      await createApi({
-        name: name || "",
-        method: method || "GET",
-        path: path || "",
-        parentId: parentId,
-        enabled: true,
-        type: "API",
-      });
-      message.success(t("create_success"));
-      setCreateApiDialogVisible(false);
-      reqApiList();
-    } catch (error: any) {
-      setCreateApiError(error.message || t("create_failed"));
-    } finally {
-      setCreateApiLoading(false);
-    }
+    setCreateApiDrawerVisible(true);
   };
 
   const addFolder = async (parentId?: string | null) => {
@@ -637,56 +601,16 @@ const UserDefineAPI: React.FC = () => {
         />
       </Modal>
       {/* 新建接口弹窗 */}
-      <Modal
-        title={t("new_api")}
-        open={createApiDialogVisible}
-        onCancel={() => {
-          setCreateApiDialogVisible(false);
-          setCreateApiError("");
+      <CreateApiDrawer
+        visible={createApiDrawerVisible}
+        onClose={() => setCreateApiDrawerVisible(false)}
+        onSuccess={() => {
+          message.success(t("create_success"));
+          reqApiList();
         }}
-        onOk={handleCreateApiForm}
-        confirmLoading={createApiLoading}
-      >
-        <Form
-          form={createApiForm}
-          layout="vertical"
-          onFinish={handleCreateApiForm}
-          autoComplete="off"
-        >
-          <Form.Item label="上级目录">
-            <Input
-              value={getParentFolderName(createApiParentId)}
-              disabled
-              style={{ backgroundColor: "#f5f5f5" }}
-            />
-          </Form.Item>
-          <Form.Item
-            label={t("name")}
-            name="name"
-            rules={[{ required: true, message: "名称不能为空" }]}
-          >
-            <Input placeholder="请输入接口名称" autoFocus />
-          </Form.Item>
-          <Form.Item
-            label={t("method")}
-            name="method"
-            initialValue="GET"
-            rules={[{ required: true, message: "请选择请求方法" }]}
-          >
-            <Select options={methodOptions} style={{ width: 120 }} />
-          </Form.Item>
-          <Form.Item
-            label={t("path")}
-            name="path"
-            rules={[{ required: true, message: "接口地址不能为空" }]}
-          >
-            <Input placeholder="请输入接口地址" />
-          </Form.Item>
-          {createApiError && (
-            <div style={{ color: "red", marginTop: 8 }}>{createApiError}</div>
-          )}
-        </Form>
-      </Modal>
+        parentId={createApiParentId}
+        parentFolderName={getParentFolderName(createApiParentId)}
+      />
       {/* 新建文件夹弹窗 */}
       <Modal
         title={t("new_folder")}

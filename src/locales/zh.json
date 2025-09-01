@@ -98,7 +98,7 @@
   "create_native_query": "创建本地查询",
   "create_model_by_idl": "创建模型（IDL）",
   "idl_editor": "IDL语法编辑器",
-  "view_idl_docs": "查看IDL语法文档",
+  "view_idl_docs": "查看Flexmodel IDL语法文档",
   "idl_syntax_example": "IDL语法示例",
   "enter_idl_code": "请输入IDL代码",
   "model_created_success": "模型创建成功",
@@ -281,5 +281,15 @@
   "remember_me": "记住我",
   "forgot_password": "忘记密码？",
   "demo_credentials": "演示账号：admin / admin123",
-  "demo_login_button": "使用演示账号登录"
+  "demo_login_button": "使用演示账号登录",
+  "parent_folder": "上级目录",
+  "api_config": "接口配置",
+  "request_method": "请求方法",
+  "api_address": "接口地址",
+  "enter_api_name": "请输入接口名称",
+  "select_request_method": "请选择请求方法",
+  "api_address_required": "接口地址不能为空",
+  "enter_api_address": "请输入接口地址",
+  "graphql_query": "GraphQL查询",
+  "create_failed": "创建失败"
 }

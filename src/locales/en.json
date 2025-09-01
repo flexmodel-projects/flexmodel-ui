@@ -99,7 +99,7 @@
   "create_native_query": "Create Native Query",
   "create_model_by_idl": "Create Model by IDL",
   "idl_editor": "IDL Syntax Editor",
-  "view_idl_docs": "View IDL Syntax Documentation",
+  "view_idl_docs": "View Flexmodel IDL Syntax Documentation",
   "idl_syntax_example": "IDL Syntax Example",
   "enter_idl_code": "Please enter IDL code",
   "model_created_success": "Model created successfully",
@@ -281,5 +281,15 @@
   "remember_me": "Remember me",
   "forgot_password": "Forgot password?",
   "demo_credentials": "Demo: admin / admin123",
-  "demo_login_button": "Login with Demo Account"
+  "demo_login_button": "Login with Demo Account",
+  "parent_folder": "Parent Folder",
+  "api_config": "API Configuration",
+  "request_method": "Request Method",
+  "api_address": "API Address",
+  "enter_api_name": "Please enter API name",
+  "select_request_method": "Please select request method",
+  "api_address_required": "API address cannot be empty",
+  "enter_api_address": "Please enter API address",
+  "graphql_query": "GraphQL Query",
+  "create_failed": "Creation failed"
 }
