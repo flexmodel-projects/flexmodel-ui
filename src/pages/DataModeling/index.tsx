@@ -46,7 +46,7 @@ const ModelingPage: React.FC = () => {
             }}
           />
         );
-      case activeModel?.type === "NATIVE_QUERY":
+      case activeModel?.type === "native_query":
         return (
           <NativeQueryView
             datasource={activeDs}

@@ -230,7 +230,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
               isLeaf: false,
             };
             break;
-          case "NATIVE_QUERY":
+          case "native_query":
             acc[type] = {
               type: "__native_query_group",
               key: "__native_query_group",
@@ -255,8 +255,8 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
       return acc;
     }, {});
 
-    // 自定义排序：先entity，再enum，最后NATIVE_QUERY
-    const order = ["entity", "enum", "NATIVE_QUERY"];
+    // 自定义排序：先entity，再enum，最后native_query
+    const order = ["entity", "enum", "native_query"];
     return order.map((type) => groups[type]).filter(Boolean);
   };
 
@@ -271,7 +271,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         filename: item.name,
         path: ((group as any).key || group.name) + '/' + item.name,
         data: item.data,
-        modelType: item.data?.type, // 新增字段，标记模型类型entity/enum/NATIVE_QUERY
+        modelType: item.data?.type, // 新增字段，标记模型类型entity/enum/native_query
       })),
     }));
   }
@@ -410,7 +410,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
                 if (nodeType === 'file') {
                   if (item.modelType === 'entity') return <IconModel key={`model${item.path}`} />;
                   if (item.modelType === 'enum') return <IconEnum key={`enum${item.path}`} />;
-                  if (item.modelType === 'NATIVE_QUERY') return <IconNativeQueryModel key={`query${item.path}`} />;
+                  if (item.modelType === 'native_query') return <IconNativeQueryModel key={`query${item.path}`} />;
                   return <IconFile key={`file${item.path}`} />;
                 }
                 // 文件夹分组特殊icon

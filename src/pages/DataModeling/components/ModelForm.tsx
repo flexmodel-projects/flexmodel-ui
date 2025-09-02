@@ -95,7 +95,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       const values = await nativeQueryForm.validateFields();
       const queryData = {
         ...values,
-        type: 'NATIVE_QUERY',
+        type: 'native_query',
       };
       await createModel(datasource, queryData);
       notification.success({message: t('form_save_success')});
