@@ -8,11 +8,11 @@ import {
   getIdentityProviders as getIdentityProvidersApi,
   updateIdentityProvider,
 } from "@/services/identity-provider.ts";
-import IdPInfo from "@/pages/IdentityProvider/components/IdPView";
 import CreateIdP from "@/pages/IdentityProvider/components/CreateIdP";
 import {buildUpdatePayload, mergeIdentityProvider, normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
+import IdpView from "@/pages/IdentityProvider/components/IdPView";
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -121,7 +121,7 @@ const IdPManagement: React.FC = () => {
                         )}
                       </Form>
                     ) : (
-                      <IdPInfo idp={activeIdP} />
+                      <IdpView data={activeIdP} />
                     )}
                   </Card>
                 </Col>

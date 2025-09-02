@@ -6,13 +6,13 @@ import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
 import {Form} from 'antd';
 
-interface IdpViewProps { idp: IdentityProvider }
+interface IdpViewProps { data: IdentityProvider }
 
-const IdpView: React.FC<IdpViewProps> = ({ idp }) => {
+const IdpView: React.FC<IdpViewProps> = ({ data }) => {
 
   useTranslation();
 
-  const flat = normalizeIdentityProvider(idp);
+  const flat = normalizeIdentityProvider(data);
 
   return (
     <>
