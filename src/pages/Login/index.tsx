@@ -118,7 +118,7 @@ const Login: React.FC = () => {
       overflow: 'hidden'
     }}>
       {/* 粒子背景 */}
-      <ParticleBackground particleCount={80} speed={0.3}/>
+      <ParticleBackground particleCount={160} speed={0.6}/>
 
       {/* 右上角主题和语言切换 */}
       <div style={{
@@ -278,8 +278,6 @@ const Login: React.FC = () => {
             {t('demo_login_button')}
           </Button>
         </div>
-
-
       </Card>
     </div>
   );

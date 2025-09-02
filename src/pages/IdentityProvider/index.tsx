@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, Form, Layout, message, Modal, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Form, Layout, message, Modal, Row, Space, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import type {IdentityProvider} from "@/types/identity-provider";
 import IdPExplorer from "@/pages/IdentityProvider/components/IdPExplorer";
@@ -84,7 +84,7 @@ const IdPManagement: React.FC = () => {
               <IdPExplorer
                 idPList={idPList}
                 activeIdP={activeIdP}
-                idPLoading={idPLoading}
+                loading={idPLoading}
                 setActiveIdP={setActiveIdP}
                 setDeleteVisible={setDeleteVisible}
                 setDrawerVisible={setDrawerVisible}
@@ -93,9 +93,6 @@ const IdPManagement: React.FC = () => {
             </div>
           </Sider>
           <Content style={{ padding: "12px 20px", overflow: "auto" }}>
-            {idPList.length === 0 && (
-              <Empty description={t('no_data') || 'No Data'} />
-            )}
             {idPList.length > 0 && activeIdP && (
               <Row>
                 <Col span={24}>

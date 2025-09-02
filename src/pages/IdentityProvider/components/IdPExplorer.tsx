@@ -13,7 +13,7 @@ const { Title } = Typography;
 interface IdPExplorerProps {
   idPList: IdentityProvider[];
   activeIdP: IdentityProvider | null;
-  idPLoading: boolean;
+  loading: boolean;
   setActiveIdP: (idp: IdentityProvider) => void;
   setDeleteVisible: (visible: boolean) => void;
   setDrawerVisible: (visible: boolean) => void;
@@ -23,7 +23,7 @@ interface IdPExplorerProps {
 const IdPExplorer: React.FC<IdPExplorerProps> = ({
   idPList,
   activeIdP,
-  idPLoading,
+  loading,
   setActiveIdP,
   setDeleteVisible,
   setDrawerVisible,
@@ -100,7 +100,7 @@ const IdPExplorer: React.FC<IdPExplorerProps> = ({
         {t('idp_management')}
       </Title>
       <Divider style={{ margin: "16px 0" }} />
-      <Spin spinning={idPLoading}>
+      <Spin spinning={loading}>
         <Tree
           tree={treeData}
           selected={selectedItem}
