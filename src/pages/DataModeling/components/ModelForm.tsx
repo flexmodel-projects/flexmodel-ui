@@ -27,7 +27,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
   const [entityForm] = Form.useForm();
   const [entityModel, setEntityModel] = useState<Entity>({
     name: '',
-    type: 'ENTITY',
+    type: 'entity',
     fields: [],
     indexes: [],
   });
@@ -47,7 +47,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       const values = await entityForm.validateFields();
       const entityData = {
         ...values,
-        type: 'ENTITY',
+        type: 'entity',
         fields: entityModel.fields,
         indexes: entityModel.indexes,
       };
@@ -58,7 +58,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       entityForm.resetFields();
       setEntityModel({
         name: '',
-        type: 'ENTITY',
+        type: 'entity',
         fields: [],
         indexes: [],
       });
@@ -75,7 +75,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       const values = await enumForm.validateFields();
       const enumData = {
         ...values,
-        type: 'ENUM',
+        type: 'enum',
       };
       await createModel(datasource, enumData);
       notification.success({message: t('form_save_success')});

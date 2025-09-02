@@ -3,7 +3,7 @@ import {Button, Drawer, Flex, Form, Input, Select, Space,} from "antd";
 import {createApi} from "@/services/api-info.ts";
 import {useTranslation} from "react-i18next";
 import GraphQL from "@/pages/GraphQLAPI/components/GraphQL";
-import {GraphQLData} from "@/types/api-management";
+import {ApiMeta, GraphQLData} from "@/types/api-management";
 
 interface CreateApiDrawerProps {
   visible: boolean;
@@ -11,6 +11,16 @@ interface CreateApiDrawerProps {
   onSuccess: () => void;
   parentId?: string | null;
   parentFolderName: string;
+}
+
+interface ApiData {
+  name: string;
+  method: string;
+  path: string;
+  parentId?: string | null;
+  enabled: boolean;
+  type: string;
+  meta?: ApiMeta;
 }
 
 const CreateApiDrawer: React.FC<CreateApiDrawerProps> = ({
@@ -68,7 +78,7 @@ const CreateApiDrawer: React.FC<CreateApiDrawerProps> = ({
     setCreateApiLoading(true);
     setCreateApiError("");
     try {
-      const apiData: any = {
+      const apiData: ApiData = {
         name: name || "",
         method: method || "GET",
         path: path || "",
@@ -83,8 +93,9 @@ const CreateApiDrawer: React.FC<CreateApiDrawerProps> = ({
           auth: false,
           execution: {
             query: graphqlData.query,
-            variables: graphqlData.variables,
+            variables: graphqlData.variables || undefined,
             operationName: graphqlData.operationName,
+            headers: graphqlData.headers || undefined,
           },
         };
       }
@@ -92,8 +103,9 @@ const CreateApiDrawer: React.FC<CreateApiDrawerProps> = ({
       await createApi(apiData);
       onSuccess();
       onClose();
-    } catch (error: any) {
-      setCreateApiError(error.message || t("create_failed"));
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t("create_failed");
+      setCreateApiError(errorMessage);
     } finally {
       setCreateApiLoading(false);
     }

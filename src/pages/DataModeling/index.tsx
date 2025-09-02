@@ -27,9 +27,9 @@ const ModelingPage: React.FC = () => {
   const renderModelView = () => {
     console.log("active:", activeModel);
     switch (true) {
-      case activeModel?.type === "ENTITY":
+      case activeModel?.type === "entity":
         return <EntityView datasource={activeDs} model={activeModel} />;
-      case activeModel?.type === "ENUM":
+      case activeModel?.type === "enum":
         return (
           <EnumView
             datasource={activeDs}

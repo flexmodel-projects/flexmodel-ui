@@ -1,6 +1,7 @@
 import React from "react";
 import {Badge, Card, Descriptions, Divider, Space, Tag, Typography} from "antd";
 import {ApiDefinition} from "@/types/api-management";
+import {useTranslation} from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -9,11 +10,13 @@ interface APIDetailProps {
 }
 
 const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
+  const { t } = useTranslation();
+
   if (!data) {
     return (
       <Card className="h-full">
-        <div className="flex items-center justify-center h-full text-gray-500">
-          请选择一个 API 以查看详情
+        <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+          {t("api_detail.select_api_to_view")}
         </div>
       </Card>
     );
@@ -32,12 +35,12 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
 
   const renderVariables = (variables: Record<string, any>) => {
     if (!variables || Object.keys(variables).length === 0) {
-      return <Text type="secondary">无</Text>;
+      return <Text type="secondary">{t("api_detail.none")}</Text>;
     }
 
     return (
-      <div className="bg-gray-50 p-3 rounded-md">
-        <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+      <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
+        <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
           {JSON.stringify(variables, null, 2)}
         </pre>
       </div>
@@ -49,30 +52,30 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
       <div className="space-y-6">
         {/* API 基本信息 */}
         <div>
-          <Title level={3} className="mb-4 text-gray-800">
+          <Title level={3} className="mb-4 text-gray-800 dark:text-gray-200">
             {data.name}
           </Title>
 
           <Descriptions bordered column={2} size="small">
-            <Descriptions.Item label="API ID">
+            <Descriptions.Item label={t("api_detail.api_id")}>
               <Text code>{data.id}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="状态">
+            <Descriptions.Item label={t("api_detail.status")}>
               <Badge
                 status={data.enabled ? "success" : "error"}
-                text={data.enabled ? "已启用" : "已禁用"}
+                text={data.enabled ? t("api_detail.enabled") : t("api_detail.disabled")}
               />
             </Descriptions.Item>
-            <Descriptions.Item label="请求方法">
+            <Descriptions.Item label={t("api_detail.request_method")}>
               <Tag color={getMethodColor(data.method || '')}>{data.method}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="请求路径">
+            <Descriptions.Item label={t("api_detail.request_path")}>
               <Text code>{data.path}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="API 类型">
+            <Descriptions.Item label={t("api_detail.api_type")}>
               <Tag>{data.type}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="父级 ID">
+            <Descriptions.Item label={t("api_detail.parent_id")}>
               <Text code>{data.parentId}</Text>
             </Descriptions.Item>
           </Descriptions>
@@ -82,31 +85,31 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
 
         {/* 认证与权限 */}
         <div>
-          <Title level={4} className="mb-3">认证与权限</Title>
+          <Title level={4} className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.auth_and_permissions")}</Title>
           <Descriptions bordered column={2} size="small">
-            <Descriptions.Item label="需要认证">
+            <Descriptions.Item label={t("api_detail.requires_auth")}>
               <Badge
                 status={data.meta.auth ? "warning" : "success"}
-                text={data.meta.auth ? "是" : "否"}
+                text={data.meta.auth ? t("api_detail.yes") : t("api_detail.no")}
               />
             </Descriptions.Item>
             {data.meta.identityProvider && (
-              <Descriptions.Item label="身份提供商">
+              <Descriptions.Item label={t("api_detail.identity_provider")}>
                 <Text>{data.meta.identityProvider}</Text>
               </Descriptions.Item>
             )}
-            <Descriptions.Item label="限流启用">
+            <Descriptions.Item label={t("api_detail.rate_limiting_enabled")}>
               <Badge
                 status={data.meta.rateLimitingEnabled ? "warning" : "default"}
-                text={data.meta.rateLimitingEnabled ? "是" : "否"}
+                text={data.meta.rateLimitingEnabled ? t("api_detail.yes") : t("api_detail.no")}
               />
             </Descriptions.Item>
             {data.meta.rateLimitingEnabled && (
               <>
-                <Descriptions.Item label="最大请求数">
+                <Descriptions.Item label={t("api_detail.max_request_count")}>
                   <Text>{data.meta.maxRequestCount || 'N/A'}</Text>
                 </Descriptions.Item>
-                <Descriptions.Item label="间隔时间(秒)" span={2}>
+                <Descriptions.Item label={t("api_detail.interval_in_seconds")} span={2}>
                   <Text>{data.meta.intervalInSeconds || 'N/A'}</Text>
                 </Descriptions.Item>
               </>
@@ -119,21 +122,21 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
           <>
             <Divider />
             <div>
-              <Title level={4} className="mb-3">执行配置</Title>
+              <Title level={4} className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.execution_config")}</Title>
 
               <div className="space-y-4">
                 {data.meta.execution.operationName && (
                   <div>
-                    <Text strong className="block mb-2">操作名称:</Text>
+                    <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.operation_name")}:</Text>
                     <Text code>{data.meta.execution.operationName}</Text>
                   </div>
                 )}
 
                 {data.meta.execution.query && (
                   <div>
-                    <Text strong className="block mb-2">查询语句:</Text>
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+                    <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.query_statement")}:</Text>
+                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
+                      <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                         {data.meta.execution.query}
                       </pre>
                     </div>
@@ -141,13 +144,13 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
                 )}
 
                 <div>
-                  <Text strong className="block mb-2">变量:</Text>
+                  <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.variables")}:</Text>
                   {renderVariables(data.meta.execution.variables || {})}
                 </div>
 
                 {data.meta.execution.headers && Object.keys(data.meta.execution.headers).length > 0 && (
                   <div>
-                    <Text strong className="block mb-2">请求头:</Text>
+                    <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.headers")}:</Text>
                     {renderVariables(data.meta.execution.headers)}
                   </div>
                 )}
@@ -161,14 +164,14 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
           <>
             <Divider />
             <div>
-              <Title level={4} className="mb-3">子项 ({data.children.length})</Title>
+              <Title level={4} className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
               <Space direction="vertical" className="w-full">
                 {data.children.map((child) => (
-                  <Card key={child.id} size="small" className="bg-gray-50">
+                  <Card key={child.id} size="small" className="bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center justify-between">
                       <div>
-                        <Text strong>{child.name}</Text>
-                        <div className="text-sm text-gray-500 mt-1">
+                        <Text strong className="text-gray-800 dark:text-gray-200">{child.name}</Text>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           <Tag color={getMethodColor(child.method || '')}>
                             {child.method}
                           </Tag>
@@ -177,7 +180,7 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
                       </div>
                       <Badge
                         status={child.enabled ? "success" : "error"}
-                        text={child.enabled ? "启用" : "禁用"}
+                        text={child.enabled ? t("api_detail.enable") : t("api_detail.disable")}
                       />
                     </div>
                   </Card>

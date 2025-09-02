@@ -63,7 +63,7 @@ const ERView: React.FC = () => {
       try {
         const modelList = await getModelList(selectedDatasource);
         // 过滤出实体类型的模型
-        const entityModels = modelList.filter(model => model.type === "ENTITY") as Entity[];
+        const entityModels = modelList.filter(model => model.type === "entity") as Entity[];
         setModels(entityModels);
       } catch (error) {
         console.error("获取模型列表失败:", error);
@@ -91,7 +91,7 @@ const ERView: React.FC = () => {
         setLoading(true);
         try {
           const modelList = await getModelList(selectedDatasource);
-          const entityModels = modelList.filter(model => model.type === "ENTITY") as Entity[];
+          const entityModels = modelList.filter(model => model.type === "entity") as Entity[];
           setModels(entityModels);
         } catch (error) {
           console.error("获取模型列表失败:", error);

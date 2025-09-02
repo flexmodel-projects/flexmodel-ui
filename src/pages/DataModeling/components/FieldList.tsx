@@ -56,7 +56,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   const handleEdit = (index: number) => {
     const field = fieldList[index];
     setSelectedFieldIndex(index);
-    
+
     // 根据字段类型正确设置tmpType
     let tmpTypeValue = field.tmpType;
     if (!tmpTypeValue) {
@@ -68,7 +68,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
         tmpTypeValue = field.type;
       }
     }
-    
+
     setCurrentVal({
       ...field,
       tmpType: tmpTypeValue
@@ -139,7 +139,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
         return <FileTextOutlined style={{ color: '#f5222d', marginRight: 4 }} />;
       case 'Relation':
         return <LinkOutlined style={{ color: '#2f54eb', marginRight: 4 }} />;
-      case 'Enum':
+      case 'EnumRef':
         return <TagsOutlined style={{ color: '#fa541c', marginRight: 4 }} />;
       default:
         return null;
@@ -187,7 +187,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
             </Tooltip>
           );
         }
-        if (type === "Enum") {
+        if (type === "EnumRef") {
           return (
             <Tooltip title={<span>{t("enums")}</span>}>
               {f.concreteType}

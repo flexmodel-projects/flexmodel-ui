@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { Button, Form, Input, Space, theme } from "antd";
-import { useTranslation } from "react-i18next";
-import type { Enum } from "@/types/data-modeling";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import React, {useEffect} from "react";
+import {Button, Form, Input, Space, theme} from "antd";
+import {useTranslation} from "react-i18next";
+import type {Enum} from "@/types/data-modeling";
+import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
 interface EnumViewProps {
   datasource: string;
@@ -27,7 +27,7 @@ const EnumView: React.FC<EnumViewProps> = ({ model, onConfirm }) => {
       await form.validateFields();
       onConfirm({
         name: form.getFieldValue("name"),
-        type: "ENUM",
+        type: "enum",
         elements: form.getFieldValue("elements"),
         comment: form.getFieldValue("comment"),
       });

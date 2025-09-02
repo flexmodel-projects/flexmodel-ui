@@ -212,7 +212,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
       const { type, name, ...rest } = item;
       if (!acc[type]) {
         switch (type) {
-          case "ENTITY":
+          case "entity":
             acc[type] = {
               type: "__entity_group",
               key: "__entity_group",
@@ -221,7 +221,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
               isLeaf: false,
             };
             break;
-          case "ENUM":
+          case "enum":
             acc[type] = {
               type: "__enum_group",
               key: "__enum_group",
@@ -255,8 +255,8 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
       return acc;
     }, {});
 
-    // 自定义排序：先ENTITY，再ENUM，最后NATIVE_QUERY
-    const order = ["ENTITY", "ENUM", "NATIVE_QUERY"];
+    // 自定义排序：先entity，再enum，最后NATIVE_QUERY
+    const order = ["entity", "enum", "NATIVE_QUERY"];
     return order.map((type) => groups[type]).filter(Boolean);
   };
 
@@ -271,7 +271,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         filename: item.name,
         path: ((group as any).key || group.name) + '/' + item.name,
         data: item.data,
-        modelType: item.data?.type, // 新增字段，标记模型类型ENTITY/ENUM/NATIVE_QUERY
+        modelType: item.data?.type, // 新增字段，标记模型类型entity/enum/NATIVE_QUERY
       })),
     }));
   }
@@ -408,8 +408,8 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
               }}
               renderIcon={(item: any, nodeType: any) => {
                 if (nodeType === 'file') {
-                  if (item.modelType === 'ENTITY') return <IconModel key={`model${item.path}`} />;
-                  if (item.modelType === 'ENUM') return <IconEnum key={`enum${item.path}`} />;
+                  if (item.modelType === 'entity') return <IconModel key={`model${item.path}`} />;
+                  if (item.modelType === 'enum') return <IconEnum key={`enum${item.path}`} />;
                   if (item.modelType === 'NATIVE_QUERY') return <IconNativeQueryModel key={`query${item.path}`} />;
                   return <IconFile key={`file${item.path}`} />;
                 }

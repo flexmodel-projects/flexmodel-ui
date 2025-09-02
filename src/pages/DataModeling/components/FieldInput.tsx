@@ -92,7 +92,7 @@ const FieldInput: React.FC<FieldInputProps> = ({
             style={inputStyle}
           />
         );
-      case "Enum": {
+      case "EnumRef": {
         const fromEnum = modelList.find((m) => m.name === field.from);
         return (
           <Select

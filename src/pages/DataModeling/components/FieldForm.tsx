@@ -204,7 +204,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
   const reqModelList = async () => {
     const data = await getModelList(datasource);
     console.log('ModelList data:', data);
-    console.log('Enum models:', data.filter(item => item.type === "ENUM"));
+    console.log('Enum models:', data.filter(item => item.type === "enum"));
     setModelList(data);
   };
 
@@ -221,8 +221,8 @@ const FieldForm: React.FC<FieldFormProps> = ({
       });
     } else if (value.startsWith("Enum")) {
       form.setFieldsValue({
-        ...FieldInitialValues["ENUM"],
-        type: "Enum",
+        ...FieldInitialValues["enum"],
+        type: "EnumRef",
         from: value.replace("Enum:", ""),
         defaultValue: { type: "fixed", value: null }, // 重置默认值
       })
@@ -282,7 +282,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         }
       }
     }
-    
+
     // 处理identity字段变化
     if ("identity" in changedValues && changedValues.identity === true) {
       // 当设置当前字段为identity时，需要通知父组件更新其他字段的identity状态
@@ -345,7 +345,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </Select.OptGroup>
             <Select.OptGroup label={t("select_group_relation")}>
               {modelList
-                .filter((item) => item.type === "ENTITY")
+                .filter((item) => item.type === "entity")
                 .map((item) => (
                   <Select.Option
                     key={item.name}
@@ -357,7 +357,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </Select.OptGroup>
             <Select.OptGroup label={t("select_group_enumeration")}>
               {(() => {
-                const enumModels = modelList.filter((item) => item.type === "ENUM");
+                const enumModels = modelList.filter((item) => item.type === "enum");
                 console.log('Enum models found:', enumModels.length, enumModels);
                 return enumModels.map((item) => (
                   <Select.Option key={item.name} value={`Enum:${item.name}`}>
@@ -450,22 +450,22 @@ const FieldForm: React.FC<FieldFormProps> = ({
           <Switch />
         </Form.Item>
         <Form.Item label={t("identity")} name="identity" valuePropName="checked">
-          <Switch 
+          <Switch
             disabled={(() => {
               // 检查当前字段是否已经是identity
               const currentFieldName = form.getFieldValue("name");
               const currentIdentity = form.getFieldValue("identity");
-              
+
               // 如果当前字段已经是identity，则不禁用
               if (currentIdentity) {
                 return false;
               }
-              
+
               // 检查其他字段是否已经是identity
-              const existingIdentityField = model?.fields?.find((field: any) => 
+              const existingIdentityField = model?.fields?.find((field: any) =>
                 field.identity === true && field.name !== currentFieldName
               );
-              
+
               return !!existingIdentityField;
             })()}
           />

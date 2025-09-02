@@ -96,7 +96,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         (document as any).msFullscreenElement
       );
       setFullscreen(isFull);
-      
+
       // 退出全屏时，延迟刷新组件
       if (!isFull) {
         setTimeout(() => {
@@ -116,7 +116,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    
+
     // 清理之前的图形实例
     if (graphRef.current) {
       try {
@@ -126,7 +126,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       }
       graphRef.current = null;
     }
-    
+
     // 注册React节点类型
     register({
       shape: 'er-react-node',
@@ -137,11 +137,11 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       width: 200,
       height: 60,
     });
-    
+
     // 确保容器尺寸正确
     const width = containerRef.current.clientWidth || 800;
     const height = containerRef.current.clientHeight || 600;
-    
+
     const graph = new Graph({
       container: containerRef.current,
       width: width,
@@ -160,10 +160,10 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     });
     graphRef.current = graph;
     // 生成节点
-    const nodes = (data || []).filter(e => e.type === 'ENTITY').map((entity, idx) => {
+    const nodes = (data || []).filter(e => e.type === 'entity').map((entity, idx) => {
       const x = 80 + (idx % 5) * 320; // 横向间距加大
       const y = 80 + Math.floor(idx / 5) * 300; // 纵向间距加大
-      
+
       return {
         id: String(entity.name),
         x: x,
@@ -177,20 +177,20 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     // 生成边
     const edges: any[] = [];
     (data || []).forEach((entity) => {
-      if (entity.type === 'ENTITY') {
+      if (entity.type === 'entity') {
         (entity.fields || []).forEach((field: Field) => {
           if (field.type === 'Relation' && field.from && field.from !== entity.name) {
             edges.push({
               source: String(field.from),
               target: String(entity.name),
               label: field.name,
-              attrs: { 
-                line: { 
-                  stroke: isDark ? '#36a3f7' : '#4096ff', 
-                  strokeWidth: 2, 
+              attrs: {
+                line: {
+                  stroke: isDark ? '#36a3f7' : '#4096ff',
+                  strokeWidth: 2,
                   strokeDasharray: '8,4',
-                  targetMarker: 'classic' 
-                } 
+                  targetMarker: 'classic'
+                }
               },
             });
           }
@@ -211,7 +211,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         }
       }
     }, 100);
-    
+
     // 清理函数
     return () => {
       if (graphRef.current) {
