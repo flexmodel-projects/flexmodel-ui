@@ -1,12 +1,14 @@
 import React from 'react';
 import {Form, Input} from 'antd';
 import {useTranslation} from 'react-i18next';
+import {useTheme} from '@/store/appStore';
 import Editor from '@monaco-editor/react';
 
 interface Props { readOnly?: boolean }
 
 const ScriptIdPForm: React.FC<Props> = ({ readOnly = false }) => {
   const { t } = useTranslation();
+  const { isDark } = useTheme();
   // Editor value is controlled via Form instance render-prop below
 
   return (
@@ -24,6 +26,7 @@ const ScriptIdPForm: React.FC<Props> = ({ readOnly = false }) => {
                 defaultLanguage="javascript"
                 value={getFieldValue('script') ?? ''}
                 onChange={(val) => { if (!readOnly) setFieldValue('script', val ?? ''); }}
+                theme={isDark ? 'vs-dark' : 'light'}
                 options={{ readOnly: readOnly, minimap: { enabled: false }, lineNumbers: 'on', scrollBeyondLastLine: false }}
               />
             </div>

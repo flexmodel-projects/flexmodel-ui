@@ -6,12 +6,12 @@ import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
 
 interface CreateIdPProps {
-  visible: boolean;
+  open: boolean;
   onClose: () => void;
   onConfirm: (provider: any) => void;
 }
 
-const CreateIdP: React.FC<CreateIdPProps> = ({ visible, onClose, onConfirm }) => {
+const CreateIdP: React.FC<CreateIdPProps> = ({ open, onClose, onConfirm }) => {
 
   const { t } = useTranslation();
 
@@ -75,7 +75,7 @@ export async function authenticate(request) {
     <Drawer
       title={t('idp_new_provider')}
       width="50%"
-      visible={visible}
+      open={open}
       onClose={onClose}
       footer={
         <>

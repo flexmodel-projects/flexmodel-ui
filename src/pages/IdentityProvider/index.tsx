@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, Form, message, Modal, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Empty, Form, Layout, message, Modal, Row, Space, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import type {IdentityProvider} from "@/types/identity-provider";
 import IdPExplorer from "@/pages/IdentityProvider/components/IdPExplorer";
@@ -70,31 +70,33 @@ const IdPManagement: React.FC = () => {
     }
   };
 
-  // 紧凑主题样式
-  const cardStyle = {
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column" as const,
-  };
-
-  // removed custom panel styles
+  const { Sider, Content } = Layout;
 
   return (
     <>
-      <Card style={cardStyle}>
-        <div style={{ display: "flex", flex: 1 }}>
-          <IdPExplorer
-            idPList={idPList}
-            activeIdP={activeIdP}
-            idPLoading={idPLoading}
-            setActiveIdP={setActiveIdP}
-            setDeleteVisible={setDeleteVisible}
-            setDrawerVisible={setDrawerVisible}
-            t={t}
-          />
-          <div style={{ width: "100%", padding: "8px 20px" }}>
-            {idPList.length > 0 && activeIdP ? (
+      <Card
+        style={{ width: "100%", height: "100%" }}
+        styles={{ body: { height: "100%" } }}
+      >
+        <Layout style={{ height: "100%", background: "transparent" }}>
+          <Sider width={320} style={{ background: "transparent", borderRight: "1px solid var(--ant-color-border)" }}>
+            <div style={{ height: "100%", overflow: "auto" }}>
+              <IdPExplorer
+                idPList={idPList}
+                activeIdP={activeIdP}
+                idPLoading={idPLoading}
+                setActiveIdP={setActiveIdP}
+                setDeleteVisible={setDeleteVisible}
+                setDrawerVisible={setDrawerVisible}
+                t={t}
+              />
+            </div>
+          </Sider>
+          <Content style={{ padding: "12px 20px", overflow: "auto" }}>
+            {idPList.length === 0 && (
+              <Empty description={t('no_data') || 'No Data'} />
+            )}
+            {idPList.length > 0 && activeIdP && (
               <Row>
                 <Col span={24}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -127,16 +129,12 @@ const IdPManagement: React.FC = () => {
                   </Card>
                 </Col>
               </Row>
-            ) : (
-              <Row justify="center">
-                <Empty />
-              </Row>
             )}
-          </div>
-        </div>
+          </Content>
+        </Layout>
       </Card>
       <CreateIdP
-        visible={drawerVisible}
+        open={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         onConfirm={(res) => {
           getIdentityProviders().then(() => setActiveIdP(res));
