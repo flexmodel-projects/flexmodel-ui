@@ -86,7 +86,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
             style={{padding: 20}}
             icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
             title="你好, 我是Flexmodel AI助手"
-            description="Flexmodel是开源、自主可控的API设计平台，让数据接口开发更简单、更高效"
+            description="Flexmodel是开源、自主可控的数据处理平台，让数据接口开发更简单、更高效"
           />
           <Prompts
             title="🤔 你想做什么？"
