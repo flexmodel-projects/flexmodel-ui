@@ -170,7 +170,8 @@ const FieldForm: React.FC<FieldFormProps> = ({
   useEffect(() => {
     if (visible) {
       reqModelList();
-      if (currentValue) {
+      if (currentValue && Object.keys(currentValue).length > 0) {
+        // 编辑现有字段时，设置表单值
         form.setFieldsValue(currentValue);
         // 根据字段类型正确设置tmpType
         let tmpTypeValue = currentValue.tmpType;
@@ -185,6 +186,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
         }
         setTmpType(tmpTypeValue);
       } else {
+        // 创建新字段时，清空表单并设置初始值
         form.setFieldsValue(initialValues);
         setTmpType("String");
       }
@@ -221,7 +223,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
       });
     } else if (value.startsWith("Enum")) {
       form.setFieldsValue({
-        ...FieldInitialValues["enum"],
+        ...FieldInitialValues["ENUM"],
         type: "EnumRef",
         from: value.replace("Enum:", ""),
         defaultValue: { type: "fixed", value: null }, // 重置默认值
@@ -238,9 +240,10 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   const handleConfirm = () => {
     form.validateFields().then((values) => {
+      if (values.defaultValue?.name === null && values.defaultValue?.value === null) {
+        values.defaultValue = null;
+      }
       onConfirm(values);
-      // 保存成功后清空表单
-      form.resetFields();
     });
   };
 
@@ -250,7 +253,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     onCancel();
   };
 
-  // 处理表单值变�?
+  // 处理表单值变化
   const handleFormChange = (
     changedValues: Partial<Field>,
     allValues: Field
@@ -271,7 +274,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
             defaultValue: _defaultValue,
           });
         } else {
-          // 切换到非multiple时，取数组的第一个值，并确保重置表单状�?
+          // 切换到非multiple时，取数组的第一个值，并确保重置表单状态
           const _defaultValue = Array.isArray(allValues.defaultValue)
             ? allValues.defaultValue[0]
             : allValues.defaultValue;

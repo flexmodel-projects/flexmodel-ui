@@ -22,13 +22,13 @@ import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
 
-const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
-  const {t} = useTranslation();
+const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
+  const { t } = useTranslation();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [records, setRecords] = useState<{list: MRecord[]; total: number}>({list: [], total: 0});
-  const [query, setQuery] = useState({current: 1, pageSize: 10});
+  const [records, setRecords] = useState<{ list: MRecord[]; total: number }>({ list: [], total: 0 });
+  const [query, setQuery] = useState({ current: 1, pageSize: 10 });
   const [form] = Form.useForm();
 
   const fieldMap = model?.fields?.reduce((acc: Record<string, Field>, field: Field) => {
@@ -45,7 +45,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     const data = await getRecordList(datasource, model.name, query);
-    setRecords(data as {list: MRecord[]; total: number});
+    setRecords(data as { list: MRecord[]; total: number });
     setLoading(false);
   }, [datasource, model.name, query]);
 
@@ -111,10 +111,10 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
   };
 
   const renderFieldInput = useCallback((field: Field) => {
-    const inputProps = {placeholder: field.comment};
+    const inputProps = { placeholder: field.comment };
     switch (field.type) {
       case 'ID':
-        return <Input disabled={editMode} size="small"/>;
+        return <Input disabled={editMode} size="small" />;
       case 'String':
         return <Input {...inputProps} size="small" />;
       case 'Text':
@@ -125,31 +125,33 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       case 'Long':
         return <Input type="number" {...inputProps} size="small" />;
       case 'Boolean':
-        return <Switch/>;
+        return <Switch />;
       case 'Date':
-        return <DatePicker picker="date" style={{width: '100%'}} {...inputProps} size="small" />;
+        return <DatePicker picker="date" style={{ width: '100%' }} {...inputProps} size="small" />;
       case 'DateTime':
-        return <DatePicker showTime style={{width: '100%'}}  {...inputProps} size="small" />;
+        return <DatePicker showTime style={{ width: '100%' }}  {...inputProps} size="small" />;
       default:
-        return <Input size="small"/>;
+        return <Input size="small" />;
     }
   }, [editMode]);
 
-  const columns: ColumnsType<MRecord> = model?.fields.map((field: Field) => ({
-    title: field.name,
-    dataIndex: field.name,
-    key: field.name,
-    render: (text: string) => {
-      const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-      return (field.type === 'TEXT' || field.type === 'JSON') ? (
-        <Tooltip title={fmtText}>
-          <span style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block'}}>
-            {fmtText}
-          </span>
-        </Tooltip>
-      ) : fmtText;
-    },
-  })) || [];
+  const columns: ColumnsType<MRecord> = model?.fields
+    .filter((field: Field) => field.type !== 'Relation')
+    .map((field: Field) => ({
+      title: field.name,
+      dataIndex: field.name,
+      key: field.name,
+      render: (text: string) => {
+        const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
+        return (field.type === 'TEXT' || field.type === 'JSON') ? (
+          <Tooltip title={fmtText}>
+            <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block' }}>
+              {fmtText}
+            </span>
+          </Tooltip>
+        ) : fmtText;
+      },
+    })) || [];
 
   columns.push({
     title: t('operations'),
@@ -158,9 +160,9 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
     width: 180,
     render: (_, record) => (
       <Space size="small">
-        <Button size="small" type="link" icon={<EditOutlined/>} onClick={() => handleEdit(record)}>{t('edit')}</Button>
+        <Button size="small" type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>{t('edit')}</Button>
         <Popconfirm title={t('table_selection_delete_text')} onConfirm={() => handleDelete(record)}>
-          <Button size="small" type="link" icon={<DeleteOutlined/>} danger>{t('delete')}</Button>
+          <Button size="small" type="link" icon={<DeleteOutlined />} danger>{t('delete')}</Button>
         </Popconfirm>
       </Space>
     ),
@@ -171,7 +173,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <Button
           type="primary"
-          icon={<PlusOutlined/>}
+          icon={<PlusOutlined />}
           onClick={() => {
             setDialogFormVisible(true);
             setEditMode(false);
@@ -185,7 +187,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
       <Table
         sticky
         loading={loading}
-        scroll={{y: 400}}
+        scroll={{ y: 400 }}
         columns={columns}
         dataSource={records.list}
         pagination={false}
@@ -197,8 +199,8 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
           current={query.current}
           pageSize={query.pageSize}
           total={records.total}
-          showTotal={(total, range) => t('pagination_total_text', {start: range[0], end: range[1], total: total})}
-          onChange={(page, pageSize) => setQuery({...query, current: page, pageSize})}
+          showTotal={(total, range) => t('pagination_total_text', { start: range[0], end: range[1], total: total })}
+          onChange={(page, pageSize) => setQuery({ ...query, current: page, pageSize })}
           size="small"
         />
       </div>
@@ -214,7 +216,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
           {model.fields.map((field: Field) => (
             editMode ? (
               <Form.Item key={field.name} name={field.name} label={field.name}
-                         rules={[{required: !field.nullable, message: `${t('input_valid_msg', {name: field.name})}`}]}>
+                rules={[{ required: !field.nullable, message: `${t('input_valid_msg', { name: field.name })}` }]}>
                 {renderFieldInput(field)}
               </Form.Item>
             ) : null
@@ -222,7 +224,7 @@ const RecordList: React.FC<RecordListProps> = ({datasource, model}) => {
         </Form>
       </Modal>
     </Card>
-  ) : <Empty/>;
+  ) : <Empty />;
 };
 
 export default RecordList;

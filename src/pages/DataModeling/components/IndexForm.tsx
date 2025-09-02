@@ -27,21 +27,28 @@ const IndexForm: React.FC<IndexFormProps> = ({
 
   useEffect(() => {
     if (visible) {
-      if (currentValue) {
+      if (currentValue && Object.keys(currentValue).length > 0) {
+        // 编辑现有索引时，设置表单值
         form.setFieldsValue(currentValue);
       } else {
-        form.setFieldsValue({
-          name: '',
-          fields: [],
-          unique: false,
-        });
+        // 添加新索引时，不清空表单，保持上次输入的内容
+        // 只有当表单完全为空时才设置初始值
+        const currentFormValues = form.getFieldsValue();
+        if (!currentFormValues.name && (!currentFormValues.fields || currentFormValues.fields.length === 0)) {
+          form.setFieldsValue({
+            name: '',
+            fields: [],
+            unique: false,
+          });
+        }
       }
     }
-  }, [visible, currentValue]);
+  }, [visible, currentValue, form]);
 
   const handleConfirm = () => {
     form.validateFields().then((values) => {
       onConfirm(values);
+      // 不清空表单，保持用户输入的内容
     });
   };
 

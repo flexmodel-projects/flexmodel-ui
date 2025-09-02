@@ -41,26 +41,12 @@ const EntityForm: React.FC<EntityFormProps> = ({
   });
 
   const handleAddField = () => {
-    setFieldForm({
-      name: '',
-      type: 'String',
-      concreteType: 'String',
-      unique: false,
-      nullable: true,
-      comment: '',
-      fieldName: '',
-      direction: 'ASC',
-      tmpType: 'String',
-    });
+    // 不清空表单，保持上次输入的内容
     setChangeFieldDialogVisible(true);
   };
 
   const handleAddIndex = () => {
-    setIndexForm({
-      name: '',
-      fields: [],
-      unique: false,
-    });
+    // 不清空表单，保持上次输入的内容
     setChangeIndexDialogVisible(true);
   };
 
