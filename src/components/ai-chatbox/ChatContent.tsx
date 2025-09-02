@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {RobotOutlined, UserOutlined} from '@ant-design/icons';
-import type {PromptProps, PromptsProps} from '@ant-design/x';
+import type {BubbleProps, PromptProps, PromptsProps} from '@ant-design/x';
 import {Bubble, Prompts, Sender, Welcome, XProvider} from '@ant-design/x';
-import {theme} from 'antd';
+import {theme, Typography} from 'antd';
 import {ChatContentProps} from './types';
+import markdownit from 'markdown-it';
 
 const items: PromptsProps['items'] = [
   {
@@ -47,6 +48,17 @@ const ChatContent: React.FC<ChatContentProps> = ({
     }
   }, [messages]);
 
+  const md = markdownit({ html: true, breaks: true });
+
+  const renderMarkdown: BubbleProps['messageRender'] = (content) => {
+    return (
+      <Typography>
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
+        <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
+      </Typography>
+    );
+  };
+
   return (
     <XProvider>
       <div style={{
@@ -86,6 +98,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
             <Bubble
               key={message.id}
               content={message.content}
+              messageRender={renderMarkdown}
               placement={message.role === 'user' ? 'end' : 'start'}
               avatar={
                 message.role === 'assistant' ?
