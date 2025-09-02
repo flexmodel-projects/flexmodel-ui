@@ -2,7 +2,6 @@ import React, {useEffect, useMemo} from "react";
 import "graphiql/style.css";
 import "@graphiql/react/style.css";
 import "@graphiql/plugin-explorer/style.css";
-import {Card} from "antd";
 import {executeQuery} from "@/services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
 import {GraphiQL} from "graphiql";
@@ -90,10 +89,10 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
 
   const { isDark } = useTheme();
-  
+
   // 使用useMemo缓存explorer插件，避免重复创建
   const explorer = useMemo(() => explorerPlugin(), []);
-  
+
   // 使用useMemo缓存GraphiQLInitializer的props，避免不必要的重新渲染
   const initializerProps = useMemo(() => ({
     query: data?.query || "",
@@ -104,15 +103,13 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   }), [data?.query, data?.operationName, data?.headers, data?.variables, onChange]);
 
   return (
-    <Card className="h-full">
-      <GraphiQL
-        forcedTheme={isDark ? "dark" : "light"}
-        fetcher={executeQuery as any}
-        plugins={[explorer]}
-      >
-        <GraphiQLInitializer {...initializerProps} />
-      </GraphiQL>
-    </Card>
+    <GraphiQL
+      forcedTheme={isDark ? "dark" : "light"}
+      fetcher={executeQuery as any}
+      plugins={[explorer]}
+    >
+      <GraphiQLInitializer {...initializerProps} />
+    </GraphiQL>
   );
 };
 
