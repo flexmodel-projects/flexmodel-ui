@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Button, Card, notification, Popconfirm, Space, Table, Tooltip,} from "antd";
+import {Button, Card, message, Popconfirm, Space, Table, Tooltip,} from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -98,10 +98,10 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
         setFieldList(updatedFields);
       }
       setChangeDialogVisible(false);
-      notification.success({ message: t("form_save_success") });
+      message.success(t("form_save_success"));
     } catch (error) {
       console.log(error);
-      notification.error({ message: t("form_save_failed") });
+      message.error(t("form_save_failed"));
     }
   };
 
@@ -110,10 +110,10 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
       const field = fieldList[index];
       await dropField(datasource, model?.name, field.name);
       setFieldList(fieldList.filter((_, i) => i !== index));
-      notification.success({ message: t("field_delete_success") });
+      message.success(t("field_delete_success"));
     } catch (error) {
       console.log(error);
-      notification.error({ message: t("field_delete_failed") });
+      message.error(t("field_delete_failed"));
     }
   };
 

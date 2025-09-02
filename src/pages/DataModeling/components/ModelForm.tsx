@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Drawer, Form, notification, Tabs} from 'antd';
+import {Button, Drawer, Form, message, Tabs} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {createModel} from '@/services/model.ts';
 import {Entity} from '@/types/data-modeling';
@@ -52,7 +52,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         indexes: entityModel.indexes,
       };
       await createModel(datasource, entityData);
-      notification.success({message: t('form_save_success')});
+      message.success(t('form_save_success'));
 
       // 清空表单内容
       entityForm.resetFields();
@@ -66,7 +66,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       onConfirm();
     } catch (error) {
       console.error(error);
-      notification.error({message: t('form_save_failed')});
+      message.error(t('form_save_failed'));
     }
   };
 
@@ -78,7 +78,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         type: 'enum',
       };
       await createModel(datasource, enumData);
-      notification.success({message: t('form_save_success')});
+      message.success(t('form_save_success'));
 
       // 清空表单内容
       enumForm.resetFields();
@@ -86,7 +86,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       onConfirm();
     } catch (error) {
       console.error(error);
-      notification.error({message: t('form_save_failed')});
+      message.error(t('form_save_failed'));
     }
   };
 
@@ -98,7 +98,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         type: 'native_query',
       };
       await createModel(datasource, queryData);
-      notification.success({message: t('form_save_success')});
+      message.success(t('form_save_success'));
 
       // 清空表单内容
       nativeQueryForm.resetFields();
@@ -106,7 +106,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       onConfirm();
     } catch (error) {
       console.error(error);
-      notification.error({message: t('form_save_failed')});
+      message.error(t('form_save_failed'));
     }
   };
 

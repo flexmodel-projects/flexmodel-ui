@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Card, notification, Popconfirm, Space, Table, Tag} from 'antd';
+import {Button, Card, message, Popconfirm, Space, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '@/services/model.ts';
 import IndexForm from "./IndexForm";
@@ -67,10 +67,10 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         setIndexList(updatedIndexes);
       }
       setChangeDialogVisible(false);
-      notification.success({message: 'Index saved successfully'});
+      message.success('Index saved successfully');
     } catch (error) {
       console.error(error);
-      notification.error({message: 'Failed to save index'});
+      message.error('Failed to save index');
     }
   };
 
@@ -79,10 +79,10 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       const index = indexList[key];
       await dropIndex(datasource, model?.name as string, index.name);
       setIndexList(indexList.filter((_, i) => i !== key));
-      notification.success({message: 'Index deleted successfully'});
+      message.success('Index deleted successfully');
     } catch (error) {
       console.error(error);
-      notification.error({message: 'Failed to delete index'});
+      message.error('Failed to delete index');
     }
   };
 

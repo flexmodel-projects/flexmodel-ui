@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Modal, notification, Space, Table, theme} from "antd";
+import {Button, Form, Input, message, Modal, Space, Table, theme} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useTranslation} from "react-i18next";
 import {executeNativeQuery} from "@/services/datasource.ts";
@@ -85,7 +85,7 @@ const NativeQueryView: React.FC<NativeQueryViewProps> = ({ datasource, model, on
       );
     } catch (error) {
       console.error("Query execution failed", error);
-      notification.error({ message: t("query_execution_failed") });
+      message.error(t("query_execution_failed"));
     }
   };
 

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Card, notification, Row, Splitter, theme} from "antd";
+import {Card, message, Row, Splitter, theme} from "antd";
 import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
 import EntityView from "@/pages/DataModeling/components/EntityView";
 import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView";
@@ -37,11 +37,11 @@ const ModelingPage: React.FC = () => {
             onConfirm={async (anEnum: Enum) => {
               try {
                 await modifyModel(activeDs, anEnum);
-                notification.success({ message: t("form_save_success") });
+                message.success(t("form_save_success"));
                 setSelectModelVersion(selectModelVersion + 1);
               } catch (error) {
                 console.error(error);
-                notification.error({ message: t("form_save_failed") });
+                message.error(t("form_save_failed"));
               }
             }}
           />
@@ -54,11 +54,11 @@ const ModelingPage: React.FC = () => {
             onConfirm={async (data) => {
               try {
                 await modifyModel(activeDs, data);
-                notification.success({ message: t("form_save_success") });
+                message.success(t("form_save_success"));
                 setSelectModelVersion(selectModelVersion + 1);
               } catch (error) {
                 console.error(error);
-                notification.error({ message: t("form_save_failed") });
+                message.error(t("form_save_failed"));
               }
             }}
           />
