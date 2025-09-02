@@ -1,27 +1,49 @@
 import React, {useState} from 'react';
 import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd';
 import {createIdentityProvider} from "@/services/identity-provider.ts";
-import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo";
 import {useTranslation} from "react-i18next";
+import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
+import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
 
-interface CreateProviderProps {
+interface CreateIdPProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: (provider: any) => void;
 }
 
-const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConfirm}) => {
+const CreateIdP: React.FC<CreateIdPProps> = ({ visible, onClose, onConfirm }) => {
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [form] = Form.useForm();
+  const SCRIPT_TEMPLATE = `/**
+ * Identity Provider Script Template
+ * Implement authenticate(request) to return an object:
+ *   { success: boolean, user?: { id: string; name?: string; roles?: string[] }, message?: string }
+ * You can read headers via request.headers and query via request.query
+ */
+export async function authenticate(request) {
+  // Example: simple token check from header
+  const auth = request.headers['authorization'] || request.headers['Authorization'];
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return { success: false, message: 'Missing bearer token' };
+  }
+  const token = auth.substring('Bearer '.length);
+  // TODO: verify token, fetch user, etc.
+  if (token === 'demo-token') {
+    return { success: true, user: { id: 'demo', name: 'Demo User', roles: ['user'] } };
+  }
+  return { success: false, message: 'Invalid token' };
+}
+`;
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<any>({
     name: '',
     type: 'oidc',
     issuer: '',
     clientId: '',
-    clientSecret: ''
+    clientSecret: '',
+    script: ''
   });
 
   const next = () => setCurrentStep((prev) => Math.min(prev + 1, 2));
@@ -58,7 +80,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
       footer={
         <>
           {currentStep !== 0 && currentStep !== 2 && (
-            <Button onClick={prev} style={{marginRight: 8}}>
+            <Button onClick={prev} style={{ marginRight: 8 }}>
               {t('idp_btn_go_back')}
             </Button>
           )}
@@ -76,26 +98,36 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
       }
     >
       <Steps current={currentStep} size="small">
-        <Steps.Step title={t('idp_step_select_provider')}/>
-        <Steps.Step title={t('idp_step_create_provider')}/>
-        <Steps.Step title={t('idp_step_success')}/>
+        <Steps.Step title={t('idp_step_select_provider')} />
+        <Steps.Step title={t('idp_step_create_provider')} />
+        <Steps.Step title={t('idp_step_success')} />
       </Steps>
 
       <Form
         form={form}
         layout="vertical"
         initialValues={formData}
-        onValuesChange={(changedValues) => setFormData((prev: any) => ({...prev, ...changedValues}))}
-        style={{marginTop: 24}}
+        onValuesChange={(changedValues) => {
+          setFormData((prev: any) => {
+            const next = { ...prev, ...changedValues };
+            if (changedValues.type === 'script' && !next.script) {
+              next.script = SCRIPT_TEMPLATE;
+              form.setFieldsValue({ script: SCRIPT_TEMPLATE });
+            }
+            return next;
+          });
+        }}
+        style={{ marginTop: 24 }}
       >
         <Form.Item hidden name="type" initialValue="oidc">
-          <Input/>
+          <Input />
         </Form.Item>
         {currentStep === 0 && (
           <Form.Item name="type" initialValue="oidc" label={t('idp_create_tips')}>
             <Radio.Group name="type">
               <div className={segmentTitle}>{t('idp_user_defined')}</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
+              <Radio value="script">{t('idp_script')} (script)</Radio>
               <div className={segmentTitle}>{t('idp_social')}</div>
               <Radio value="github" disabled>
                 Github (github)
@@ -107,56 +139,32 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
           </Form.Item>
         )}
 
-        {currentStep === 1 && (
-          <>
-            <Form.Item
-              name="name"
-              label={t('idp_provider_name')}
-              rules={[{required: true}]}
-            >
-              <Input/>
-            </Form.Item>
-
-            <Form.Item
-              label={t('idp_issuer')}
-              name="issuer"
-              rules={[{required: true}]}
-            >
-              <Input placeholder="e.g. http://localhost:8080/realms/master"/>
-            </Form.Item>
-
-            {/* Discovery endpoint */}
-            {formData.issuer && <Form.Item label="Discovery endpoint">
-              {formData.issuer}/.well-known/openid-configuration
-            </Form.Item>}
-
-
-            {/* Client ID */}
-            <Form.Item
-              label={t('idp_client_id')}
-              name="clientId"
-              rules={[{required: true}]}
-            >
-              <Input/>
-            </Form.Item>
-
-            {/* Client Secret */}
-            <Form.Item
-              label={t('idp_client_secret')}
-              name="clientSecret"
-              rules={[{required: true}]}
-            >
-              <Input/>
-            </Form.Item>
-          </>
+        {currentStep === 1 && formData.type === 'oidc' && (
+          <OIDCIdPForm />
+        )}
+        {currentStep === 1 && formData.type === 'script' && (
+          <ScriptIdPForm />
         )}
 
         {currentStep === 2 && (
           <Row justify="center">
-            <Col span={24} style={{textAlign: 'center'}}>
+            <Col span={24} style={{ textAlign: 'center' }}>
               <p>Created successfully</p>
-              <IdPInfo data={formData}/>
-              <Button type="primary" style={{marginTop: 12}} onClick={() => {
+              <Form
+                layout="horizontal"
+                labelCol={{ style: { width: 160 } }}
+                colon={false}
+                variant="borderless"
+                initialValues={formData}
+              >
+                {formData.type === 'oidc' && (
+                  <OIDCIdPForm readOnly />
+                )}
+                {formData.type === 'script' && (
+                  <ScriptIdPForm readOnly />
+                )}
+              </Form>
+              <Button type="primary" style={{ marginTop: 12 }} onClick={() => {
                 onClose();
                 setCurrentStep(0);
               }}>
@@ -170,4 +178,4 @@ const CreateProvider: React.FC<CreateProviderProps> = ({visible, onClose, onConf
   );
 };
 
-export default CreateProvider;
+export default CreateIdP;

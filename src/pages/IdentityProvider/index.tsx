@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Empty, message, Modal, Row} from "antd";
+import {Button, Card, Col, Empty, Form, message, Modal, Row, Space, Typography} from "antd";
 import {useTranslation} from "react-i18next";
-import styles from "@/pages/IdentityProvider/index.module.scss";
 import type {IdentityProvider} from "@/types/identity-provider";
-import IdPMenu from "@/pages/IdentityProvider/components/IdPMenu";
+import IdPExplorer from "@/pages/IdentityProvider/components/IdPExplorer";
 import {
   deleteIdentityProvider,
   getIdentityProviders as getIdentityProvidersApi,
   updateIdentityProvider,
 } from "@/services/identity-provider.ts";
-import IdPInfo from "@/pages/IdentityProvider/components/IdPInfo";
-import EditProvider from "@/pages/IdentityProvider/components/EditProvider";
-import CreateProvider from "@/pages/IdentityProvider/components/CreateProvider";
+import IdPInfo from "@/pages/IdentityProvider/components/IdPView";
+import CreateIdP from "@/pages/IdentityProvider/components/CreateIdP";
+import {buildUpdatePayload, mergeIdentityProvider, normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
+import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
+import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -19,9 +20,9 @@ const IdPManagement: React.FC = () => {
   const [activeIdP, setActiveIdP] = useState<IdentityProvider | null>(null);
   const [idPLoading, setIdPLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [editVisible, setEditVisible] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
-  const [editForm, setEditForm] = useState<IdentityProvider | null>(null);
+  const [form] = Form.useForm();
 
   const getIdentityProviders = async () => {
     try {
@@ -53,18 +54,16 @@ const IdPManagement: React.FC = () => {
     }
   };
 
-  const handleEditProvider = async (formData: IdentityProvider) => {
+  const handleEditProvider = async (formData: any) => {
     try {
-      const reqData: IdentityProvider = { ...formData, provider: formData };
-      await updateIdentityProvider(formData.name, {
-        ...formData,
-        provider: formData,
-        createdAt: "",
-        updatedAt: "",
-      });
-      setEditVisible(false);
+      const payload = buildUpdatePayload(formData);
+      await updateIdentityProvider(formData.name, payload);
+      setIsEditing(false);
       await getIdentityProviders();
-      setActiveIdP(reqData);
+      if (activeIdP) {
+        const merged = mergeIdentityProvider(activeIdP, formData);
+        setActiveIdP(merged);
+      }
       message.success(t("form_save_success"));
     } catch {
       message.error(t("form_save_failed"));
@@ -74,21 +73,18 @@ const IdPManagement: React.FC = () => {
   // 紧凑主题样式
   const cardStyle = {
     height: "100%",
+    width: "100%",
     display: "flex",
     flexDirection: "column" as const,
   };
 
-  const panelContainerStyle = {};
+  // removed custom panel styles
 
   return (
     <>
-      <Card
-        className={`${styles.root} h-full w-full`}
-        style={cardStyle}
-        styles={{ body: { height: "100%" } }}
-      >
-        <div className={styles.container}>
-          <IdPMenu
+      <Card style={cardStyle}>
+        <div style={{ display: "flex", flex: 1 }}>
+          <IdPExplorer
             idPList={idPList}
             activeIdP={activeIdP}
             idPLoading={idPLoading}
@@ -97,35 +93,37 @@ const IdPManagement: React.FC = () => {
             setDrawerVisible={setDrawerVisible}
             t={t}
           />
-          <div
-            className={`${styles.content} ${styles.panelContainer}`}
-            style={panelContainerStyle}
-          >
+          <div style={{ width: "100%", padding: "8px 20px" }}>
             {idPList.length > 0 && activeIdP ? (
               <Row>
                 <Col span={24}>
-                  <div className={styles.header}>
-                    <div className={styles.title}>{activeIdP.name}</div>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        console.log("activeIdP", activeIdP);
-                        setEditForm(activeIdP);
-                        setEditVisible(true);
-                      }}
-                    >
-                      {t("edit")}
-                    </Button>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                    <Typography.Title level={5} style={{ margin: 0 }}>
+                      {activeIdP.name}
+                    </Typography.Title>
+                    {isEditing ? (
+                      <Space>
+                        <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
+                        <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditProvider(values); }}>{t("save")}</Button>
+                      </Space>
+                    ) : (
+                      <Button type="primary" onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeIdentityProvider(activeIdP)); }}>{t("edit")}</Button>
+                    )}
                   </div>
                 </Col>
                 <Col span={24}>
-                  <Card bordered={false} className={styles.infoCard}>
-                    <IdPInfo
-                      data={{
-                        name: activeIdP.name,
-                        provider: activeIdP.provider,
-                      }}
-                    />
+                  <Card bordered>
+                    {isEditing ? (
+                      <Form form={form} layout="vertical">
+                        {(form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'script' ? (
+                          <ScriptIdPForm />
+                        ) : (
+                          <OIDCIdPForm />
+                        )}
+                      </Form>
+                    ) : (
+                      <IdPInfo idp={activeIdP} />
+                    )}
                   </Card>
                 </Col>
               </Row>
@@ -137,19 +135,14 @@ const IdPManagement: React.FC = () => {
           </div>
         </div>
       </Card>
-      <CreateProvider
+      <CreateIdP
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
         onConfirm={(res) => {
           getIdentityProviders().then(() => setActiveIdP(res));
         }}
       />
-      <EditProvider
-        visible={editVisible}
-        data={{ ...editForm, ...editForm?.provider }}
-        onCancel={() => setEditVisible(false)}
-        onConfirm={handleEditProvider}
-      />
+      {/* inline editing; modal removed */}
       <Modal
         open={deleteVisible}
         title={`Delete '${activeIdP?.name}'?`}

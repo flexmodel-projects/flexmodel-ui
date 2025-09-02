@@ -6,11 +6,11 @@ import Tree from "@/components/explore/explore/Tree.jsx";
 // 导入Tree样式
 import "@/components/explore/styles/explore.scss";
 import type {IdentityProvider} from "@/types/identity-provider";
-import styles from "@/pages/IdentityProvider/index.module.scss";
+// removed custom scss usage
 
 const { Title } = Typography;
 
-interface IdPMenuProps {
+interface IdPExplorerProps {
   idPList: IdentityProvider[];
   activeIdP: IdentityProvider | null;
   idPLoading: boolean;
@@ -20,7 +20,7 @@ interface IdPMenuProps {
   t: (key: string) => string;
 }
 
-const IdPMenu: React.FC<IdPMenuProps> = ({
+const IdPExplorer: React.FC<IdPExplorerProps> = ({
   idPList,
   activeIdP,
   idPLoading,
@@ -53,13 +53,13 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
       switch (providerType?.toLowerCase()) {
         case 'oauth2':
         case 'oidc':
-          return <SafetyCertificateOutlined style={{ color: '#1890ff' }} />;
+          return <SafetyCertificateOutlined />;
         case 'saml':
-          return <KeyOutlined style={{ color: '#52c41a' }} />;
+          return <KeyOutlined />;
         case 'system':
-          return <UserOutlined style={{ color: '#faad14' }} />;
+          return <UserOutlined />;
         default:
-          return <UserOutlined style={{ color: '#666' }} />;
+          return <UserOutlined />;
       }
     }
     return <div />;
@@ -87,11 +87,7 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
           trigger={["hover"]}
           placement="bottomRight"
         >
-          <MoreOutlined
-            className="cursor-pointer opacity-100 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-            style={{ marginLeft: '8px' }}
-          />
+          <MoreOutlined onClick={(e) => e.stopPropagation()} style={{ marginLeft: '8px', cursor: 'pointer' }} />
         </Dropdown>
       );
     }
@@ -99,7 +95,7 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
   };
 
   return (
-    <div className={`${styles["idp-menu-wrapper"]}`} style={{ minWidth: 200 }}>
+    <div style={{ minWidth: 200 }}>
       <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
         {t('idp_management')}
       </Title>
@@ -127,4 +123,4 @@ const IdPMenu: React.FC<IdPMenuProps> = ({
   );
 };
 
-export default IdPMenu;
+export default IdPExplorer;

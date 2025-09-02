@@ -1,0 +1,42 @@
+import React from 'react';
+import {useTranslation} from "react-i18next";
+import type {IdentityProvider} from "@/types/identity-provider";
+import {normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
+import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
+import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
+import {Form} from 'antd';
+
+interface IdpViewProps { idp: IdentityProvider }
+
+const IdpView: React.FC<IdpViewProps> = ({ idp }) => {
+
+  useTranslation();
+
+  const flat = normalizeIdentityProvider(idp);
+
+  return (
+    <>
+      {flat.type === 'script' ? (
+        <Form
+          layout="vertical"
+          variant="borderless"
+          initialValues={flat}
+          key={`${flat.name}-script`}
+        >
+          <ScriptIdPForm readOnly />
+        </Form>
+      ) : (
+        <Form
+          layout="vertical"
+          variant="borderless"
+          initialValues={flat}
+          key={`${flat.name}-oidc`}
+        >
+          <OIDCIdPForm readOnly />
+        </Form>
+      )}
+    </>
+  );
+};
+
+export default IdpView;

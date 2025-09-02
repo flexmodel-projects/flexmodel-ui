@@ -192,6 +192,8 @@
   "idp_discovery_endpoint": "Discovery endpoint",
   "idp_client_id": "Client ID",
   "idp_client_secret": "Client Secret",
+  "idp_script": "Script",
+  "idp_script_tooltip": "Write JavaScript for authentication, export authenticate(request)",
   "idp_step_select_provider": "Select provider",
   "idp_step_create_provider": "Create provider",
   "idp_step_success": "Success",
