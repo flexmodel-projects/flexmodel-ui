@@ -1,68 +1,78 @@
-import Highlight from 'prism-react-renderer'
-import Prism from 'prism-react-renderer/prism'
+import Editor from '@monaco-editor/react'
 import PropTypes from 'prop-types'
 import React, {useEffect} from 'react'
-import get from 'lodash.get'
-
-// const ReactMarkdown = require('react-markdown')
-
-// if (typeof global !== 'undefined') {
-//   global.Prism = Prism
-//   require('prismjs/components/prism-java') // eslint-disable-line
-//   require('prismjs/components/prism-kotlin') // eslint-disable-line
-//   require('prismjs/components/prism-properties') // eslint-disable-line
-//   require('prismjs/components/prism-groovy') // eslint-disable-line
-//   require('prismjs/components/prism-git') // eslint-disable-line
-// }
+import get from 'lodash.get';
+import markdownit from 'markdown-it';
+import {Typography} from 'antd';
 
 function Code({ item }) {
   const code = get(item, 'content', '').replace(/\t/g, '  ')
   const language = get(item, 'language')
+
   if (language === 'markdown' && !get(item, 'force', false)) {
+    const md = markdownit({ html: true, breaks: true });
     return (
       <div className='markdown'>
-        {code}
+        <Typography>
+          {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
+          <div dangerouslySetInnerHTML={{ __html: md.render(code) }} />
+          </Typography>
       </div>
     )
   }
+
   useEffect(() => {
     console.log('item=======', item)
   }, [item]);
+
+  // 将语言映射到 Monaco Editor 支持的语言
+  const getMonacoLanguage = (lang) => {
+    const languageMap = {
+      'js': 'javascript',
+      'jsx': 'javascript',
+      'ts': 'typescript',
+      'tsx': 'typescript',
+      'py': 'python',
+      'java': 'java',
+      'kt': 'kotlin',
+      'groovy': 'groovy',
+      'properties': 'properties',
+      'git': 'git',
+      'md': 'markdown',
+      'json': 'json',
+      'xml': 'xml',
+      'html': 'html',
+      'css': 'css',
+      'scss': 'scss',
+      'sql': 'sql',
+      'yaml': 'yaml',
+      'yml': 'yaml'
+    }
+    return languageMap[lang] || lang
+  }
+
+  const monacoLanguage = getMonacoLanguage(language)
+
   return (
-    <Highlight Prism={Prism} code={code} language={language} theme={null}>
-      {({ className, style, tokens, getLineProps, getTokenProps }) => {
-        let groupLine = tokens.length > 9 ? '2' : '1'
-        groupLine = tokens.length > 99 ? '3' : groupLine
-        groupLine = tokens.length > 999 ? '4' : groupLine
-        return (
-          <pre className={`${className} line-${groupLine}`} style={style}>
-            {tokens.map((line, i) => {
-              const props = getLineProps({ line, key: i })
-              return (
-                <div
-                  key={get(props, 'key')}
-                  className={get(props, 'className')}
-                >
-                  <span data-value={i + 1} className='explorer-number' />
-                  {line.map((token, key) => {
-                    const props2 = getTokenProps({ token, key })
-                    return (
-                      <span
-                        className={get(props2, 'className')}
-                        style={get(props2, 'style')}
-                        key={get(props2, 'key')}
-                      >
-                        {get(props2, 'children')}
-                      </span>
-                    )
-                  })}
-                </div>
-              )
-            })}
-          </pre>
-        )
-      }}
-    </Highlight>
+    <div style={{ height: '400px', border: '1px solid #d9d9d9', borderRadius: '6px' }}>
+      <Editor
+        height="100%"
+        language={monacoLanguage}
+        value={code}
+        theme="vs-dark"
+        options={{
+          readOnly: true,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          fontSize: 14,
+          lineNumbers: 'on',
+          wordWrap: 'on',
+          automaticLayout: true,
+          folding: true,
+          foldingStrategy: 'indentation'
+        }}
+      />
+    </div>
   )
 }
 
