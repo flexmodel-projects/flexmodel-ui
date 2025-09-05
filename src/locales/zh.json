@@ -137,7 +137,6 @@
   "identity_field": "主键字段",
   "index": "索引",
   "record": "记录",
-  "name": "名称",
   "type": "类型",
   "unique": "唯一值",
   "nullable": "可为空",
@@ -269,8 +268,6 @@
   "authorization": "鉴权",
   "login": "登录",
   "logout": "退出登录",
-  "username": "用户名",
-  "password": "密码",
   "login_title": "欢迎登录",
   "login_subtitle": "让数据访问更简单、更高效、更灵活！",
   "login_username_placeholder": "请输入用户名",
@@ -321,5 +318,13 @@
     "children": "子项",
     "enable": "启用",
     "disable": "禁用"
+  },
+  "code_view": {
+    "config_template_variables": "配置模板变量",
+    "config_template_variables_help": "选择不同模板时，变量会自动更新。您可以修改这些变量值。",
+    "variables_placeholder": "请输入JSON格式的变量配置...",
+    "select_code_template": "选择代码模板",
+    "regenerate": "重新生成",
+    "download_source": "下载源码"
   }
 }

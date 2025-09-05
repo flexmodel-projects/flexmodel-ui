@@ -1,7 +1,7 @@
 import {api, BASE_URI} from '@/utils/request'
 
-export function getTemplateNames(): Promise<string[]> {
-  return api.get('/codegen/templates/names');
+export function getTemplates(): Promise<{ name: string, variables: object }[]> {
+  return api.get('/codegen/templates');
 }
 
 export async function getFileAsBlob(url: string) {

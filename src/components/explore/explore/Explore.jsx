@@ -145,7 +145,7 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
                       </div>
 
                     </div>
-                    <div className='explorer-content' style={{maxHeight: '400px', overflowY: "auto"}}>
+                    <div className='explorer-content' style={{ overflowY: "auto"}}>
                       <Code item={selected} onChange={() => {
                       }}/>
                     </div>

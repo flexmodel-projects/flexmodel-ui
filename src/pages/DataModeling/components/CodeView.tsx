@@ -7,7 +7,7 @@ import React, {useEffect, useRef, useState} from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import Explore from '@/components/explore/explore/Explore.jsx';
-import {getFileAsBlob, getTemplateNames} from '@/services/codegen.js';
+import {getFileAsBlob, getTemplates} from '@/services/codegen.js';
 
 import type {Model} from '@/types/data-modeling';
 
@@ -16,7 +16,7 @@ interface CodeViewProps {
   model: Partial<Model>;
 }
 
-const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
+const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExpand, setIsExpand] = useState<boolean>(true);
@@ -25,6 +25,7 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
   const [options, setOptions] = useState<{ label: string; value: string }[]>();
   const [templateName, setTemplateName] = useState<string>('');
   const [variables, setVariables] = useState<string>('');
+  const [templatesData, setTemplatesData] = useState<{ name: string, variables: object }[]>([]);
 
   const downloadZip = () => {
     exploreRef?.current?.downloadZip();
@@ -44,6 +45,21 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
     });
   };
 
+  /**
+   * 处理模板选择变化
+   *
+   * @param val
+   */
+  const handleTemplateChange = (val: string) => {
+    setTemplateName(val);
+    // 根据选择的模板更新变量
+    const selectedTemplate = templatesData.find(template => template.name === val);
+    if (selectedTemplate) {
+      setVariables(JSON.stringify(selectedTemplate.variables, null, 2));
+    }
+    handleExplore(val);
+  };
+
   useEffect(() => {
     if (templateName) {
       getFileAsBlob(
@@ -53,64 +69,72 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
         setIsLoading(false);
       });
     }
-  }, [datasource, templateName]);
+  }, [datasource, templateName, variables]);
 
   useEffect(() => {
-    getTemplateNames().then((res: string[]) => {
+    getTemplates().then((res: { name: string, variables: object }[]) => {
+      setTemplatesData(res);
       setOptions(
-        res.map((item: string) => ({
-          label: item,
-          value: item
+        res.map((item: any) => ({
+          label: item?.name,
+          value: item?.name
         }))
       );
-      setTemplateName(res[0]);
-      setVariables('{"foo":"bar"}');
+      if (res.length > 0) {
+        setTemplateName(res[0].name);
+        setVariables(JSON.stringify(res[0]?.variables, null, 2));
+      }
     });
   }, []);
 
   return (
-    <Card size="small" bodyStyle={{ padding: 12 }}>
-      <Space direction="vertical" style={{ width: '100%' }} size="small">
+    <Card size="small" bodyStyle={{padding: 12, overflowY: 'auto'}}>
+      <Space direction="vertical" style={{width: '100%'}} size="small">
         {isExpand && (
           <Form.Item
-            label="配置模板变量"
-            style={{ marginBottom: 8 }}
+            label={t('code_view.config_template_variables')}
+            style={{marginBottom: 8}}
+            help={t('code_view.config_template_variables_help')}
           >
-            <TextArea value={variables} />
+            <TextArea 
+              value={variables} 
+              onChange={e => setVariables(e.target.value)}
+              rows={3}
+              placeholder={t('code_view.variables_placeholder')}
+              style={{fontFamily: 'monospace'}}
+            />
           </Form.Item>
         )}
         <Row gutter={8}>
           <Col span={14}>
             <Form.Item
-              label="选择代码模板"
-              style={{ marginBottom: 8 }}
+              label={t('code_view.select_code_template')}
+              style={{marginBottom: 8}}
             >
               <Select
                 options={options}
                 value={templateName}
-                onSelect={val => {
-                  handleExplore(val);
-                }}
+                onSelect={handleTemplateChange}
               />
             </Form.Item>
           </Col>
           <Col span={10}>
-            <Form.Item style={{ marginBottom: 8 }}>
+            <Form.Item style={{marginBottom: 8}}>
               <Space>
                 <Button
-                  icon={<ReloadOutlined />}
+                  icon={<ReloadOutlined/>}
                   type="primary"
                   size="small"
                   onClick={() => handleExplore(templateName)}
                 >
-                  重新生成
+                  {t('code_view.regenerate')}
                 </Button>
                 <Button
-                  icon={<DownloadOutlined />}
+                  icon={<DownloadOutlined/>}
                   size="small"
                   onClick={() => downloadZip()}
                 >
-                  下载源码
+                  {t('code_view.download_source')}
                 </Button>
                 <Button
                   type="link"
@@ -121,11 +145,11 @@ const CodeView: React.FC<CodeViewProps> = ({ datasource }) => {
                 >
                   {isExpand ? (
                     <>
-                      {t('collapse')} <UpOutlined />
+                      {t('collapse')} <UpOutlined/>
                     </>
                   ) : (
                     <>
-                      {t('expand')} <DownOutlined />
+                      {t('expand')} <DownOutlined/>
                     </>
                   )}
                 </Button>

@@ -138,7 +138,6 @@
   "identity_field": "Identity Field",
   "index": "Index",
   "record": "Record",
-  "name": "Name",
   "type": "Type",
   "unique": "Unique",
   "nullable": "Nullable",
@@ -269,8 +268,6 @@
   "authorization": "Authorization",
   "login": "Login",
   "logout": "Logout",
-  "username": "Username",
-  "password": "Password",
   "login_title": "Welcome Back",
   "login_subtitle": "Make data access easier, more efficient, and more flexible!",
   "login_username_placeholder": "Enter your username",
@@ -321,5 +318,13 @@
     "children": "Children",
     "enable": "Enable",
     "disable": "Disable"
+  },
+  "code_view": {
+    "config_template_variables": "Configure Template Variables",
+    "config_template_variables_help": "Variables will be automatically updated when selecting different templates. You can modify these variable values.",
+    "variables_placeholder": "Please enter JSON format variable configuration...",
+    "select_code_template": "Select Code Template",
+    "regenerate": "Regenerate",
+    "download_source": "Download Source"
   }
 }

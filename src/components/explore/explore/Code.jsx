@@ -12,7 +12,7 @@ function Code({ item }) {
   if (language === 'markdown' && !get(item, 'force', false)) {
     const md = markdownit({ html: true, breaks: true });
     return (
-      <div className='markdown'>
+      <div className='markdown' style={{ height: '400px', overflowY: 'auto', padding: '16px', border: '1px solid #d9d9d9', borderRadius: '6px' }}>
         <Typography>
           {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
           <div dangerouslySetInnerHTML={{ __html: md.render(code) }} />
@@ -54,7 +54,7 @@ function Code({ item }) {
   const monacoLanguage = getMonacoLanguage(language)
 
   return (
-    <div style={{ height: '400px', border: '1px solid #d9d9d9', borderRadius: '6px' }}>
+    <div style={{ height: '400px', borderRadius: '6px' }}>
       <Editor
         height="100%"
         language={monacoLanguage}

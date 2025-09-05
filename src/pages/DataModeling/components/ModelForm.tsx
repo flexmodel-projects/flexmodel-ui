@@ -163,7 +163,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       onClose={onCancel}
       width={800}
       footer={
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'left' }}>
           <Button onClick={onCancel} style={{ marginRight: 8 }}>
             {t('cancel')}
           </Button>
