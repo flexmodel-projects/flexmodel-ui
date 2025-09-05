@@ -2,12 +2,15 @@ import React, {useEffect, useMemo} from "react";
 import "graphiql/style.css";
 import "@graphiql/react/style.css";
 import "@graphiql/plugin-explorer/style.css";
+import "@graphiql/plugin-history/style.css";
 import {executeQuery} from "@/services/api-management.ts";
 import {explorerPlugin} from "@graphiql/plugin-explorer";
+import {HISTORY_PLUGIN} from "@graphiql/plugin-history";
 import {GraphiQL} from "graphiql";
 import {GraphQLData} from "@/types/api-management";
 import {useTheme} from "@/store/appStore.ts";
 import {useGraphiQL} from "@graphiql/react";
+import {theme} from "antd";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
@@ -31,19 +34,19 @@ const GraphiQLInitializer: React.FC<{
     if (queryEditor && query !== queryEditor.getValue()) {
       queryEditor.setValue(query);
     }
-  }, [queryEditor]); // 只在queryEditor变化时执行
+  }, [queryEditor, query]); // 添加query依赖
 
   useEffect(() => {
     if (variableEditor && variables !== variableEditor.getValue()) {
       variableEditor.setValue(variables);
     }
-  }, [variableEditor]); // 只在variableEditor变化时执行
+  }, [variableEditor, variables]); // 添加variables依赖
 
   useEffect(() => {
     if (headerEditor && headers !== headerEditor.getValue()) {
       headerEditor.setValue(headers);
     }
-  }, [headerEditor]); // 只在headerEditor变化时执行
+  }, [headerEditor, headers]); // 添加headers依赖
 
   // 使用防抖来优化变化监听
   useEffect(() => {
@@ -89,6 +92,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   localStorage.removeItem("graphiql:tabState");
 
   const { isDark } = useTheme();
+  const { token } = theme.useToken();
 
   // 使用useMemo缓存explorer插件，避免重复创建
   const explorer = useMemo(() => explorerPlugin(), []);
@@ -102,11 +106,63 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     onChange: onChange,
   }), [data?.query, data?.operationName, data?.headers, data?.variables, onChange]);
 
+  // 动态注入样式
+  useEffect(() => {
+    const styleId = 'graphiql-execute-button-custom';
+    let styleElement = document.getElementById(styleId) as HTMLStyleElement;
+    
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = styleId;
+      document.head.appendChild(styleElement);
+    }
+    
+    styleElement.textContent = `
+      .graphiql-container .graphiql-toolbar > button:first-child {
+        background-color: ${token.colorPrimary} !important;
+        color: white !important;
+        border: 1px solid ${token.colorPrimary} !important;
+        border-top-color: ${token.colorPrimary} !important;
+        border-right-color: ${token.colorPrimary} !important;
+        border-bottom-color: ${token.colorPrimary} !important;
+        border-left-color: ${token.colorPrimary} !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+      .graphiql-container .graphiql-toolbar > button:first-child:hover {
+        background-color: ${token.colorPrimaryHover} !important;
+        border-color: ${token.colorPrimaryHover} !important;
+        border-top-color: ${token.colorPrimaryHover} !important;
+        border-right-color: ${token.colorPrimaryHover} !important;
+        border-bottom-color: ${token.colorPrimaryHover} !important;
+        border-left-color: ${token.colorPrimaryHover} !important;
+      }
+      .graphiql-container .graphiql-toolbar > button:first-child:active {
+        background-color: ${token.colorPrimaryActive} !important;
+        border-color: ${token.colorPrimaryActive} !important;
+        border-top-color: ${token.colorPrimaryActive} !important;
+        border-right-color: ${token.colorPrimaryActive} !important;
+        border-bottom-color: ${token.colorPrimaryActive} !important;
+        border-left-color: ${token.colorPrimaryActive} !important;
+      }
+      .graphiql-container .graphiql-toolbar > button:first-child .graphiql-toolbar-icon {
+        color: white !important;
+      }
+    `;
+    
+    return () => {
+      const element = document.getElementById(styleId);
+      if (element) {
+        document.head.removeChild(element);
+      }
+    };
+  }, [token.colorPrimary, token.colorPrimaryHover, token.colorPrimaryActive]);
+
   return (
     <GraphiQL
       forcedTheme={isDark ? "dark" : "light"}
       fetcher={executeQuery as any}
-      plugins={[explorer]}
+      plugins={[explorer, HISTORY_PLUGIN]}
     >
       <GraphiQLInitializer {...initializerProps} />
     </GraphiQL>
