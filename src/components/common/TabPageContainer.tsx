@@ -12,12 +12,12 @@ interface TabPageContainerProps {
 }
 
 const TabPageContainer: React.FC<TabPageContainerProps> = ({
-                                                             items,
-                                                             defaultActiveKey,
-                                                           }) => {
-  const {t} = useTranslation();
-  const {token} = theme.useToken();
-  const {isFullscreen, toggle, ref} = useFullscreen(token.colorBgContainer);
+  items,
+  defaultActiveKey,
+}) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { isFullscreen, toggle, ref } = useFullscreen(token.colorBgContainer);
   const tabMenuRef = useRef<TabMenuRef>(null);
 
   return (
@@ -27,6 +27,9 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
         height: 'calc(100vh - 64px)',
         width: '100%',
         background: token.colorBgContainer,
+        borderRadius: token.borderRadius,
+        border: `1px solid ${token.colorBorder}`,
+        boxShadow: token.boxShadow,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden'
@@ -41,14 +44,14 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
             <Button
               type="text"
               size="small"
-              icon={<ReloadOutlined/>}
+              icon={<ReloadOutlined />}
               onClick={() => tabMenuRef.current?.refreshCurrentTab()}
               title={t('refresh_tab')}
             />
             <Button
               type="text"
               size="small"
-              icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+              icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
               onClick={toggle}
               title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
             />

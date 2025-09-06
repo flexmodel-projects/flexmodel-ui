@@ -1,5 +1,5 @@
 import React from "react";
-import {theme} from "antd";
+import {theme, Typography} from "antd";
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   const { token } = theme.useToken();
 
   const containerStyle: React.CSSProperties = {
-    height: 'calc(100vh - 60px)',
+    height: 'calc(100vh - 64px)',
     width: '100%',
     background: token.colorBgContainer,
     borderRadius: token.borderRadius,
@@ -47,11 +47,11 @@ const PageContainer: React.FC<PageContainerProps> = ({
           }}
         >
           {title && (
-            <h3 style={{ margin: 0, fontSize: token.fontSizeLG, fontWeight: token.fontWeightStrong }}>
+            <Typography.Title style={{ margin: 0 }} level={5}>
               {title}
-            </h3>
+            </Typography.Title>
           )}
-          {extra && <div>{extra}</div>}
+          {extra && extra}
         </div>
       )}
       <div

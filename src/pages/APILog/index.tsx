@@ -14,6 +14,7 @@ import {
   Table,
   Tag,
 } from "antd";
+import PageContainer from "@/components/common/PageContainer";
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import {getApiLogs, getApiLogStat} from "@/services/api-log.ts";
 import LogSettings from "./components/LogSettings";
@@ -154,15 +155,7 @@ const LogViewer: React.FC = () => {
   ];
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '16px',
-      boxSizing: 'border-box',
-      overflow: 'hidden',
-      height: '100%',
-      width: '100%'
-    }}>
+    <PageContainer>
       {/* 搜索表单区域 */}
       <div style={{
         marginBottom: '16px',
@@ -273,7 +266,7 @@ const LogViewer: React.FC = () => {
         display: 'flex',
         justifyContent: 'flex-end',
         flexShrink: 0,
-        padding: '0px 0',
+        padding: '50px 0',
         position: 'relative',
         zIndex: 1
       }}>
@@ -321,7 +314,7 @@ const LogViewer: React.FC = () => {
         onConfirm={() => setSettingsDialogVisible(false)}
         onCancel={() => setSettingsDialogVisible(false)}
       />
-    </div>
+    </PageContainer>
   );
 };
 

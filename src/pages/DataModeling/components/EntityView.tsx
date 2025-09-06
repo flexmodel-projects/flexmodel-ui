@@ -1,17 +1,7 @@
-import { CodeOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Card,
-  Col,
-  Dropdown,
-  Menu,
-  Row,
-  Segmented,
-  Space,
-  Typography,
-} from "antd";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import {CodeOutlined} from "@ant-design/icons";
+import {Button, Col, Dropdown, Menu, Row, Segmented, Space, Typography,} from "antd";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
 
 import CodeView from "./CodeView";
 import FieldList from "./FieldList";
@@ -51,7 +41,7 @@ const EntityView = ({ datasource, model }: Props) => {
   };
 
   return (
-    <Card size="small" className="h-full">
+    <>
       <Row align="middle" justify="space-between" style={{ marginBottom: 16 }}>
         <Col>
           <Space align="center">
@@ -88,7 +78,7 @@ const EntityView = ({ datasource, model }: Props) => {
         </Col>
       </Row>
       {renderContent()}
-    </Card>
+    </>
   );
 };
 

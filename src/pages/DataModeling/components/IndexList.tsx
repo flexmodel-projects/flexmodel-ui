@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Card, message, Popconfirm, Space, Table, Tag} from 'antd';
+import {Button, message, Popconfirm, Space, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '@/services/model.ts';
 import IndexForm from "./IndexForm";
@@ -133,7 +133,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   ];
 
   return (
-    <Card size="small" bodyStyle={{ padding: 12 }}>
+    <>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <Button
           type="primary"
@@ -158,7 +158,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         onConfirm={addOrEditIndex}
         onCancel={() => setChangeDialogVisible(false)}
       />
-    </Card>
+    </>
   );
 };
 

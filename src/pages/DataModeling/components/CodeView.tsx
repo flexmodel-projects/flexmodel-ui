@@ -1,5 +1,5 @@
 import {DownloadOutlined, DownOutlined, ReloadOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Card, Col, Form, Row, Select, Space, Spin} from 'antd';
+import {Button, Col, Form, Row, Select, Space, Spin} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import {t} from 'i18next';
 import React, {useEffect, useRef, useState} from 'react';
@@ -88,7 +88,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
   }, []);
 
   return (
-    <Card size="small" bodyStyle={{padding: 12, overflowY: 'auto'}}>
+    <>
       <Space direction="vertical" style={{width: '100%'}} size="small">
         {isExpand && (
           <Form.Item
@@ -96,8 +96,8 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
             style={{marginBottom: 8}}
             help={t('code_view.config_template_variables_help')}
           >
-            <TextArea 
-              value={variables} 
+            <TextArea
+              value={variables}
               onChange={e => setVariables(e.target.value)}
               rows={3}
               placeholder={t('code_view.variables_placeholder')}
@@ -165,7 +165,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
           />
         </Spin>
       </Space>
-    </Card>
+    </>
   );
 };
 

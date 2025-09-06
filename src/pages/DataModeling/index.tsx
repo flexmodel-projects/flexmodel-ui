@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import {Card, message, Row, Splitter, theme} from "antd";
+import {message, Splitter} from "antd";
+import PageContainer from "@/components/common/PageContainer";
 import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
 import EntityView from "@/pages/DataModeling/components/EntityView";
 import NativeQueryView from "@/pages/DataModeling/components/NativeQueryView";
@@ -11,7 +12,6 @@ import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
 
 const ModelingPage: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [activeDs, setActiveDs] = useState("");
   const [activeModel, setActiveModel] = useState<any>({});
@@ -71,49 +71,30 @@ const ModelingPage: React.FC = () => {
     }
   };
 
-  const splitterStyle = {};
-
-  const leftPanelStyle = {
-    height: "100%",
-    paddingRight: token.marginXS,
-    boxSizing: "border-box" as const,
-  };
-
-  const rightPanelStyle = {
-    paddingLeft: token.marginXS,
-    boxSizing: "border-box" as const,
-  };
-
-  const panelContainerStyle = {};
-
   return (
-    <Card styles={{ body: { height: "100%" } }}>
-      <Row className="flex-1">
-        <Splitter style={splitterStyle}>
-          <Splitter.Panel
-            defaultSize="20%"
-            max="40%"
-            collapsible
-            style={leftPanelStyle}
-          >
+    <PageContainer>
+      <Splitter>
+        <Splitter.Panel
+          defaultSize="20%"
+          max="40%"
+          collapsible
+        >
+          <div className="pr-1">
             <ModelExplorer
               datasource={activeDs}
               editable
               onSelect={handleItemChange}
               version={selectModelVersion}
             />
-          </Splitter.Panel>
-          <Splitter.Panel style={rightPanelStyle}>
-            <div
-              className={("h-full")}
-              style={panelContainerStyle}
-            >
-              {renderModelView()}
-            </div>
-          </Splitter.Panel>
-        </Splitter>
-      </Row>
-    </Card>
+          </div>
+        </Splitter.Panel>
+        <Splitter.Panel>
+          <div className="pl-1">
+            {renderModelView()}
+          </div>
+        </Splitter.Panel>
+      </Splitter>
+    </PageContainer>
   );
 };
 

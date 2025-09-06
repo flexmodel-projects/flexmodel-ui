@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
-  Card,
   DatePicker,
   Empty,
   Form,
@@ -169,7 +168,7 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   });
 
   return model ? (
-    <Card size="small" bodyStyle={{ padding: 12 }}>
+    <>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <Button
           type="primary"
@@ -223,7 +222,7 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
           ))}
         </Form>
       </Modal>
-    </Card>
+    </>
   ) : <Empty />;
 };
 

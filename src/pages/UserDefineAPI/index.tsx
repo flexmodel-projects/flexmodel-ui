@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
   Button,
-  Card,
   Dropdown,
   Flex,
   Form,
@@ -17,9 +16,9 @@ import {
   TabsProps,
   Typography,
 } from "antd";
+import PageContainer from "@/components/common/PageContainer";
 import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined,} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
-import styles from "./index.module.scss";
 import APIDetail from "./components/APIDetail";
 import Authorization from "./components/Authorization";
 import {useTranslation} from "react-i18next";
@@ -359,215 +358,200 @@ const UserDefineAPI: React.FC = () => {
     setFilteredApiList(apiList);
   }, [apiList]);
 
-  // 紧凑主题样式
-  const cardStyle = {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column" as const,
-  };
-
   return (
-    <Card
-      className={`${styles.apiManagementWrapper} h-full w-full`}
-      style={cardStyle}
-    >
-      <Splitter className="h-full">
+    <PageContainer>
+      <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-          <Card className={`${styles.apiManagementWrapper} h-full`}>
-            <Space direction="vertical" size="small" className="w-full">
-              <Flex gap="small" align="center">
-                <Input
-                  placeholder={t("search_apis")}
-                  value={searchText}
-                  onChange={handleSearchChange}
-                  allowClear
-                  prefix={<SearchOutlined />}
-                  className="flex-1"
-                />
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item onClick={() => showCreateApiDialog()}>
-                        {t("new_api")}
-                      </Menu.Item>
-                      <Menu.Item onClick={() => showCreateFolderDialog()}>
-                        {t("new_folder")}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => setBatchCreateDrawerVisible(true)}
-                      >
-                        {t("batch_new_api")}
-                      </Menu.Item>
-                    </Menu>
+          <div className="pr-1">
+            <Flex gap="small" align="center">
+              <Input
+                placeholder={t("search_apis")}
+                value={searchText}
+                onChange={handleSearchChange}
+                allowClear
+                prefix={<SearchOutlined />}
+                className="flex-1"
+              />
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item onClick={() => showCreateApiDialog()}>
+                      {t("new_api")}
+                    </Menu.Item>
+                    <Menu.Item onClick={() => showCreateFolderDialog()}>
+                      {t("new_folder")}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => setBatchCreateDrawerVisible(true)}
+                    >
+                      {t("batch_new_api")}
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button icon={<PlusOutlined />} />
+              </Dropdown>
+            </Flex>
+            <div className="flex-1 overflow-auto">
+              <Tree
+                tree={{ children: convertApiListToTreeData(filteredApiList) }}
+                selected={
+                  selectedNode ? { path: selectedNode.data.id } : { path: "" }
+                }
+                onClickItem={(item: any) => {
+                  setSelectedNode({
+                    children: [],
+                    data: item.data,
+                    isLeaf: item.type === "file",
+                    key: item.path,
+                    settingVisible: false,
+                    title: item.filename,
+                  });
+                }}
+                renderMore={(item: any) => {
+                  return (
+                    <Dropdown
+                      overlay={
+                        <Menu>
+                          {item.type === "folder" && (
+                            <>
+                              <Menu.Item
+                                onClick={() =>
+                                  showCreateApiDialog(item.data.id)
+                                }
+                              >
+                                {t("new_api")}
+                              </Menu.Item>
+                              <Menu.Item
+                                onClick={() =>
+                                  showCreateFolderDialog(item.data.id)
+                                }
+                              >
+                                {t("new_folder")}
+                              </Menu.Item>
+                              <Menu.Divider />
+                            </>
+                          )}
+                          <Menu.Item onClick={() => showEditInput(item.data)}>
+                            {t("rename")}
+                          </Menu.Item>
+                          <Menu.Item
+                            style={{ color: "red" }}
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
+                              showDeleteConfirm(item.data.id, item.data.name);
+                            }}
+                          >
+                            {t("delete")}
+                          </Menu.Item>
+                        </Menu>
+                      }
+                      trigger={["hover"]}
+                    >
+                      <MoreOutlined onClick={(e) => e.stopPropagation()} />
+                    </Dropdown>
+                  );
+                }}
+                renderIcon={(item: any, nodeType: any) => {
+                  if (nodeType === "file") {
+                    const method = item.data?.method;
+                    if (method === "GET")
+                      return <ApiMethodGet key={`get${item.path}`} />;
+                    if (method === "POST")
+                      return <ApiMethodPost key={`post${item.path}`} />;
+                    if (method === "PUT")
+                      return <ApiMethodPut key={`put${item.path}`} />;
+                    if (method === "DELETE")
+                      return <ApiMethodDelete key={`delete${item.path}`} />;
+                    if (method === "PATCH")
+                      return <ApiMethodPatch key={`patch${item.path}`} />;
+                    return <IconFile key={`file${item.path}`} />;
                   }
-                >
-                  <Button icon={<PlusOutlined />} />
-                </Dropdown>
-              </Flex>
-              <div className="flex-1 overflow-auto">
-                <Tree
-                  tree={{ children: convertApiListToTreeData(filteredApiList) }}
-                  selected={
-                    selectedNode ? { path: selectedNode.data.id } : { path: "" }
-                  }
-                  onClickItem={(item: any) => {
-                    setSelectedNode({
-                      children: [],
-                      data: item.data,
-                      isLeaf: item.type === "file",
-                      key: item.path,
-                      settingVisible: false,
-                      title: item.filename,
-                    });
-                  }}
-                  renderMore={(item: any) => {
-                    return (
-                      <Dropdown
-                        overlay={
-                          <Menu>
-                            {item.type === "folder" && (
-                              <>
-                                <Menu.Item
-                                  onClick={() =>
-                                    showCreateApiDialog(item.data.id)
-                                  }
-                                >
-                                  {t("new_api")}
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() =>
-                                    showCreateFolderDialog(item.data.id)
-                                  }
-                                >
-                                  {t("new_folder")}
-                                </Menu.Item>
-                                <Menu.Divider />
-                              </>
-                            )}
-                            <Menu.Item onClick={() => showEditInput(item.data)}>
-                              {t("rename")}
-                            </Menu.Item>
-                            <Menu.Item
-                              style={{ color: "red" }}
-                              onClick={(e) => {
-                                e.domEvent.stopPropagation();
-                                showDeleteConfirm(item.data.id, item.data.name);
-                              }}
-                            >
-                              {t("delete")}
-                            </Menu.Item>
-                          </Menu>
-                        }
-                        trigger={["hover"]}
-                      >
-                        <MoreOutlined onClick={(e) => e.stopPropagation()} />
-                      </Dropdown>
-                    );
-                  }}
-                  renderIcon={(item: any, nodeType: any) => {
-                    if (nodeType === "file") {
-                      const method = item.data?.method;
-                      if (method === "GET")
-                        return <ApiMethodGet key={`get${item.path}`} />;
-                      if (method === "POST")
-                        return <ApiMethodPost key={`post${item.path}`} />;
-                      if (method === "PUT")
-                        return <ApiMethodPut key={`put${item.path}`} />;
-                      if (method === "DELETE")
-                        return <ApiMethodDelete key={`delete${item.path}`} />;
-                      if (method === "PATCH")
-                        return <ApiMethodPatch key={`patch${item.path}`} />;
-                      return <IconFile key={`file${item.path}`} />;
-                    }
-                    if (item.data && item.data.type === "FOLDER")
-                      return <ApiFolder key={`apifolder${item.path}`} />;
-                    return <IconFolder key={`folder${item.path}`} />;
-                  }}
-                />
-              </div>
-            </Space>
-          </Card>
+                  if (item.data && item.data.type === "FOLDER")
+                    return <ApiFolder key={`apifolder${item.path}`} />;
+                  return <IconFolder key={`folder${item.path}`} />;
+                }}
+              />
+            </div>
+          </div>
         </Splitter.Panel>
         <Splitter.Panel>
-          <Card className={`${styles.apiManagementWrapper} h-full`}>
-            {editForm?.type == "API" ? (
-              <div className="flex flex-col h-full">
-                <Space direction="vertical" size="small" className="mb-2">
-                  <Flex gap="small" justify="flex-start" align="center" wrap>
-                    <Input
-                      addonBefore={
-                        <Select
-                          value={editForm?.method}
-                          onChange={(value) =>
-                            setEditForm({ ...editForm, method: value })
-                          }
-                          options={methodOptions}
-                          style={{ minWidth: 80 }}
-                        />
-                      }
-                      prefix={
-                        <span>
-                          {config?.apiRootPath}
-                        </span>
-                      }
-                      className="flex-1"
-                      value={editForm?.path}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, path: e?.target?.value })
-                      }
-                    />
-                    <Button
-                      type="primary"
-                      onClick={handleSaveApi}
-                      icon={<SaveOutlined />}
-                    >
-                      {t("save")}
-                    </Button>
-                    <Switch
-                      value={editForm?.enabled}
-                      onChange={(val) => {
-                        if (editForm) {
-                          setEditForm({ ...editForm, enabled: val });
-                          updateApiStatus(editForm.id, val).then(() => {
-                            message.success(val ? t("enabled") : t("closed"));
-                            reqApiList();
-                          });
+          {editForm?.type == "API" ? (
+            <div className="flex flex-col h-full pl-1">
+              <Space direction="vertical" size="small" className="mb-2">
+                <Flex gap="small" justify="flex-start" align="center" wrap>
+                  <Input
+                    addonBefore={
+                      <Select
+                        value={editForm?.method}
+                        onChange={(value) =>
+                          setEditForm({ ...editForm, method: value })
                         }
-                      }}
-                    />
-                  </Flex>
-                </Space>
-                <div
+                        options={methodOptions}
+                        style={{ minWidth: 80 }}
+                      />
+                    }
+                    prefix={
+                      <span>
+                        {config?.apiRootPath}
+                      </span>
+                    }
+                    className="flex-1"
+                    value={editForm?.path}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, path: e?.target?.value })
+                    }
+                  />
+                  <Button
+                    type="primary"
+                    onClick={handleSaveApi}
+                    icon={<SaveOutlined />}
+                  >
+                    {t("save")}
+                  </Button>
+                  <Switch
+                    value={editForm?.enabled}
+                    onChange={(val) => {
+                      if (editForm) {
+                        setEditForm({ ...editForm, enabled: val });
+                        updateApiStatus(editForm.id, val).then(() => {
+                          message.success(val ? t("enabled") : t("closed"));
+                          reqApiList();
+                        });
+                      }
+                    }}
+                  />
+                </Flex>
+              </Space>
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight: 0,
+                  overflow: "hidden",
+                }}
+              >
+                <Tabs
+                  defaultActiveKey="detail"
+                  items={items}
+                  onChange={onChange}
                   style={{
-                    flex: 1,
+                    height: "100%",
                     display: "flex",
                     flexDirection: "column",
                     minHeight: 0,
-                    overflow: "hidden",
                   }}
-                >
-                  <Tabs
-                    className={styles.apiManagementTab}
-                    defaultActiveKey="detail"
-                    items={items}
-                    onChange={onChange}
-                    style={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      minHeight: 0,
-                    }}
-                  />
-                </div>
+                />
               </div>
-            ) : (
-              <div>
-                <Typography.Text>
-                  {t("folder_name")}: {editForm?.name}
-                </Typography.Text>
-              </div>
-            )}
-          </Card>
+            </div>
+          ) : (
+            <div>
+              <Typography.Text>
+                {t("folder_name")}: {editForm?.name}
+              </Typography.Text>
+            </div>
+          )}
         </Splitter.Panel>
       </Splitter>
       {/* 删除确认弹窗 */}
@@ -649,7 +633,7 @@ const UserDefineAPI: React.FC = () => {
         onCancel={() => setBatchCreateDrawerVisible(false)}
         visible={batchCreateDialogDrawer}
       />
-    </Card>
+    </PageContainer>
   );
 };
 

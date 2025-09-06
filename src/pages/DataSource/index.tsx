@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Form, Input, Layout, message, Modal, Radio, Row, Space} from "antd";
+import {Button, Col, Form, Input, Layout, message, Modal, Radio, Row, Space} from "antd";
 import {useTranslation} from "react-i18next";
 import PageContainer from "@/components/common/PageContainer";
 import type {DatasourceSchema} from "@/types/data-source";
@@ -195,15 +195,13 @@ const DatasourceManagement: React.FC = () => {
             {dsList.length > 0 && activeDs && (
               <Row>
                 <Col span={24}>
-                  <Card bordered>
-                    {isEditing ? (
-                      <Form form={form} layout="vertical">
-                        <DataSourceForm />
-                      </Form>
-                    ) : (
-                      <DataSourceView data={activeDs} />
-                    )}
-                  </Card>
+                  {isEditing ? (
+                    <Form form={form} layout="vertical">
+                      <DataSourceForm />
+                    </Form>
+                  ) : (
+                    <DataSourceView data={activeDs} />
+                  )}
                 </Col>
               </Row>
             )}

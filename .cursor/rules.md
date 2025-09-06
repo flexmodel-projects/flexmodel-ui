@@ -32,28 +32,44 @@
 
 #### 组件开发模板
 ```tsx
-// 正确的组件写法 - 使用官方组件
+// 正确的页面组件写法 - 使用PageContainer
 import React from 'react';
-import { Card, Space, Typography } from 'antd';
+import { Space, Typography } from 'antd';
+import PageContainer from '@/components/common/PageContainer';
+import { useTranslation } from 'react-i18next';
 
-const MyComponent: React.FC = () => {
+const MyPage: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
-    <Card>
+    <PageContainer title={t('page_title')}>
       <Space direction="vertical">
         <Typography.Title level={5} style={{ margin: 0 }}>
-          标题
+          内容标题
         </Typography.Title>
-        {/* 组件内容 */}
+        {/* 页面内容 */}
       </Space>
-    </Card>
+    </PageContainer>
   );
 };
 
-export default MyComponent;
+export default MyPage;
 ```
 
 #### 避免的写法
 ```tsx
+// 避免的写法 - 使用Card作为页面容器
+import React from 'react';
+import { Card } from 'antd';
+
+const MyPage: React.FC = () => {
+  return (
+    <Card>
+      {/* 页面内容 */}
+    </Card>
+  );
+};
+
 // 避免的写法 - 自定义样式
 const containerStyle = {
   padding: token.paddingSM,
@@ -72,6 +88,33 @@ return (
 ***注意: 尽量避免自定义CSS, 如有必要, 请使用Tailwind CSS!***
 
 ### 5. 布局组件规范
+
+#### PageContainer.tsx
+- **统一页面容器**: 所有页面都应使用 `PageContainer` 组件作为根容器
+- **页面标题**: 使用 `title` 属性设置页面标题，支持国际化
+- **操作区域**: 使用 `extra` 属性添加页面操作按钮
+- **避免自定义样式**: 不要为 PageContainer 添加自定义 style 属性
+- **保持一致性**: 确保所有页面都使用相同的 PageContainer 布局
+
+```tsx
+// 正确的 PageContainer 使用方式
+import PageContainer from "@/components/common/PageContainer";
+
+const MyPage: React.FC = () => {
+  return (
+    <PageContainer 
+      title={t('page_title')}
+      extra={
+        <Space>
+          <Button>操作按钮</Button>
+        </Space>
+      }
+    >
+      {/* 页面内容 */}
+    </PageContainer>
+  );
+};
+```
 
 #### PageLayout.tsx
 - 使用官方组件进行布局
@@ -125,9 +168,13 @@ return (
 
 当重构组件时，请检查以下项目：
 
-- [ ] 使用 `Card` 组件替代自定义容器
+- [ ] 使用 `PageContainer` 组件作为页面根容器
+- [ ] 移除自定义的页面容器样式和 Card 包装
+- [ ] 使用 `title` 属性设置页面标题，支持国际化
+- [ ] 使用 `extra` 属性添加页面操作按钮
 - [ ] 使用 `Space` 组件优化布局
 - [ ] 使用 `Typography` 组件替代自定义标题
+- [ ] 移除无用的样式导入和定义
 
 
 ## AI 助手指令
@@ -141,3 +188,5 @@ return (
 5. **提供完整的 TypeScript 类型定义**
 6. **注意: 请避免自定义CSS，没有要求一定不要新增css文件，如有必要, 请使用Tailwind CSS!**
 7. **组件都需要支持夜间模式，尽量少改动代码**
+8. **所有页面都必须使用 PageContainer 组件作为根容器**
+9. **确保页面使用国际化翻译**
