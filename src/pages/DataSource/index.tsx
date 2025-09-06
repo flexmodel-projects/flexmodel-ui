@@ -1,25 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  message,
-  Modal,
-  Radio,
-  Row,
-  Space,
-  Spin,
-  Typography,
-} from "antd";
-import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined,} from "@ant-design/icons";
-import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo";
-import EditDSConfig from "@/pages/DataSource/components/EditDatabaseModal";
-import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer";
+import {Button, Card, Col, Form, Input, Layout, message, Modal, Radio, Row, Space, Typography} from "antd";
+import {useTranslation} from "react-i18next";
+import type {DatasourceSchema} from "@/types/data-source";
+import {ScriptImportForm, ScriptType} from "@/types/data-source";
+import DataSourceExplorer from "@/pages/DataSource/components/DataSourceExplorer";
 import {
   deleteDatasource,
   getDatasourceList,
@@ -27,129 +11,31 @@ import {
   updateDatasource,
   validateDatasource,
 } from "@/services/datasource.ts";
-// 导入Tree组件
-import Tree from "@/components/explore/explore/Tree.jsx";
-// 导入Tree样式
-import "@/components/explore/styles/explore.scss";
-// 数据库图标映射
-import MySQL from "@/assets/icons/svg/mysql.svg?react";
-import MariaDB from "@/assets/icons/svg/mariadb.svg?react";
-import Oracle from "@/assets/icons/svg/oracle.svg?react";
-import SqlServer from "@/assets/icons/svg/sqlserver.svg?react";
-import PostgreSQL from "@/assets/icons/svg/postgresql.svg?react";
-import DB2 from "@/assets/icons/svg/db2.svg?react";
-import SQLite from "@/assets/icons/svg/sqlite.svg?react";
-import GBase from "@/assets/icons/svg/gbase.svg?react";
-import DM8 from "@/assets/icons/svg/dm.svg?react";
-import TiDB from "@/assets/icons/svg/tidb.svg?react";
-import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
+import ConnectDatabaseDrawer from "@/pages/DataSource/components/ConnectDatabaseDrawer";
+import {buildUpdatePayload, mergeDatasource, normalizeDatasource} from "@/pages/DataSource/utils";
+import DataSourceView from "@/pages/DataSource/components/DataSourceView";
+import DataSourceForm from "@/pages/DataSource/components/DataSourceForm";
 import {getModelList} from "@/services/model.ts";
-import {useTranslation} from "react-i18next";
-
-import type {DatasourceSchema} from "@/types/data-source";
-import {ScriptImportForm, ScriptType} from "@/types/data-source";
 import {EntitySchema, EnumSchema, NativeQuerySchema,} from "@/types/data-modeling";
 
-const DbsMap: Record<string, any> = {
-  mysql: MySQL,
-  mariadb: MariaDB,
-  oracle: Oracle,
-  sqlserver: SqlServer,
-  postgresql: PostgreSQL,
-  db2: DB2,
-  sqlite: SQLite,
-  gbase: GBase,
-  dm: DM8,
-  tidb: TiDB,
-  mongodb: MongoDB,
-};
-
-const { Title } = Typography;
 
 const DatasourceManagement: React.FC = () => {
   const { t } = useTranslation();
-
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
-  const [activeDs, setActiveDs] = useState<DatasourceSchema>({
-    name: "",
-    type: "USER",
-    config: { dbKind: "" },
-    enabled: true,
-    createdAt: "",
-    updatedAt: "",
-  });
-  const [modelList, setModelList] = useState<
-    (EntitySchema | EnumSchema | NativeQuerySchema)[]
-  >([]);
+  const [activeDs, setActiveDs] = useState<DatasourceSchema | null>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-  const [editVisible, setEditVisible] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
   const [importVisible, setImportVisible] = useState<boolean>(false);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
-
+  const [modelList, setModelList] = useState<
+    (EntitySchema | EnumSchema | NativeQuerySchema)[]
+  >([]);
+  const [form] = Form.useForm();
   const [scriptForm] = Form.useForm<ScriptImportForm>();
 
-  // 将数据源列表转换为Tree组件需要的数据结构
-  const treeData = {
-    children: dsList.map((ds) => ({
-      type: 'file' as const,
-      filename: ds.name,
-      path: ds.name,
-      datasource: ds, // 保存原始数据源对象
-    }))
-  };
-
-  // 当前选中的数据源
-  const selectedItem = {
-    path: activeDs.name
-  };
-
-  // 自定义图标渲染函数
-  const renderIcon = (item: any, nodeType: any) => {
-    if (nodeType === 'file' && item.datasource) {
-      const dbKind = item.datasource.config?.dbKind;
-      const IconComponent = DbsMap[dbKind];
-      return IconComponent ? <Icon component={IconComponent} /> : <div />;
-    }
-    return <div />;
-  };
-
-  // 更多按钮渲染函数
-  const renderMore = (item: any) => {
-    if (item.datasource) {
-      return (
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item
-                className="text-red"
-                icon={<DeleteOutlined />}
-                disabled={item.datasource.type === "SYSTEM"}
-                onClick={(e) => {
-                  e.domEvent.stopPropagation();
-                  setActiveDs(item.datasource);
-                  setDeleteVisible(true);
-                }}
-              >
-                {t("delete")}
-              </Menu.Item>
-            </Menu>
-          }
-          trigger={["hover"]}
-          placement="bottomRight"
-        >
-          <MoreOutlined
-            className="cursor-pointer opacity-100 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-            style={{ marginLeft: '8px' }}
-          />
-        </Dropdown>
-      );
-    }
-    return null;
-  };
 
   useEffect(() => {
     const currentType = scriptForm.getFieldValue("type") || ScriptType.IDL;
@@ -174,12 +60,10 @@ const DatasourceManagement: React.FC = () => {
       setDsLoading(true);
       const list = await getDatasourceList();
       setDsList(list);
-      if (!activeDs.name) {
-        setActiveDs(list[0]);
-      }
+      setActiveDs(list[0] || null);
     } catch (error) {
+      console.log(error);
       message.error("Failed to load datasource list.");
-      console.error(error);
     } finally {
       setDsLoading(false);
     }
@@ -190,6 +74,7 @@ const DatasourceManagement: React.FC = () => {
   }, []);
 
   const handleTestConnection = async () => {
+    if (!activeDs) return;
     setTestLoading(true);
     try {
       const result = await validateDatasource(activeDs);
@@ -210,37 +95,37 @@ const DatasourceManagement: React.FC = () => {
     }
   };
 
-  const handleEdit = async (formData: any) => {
+  const handleEditDatasource = async (formData: any) => {
     try {
-      const res = await updateDatasource(formData.name, {
-        name: formData.name,
-        type: "USER" as import("@/types/data-source").DatasourceType,
-        config: formData.config,
-        enabled: formData.enabled,
-        createdAt: "",
-        updatedAt: "",
-      });
-      setEditVisible(false);
-      setActiveDs(res);
-      getDatasourceListHandler();
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to update datasource.");
+      const payload = buildUpdatePayload(formData);
+      await updateDatasource(formData.name, payload as DatasourceSchema);
+      setIsEditing(false);
+      await getDatasourceListHandler();
+      if (activeDs) {
+        const merged = mergeDatasource(activeDs, formData);
+        setActiveDs(merged);
+      }
+      message.success(t("form_save_success"));
+    } catch {
+      message.error(t("form_save_failed"));
     }
   };
 
   const handleDelete = async () => {
-    await deleteDatasource(activeDs.name);
-    const list = await getDatasourceList();
-    setDsList(list);
-    setDeleteVisible(false);
-  };
-
-  const handleTreeClick = (item: any) => {
-    setActiveDs(item);
+    if (activeDs) {
+      try {
+        await deleteDatasource(activeDs.name);
+        getDatasourceListHandler();
+        setDeleteVisible(false);
+        message.success("Deleted successfully");
+      } catch {
+        message.error("Failed to delete datasource");
+      }
+    }
   };
 
   const handleExport = async () => {
+    if (!activeDs) return;
     const models = await getModelList(activeDs.name);
     setModelList(models);
     setExportVisible(true);
@@ -254,6 +139,7 @@ const DatasourceManagement: React.FC = () => {
   };
 
   const importModels = async () => {
+    if (!activeDs) return;
     const values = await scriptForm.validateFields();
     reqImportModels(activeDs.name, values).then(() =>
       message.success("Models import successfully")
@@ -261,90 +147,75 @@ const DatasourceManagement: React.FC = () => {
     setImportVisible(false);
   };
 
+  const { Sider, Content } = Layout;
+
   return (
-    <div className="h-full w-full">
-      <Row gutter={16} className="h-full">
-        {/* 左侧边栏 */}
-        <Col span={6} className="h-full">
-          <Card
-            style={{ height: "100%", display: "flex", flexDirection: "column" }}
-          >
-            <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
-              {t("datasource_management")}
-            </Title>
-
-            <Divider style={{ margin: "16px 0" }} />
-
-            <div style={{ flex: 1, overflow: "auto", marginBottom: "16px" }}>
-              <Spin spinning={dsLoading}>
-                <Tree
-                  tree={treeData}
-                  selected={selectedItem}
-                  onClickItem={(item) => handleTreeClick(item.datasource)}
-                  renderIcon={renderIcon}
-                  renderMore={renderMore}
-                />
-              </Spin>
+    <>
+      <Card
+        style={{ width: "100%", height: "100%" }}
+        styles={{ body: { height: "100%" } }}
+      >
+        <Layout style={{ height: "100%", background: "transparent" }}>
+          <Sider width={320} style={{ background: "transparent", borderRight: "1px solid var(--ant-color-border)" }}>
+            <div style={{ height: "100%", overflow: "auto" }}>
+              <DataSourceExplorer
+                dsList={dsList}
+                activeDs={activeDs}
+                loading={dsLoading}
+                setActiveDs={setActiveDs}
+                setDeleteVisible={setDeleteVisible}
+                setDrawerVisible={setDrawerVisible}
+                t={t}
+              />
             </div>
-
-            <Divider style={{ margin: "16px 0" }} />
-
-            <Button
-              type="primary"
-              icon={<BlockOutlined />}
-              onClick={() => setDrawerVisible(true)}
-              style={{ width: "100%" }}
-              ghost
-            >
-              {t("connect_datasource")}
-            </Button>
-          </Card>
-        </Col>
-
-        {/* 右侧内容区域 */}
-        <Col span={18} style={{ height: "100%", paddingLeft: "0x" }}>
-          <Card
-            style={{ height: "100%", display: "flex", flexDirection: "column" }}
-            bodyStyle={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "24px",
-              }}
-            >
-              <Title level={4} style={{ margin: 0 }}>
-                {activeDs.name}
-              </Title>
-
-              <Space>
-                <Button onClick={handleImport}>{t("import")}</Button>
-                <Button onClick={handleExport}>{t("export")}</Button>
-                <Button onClick={handleTestConnection} loading={testLoading}>
-                  {t("test")}
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={activeDs.type === "SYSTEM"}
-                  onClick={() => setEditVisible(true)}
-                >
-                  {t("edit")}
-                </Button>
-              </Space>
-            </div>
-
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <DatabaseInfo datasource={activeDs} />
-            </div>
-          </Card>
-        </Col>
-      </Row>
+          </Sider>
+          <Content style={{ padding: "12px 20px", overflow: "auto" }}>
+            {dsList.length > 0 && activeDs && (
+              <Row>
+                <Col span={24}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                    <Typography.Title level={5} style={{ margin: 0 }}>
+                      {activeDs.name}
+                    </Typography.Title>
+                    {isEditing ? (
+                      <Space>
+                        <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
+                        <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditDatasource(values); }}>{t("save")}</Button>
+                      </Space>
+                    ) : (
+                      <Space>
+                        <Button onClick={handleImport}>{t("import")}</Button>
+                        <Button onClick={handleExport}>{t("export")}</Button>
+                        <Button onClick={handleTestConnection} loading={testLoading}>
+                          {t("test")}
+                        </Button>
+                        <Button
+                          type="primary"
+                          disabled={activeDs.type === "SYSTEM"}
+                          onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeDatasource(activeDs)); }}
+                        >
+                          {t("edit")}
+                        </Button>
+                      </Space>
+                    )}
+                  </div>
+                </Col>
+                <Col span={24}>
+                  <Card bordered>
+                    {isEditing ? (
+                      <Form form={form} layout="vertical">
+                        <DataSourceForm/>
+                      </Form>
+                    ) : (
+                      <DataSourceView data={activeDs} />
+                    )}
+                  </Card>
+                </Col>
+              </Row>
+            )}
+          </Content>
+        </Layout>
+      </Card>
 
       <ConnectDatabaseDrawer
         visible={drawerVisible}
@@ -357,20 +228,17 @@ const DatasourceManagement: React.FC = () => {
         }}
       />
 
-      <EditDSConfig
-        visible={editVisible}
-        datasource={activeDs}
-        onConfirm={handleEdit}
-        onCancel={() => setEditVisible(false)}
-      />
-
       <Modal
         open={deleteVisible}
-        title={`${t("delete")} '${activeDs?.name}?'`}
+        title={`Delete '${activeDs?.name}'?`}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
+        okText="Delete"
+        okButtonProps={{ danger: true }}
       >
-        {t("delete_dialog_text", { name: activeDs?.name })}
+        <p>
+          Are you sure you want to delete <strong>{activeDs?.name}</strong>?
+        </p>
       </Modal>
 
       <Modal
@@ -378,7 +246,7 @@ const DatasourceManagement: React.FC = () => {
         open={exportVisible}
         onOk={() => setExportVisible(false)}
         onCancel={() => setExportVisible(false)}
-        title={`Export ${activeDs.name} models`}
+        title={`Export ${activeDs?.name} models`}
       >
         <Form
           form={scriptForm}
@@ -418,7 +286,7 @@ const DatasourceManagement: React.FC = () => {
         open={importVisible}
         onOk={importModels}
         onCancel={() => setImportVisible(false)}
-        title={`Import ${activeDs.name} models`}
+        title={`Import ${activeDs?.name} models`}
       >
         <Form form={scriptForm}>
           <Form.Item label="type" name="type">
@@ -432,7 +300,7 @@ const DatasourceManagement: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 

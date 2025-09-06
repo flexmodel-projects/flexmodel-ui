@@ -70,7 +70,7 @@ const About: React.FC = () => {
               <Button
                 icon={<BookOutlined />}
                 size="middle"
-                href="https://flexmodel.wetech.tech/docs/tutorial/intro"
+                href="https://flexmodel.wetech.tech/docs"
                 target="_blank"
                 style={{ borderRadius: '6px' }}
               >

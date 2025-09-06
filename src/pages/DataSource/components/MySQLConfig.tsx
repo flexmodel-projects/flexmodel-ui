@@ -11,9 +11,10 @@ interface Config {
 interface DatabaseConfigProps {
   config?: Config;
   onChange?: (changedConfig: Config) => void;
+  readOnly?: boolean;
 }
 
-const MySQLConfig: React.FC<DatabaseConfigProps> = () => {
+const MySQLConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
 
   const {t} = useTranslation();
 
@@ -25,13 +26,13 @@ const MySQLConfig: React.FC<DatabaseConfigProps> = () => {
         label={t('connect_database_url')}
         rules={[{required: true}]}
       >
-        <Input placeholder="jdbc:mysql://localhost:3306/db_name"/>
+        <Input placeholder="jdbc:mysql://localhost:3306/db_name" readOnly={readOnly}/>
       </Form.Item>
       <Form.Item name="username" label={t('username')}>
-        <Input/>
+        <Input readOnly={readOnly}/>
       </Form.Item>
       <Form.Item name="password" label={t('password')}>
-        <Input.Password/>
+        <Input.Password readOnly={readOnly}/>
       </Form.Item>
     </>
   );

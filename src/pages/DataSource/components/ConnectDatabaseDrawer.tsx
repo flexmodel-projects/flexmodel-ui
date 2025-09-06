@@ -1,21 +1,19 @@
 import React, {useState} from 'react';
-import {Button, Col, Drawer, Form, Input, message, Radio, Row, Space, Spin, Steps, Transfer, TransferProps} from 'antd';
+import {Button, Col, Drawer, Form, message, Radio, Row, Space, Spin, Steps, Transfer, TransferProps} from 'antd';
 import {createDatasource, getPhysicsModelNames, syncModels, validateDatasource} from "@/services/datasource.ts";
-import MySQLConfig from "@/pages/DataSource/components/MySQLConfig";
-import SQLiteConfig from "@/pages/DataSource/components/SQLiteConfig";
-import CommonConfig from "@/pages/DataSource/components/CommonConfig";
-import DatabaseInfo from "@/pages/DataSource/components/DatabaseInfo";
+import DataSourceForm from "@/pages/DataSource/components/DataSourceForm";
+import DataSourceView from "@/pages/DataSource/components/DataSourceView";
 import Title from "antd/lib/typography/Title";
 import {useTranslation} from "react-i18next";
 
-const {Step} = Steps;
+const { Step } = Steps;
 
 const ConnectDatabaseDrawer: React.FC<{
   visible: boolean;
   onChange: (data: any) => void;
   onClose: () => void;
-}> = ({visible, onChange, onClose}) => {
-  const {t} = useTranslation();
+}> = ({ visible, onChange, onClose }) => {
+  const { t } = useTranslation();
   const [active, setActive] = useState<number>(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<any>({});
@@ -46,9 +44,9 @@ const ConnectDatabaseDrawer: React.FC<{
         updatedAt: ''
       });
       if (result.success) {
-        message.success(t('test_connection_success_message', {time: result.time}));
+        message.success(t('test_connection_success_message', { time: result.time }));
       } else {
-        message.error(t('test_connection_fail_message', {msg: result.errorMsg}));
+        message.error(t('test_connection_fail_message', { msg: result.errorMsg }));
       }
     } catch (error) {
       console.error(error);
@@ -85,9 +83,9 @@ const ConnectDatabaseDrawer: React.FC<{
       handleNext();
       onChange(res);
       if (targetKeys?.length) {
-        message.success(t('connect_sync_models_tips', {name: formData.name}));
+        message.success(t('connect_sync_models_tips', { name: formData.name }));
         syncModels(formData.name, targetKeys as string[]).then(() => {
-          message.success(t('connect_sync_models_done_tips', {name: formData.name}));
+          message.success(t('connect_sync_models_done_tips', { name: formData.name }));
         });
       }
     } catch (error) {
@@ -117,13 +115,32 @@ const ConnectDatabaseDrawer: React.FC<{
       onClose={onClose}
       open={visible}
       className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]"
+      footer={<Space>
+        {active !== 0 && active !== 3 && (
+          <Button onClick={handlePrev}>{t('connect_go_back')}</Button>
+        )}
+        {active === 0 && (
+          <Button type="primary" onClick={handleNext}>{t('connect_select_database')}</Button>
+        )}
+        {active === 1 && (
+          <>
+            <Button onClick={handleTestConnection}>{t('connect_test_connection')}</Button>
+            <Button type="primary" onClick={handleSelectModels}>{t('connect_select_models')}</Button>
+          </>
+        )}
+        {active === 2 && (
+          <>
+            <Button type="primary" onClick={handleConnectDatabase}>{t('connect_datasource')}</Button>
+          </>
+        )}
+      </Space>}
     >
-      <div style={{paddingBottom: 20}} className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]">
+      <div style={{ paddingBottom: 20 }} className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]">
         <Steps current={active} size="small">
-          <Step title={t('connect_step_select_database')}/>
-          <Step title={t('connect_step_connect_database')}/>
-          <Step title={t('connect_step_select_models')}/>
-          <Step title={t('connect_step_completed')}/>
+          <Step title={t('connect_step_select_database')} />
+          <Step title={t('connect_step_connect_database')} />
+          <Step title={t('connect_step_select_models')} />
+          <Step title={t('connect_step_completed')} />
         </Steps>
       </div>
       <Form
@@ -160,16 +177,7 @@ const ConnectDatabaseDrawer: React.FC<{
           </Form.Item>
         )}
         {active === 1 && (
-          <>
-            <Form.Item name="name" label={t('connection_name')}
-                       rules={[{required: true}]}>
-              <Input name="name"/>
-            </Form.Item>
-            {form.getFieldValue('dbKind') === 'mysql' && <MySQLConfig/>}
-            {form.getFieldValue('dbKind') === 'sqlite' && <SQLiteConfig/>}
-            {form.getFieldValue('dbKind') !== 'mysql' && form.getFieldValue('dbKind') !== 'sqlite' &&
-              <CommonConfig/>}
-          </>
+          <DataSourceForm />
         )}
         {
           active === 2 && (
@@ -178,7 +186,7 @@ const ConnectDatabaseDrawer: React.FC<{
                 <Col span={24}>
                   <Title level={5}>{form.getFieldValue('name')}</Title>
                 </Col>
-                <Col span={24} style={{paddingBottom: "15px"}}>
+                <Col span={24} style={{ paddingBottom: "15px" }}>
                   <Spin spinning={pLoading}>
                     <Transfer
                       showSearch
@@ -200,14 +208,14 @@ const ConnectDatabaseDrawer: React.FC<{
         {active === 3 && (
           <>
             <Row>
-              <Col span={24} style={{marginTop: 12, marginBottom: 12, textAlign: 'center'}}>
+              <Col span={24} style={{ marginTop: 12, marginBottom: 12, textAlign: 'center' }}>
                 <span>{t('connect_success_tips')}</span>
               </Col>
               <Col span={24}>
-                <DatabaseInfo datasource={currentVal}/>
+                <DataSourceView data={currentVal} />
               </Col>
-              <Col span={24} style={{textAlign: 'center'}}>
-                <Button style={{marginTop: 12}} onClick={() => {
+              <Col span={24} style={{ textAlign: 'center' }}>
+                <Button style={{ marginTop: 12 }} onClick={() => {
                   onClose();
                   setActive((0));
                 }}>{t('close')}</Button>
@@ -215,27 +223,6 @@ const ConnectDatabaseDrawer: React.FC<{
             </Row>
           </>
         )}
-        <Form.Item style={{textAlign: 'end'}} wrapperCol={{offset: 8, span: 16}}>
-          <Space>
-            {active !== 0 && active !== 3 && (
-              <Button onClick={handlePrev}>{t('connect_go_back')}</Button>
-            )}
-            {active === 0 && (
-              <Button type="primary" onClick={handleNext}>{t('connect_select_database')}</Button>
-            )}
-            {active === 1 && (
-              <>
-                <Button onClick={handleTestConnection}>{t('connect_test_connection')}</Button>
-                <Button type="primary" onClick={handleSelectModels}>{t('connect_select_models')}</Button>
-              </>
-            )}
-            {active === 2 && (
-              <>
-                <Button type="primary" onClick={handleConnectDatabase}>{t('connect_datasource')}</Button>
-              </>
-            )}
-          </Space>
-        </Form.Item>
       </Form>
     </Drawer>
   );
