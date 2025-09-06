@@ -1,19 +1,19 @@
 import React, {useRef} from "react";
-import {Button, Layout, theme} from "antd";
+import {Button, theme} from "antd";
 import {FullscreenExitOutlined, FullscreenOutlined, ReloadOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
 import TabMenu, {TabMenuItem, TabMenuRef} from "./TabMenu";
 import {useFullscreen} from "@/hooks/useFullscreen.ts";
 
 interface TabPageContainerProps {
-  items: TabMenuItem[];
-  defaultActiveKey: string;
+  items?: TabMenuItem[];
+  defaultActiveKey?: string;
   style?: React.CSSProperties;
 }
 
 const TabPageContainer: React.FC<TabPageContainerProps> = ({
-                                                             items,
-                                                             defaultActiveKey,
+                                                             items = [],
+                                                             defaultActiveKey = '',
                                                            }) => {
   const {t} = useTranslation();
   const {token} = theme.useToken();
@@ -21,24 +21,24 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
   const tabMenuRef = useRef<TabMenuRef>(null);
 
   return (
-    <Layout
-      ref={ref}
-      className={`relative transition-all duration-300`}
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
       style={{
         height: 'calc(100vh - 64px)',
+        width: '100%',
         background: token.colorBgContainer,
         display: 'flex',
-        overflow: 'hidden',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'hidden'
       }}
     >
-
-      <Layout.Content style={{
-        height: 'calc(100vh - 64px)',
-        background: token.colorBgContainer,
-        display: 'flex',
-        flexDirection: 'column'
-      }}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
       >
         <TabMenu
           ref={tabMenuRef}
@@ -70,8 +70,8 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
             </div>
           }
         />
-      </Layout.Content>
-    </Layout>
+      </div>
+    </div>
   );
 };
 
