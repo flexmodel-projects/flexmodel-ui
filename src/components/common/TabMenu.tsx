@@ -15,9 +15,6 @@ interface TabMenuProps {
   items: TabMenuItem[];
   defaultActiveKey: string;
   className?: string;
-  style?: React.CSSProperties;
-  type?: "card" | "line";
-  size?: "small" | "middle" | "large";
   tabBarExtraContent?: ReactNode;
   onRefresh?: () => void;
 }
@@ -30,9 +27,6 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
   items,
   defaultActiveKey,
   className,
-  style,
-  type = "card",
-  size = "small",
   tabBarExtraContent,
   onRefresh,
 }, ref) => {
@@ -83,14 +77,11 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
       className={`${styles.compactTabs} ${
         className || ""
       } `}
-      style={style}
       activeKey={activeKey}
       onChange={onChange}
-      type={type}
-      size={size}
+      type="card"
+      size="small"
       tabBarGutter={4}
-      popupClassName="h-full"
-      destroyInactiveTabPane={true}
       tabBarExtraContent={tabBarExtraContent}
       items={items.map((content) => {
         const { label, key, icon, element: Element } = content;
@@ -99,7 +90,7 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
           label,
           key,
           className: "h-full",
-          children: <Element key={key === activeKey ? `${key}-${refreshKey}` : key} className="h-full" />,
+          children: <Element key={key === activeKey ? `${key}-${refreshKey}` : key}/>,
           icon,
         };
       })}

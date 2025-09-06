@@ -36,13 +36,6 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
         ref={tabMenuRef}
         items={items}
         defaultActiveKey={defaultActiveKey}
-        size="small"
-        style={{
-          background: token.colorBgContainer,
-          display: 'flex',
-          flexDirection: 'column',
-          flex: 1
-        }}
         tabBarExtraContent={
           <div className="flex items-center gap-1">
             <Button
