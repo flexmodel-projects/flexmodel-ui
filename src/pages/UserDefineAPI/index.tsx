@@ -295,7 +295,7 @@ const UserDefineAPI: React.FC = () => {
   const items: TabsProps["items"] = [
     {
       key: "detail",
-      label: t("api_detail"),
+      label: t("api_detail.title"),
       className: "h-full",
       children: (
         <APIDetail data={editForm || undefined}

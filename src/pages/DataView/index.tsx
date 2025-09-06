@@ -1,15 +1,11 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import DataModeling from "@/pages/DataModeling";
 import DataSource from "@/pages/DataSource";
 import ERView from "./components/ERView";
-import {
-  BranchesOutlined,
-  ContainerOutlined,
-  DatabaseOutlined,
-} from "@ant-design/icons";
+import {BranchesOutlined, ContainerOutlined, DatabaseOutlined,} from "@ant-design/icons";
 import TabPageContainer from "@/components/common/TabPageContainer";
-import { TabMenuItem } from "@/components/common/TabMenu";
+import {TabMenuItem} from "@/components/common/TabMenu";
 
 const DataView: React.FC = () => {
   const { t } = useTranslation();
@@ -43,8 +39,6 @@ const DataView: React.FC = () => {
     <TabPageContainer
       items={tabItems}
       defaultActiveKey="modeling"
-      className="h-full"
-      compact={true}
     />
   );
 };

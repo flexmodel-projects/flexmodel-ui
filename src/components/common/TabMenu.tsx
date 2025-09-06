@@ -18,7 +18,6 @@ interface TabMenuProps {
   style?: React.CSSProperties;
   type?: "card" | "line";
   size?: "small" | "middle" | "large";
-  compact?: boolean;
   tabBarExtraContent?: ReactNode;
   onRefresh?: () => void;
 }
@@ -34,7 +33,6 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
   style,
   type = "card",
   size = "small",
-  compact = false,
   tabBarExtraContent,
   onRefresh,
 }, ref) => {
@@ -82,7 +80,7 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
 
   return (
     <Tabs
-      className={`${styles.compactTabs} ${compact ? styles.compact : ""} ${
+      className={`${styles.compactTabs} ${
         className || ""
       } `}
       style={style}

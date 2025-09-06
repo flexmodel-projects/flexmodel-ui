@@ -3,29 +3,17 @@ import {Button, Layout, theme} from "antd";
 import {FullscreenExitOutlined, FullscreenOutlined, ReloadOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
 import TabMenu, {TabMenuItem, TabMenuRef} from "./TabMenu";
-import {useFullscreen} from "../../hooks/useFullscreen";
+import {useFullscreen} from "@/hooks/useFullscreen.ts";
 
 interface TabPageContainerProps {
   items: TabMenuItem[];
   defaultActiveKey: string;
-  className?: string;
   style?: React.CSSProperties;
-  type?: "card" | "line";
-  size?: "small" | "middle" | "large";
-  compact?: boolean;
-  showHeader?: boolean;
-  headerContent?: React.ReactNode;
 }
 
 const TabPageContainer: React.FC<TabPageContainerProps> = ({
                                                              items,
                                                              defaultActiveKey,
-                                                             className,
-                                                             type = "card",
-                                                             size = "small",
-                                                             compact = false,
-                                                             showHeader = false,
-                                                             headerContent
                                                            }) => {
   const {t} = useTranslation();
   const {token} = theme.useToken();
@@ -35,7 +23,7 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
   return (
     <Layout
       ref={ref}
-      className={`${className || ''} relative transition-all duration-300`}
+      className={`relative transition-all duration-300`}
       style={{
         height: 'calc(100vh - 64px)',
         background: token.colorBgContainer,
@@ -44,13 +32,6 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
         flexDirection: 'column'
       }}
     >
-
-
-      {showHeader && headerContent && (
-        <Layout.Header>
-          {headerContent}
-        </Layout.Header>
-      )}
 
       <Layout.Content style={{
         height: 'calc(100vh - 64px)',
@@ -63,9 +44,7 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
           ref={tabMenuRef}
           items={items}
           defaultActiveKey={defaultActiveKey}
-          type={type}
-          size={size}
-          compact={compact}
+          size="small"
           style={{
             background: token.colorBgContainer,
             display: 'flex',

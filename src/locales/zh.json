@@ -291,6 +291,7 @@
   "graphql_query": "GraphQL查询",
   "create_failed": "创建失败",
   "api_detail": {
+    "title": "接口详情",
     "select_api_to_view": "请选择一个 API 以查看详情",
     "api_id": "API ID",
     "status": "状态",

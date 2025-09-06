@@ -291,6 +291,7 @@
   "graphql_query": "GraphQL Query",
   "create_failed": "Creation failed",
   "api_detail": {
+    "title": "API detail",
     "select_api_to_view": "Please select an API to view details",
     "api_id": "API ID",
     "status": "Status",

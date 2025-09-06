@@ -47,8 +47,6 @@ const ApiView: React.FC = () => {
     <TabPageContainer
       items={tabItems}
       defaultActiveKey="graphql_api"
-      style={{height: '100%'}}
-      compact={true}
     />
   );
 };
