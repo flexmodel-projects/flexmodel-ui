@@ -1,9 +1,9 @@
 import React from 'react';
-import {Form, Input} from 'antd';
+import {Form, Input, Typography} from 'antd';
 import {useTranslation} from "react-i18next";
-import MySQLConfig from "@/pages/DataSource/components/MySQLConfig";
-import SQLiteConfig from "@/pages/DataSource/components/SQLiteConfig";
-import CommonConfig from "@/pages/DataSource/components/CommonConfig";
+import MySQLConnectionForm from "@/pages/DataSource/components/MySQLConnectionForm";
+import SQLiteConnectionForm from "@/pages/DataSource/components/SQLiteConnectionForm";
+import GenericConnectionForm from "@/pages/DataSource/components/GenericConnectionForm";
 
 interface DataSourceFormProps {
   readOnly?: boolean;
@@ -27,23 +27,21 @@ const DataSourceForm: React.FC<DataSourceFormProps> = ({ readOnly = false }) => 
       <Form.Item
         name="type"
         label={t('connection_type')}
-        initialValue="USER"
       >
-        <Input readOnly={readOnly} />
+        <Typography.Text>{Form.useWatch('type') || 'USER'}</Typography.Text>
       </Form.Item>
 
       <Form.Item
         name="dbKind"
         label={t('database_type')}
-        rules={[{ required: true, message: t('database_type_required') }]}
       >
-        <Input readOnly={readOnly} />
+        <Typography.Text>{Form.useWatch('dbKind')}</Typography.Text>
       </Form.Item>
 
       {/* 根据数据库类型显示不同的配置表单 */}
-      {dbKind === 'mysql' && <MySQLConfig readOnly={readOnly} />}
-      {dbKind === 'sqlite' && <SQLiteConfig readOnly={readOnly} />}
-      {dbKind && dbKind !== 'mysql' && dbKind !== 'sqlite' && <CommonConfig readOnly={readOnly} />}
+      {dbKind === 'mysql' && <MySQLConnectionForm readOnly={readOnly} />}
+      {dbKind === 'sqlite' && <SQLiteConnectionForm readOnly={readOnly} />}
+      {dbKind && dbKind !== 'mysql' && dbKind !== 'sqlite' && <GenericConnectionForm readOnly={readOnly} />}
     </>
   );
 };

@@ -14,7 +14,7 @@ interface DatabaseConfigProps {
   readOnly?: boolean;
 }
 
-const SQLiteConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
+const SQLiteConnectionForm: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
 
   const {t} = useTranslation();
 
@@ -38,4 +38,4 @@ const SQLiteConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
   );
 };
 
-export default SQLiteConfig;
+export default SQLiteConnectionForm;

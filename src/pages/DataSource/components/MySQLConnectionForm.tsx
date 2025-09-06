@@ -14,7 +14,7 @@ interface DatabaseConfigProps {
   readOnly?: boolean;
 }
 
-const MySQLConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
+const MySQLConnectionForm: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
 
   const {t} = useTranslation();
 
@@ -38,4 +38,4 @@ const MySQLConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
   );
 };
 
-export default MySQLConfig;
+export default MySQLConnectionForm;

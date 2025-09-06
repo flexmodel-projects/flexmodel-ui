@@ -14,7 +14,7 @@ interface DatabaseConfigProps {
   readOnly?: boolean;
 }
 
-const CommonConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
+const GenericConnectionForm: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
 
   const {t} = useTranslation();
 
@@ -38,4 +38,4 @@ const CommonConfig: React.FC<DatabaseConfigProps> = ({ readOnly = false }) => {
   );
 };
 
-export default CommonConfig;
+export default GenericConnectionForm;
