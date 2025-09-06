@@ -246,7 +246,7 @@ const UserDefineAPI: React.FC = () => {
 
   // 根据ID获取上级目录名称
   const getParentFolderName = (parentId: string | null): string => {
-    if (!parentId) return "根目录";
+    if (!parentId) return t("root_directory");
 
     const findFolder = (
       apis: ApiDefinition[],
@@ -265,7 +265,7 @@ const UserDefineAPI: React.FC = () => {
     };
 
     const parent = findFolder(apiList, parentId);
-    return parent ? parent.name : "未知目录";
+    return parent ? parent.name : t("unknown_directory");
   };
 
   const handleSaveApi = async () => {
@@ -295,7 +295,7 @@ const UserDefineAPI: React.FC = () => {
   const items: TabsProps["items"] = [
     {
       key: "detail",
-      label: "接口详情",
+      label: t("api_detail"),
       className: "h-full",
       children: (
         <APIDetail data={editForm || undefined}
@@ -620,7 +620,7 @@ const UserDefineAPI: React.FC = () => {
         confirmLoading={createFolderLoading}
       >
         <Form layout="vertical">
-          <Form.Item label="上级目录">
+          <Form.Item label={t("parent_folder")}>
             <Input
               value={getParentFolderName(createFolderParentId)}
               disabled

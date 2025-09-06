@@ -8,6 +8,7 @@ import {register} from 'x6-html-shape';
 import createRender from 'x6-html-shape/dist/react';
 import ERNodeView from './ERNodeView';
 import {getDarkModeFromStorage} from '@/utils/darkMode';
+import {t} from "i18next";
 
 interface ERDiagramProps {
   data: Entity[];
@@ -122,7 +123,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       try {
         graphRef.current.dispose();
       } catch (error) {
-        console.warn('清理图形实例时出错:', error);
+        console.warn(t('cleanup_graph_error'), error);
       }
       graphRef.current = null;
     }
@@ -218,7 +219,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
         try {
           graphRef.current.dispose();
         } catch (error) {
-          console.warn('组件卸载时清理图形实例出错:', error);
+          console.warn(t('cleanup_graph_error_unmount'), error);
         }
         graphRef.current = null;
       }
@@ -276,20 +277,20 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
           <Button
             icon={<PlusOutlined />}
             onClick={() => handleZoom(0.1)}
-            title="放大"
+            title={t('zoom_in')}
             style={{ borderRadius: 4 }}
           />
           <Button
             icon={<MinusOutlined />}
             onClick={() => handleZoom(-0.1)}
-            title="缩小"
+            title={t('zoom_out')}
             style={{ borderRadius: 4 }}
           />
 
           <Button
             icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
             onClick={handleToggleFullscreen}
-            title={fullscreen ? "退出全屏" : "全屏"}
+            title={fullscreen ? t('exit_fullscreen') : t('fullscreen')}
             style={{ borderRadius: 4 }}
           />
         </Space>

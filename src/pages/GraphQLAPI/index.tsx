@@ -7,6 +7,7 @@ import {getSettings} from "@/services/settings";
 import {Settings} from "@/types/settings";
 import {useConfig} from "@/store/appStore";
 import GraphQLSettingsModal from "./components/GraphQLSettingsModal";
+import {t} from "i18next";
 
 const GraphQLAPI: React.FC = () => {
   const {config} = useConfig();
@@ -27,8 +28,8 @@ const GraphQLAPI: React.FC = () => {
         const settingsData = await getSettings();
         setSettings(settingsData);
       } catch (error) {
-        console.error('加载配置失败:', error);
-        message.error('加载配置失败');
+        console.error(t('config_load_failed'), error);
+        message.error(t('config_load_failed'));
       }
     };
 

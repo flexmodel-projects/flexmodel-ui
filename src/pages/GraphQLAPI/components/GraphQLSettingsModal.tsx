@@ -4,6 +4,7 @@ import {getIdentityProviders} from "@/services/identity-provider";
 import {saveSettings} from "@/services/settings";
 import {Settings} from "@/types/settings";
 import {useConfig} from "@/store/appStore";
+import {useTranslation} from "react-i18next";
 
 interface GraphQLSettingsModalProps {
   visible: boolean;
@@ -18,6 +19,7 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
   onCancel,
   onSuccess
 }) => {
+  const { t } = useTranslation();
   const { config } = useConfig();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -32,14 +34,14 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
         const providers = await getIdentityProviders();
         setIdentityProviders(providers);
       } catch (error) {
-        console.error('加载身份提供商失败:', error);
+        console.error(t('identity_provider_load_failed'), error);
       }
     };
 
     if (visible) {
       loadProviders();
     }
-  }, [visible]);
+  }, [visible, t]);
 
   // 设置表单初始值
   useEffect(() => {
@@ -67,11 +69,11 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
       };
 
       await saveSettings(updatedSettings);
-      message.success('配置保存成功');
+      message.success(t('config_save_success'));
       onSuccess(updatedSettings);
     } catch (error) {
-      console.error('保存配置失败:', error);
-      message.error('保存配置失败');
+      console.error(t('config_save_failed'), error);
+      message.error(t('config_save_failed'));
     } finally {
       setLoading(false);
     }
@@ -85,15 +87,15 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
 
   return (
     <Modal
-      title="GraphQL 端点配置"
+      title={t('graphql_endpoint_config')}
       open={visible}
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" onClick={handleCancel}>
-          取消
+          {t('cancel')}
         </Button>,
         <Button key="save" type="primary" loading={loading} onClick={handleSave}>
-          保存配置
+          {t('save')}
         </Button>
       ]}
       width={600}
@@ -106,9 +108,9 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
       >
         <Form.Item
           name="graphqlEndpointPath"
-          label="GraphQL 端点路径"
-          rules={[{ required: true, message: '请输入 GraphQL 端点路径' }]}
-          extra={`完整地址: ${config?.apiRootPath || ''}[端点路径]`}
+          label={t('graphql_endpoint_path')}
+          rules={[{ required: true, message: t('graphql_endpoint_path_required') }]}
+          extra={t('graphql_endpoint_full_address', { path: config?.apiRootPath || '' })}
         >
           <Input
             addonBefore={config?.apiRootPath || ''}
@@ -118,15 +120,15 @@ const GraphQLSettingsModal: React.FC<GraphQLSettingsModalProps> = ({
 
         <Form.Item
           name="graphqlEndpointIdentityProvider"
-          label="身份提供商"
-          extra="可选择身份提供商进行访问控制"
+          label={t('identity_provider')}
+          extra={t('identity_provider_help')}
         >
           <Select
             options={identityProviders.map(provider => ({
               value: provider.name,
               label: provider.name
             }))}
-            placeholder="选择身份提供商"
+            placeholder={t('select_identity_provider')}
             allowClear
           />
         </Form.Item>

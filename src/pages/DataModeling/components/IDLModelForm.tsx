@@ -68,7 +68,7 @@ enum ExampleEnum {
 }`);
       onConfirm();
     } catch (error) {
-      console.error('创建模型失败:', error);
+      console.error(t('create_model_failed'), error);
       message.error(t('model_creation_failed'));
     } finally {
       setLoading(false);

@@ -18,12 +18,14 @@ import {
   FileTextOutlined,
   HomeOutlined,
   LineChartOutlined,
+  NodeIndexOutlined,
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import GraphQLAPI from "@/pages/GraphQLAPI";
 import UserDefineAPI from "@/pages/UserDefineAPI";
 import OpenAPI from "@/pages/OpenAPI";
+import Flow from "@/pages/Flow";
 
 export interface RouteConfig {
   path: string;
@@ -99,6 +101,12 @@ export const routes: RouteConfig[] = [
         translationKey: "er_view",
       },
     ],
+  },
+  {
+    path: "/flow",
+    element: <Flow />,
+    icon: NodeIndexOutlined,
+    translationKey: "flow",
   },
   {
     path: "/identity-providers",

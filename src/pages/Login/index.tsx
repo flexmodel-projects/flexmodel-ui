@@ -75,18 +75,18 @@ const Login: React.FC = () => {
   const localeMenu = useMemo(() => (
     <Menu>
       <Menu.Item key="zh" onClick={() => changeLocale(zhCN)}>
-        中文
+        {t("chinese")}
       </Menu.Item>
       <Menu.Item key="en" onClick={() => changeLocale(enUS)}>
-        English
+        {t("english")}
       </Menu.Item>
     </Menu>
   ), [changeLocale]);
 
   // 当前语言显示文本
   const currentLocaleText = useMemo(() =>
-      currentLang === 'zh' ? "中文" : "English",
-    [currentLang]
+      currentLang === 'zh' ? t("chinese") : t("english"),
+    [currentLang, t]
   );
 
   const handleSubmit = async (values: LoginFormData) => {

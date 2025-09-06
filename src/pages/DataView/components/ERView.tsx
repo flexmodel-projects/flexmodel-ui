@@ -27,10 +27,10 @@ const ERView: React.FC = () => {
           setSelectedDatasource(dsList[0].name);
         }
       } catch (error) {
-        console.error("获取数据源列表失败:", error);
+        console.error(t("get_datasource_list_failed"), error);
         notification.error({
-          message: "获取数据源列表失败",
-          description: "请检查网络连接或联系管理员"
+          message: t("get_datasource_list_failed"),
+          description: t("get_datasource_list_failed_desc")
         });
       }
     };
@@ -66,10 +66,10 @@ const ERView: React.FC = () => {
         const entityModels = modelList.filter(model => model.type === "entity") as Entity[];
         setModels(entityModels);
       } catch (error) {
-        console.error("获取模型列表失败:", error);
+        console.error(t("get_model_list_failed"), error);
         notification.error({
-          message: "获取模型列表失败",
-          description: "请检查数据源连接或联系管理员"
+          message: t("get_model_list_failed"),
+          description: t("get_model_list_failed_desc")
         });
         setModels([]);
       } finally {
@@ -94,10 +94,10 @@ const ERView: React.FC = () => {
           const entityModels = modelList.filter(model => model.type === "entity") as Entity[];
           setModels(entityModels);
         } catch (error) {
-          console.error("获取模型列表失败:", error);
+          console.error(t("get_model_list_failed"), error);
           notification.error({
-            message: "获取模型列表失败",
-            description: "请检查数据源连接或联系管理员"
+            message: t("get_model_list_failed"),
+            description: t("get_model_list_failed_desc")
           });
           setModels([]);
         } finally {
