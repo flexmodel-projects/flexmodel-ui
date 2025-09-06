@@ -25,8 +25,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
     width: '100%',
     background: token.colorBgContainer,
     borderRadius: token.borderRadius,
-    border: `1px solid ${token.colorBorder}`,
-    boxShadow: token.boxShadow,
+    border: `1px solid ${token.colorBorderSecondary}`,
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
@@ -39,7 +38,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
         <div
           style={{
             padding: `${token.padding}px ${token.paddingLG}px`,
-            borderBottom: `1px solid ${token.colorBorder}`,
+            borderBottom: `1px solid ${token.colorBorderSecondary}`,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',

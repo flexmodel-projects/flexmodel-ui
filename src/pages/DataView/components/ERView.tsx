@@ -84,30 +84,6 @@ const ERView: React.FC = () => {
     setSelectedDatasource(value);
   };
 
-  const handleRefresh = () => {
-    if (selectedDatasource) {
-      // 重新获取模型数据
-      const fetchModels = async () => {
-        setLoading(true);
-        try {
-          const modelList = await getModelList(selectedDatasource);
-          const entityModels = modelList.filter(model => model.type === "entity") as Entity[];
-          setModels(entityModels);
-        } catch (error) {
-          console.error(t("get_model_list_failed"), error);
-          notification.error({
-            message: t("get_model_list_failed"),
-            description: t("get_model_list_failed_desc")
-          });
-          setModels([]);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchModels();
-    }
-  };
-
   return (
     <PageContainer
       title={t("er_view")}

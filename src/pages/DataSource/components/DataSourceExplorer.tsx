@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu, Spin, Typography} from "antd";
+import {Button, Divider, Dropdown, Menu, Spin} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 // 导入Tree组件
 import Tree from "@/components/explore/explore/Tree.jsx";
@@ -18,8 +18,6 @@ import GBase from "@/assets/icons/svg/gbase.svg?react";
 import DM8 from "@/assets/icons/svg/dm.svg?react";
 import TiDB from "@/assets/icons/svg/tidb.svg?react";
 import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
-
-const { Title } = Typography;
 
 const DbsMap: Record<string, any> = {
   mysql: MySQL,
