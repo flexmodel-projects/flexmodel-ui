@@ -359,5 +359,6 @@
   "cleanup_graph_error": "Error cleaning up graph instance",
   "cleanup_graph_error_unmount": "Error cleaning up graph instance on component unmount",
   "chinese": "中文",
-  "english": "English"
+  "english": "English",
+  "refresh_tab": "Refresh Tab"
 }

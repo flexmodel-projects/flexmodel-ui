@@ -359,5 +359,6 @@
   "cleanup_graph_error": "清理图形实例时出错",
   "cleanup_graph_error_unmount": "组件卸载时清理图形实例出错",
   "chinese": "中文",
-  "english": "English"
+  "english": "English",
+  "refresh_tab": "刷新标签页"
 }
