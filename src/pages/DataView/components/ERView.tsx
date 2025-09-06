@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Card, Empty, notification, Select, Spin, Tooltip} from "antd";
+import {Empty, notification, Select, Spin} from "antd";
 import {useTranslation} from "react-i18next";
+import PageContainer from "@/components/common/PageContainer";
 import {getDatasourceList} from "@/services/datasource";
 import {getModelList} from "@/services/model";
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
 import type {DatasourceSchema} from "@/types/data-source";
 import type {Entity} from "@/types/data-modeling";
-import {DatabaseOutlined, ReloadOutlined} from "@ant-design/icons";
 import styles from "./ERView.module.scss";
 
 const ERView: React.FC = () => {
@@ -35,7 +35,7 @@ const ERView: React.FC = () => {
       }
     };
     fetchDatasources();
-  }, []);
+  }, [t]);
 
   // 监听全屏退出，刷新组件
   useEffect(() => {
@@ -78,7 +78,7 @@ const ERView: React.FC = () => {
     };
 
     fetchModels();
-  }, [selectedDatasource]);
+  }, [selectedDatasource, t]);
 
   const handleDatasourceChange = (value: string) => {
     setSelectedDatasource(value);
@@ -109,76 +109,44 @@ const ERView: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <Card
-        className={styles.contentCard}
-        title={
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%'
-          }}>
-            {/* 左侧：标题区域 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <DatabaseOutlined style={{ fontSize: 16, color: '#1890ff' }} />
-              <span style={{ fontSize: 14, fontWeight: 500 }}>{t("er_view")}</span>
-            </div>
-
-            {/* 右侧：操作区域 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Select
-                value={selectedDatasource}
-                onChange={handleDatasourceChange}
-                style={{ minWidth: 150 }}
-                placeholder={t("select_datasource")}
-                loading={datasources.length === 0}
-              >
-                {datasources.map(ds => (
-                  <Select.Option key={ds.name} value={ds.name}>
-                    {ds.name}
-                  </Select.Option>
-                ))}
-              </Select>
-
-              <Tooltip title={t("refresh_models")}>
-                <ReloadOutlined
-                  onClick={handleRefresh}
-                  style={{
-                    cursor: 'pointer',
-                    fontSize: 16,
-                    color: '#666',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#1890ff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
-                />
-              </Tooltip>
-            </div>
-          </div>
-        }
-        bodyStyle={{ padding: 0, height: '100%' }}
-        style={{ height: '100%', margin: 0 }}
-      >
-        {loading ? (
-          <div className={styles.loading}>
-            <Spin size="large" />
-            <p>{t("loading_models")}</p>
-          </div>
-        ) : models.length > 0 ? (
-          <ERDiagram
-            key={refreshKey}
-            datasource={selectedDatasource}
-            data={models}
-          />
-        ) : (
-          <Empty
-            description={t("no_model_data")}
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        )}
-      </Card>
-    </div>
+    <PageContainer
+      title={t("er_view")}
+      extra={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Select
+            value={selectedDatasource}
+            onChange={handleDatasourceChange}
+            style={{ minWidth: 150 }}
+            placeholder={t("select_datasource")}
+            loading={datasources.length === 0}
+          >
+            {datasources.map(ds => (
+              <Select.Option key={ds.name} value={ds.name}>
+                {ds.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+      }
+    >
+      {loading ? (
+        <div className={styles.loading}>
+          <Spin size="large" />
+          <p>{t("loading_models")}</p>
+        </div>
+      ) : models.length > 0 ? (
+        <ERDiagram
+          key={refreshKey}
+          datasource={selectedDatasource}
+          data={models}
+        />
+      ) : (
+        <Empty
+          description={t("no_model_data")}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      )}
+    </PageContainer>
   );
 };
 

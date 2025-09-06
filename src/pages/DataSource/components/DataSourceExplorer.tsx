@@ -114,10 +114,6 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
 
   return (
     <div style={{ minWidth: 200 }}>
-      <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
-        {t('datasource_management')}
-      </Title>
-      <Divider style={{ margin: "16px 0" }} />
       <Spin spinning={loading}>
         <Tree
           tree={treeData}

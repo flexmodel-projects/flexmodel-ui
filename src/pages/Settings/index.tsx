@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Card, Menu, message} from "antd";
+import {Menu, message} from "antd";
 import About from "@/pages/Settings/components/About";
 import Base from "@/pages/Settings/components/Base";
 import Proxy from "@/pages/Settings/components/Proxy";
@@ -7,7 +7,7 @@ import {getSettings, saveSettings as reqSaveSettings,} from "@/services/settings
 import Security from "@/pages/Settings/components/Security";
 import {useTranslation} from "react-i18next";
 import type {Settings} from "@/types/settings";
-import Title from "antd/es/typography/Title";
+import {PageContainer} from "@/components/common";
 
 type OnChangeHandler = (data: Partial<Settings>) => void;
 
@@ -72,11 +72,10 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <Card
-      style={{ width: "100%", height: "100%" }}
-      styles={{ body: { height: "100%" } }}
+    <PageContainer
+      title={menuMap[initConfig.selectKey] as string}
     >
-      <div className="flex w-full h-full pt-4 pb-4">
+      <div className="flex w-full h-full">
         <div className="w-[224px] h-full settings-menu-wrapper">
           <Menu
             className="h-full"
@@ -92,17 +91,10 @@ const Settings: React.FC = () => {
           />
         </div>
         <div className="flex-1 px-10 py-2">
-          <Title
-            level={3}
-            className="description"
-            style={{ color: "var(--ant-color-text)" }}
-          >
-            {menuMap[initConfig.selectKey]}
-          </Title>
           {renderChildren(saveSettings)}
         </div>
       </div>
-    </Card>
+    </PageContainer>
   );
 };
 

@@ -5,6 +5,9 @@
   "api_log": "接口日志",
   "user_define_api": "自定义接口",
   "graphql_api": "GraphQL",
+  "graphql_endpoint": "端点",
+  "graphql_settings": "设置",
+  "graphql_api_title": "GraphQL API",
   "data": "数据",
   "data_source": "数据源",
   "data_modeling": "数据建模",
@@ -370,5 +373,9 @@
     "view_source": "查看源码",
     "could_not_load_zip": "无法加载ZIP项目",
     "could_not_read_zip": "无法读取ZIP项目"
-  }
+  },
+  "identity_provider_delete_success": "删除成功",
+  "identity_provider_delete_failed": "删除身份提供商失败",
+  "identity_provider_delete_confirm": "确定要删除 '{{name}}' 吗？",
+  "identity_provider_delete_confirm_desc": "您确定要删除 <strong>{{name}}</strong> 吗？"
 }

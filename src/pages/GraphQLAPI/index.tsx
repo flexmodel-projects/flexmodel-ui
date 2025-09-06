@@ -1,25 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, message, Space} from "antd";
+import {Button, message, Space} from "antd";
 import {SettingOutlined} from "@ant-design/icons";
-import styles from "./index.module.scss";
 import GraphQL from "./components/GraphQL";
 import {getSettings} from "@/services/settings";
 import {Settings} from "@/types/settings";
 import {useConfig} from "@/store/appStore";
 import GraphQLSettingsModal from "./components/GraphQLSettingsModal";
-import {t} from "i18next";
+import PageContainer from "@/components/common/PageContainer";
+import {useTranslation} from "react-i18next";
 
 const GraphQLAPI: React.FC = () => {
   const {config} = useConfig();
+  const {t} = useTranslation();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
-  // 紧凑主题样式
-  const cardStyle = {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column" as const,
-  };
 
   // 加载设置
   useEffect(() => {
@@ -34,7 +29,7 @@ const GraphQLAPI: React.FC = () => {
     };
 
     loadSettings();
-  }, []);
+  }, [t]);
 
   // 设置更新回调
   const handleSettingsUpdate = (updatedSettings: Settings) => {
@@ -43,27 +38,21 @@ const GraphQLAPI: React.FC = () => {
   };
 
   return (
-    <Card
-      className={`${styles.apiManagementWrapper} h-full w-full`}
-      style={cardStyle}
-      title={
-        <div className="flex justify-between items-center">
-          <span>{settings?.security.graphqlEndpointPath && (
-            <span>
-                 端点: {config?.apiRootPath || ''}{settings.security.graphqlEndpointPath}
-              </span>
-          )}</span>
-          <Space>
-
-            <Button
-              type="text"
-              icon={<SettingOutlined/>}
-              onClick={() => setSettingsModalVisible(true)}
+    <PageContainer
+      title={settings?.security.graphqlEndpointPath ? 
+        `${t('graphql_endpoint')}: ${config?.apiRootPath || ''}${settings.security.graphqlEndpointPath}` : 
+        t('graphql_api_title')
+      }
+      extra={
+        <Space>
+          <Button
+            type="text"
+            icon={<SettingOutlined/>}
+            onClick={() => setSettingsModalVisible(true)}
             >
-              设置
+              {t('graphql_settings')}
             </Button>
-          </Space>
-        </div>
+        </Space>
       }
     >
       <GraphQL
@@ -114,7 +103,7 @@ const GraphQLAPI: React.FC = () => {
         onCancel={() => setSettingsModalVisible(false)}
         onSuccess={handleSettingsUpdate}
       />
-    </Card>
+    </PageContainer>
   );
 };
 

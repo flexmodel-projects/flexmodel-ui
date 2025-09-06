@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Form, Layout, message, Modal, Row, Space, Typography} from "antd";
+import React, {useCallback, useEffect, useState} from "react";
+import {Button, Col, Form, Layout, message, Modal, Row, Space} from "antd";
 import {useTranslation} from "react-i18next";
 import type {IdentityProvider} from "@/types/identity-provider";
 import IdPExplorer from "@/pages/IdentityProvider/components/IdPExplorer";
@@ -13,6 +13,7 @@ import {buildUpdatePayload, mergeIdentityProvider, normalizeIdentityProvider} fr
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
 import IdpView from "@/pages/IdentityProvider/components/IdPView";
+import {PageContainer} from "@/components/common";
 
 const IdPManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ const IdPManagement: React.FC = () => {
   const [deleteVisible, setDeleteVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
 
-  const getIdentityProviders = async () => {
+  const getIdentityProviders = useCallback(async () => {
     try {
       setIdPLoading(true);
       const data = await getIdentityProvidersApi();
@@ -33,13 +34,13 @@ const IdPManagement: React.FC = () => {
       setActiveIdP(data[0] || null);
     } catch (error) {
       console.log(error);
-      message.error("Failed to load identity providers.");
+      message.error(t("identity_provider_load_failed"));
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     getIdentityProviders();
-  }, []);
+  }, [getIdentityProviders]);
 
   const handleDelete = async () => {
     if (activeIdP) {
@@ -47,9 +48,9 @@ const IdPManagement: React.FC = () => {
         await deleteIdentityProvider(activeIdP.name);
         getIdentityProviders();
         setDeleteVisible(false);
-        message.success("Deleted successfully");
+        message.success(t("identity_provider_delete_success"));
       } catch {
-        message.error("Failed to delete provider");
+        message.error(t("identity_provider_delete_failed"));
       }
     }
   };
@@ -74,9 +75,21 @@ const IdPManagement: React.FC = () => {
 
   return (
     <>
-      <Card
-        style={{ width: "100%", height: "100%" }}
-        styles={{ body: { height: "100%" } }}
+      <PageContainer
+        title={activeIdP ? activeIdP.name : t("identity_provider")}
+        extra={
+          activeIdP && (
+            isEditing ? (
+              <Space>
+                <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
+                <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditProvider(values); }}>{t("save")}</Button>
+              </Space>
+            ) : (
+              <Button type="primary" onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeIdentityProvider(activeIdP)); }}>{t("edit")}</Button>
+            )
+          )
+        }
+        loading={idPLoading}
       >
         <Layout style={{ height: "100%", background: "transparent" }}>
           <Sider width={320} style={{ background: "transparent", borderRight: "1px solid var(--ant-color-border)" }}>
@@ -96,40 +109,23 @@ const IdPManagement: React.FC = () => {
             {idPList.length > 0 && activeIdP && (
               <Row>
                 <Col span={24}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                    <Typography.Title level={5} style={{ margin: 0 }}>
-                      {activeIdP.name}
-                    </Typography.Title>
-                    {isEditing ? (
-                      <Space>
-                        <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
-                        <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditProvider(values); }}>{t("save")}</Button>
-                      </Space>
-                    ) : (
-                      <Button type="primary" onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeIdentityProvider(activeIdP)); }}>{t("edit")}</Button>
-                    )}
-                  </div>
-                </Col>
-                <Col span={24}>
-                  <Card bordered>
-                    {isEditing ? (
-                      <Form form={form} layout="vertical">
-                        {(form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'script' ? (
-                          <ScriptIdPForm />
-                        ) : (
-                          <OIDCIdPForm />
-                        )}
-                      </Form>
-                    ) : (
-                      <IdpView data={activeIdP} />
-                    )}
-                  </Card>
+                  {isEditing ? (
+                    <Form form={form} layout="vertical">
+                      {(form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'script' ? (
+                        <ScriptIdPForm />
+                      ) : (
+                        <OIDCIdPForm />
+                      )}
+                    </Form>
+                  ) : (
+                    <IdpView data={activeIdP} />
+                  )}
                 </Col>
               </Row>
             )}
           </Content>
         </Layout>
-      </Card>
+      </PageContainer>
       <CreateIdP
         open={drawerVisible}
         onClose={() => setDrawerVisible(false)}
@@ -137,18 +133,19 @@ const IdPManagement: React.FC = () => {
           getIdentityProviders().then(() => setActiveIdP(res));
         }}
       />
-      {/* inline editing; modal removed */}
       <Modal
         open={deleteVisible}
-        title={`Delete '${activeIdP?.name}'?`}
+        title={t("identity_provider_delete_confirm", { name: activeIdP?.name })}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
-        okText="Delete"
+        okText={t("delete")}
         okButtonProps={{ danger: true }}
       >
-        <p>
-          Are you sure you want to delete <strong>{activeIdP?.name}</strong>?
-        </p>
+        <p
+          dangerouslySetInnerHTML={{
+            __html: t("identity_provider_delete_confirm_desc", { name: activeIdP?.name })
+          }}
+        />
       </Modal>
     </>
   );

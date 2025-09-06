@@ -5,6 +5,9 @@
   "api_log": "API Log",
   "user_define_api": "User Define API",
   "graphql_api": "GraphQL",
+  "graphql_endpoint": "Endpoint",
+  "graphql_settings": "Settings",
+  "graphql_api_title": "GraphQL API",
   "data": "Data",
   "data_source": "Data source",
   "data_modeling": "Data modeling",
@@ -370,5 +373,9 @@
     "view_source": "View source",
     "could_not_load_zip": "Could not load the ZIP project.",
     "could_not_read_zip": "Could not read the ZIP project."
-  }
+  },
+  "identity_provider_delete_success": "Deleted successfully",
+  "identity_provider_delete_failed": "Failed to delete provider",
+  "identity_provider_delete_confirm": "Delete '{{name}}'?",
+  "identity_provider_delete_confirm_desc": "Are you sure you want to delete <strong>{{name}}</strong>?"
 }

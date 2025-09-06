@@ -1,14 +1,13 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu, Spin, Typography} from "antd";
+import {Button, Divider, Dropdown, Menu, Spin} from "antd";
 import {KeyOutlined, MoreOutlined, PlusOutlined, SafetyCertificateOutlined, UserOutlined} from "@ant-design/icons";
 // 导入Tree组件
 import Tree from "@/components/explore/explore/Tree.jsx";
 // 导入Tree样式
 import "@/components/explore/styles/explore.scss";
 import type {IdentityProvider} from "@/types/identity-provider";
-// removed custom scss usage
 
-const { Title } = Typography;
+// removed custom scss usage
 
 interface IdPExplorerProps {
   idPList: IdentityProvider[];
@@ -96,10 +95,6 @@ const IdPExplorer: React.FC<IdPExplorerProps> = ({
 
   return (
     <div style={{ minWidth: 200 }}>
-      <Title level={5} style={{ margin: 0, marginBottom: "16px" }}>
-        {t('idp_management')}
-      </Title>
-      <Divider style={{ margin: "16px 0" }} />
       <Spin spinning={loading}>
         <Tree
           tree={treeData}

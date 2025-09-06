@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Form, Input, Layout, message, Modal, Radio, Row, Space, Typography} from "antd";
+import {Button, Card, Col, Form, Input, Layout, message, Modal, Radio, Row, Space} from "antd";
 import {useTranslation} from "react-i18next";
+import PageContainer from "@/components/common/PageContainer";
 import type {DatasourceSchema} from "@/types/data-source";
 import {ScriptImportForm, ScriptType} from "@/types/data-source";
 import DataSourceExplorer from "@/pages/DataSource/components/DataSourceExplorer";
@@ -151,10 +152,31 @@ const DatasourceManagement: React.FC = () => {
 
   return (
     <>
-      <Card
-        style={{ width: "100%", height: "100%" }}
-        styles={{ body: { height: "100%" } }}
-      >
+      <PageContainer title={activeDs?.name || t('datasource_management')} extra={
+        <>
+          {isEditing ? (
+            <Space>
+              <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
+              <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditDatasource(values); }}>{t("save")}</Button>
+            </Space>
+          ) : (
+            <Space>
+              <Button onClick={handleImport}>{t("import")}</Button>
+              <Button onClick={handleExport}>{t("export")}</Button>
+              <Button onClick={handleTestConnection} loading={testLoading}>
+                {t("test")}
+              </Button>
+              <Button
+                type="primary"
+                disabled={activeDs?.type === "SYSTEM"}
+                onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeDatasource(activeDs as DatasourceSchema)); }}
+              >
+                {t("edit")}
+              </Button>
+            </Space>
+          )}
+        </>
+      }>
         <Layout style={{ height: "100%", background: "transparent" }}>
           <Sider width={320} style={{ background: "transparent", borderRight: "1px solid var(--ant-color-border)" }}>
             <div style={{ height: "100%", overflow: "auto" }}>
@@ -173,38 +195,10 @@ const DatasourceManagement: React.FC = () => {
             {dsList.length > 0 && activeDs && (
               <Row>
                 <Col span={24}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                    <Typography.Title level={5} style={{ margin: 0 }}>
-                      {activeDs.name}
-                    </Typography.Title>
-                    {isEditing ? (
-                      <Space>
-                        <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
-                        <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditDatasource(values); }}>{t("save")}</Button>
-                      </Space>
-                    ) : (
-                      <Space>
-                        <Button onClick={handleImport}>{t("import")}</Button>
-                        <Button onClick={handleExport}>{t("export")}</Button>
-                        <Button onClick={handleTestConnection} loading={testLoading}>
-                          {t("test")}
-                        </Button>
-                        <Button
-                          type="primary"
-                          disabled={activeDs.type === "SYSTEM"}
-                          onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeDatasource(activeDs)); }}
-                        >
-                          {t("edit")}
-                        </Button>
-                      </Space>
-                    )}
-                  </div>
-                </Col>
-                <Col span={24}>
                   <Card bordered>
                     {isEditing ? (
                       <Form form={form} layout="vertical">
-                        <DataSourceForm/>
+                        <DataSourceForm />
                       </Form>
                     ) : (
                       <DataSourceView data={activeDs} />
@@ -215,7 +209,7 @@ const DatasourceManagement: React.FC = () => {
             )}
           </Content>
         </Layout>
-      </Card>
+      </PageContainer>
 
       <ConnectDatabaseDrawer
         visible={drawerVisible}
