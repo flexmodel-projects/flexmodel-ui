@@ -7,15 +7,17 @@ import get from 'lodash.get'
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 import {toast} from 'react-toastify'
+import {useTranslation} from 'react-i18next'
 
 import Code from './Code'
 import Loading from './Loading'
 import Tree from './Tree'
 import {createTree, findRoot} from '../utils/Zip'
-import {Col, Row} from "antd";
+import {Col, Divider, Row} from "antd";
 
 const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
-  const [button, setButton] = useState('Copy')
+  const {t} = useTranslation()
+  const [button, setButton] = useState(t('explore.copy'))
   const [tree, setTree] = useState(null)
   const [selected, setSelected] = useState(null)
 
@@ -30,11 +32,11 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
       try {
         const zipJs = new JSZip()
         const {files} = await zipJs.loadAsync(blob).catch(() => {
-          throw Error(`Could not load the ZIP project.`)
+          throw Error(t('explore.could_not_load_zip'))
         })
         const path = `${findRoot({files})}/`
         const result = await createTree(files, path, path, zipJs).catch(() => {
-          throw Error(`Could not read the ZIP project.`)
+          throw Error(t('explore.could_not_read_zip'))
         })
         setSelected(result.selected)
         setTree(result.tree)
@@ -47,12 +49,12 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
     if (blob) {
       load()
     }
-  }, [blob])
+  }, [blob, t])
 
   const onCopy = () => {
-    setButton('Copied!')
+    setButton(t('explore.copied'))
     setTimeout(() => {
-      setButton('Copy!')
+      setButton(t('explore.copy'))
     }, 3000)
   }
 
@@ -93,57 +95,62 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
               <div className='right'>
                 {selected && (
                   <>
-                    <div className='head' style={{paddingLeft: '40px'}}>
-                      <strong>
-                        {get(selected, 'filename')}
-                      </strong>
-                      <div className='actions'>
-                        <a
-                          href='/#'
-                          onClick={e => {
-                            e.preventDefault()
-                            download(selected)
-                          }}
-                          className='action'
-                        >
-                          Download
-                        </a>
-                        <span className='divider'>|</span>
-                        <CopyToClipboard
-                          onCopy={onCopy}
-                          text={get(selected, 'content', '')}
-                        >
-                          <a
-                            href='/#'
-                            onClick={e => {
-                              e.preventDefault()
-                            }}
-                            className='action'
-                          >
-                            {button}
-                          </a>
-                        </CopyToClipboard>
-                        {get(selected, 'language') === 'markdown' && (
-                          <>
-                            <span className='divider'>|</span>
+                    <div className='head'>
+                      <Row justify="space-between" align="middle">
+                        <Col>
+                          <strong>
+                            {get(selected, 'filename')}
+                          </strong>
+                        </Col>
+                        <Col>
+                          <div className='actions'>
                             <a
                               href='/#'
                               onClick={e => {
                                 e.preventDefault()
-                                const newSelected = {...selected}
-                                newSelected.force = !get(selected, 'force', false)
-                                setSelected(newSelected)
+                                download(selected)
                               }}
                               className='action'
                             >
-                              {get(selected, 'force', false)
-                                ? 'Preview'
-                                : 'View source'}
+                              {t('explore.download')}
                             </a>
-                          </>
-                        )}
-                      </div>
-
+                            <Divider type="vertical" />
+                            <CopyToClipboard
+                              onCopy={onCopy}
+                              text={get(selected, 'content', '')}
+                            >
+                              <a
+                                href='/#'
+                                onClick={e => {
+                                  e.preventDefault()
+                                }}
+                                className='action'
+                              >
+                                {button}
+                              </a>
+                            </CopyToClipboard>
+                            {get(selected, 'language') === 'markdown' && (
+                              <>
+                                <Divider type="vertical" />
+                                <a
+                                  href='/#'
+                                  onClick={e => {
+                                    e.preventDefault()
+                                    const newSelected = {...selected}
+                                    newSelected.force = !get(selected, 'force', false)
+                                    setSelected(newSelected)
+                                  }}
+                                  className='action'
+                                >
+                                  {get(selected, 'force', false)
+                                    ? t('explore.preview')
+                                    : t('explore.view_source')}
+                                </a>
+                              </>
+                            )}
+                          </div>
+                        </Col>
+                      </Row>
                     </div>
                     <div className='explorer-content' style={{ overflowY: "auto"}}>
                       <Code item={selected} onChange={() => {

@@ -361,5 +361,14 @@
   "cleanup_graph_error_unmount": "组件卸载时清理图形实例出错",
   "chinese": "中文",
   "english": "English",
-  "refresh_tab": "刷新标签页"
+  "refresh_tab": "刷新标签页",
+  "explore": {
+    "download": "下载",
+    "copy": "复制",
+    "copied": "已复制",
+    "preview": "预览",
+    "view_source": "查看源码",
+    "could_not_load_zip": "无法加载ZIP项目",
+    "could_not_read_zip": "无法读取ZIP项目"
+  }
 }

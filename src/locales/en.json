@@ -361,5 +361,14 @@
   "cleanup_graph_error_unmount": "Error cleaning up graph instance on component unmount",
   "chinese": "中文",
   "english": "English",
-  "refresh_tab": "Refresh Tab"
+  "refresh_tab": "Refresh Tab",
+  "explore": {
+    "download": "Download",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "preview": "Preview",
+    "view_source": "View source",
+    "could_not_load_zip": "Could not load the ZIP project.",
+    "could_not_read_zip": "Could not read the ZIP project."
+  }
 }
