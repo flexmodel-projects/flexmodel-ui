@@ -64,8 +64,7 @@ const ModelingPage: React.FC = () => {
           />
         );
       case activeModel?.type?.endsWith("_group"):
-        // return <ModelGroupView datasource={activeDs} model={activeModel}/>;
-        return <ERDiagram datasource={activeDs} data={activeModel?.children} />;
+        return <ERDiagram data={activeModel?.children} />;
       default:
         return <div>Please select a model to operate.</div>;
     }

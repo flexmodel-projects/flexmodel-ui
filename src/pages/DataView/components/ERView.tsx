@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Empty, notification, Select, Spin} from "antd";
+import {notification, Select} from "antd";
 import {useTranslation} from "react-i18next";
 import PageContainer from "@/components/common/PageContainer";
 import {getDatasourceList} from "@/services/datasource";
@@ -7,7 +7,6 @@ import {getModelList} from "@/services/model";
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
 import type {DatasourceSchema} from "@/types/data-source";
 import type {Entity} from "@/types/data-modeling";
-import styles from "./ERView.module.scss";
 
 const ERView: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +14,6 @@ const ERView: React.FC = () => {
   const [selectedDatasource, setSelectedDatasource] = useState<string>("");
   const [models, setModels] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   // 获取数据源列表
   useEffect(() => {
@@ -36,23 +34,6 @@ const ERView: React.FC = () => {
     };
     fetchDatasources();
   }, [t]);
-
-  // 监听全屏退出，刷新组件
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        // 退出全屏时，延迟刷新组件
-        setTimeout(() => {
-          setRefreshKey(prev => prev + 1);
-        }, 100);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
 
   // 获取模型列表
   useEffect(() => {
@@ -86,6 +67,7 @@ const ERView: React.FC = () => {
 
   return (
     <PageContainer
+      loading={loading}
       title={t("er_view")}
       extra={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -105,23 +87,7 @@ const ERView: React.FC = () => {
         </div>
       }
     >
-      {loading ? (
-        <div className={styles.loading}>
-          <Spin size="large" />
-          <p>{t("loading_models")}</p>
-        </div>
-      ) : models.length > 0 ? (
-        <ERDiagram
-          key={refreshKey}
-          datasource={selectedDatasource}
-          data={models}
-        />
-      ) : (
-        <Empty
-          description={t("no_model_data")}
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
-      )}
+      <ERDiagram data={models} />
     </PageContainer>
   );
 };

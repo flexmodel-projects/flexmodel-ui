@@ -12,15 +12,13 @@
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
     "@ant-design/x": "^1.6.0",
-    "@antv/x6": "^2.18.1",
-    "@antv/x6-plugin-scroller": "^2.0.10",
-    "@antv/x6-react-shape": "^2.2.3",
     "@graphiql/plugin-explorer": "^5.1.1",
     "@graphiql/react": "^0.37.1",
     "@graphiql/toolkit": "^0.11.3",
     "@monaco-editor/react": "^4.7.0",
     "@types/dagre": "^0.7.52",
     "@types/react-transition-group": "^4.4.12",
+    "@xyflow/react": "^12.8.4",
     "antd": "^5.27.1",
     "axios": "^1.7.5",
     "dagre": "^0.8.5",
@@ -43,7 +41,6 @@
     "react-router-dom": "^6.26.1",
     "react-toastify": "^11.0.5",
     "react-transition-group": "^4.4.5",
-    "x6-html-shape": "^0.4.9",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
