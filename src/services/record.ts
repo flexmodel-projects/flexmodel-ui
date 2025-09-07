@@ -4,6 +4,16 @@ import {PagedResult} from '@/types/record'
 
 /**
  * 获取记录列表
+ * @param datasourceName 数据源名称
+ * @param modelName 模型名称
+ * @param query 查询参数
+ * @returns 记录列表
+ * @example
+ * const query = { page: 1, size: 10,
+ *  filter: '{ "id": { "_eq": 1, "_and": { "name": { "_eq": "zhangsan" } } } }',
+ *  nestedQuery: true,
+ *  sort: [{ "field": "name", "order": "ASC" }, { "field": "id", "order": "DESC" }] }
+ * const records = await getRecordList('datasourceName', 'modelName', query)
  */
 export const getRecordList = (datasourceName: string, modelName: string, query?: { page: number, size: number, filter?: string, nestedQuery?: boolean, sort?: string }): Promise<PagedResult<MRecord>> => {
   return api.get(`/datasources/${datasourceName}/models/${modelName}/records`, query)

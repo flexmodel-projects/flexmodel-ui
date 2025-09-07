@@ -407,5 +407,8 @@
   "import_models_title": "Import {{name}} models",
   "models_import_success": "Models import successfully",
   "models_import_failed": "Models import failed",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "sort_asc": "Sort Ascending",
+  "sort_desc": "Sort Descending",
+  "sort_cancel": "Cancel Sort"
 }

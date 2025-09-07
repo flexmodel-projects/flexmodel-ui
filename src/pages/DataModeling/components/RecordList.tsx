@@ -17,7 +17,7 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   const [editMode, setEditMode] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<MRecord | undefined>();
   const [records, setRecords] = useState<{ list: MRecord[]; total: number }>({ list: [], total: 0 });
-  const [query, setQuery] = useState({ page: 1, size: 10, filter: '' });
+  const [query, setQuery] = useState({ page: 1, size: 10, filter: '', sort: [] as Array<{ field: string; order: 'ASC' | 'DESC' }> });
   const [searchValue, setSearchValue] = useState('');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [form] = Form.useForm();
@@ -27,7 +27,11 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getRecordList(datasource, model.name, query);
+      const apiQuery = {
+        ...query,
+        sort: query.sort.length > 0 ? JSON.stringify(query.sort) : undefined
+      };
+      const data = await getRecordList(datasource, model.name, apiQuery);
       setRecords(data as { list: MRecord[]; total: number });
     } catch (error) {
       console.error('Failed to fetch records:', error);
@@ -103,6 +107,9 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
       title: field.name,
       dataIndex: field.name,
       key: field.name,
+      sorter: true,
+      sortOrder: query.sort.find(s => s.field === field.name)?.order === 'ASC' ? 'ascend' : 
+                 query.sort.find(s => s.field === field.name)?.order === 'DESC' ? 'descend' : null,
       render: (text: string) => {
         const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
         return (field.type === 'TEXT' || field.type === 'JSON') ? (
@@ -148,6 +155,17 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
 
   const handlePaginationChange = (page: number, pageSize: number) => {
     setQuery({ ...query, page, size: pageSize });
+  };
+
+  const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
+    let newSort: Array<{ field: string; order: 'ASC' | 'DESC' }> = [];
+    
+    if (sorter && sorter.field) {
+      const order = sorter.order === 'ascend' ? 'ASC' : 'DESC';
+      newSort = [{ field: sorter.field, order }];
+    }
+    
+    setQuery({ ...query, page: 1, sort: newSort });
   };
 
   const handleSearch = () => {
@@ -227,11 +245,12 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
             <Table
               sticky
               loading={loading}
-              scroll={{ y: 'calc(100vh - 300px)' }}
+              scroll={{ y: 'calc(100vh - 400px)' }}
               columns={columns}
               dataSource={records.list}
               pagination={false}
               rowKey={idField?.name}
+              onChange={handleTableChange}
             />
           </div>
         </div>

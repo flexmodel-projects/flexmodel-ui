@@ -407,5 +407,8 @@
   "import_models_title": "导入 {{name}} 模型",
   "models_import_success": "模型导入成功",
   "models_import_failed": "模型导入失败",
-  "loading": "加载中..."
+  "loading": "加载中...",
+  "sort_asc": "升序",
+  "sort_desc": "降序",
+  "sort_cancel": "取消排序"
 }
