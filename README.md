@@ -1,12 +1,12 @@
-# FlexModel UI React
+# FlexModel UI
 
 [English](./README_EN.md) | 中文
 
 ---
 
-## FlexModel UI React - 面向下一代应用程序的统一数据访问层
+## FlexModel UI - 面向下一代应用程序的统一数据访问层
 
-FlexModel UI React 是一个开源的、免费的统一数据访问层解决方案，专为下一代应用程序设计。它提供全面的数据建模、API管理和数据源集成功能，支持私有化部署。
+FlexModel UI 是一个开源的、免费的统一数据访问层解决方案，专为下一代应用程序设计。它提供全面的数据建模、API管理和数据源集成功能，支持私有化部署。
 
 ### ✨ 核心特性
 

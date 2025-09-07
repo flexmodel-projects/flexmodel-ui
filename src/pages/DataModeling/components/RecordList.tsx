@@ -1,82 +1,94 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Button,
-  DatePicker,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Pagination,
-  Popconfirm,
-  Space,
-  Switch,
-  Table,
-  Tooltip
-} from 'antd';
+import {Button, Empty, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, Tooltip} from 'antd';
 import {ColumnsType} from 'antd/es/table';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined, SearchOutlined, UpOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/services/record.ts";
-import dayjs from "dayjs";
 import {useTranslation} from "react-i18next";
 import type {Field, MRecord, RecordListProps} from '@/types/data-modeling.d.ts';
+import RecordForm from './RecordForm';
+import dayjs from 'dayjs';
+
+const { TextArea } = Input;
 
 const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   const { t } = useTranslation();
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<MRecord | undefined>();
   const [records, setRecords] = useState<{ list: MRecord[]; total: number }>({ list: [], total: 0 });
-  const [query, setQuery] = useState({ current: 1, pageSize: 10 });
+  const [query, setQuery] = useState({ page: 1, size: 10, filter: '' });
+  const [searchValue, setSearchValue] = useState('');
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const [form] = Form.useForm();
 
-  const fieldMap = model?.fields?.reduce((acc: Record<string, Field>, field: Field) => {
-    acc[field.name] = field;
-    return acc;
-  }, {} as Record<string, Field>) || {};
-
-  const idField = model?.fields?.find((f: Field) => f.type === 'ID');
-
-  useEffect(() => {
-    if (model) fetchRecords();
-  }, [query, model]);
+  const idField = model?.fields?.find((f: Field) => f.identity === true);
 
   const fetchRecords = useCallback(async () => {
     setLoading(true);
-    const data = await getRecordList(datasource, model.name, query);
-    setRecords(data as { list: MRecord[]; total: number });
-    setLoading(false);
+    try {
+      const data = await getRecordList(datasource, model.name, query);
+      setRecords(data as { list: MRecord[]; total: number });
+    } catch (error) {
+      console.error('Failed to fetch records:', error);
+      message.error('Failed to fetch records');
+      setRecords({ list: [], total: 0 });
+    } finally {
+      setLoading(false);
+    }
   }, [datasource, model.name, query]);
 
-  const handleEdit = (record: MRecord) => {
-    setDialogFormVisible(true);
-    setEditMode(true);
+  useEffect(() => {
+    if (model) fetchRecords();
+  }, [query, model, fetchRecords]);
 
-    form.setFieldsValue(formatFormFieldsValue(record));
+  const handleEdit = (record: MRecord) => {
+    setCurrentRecord(record);
+    setEditMode(true);
+    setDialogFormVisible(true);
   };
 
   const handleDelete = async (record: MRecord) => {
     if (!idField) {
-      message.warning("Can't delete a record without ID!");
+      message.warning(t('record_delete_no_id_warning'));
       return;
     }
-    await deleteRecord(datasource, model.name, record[idField.name]);
-    await fetchRecords();
+    try {
+      await deleteRecord(datasource, model.name, record[idField.name]);
+      message.success(t('record_delete_success') || 'Record deleted successfully');
+      await fetchRecords();
+    } catch (error) {
+      console.error('Failed to delete record:', error);
+      message.error(t('record_delete_failed') || 'Failed to delete record');
+    }
   };
 
-  const formatFormFieldsValue = (changedValues: Record<string, any>): Record<string, any> => {
-    const formattedValues: Record<string, any> = {};
-    for (const [key, value] of Object.entries(changedValues)) {
-      const field = fieldMap[key];
+  const handleCancel = () => {
+    setDialogFormVisible(false);
+    setCurrentRecord(undefined);
+    form.resetFields();
+  };
+
+  // 格式化表单数据
+  const formatFormData = (values: Record<string, any>): MRecord => {
+    const formattedValues: MRecord = {};
+    for (const [key, value] of Object.entries(values)) {
+      const field = model?.fields?.find((f: Field) => f.name === key);
+      if (!field) continue;
+
       switch (field.type) {
         case "Date":
-          formattedValues[key] = dayjs(value as string, 'YYYY-MM-DD');
+          formattedValues[key] = value ? dayjs(value).format('YYYY-MM-DD') : null;
           break;
         case "DateTime":
-          formattedValues[key] = dayjs(value as string);
+          formattedValues[key] = value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : null;
           break;
         case "JSON":
-          formattedValues[key] = JSON.stringify(value);
+          try {
+            formattedValues[key] = typeof value === 'string' ? JSON.parse(value) : value;
+          } catch {
+            formattedValues[key] = value;
+          }
           break;
         default:
           formattedValues[key] = value;
@@ -84,55 +96,6 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
     }
     return formattedValues;
   };
-
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const formattedValues = formatFormFieldsValue(values);
-
-      if (editMode) {
-        if (!idField) {
-          message.warning("Can't edit a record without ID!");
-          return;
-        }
-        await updateRecord(datasource, model.name, formattedValues[idField.name], formattedValues);
-      } else {
-        await createRecord(datasource, model.name, formattedValues);
-      }
-
-      setDialogFormVisible(false);
-      form.resetFields();
-      await fetchRecords();
-      message.success(editMode ? 'Record updated successfully' : 'Record created successfully');
-    } catch (error) {
-      console.error('Form validation failed:', error);
-    }
-  };
-
-  const renderFieldInput = useCallback((field: Field) => {
-    const inputProps = { placeholder: field.comment };
-    switch (field.type) {
-      case 'ID':
-        return <Input disabled={editMode} size="small" />;
-      case 'String':
-        return <Input {...inputProps} size="small" />;
-      case 'Text':
-      case 'JSON':
-        return <Input.TextArea {...inputProps} size="small" />;
-      case 'Decimal':
-      case 'INT':
-      case 'Long':
-        return <Input type="number" {...inputProps} size="small" />;
-      case 'Boolean':
-        return <Switch />;
-      case 'Date':
-        return <DatePicker picker="date" style={{ width: '100%' }} {...inputProps} size="small" />;
-      case 'DateTime':
-        return <DatePicker showTime style={{ width: '100%' }}  {...inputProps} size="small" />;
-      default:
-        return <Input size="small" />;
-    }
-  }, [editMode]);
 
   const columns: ColumnsType<MRecord> = model?.fields
     .filter((field: Field) => field.type !== 'Relation')
@@ -167,64 +130,196 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
     ),
   });
 
-  return model ? (
-    <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setDialogFormVisible(true);
-            setEditMode(false);
-          }}
-          size="small"
-        >
-          {t('new_record')}
-        </Button>
-      </div>
+  const paginationStyle = {
+    position: 'fixed' as const,
+    bottom: 30,
+    right: 30,
+    padding: '12px 24px',
+    backgroundColor: 'var(--ant-color-bg-container)',
+    zIndex: 1000,
+  };
 
-      <Table
-        sticky
-        loading={loading}
-        scroll={{ y: 400 }}
-        columns={columns}
-        dataSource={records.list}
-        pagination={false}
-        rowKey={idField?.name}
-      />
+  // 事件处理函数
+  const handleNewRecord = () => {
+    setCurrentRecord(undefined);
+    setEditMode(false);
+    setDialogFormVisible(true);
+  };
 
-      <div style={{ marginTop: 8, textAlign: 'right' }}>
-        <Pagination
-          current={query.current}
-          pageSize={query.pageSize}
-          total={records.total}
-          showTotal={(total, range) => t('pagination_total_text', { start: range[0], end: range[1], total: total })}
-          onChange={(page, pageSize) => setQuery({ ...query, current: page, pageSize })}
-          size="small"
-        />
-      </div>
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    setQuery({ ...query, page, size: pageSize });
+  };
 
+  const handleSearch = () => {
+    setQuery({ ...query, page: 1, filter: searchValue }); // 重置到第一页，更新 filter
+  };
+
+  // 渲染主要内容
+  const renderContent = () => {
+    if (!model) {
+      return <Empty />;
+    }
+
+    return (
+      <>
+        {/* 搜索区域 */}
+        <div style={{ marginBottom: 16 }}>
+
+
+          {searchExpanded && (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+              <TextArea
+                value={searchValue}
+                rows={2}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder={'e.g. { "id": { "_eq": 1, "_and": { "name": { "_eq": "zhangsan" } } } }'}
+                allowClear
+              />
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                onClick={handleSearch}
+                style={{ height: 'auto' }}
+              >
+                {t('search') || 'Search'}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* 头部操作区 */}
+        <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+          <Space>
+            <Button
+              type="text"
+              size="small"
+              icon={searchExpanded ? <UpOutlined /> : <DownOutlined />}
+              onClick={() => setSearchExpanded(!searchExpanded)}
+            >
+              {searchExpanded ? t('collapse') || 'Collapse' : t('expand') || 'Expand'}
+            </Button>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleNewRecord}
+              size="small"
+            >
+              {t('new_record')}
+            </Button>
+          </Space>
+        </div>
+
+        {/* 表格区域 */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          overflow: 'hidden',
+          marginBottom: '10px'
+        }}>
+          <div style={{
+            flex: 1,
+            minHeight: 'calc(100vh - 380px)',
+            overflow: 'hidden',
+            marginBottom: '60px',
+          }}>
+            <Table
+              sticky
+              loading={loading}
+              scroll={{ y: 'calc(100vh - 300px)' }}
+              columns={columns}
+              dataSource={records.list}
+              pagination={false}
+              rowKey={idField?.name}
+            />
+          </div>
+        </div>
+
+        {/* 分页区域 */}
+        <div style={paginationStyle}>
+          <Pagination
+            current={query.page}
+            pageSize={query.size}
+            total={records.total}
+            showTotal={(total, range) =>
+              t("pagination_total_text", {
+                start: range[0],
+                end: range[1],
+                total: total,
+              })
+            }
+            onChange={handlePaginationChange}
+            size="small"
+          />
+        </div>
+      </>
+    );
+  };
+
+  // 处理表单提交
+  const handleFormSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const formattedValues = formatFormData(values);
+
+      if (editMode) {
+        if (!idField || !currentRecord || !currentRecord[idField.name]) {
+          message.warning(t('record_edit_no_id_warning'));
+          return;
+        }
+        await updateRecord(datasource, model.name, currentRecord[idField.name], formattedValues);
+      } else {
+        await createRecord(datasource, model.name, formattedValues);
+      }
+
+      setDialogFormVisible(false);
+      setCurrentRecord(undefined);
+      form.resetFields();
+      await fetchRecords();
+      message.success(editMode ? t('record_updated_success') : t('record_created_success'));
+    } catch (error) {
+      console.error('Form submission failed:', error);
+      message.error(editMode ?
+        (t('record_update_failed') || 'Failed to update record') :
+        (t('record_create_failed') || 'Failed to create record')
+      );
+    }
+  };
+
+  // 渲染模态框
+  const renderModal = () => {
+    if (!model) return null;
+
+    return (
       <Modal
-        title={editMode ? `Edit ${model.name} Record` : `New ${model.name} Record`}
+        title={t('record_form_title', {
+          mode: editMode ? t('record_form_edit') : t('record_form_create'),
+          modelName: model.name
+        })}
         open={dialogFormVisible}
-        onCancel={() => setDialogFormVisible(false)}
-        onOk={handleSubmit}
+        onCancel={handleCancel}
+        onOk={handleFormSubmit}
         width={600}
       >
         <Form form={form} layout="vertical">
-          {model.fields.map((field: Field) => (
-            editMode ? (
-              <Form.Item key={field.name} name={field.name} label={field.name}
-                rules={[{ required: !field.nullable, message: `${t('input_valid_msg', { name: field.name })}` }]}>
-                {renderFieldInput(field)}
-              </Form.Item>
-            ) : null
-          ))}
+          <RecordForm
+            model={model}
+            mode={editMode ? 'edit' : 'create'}
+            record={currentRecord}
+            form={form}
+          />
         </Form>
       </Modal>
+    );
+  };
+
+  return (
+    <>
+      {renderContent()}
+      {renderModal()}
     </>
-  ) : <Empty />;
+  );
 };
 
 export default RecordList;
-

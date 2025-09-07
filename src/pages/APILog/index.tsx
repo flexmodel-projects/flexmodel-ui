@@ -32,7 +32,7 @@ const LogViewer: React.FC = () => {
   const [chartData, setChartData] = useState<{ xAxis: string[], series: number[] }>({ xAxis: [], series: [] });
   const [expand, setExpand] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [query, setQuery] = useState({ current: 1, pageSize: 100 });
+  const [query, setQuery] = useState({ page: 1, size: 100 });
   const [settingsDialogVisible, setSettingsDialogVisible] = useState<boolean>(false);
 
 
@@ -83,14 +83,14 @@ const LogViewer: React.FC = () => {
   };
 
   const searchLog = async () => {
-    setQuery({ current: 1, pageSize: 100 });
+    setQuery({ page: 1, size: 100 });
     await getApiLogsHandler();
     await getApiLogStatHandler();
   };
 
   const resetLog = async () => {
     form.resetFields();
-    setQuery({ current: 1, pageSize: 100 });
+    setQuery({ page: 1, size: 100 });
     await getApiLogsHandler();
   };
 
@@ -271,8 +271,8 @@ const LogViewer: React.FC = () => {
         zIndex: 1
       }}>
         <Pagination
-          current={query.current}
-          pageSize={query.pageSize}
+          current={query.page}
+          pageSize={query.size}
           total={tableData.total}
           showTotal={(total, range) =>
             t("pagination_total_text", {
@@ -281,8 +281,8 @@ const LogViewer: React.FC = () => {
               total: total,
             })
           }
-          onChange={(page, pageSize) =>
-            setQuery({ ...query, current: page, pageSize })
+          onChange={(page, size) =>
+            setQuery({ ...query,  page, size })
           }
         />
       </div>

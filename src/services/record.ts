@@ -5,7 +5,7 @@ import {PagedResult} from '@/types/record'
 /**
  * 获取记录列表
  */
-export const getRecordList = (datasourceName: string, modelName: string, query?: { current: number, pageSize: number, filter?: string, nestedQuery?: boolean, sort?: string }): Promise<PagedResult<MRecord>> => {
+export const getRecordList = (datasourceName: string, modelName: string, query?: { page: number, size: number, filter?: string, nestedQuery?: boolean, sort?: string }): Promise<PagedResult<MRecord>> => {
   return api.get(`/datasources/${datasourceName}/models/${modelName}/records`, query)
 }
 

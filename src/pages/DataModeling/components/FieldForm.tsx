@@ -154,6 +154,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
     concreteType: "String",
     unique: false,
     nullable: true,
+    identity: false,
     comment: "",
     defaultValue: { type: "fixed", value: null },
     length: 255,
@@ -171,8 +172,11 @@ const FieldForm: React.FC<FieldFormProps> = ({
     if (visible) {
       reqModelList();
       if (currentValue && Object.keys(currentValue).length > 0) {
-        // 编辑现有字段时，设置表单值
-        form.setFieldsValue(currentValue);
+        // 编辑现有字段时，设置表单值，确保包含所有必要字段
+        form.setFieldsValue({
+          ...initialValues,
+          ...currentValue
+        });
         // 根据字段类型正确设置tmpType
         let tmpTypeValue = currentValue.tmpType;
         if (!tmpTypeValue) {
@@ -243,6 +247,8 @@ const FieldForm: React.FC<FieldFormProps> = ({
       if (values.defaultValue?.name === null && values.defaultValue?.value === null) {
         values.defaultValue = null;
       }
+      console.log('FieldForm提交的数据:', values);
+      console.log('identity字段值:', values.identity);
       onConfirm(values);
     });
   };
@@ -338,7 +344,11 @@ const FieldForm: React.FC<FieldFormProps> = ({
           name="tmpType"
           rules={[{ required: true }]}
         >
-          <Select onChange={handleTypeChange} style={selectStyle}>
+          <Select 
+            onChange={handleTypeChange} 
+            style={selectStyle}
+            disabled={currentValue && Object.keys(currentValue).length > 0}
+          >
             <Select.OptGroup label={t("select_group_basic_field")}>
               {BasicFieldTypes.map((item) => (
                 <Select.Option key={item.name} value={item.name}>

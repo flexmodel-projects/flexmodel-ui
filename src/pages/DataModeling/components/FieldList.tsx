@@ -86,7 +86,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
         comment: values.comment,
         defaultValue: values.defaultValue,
         modelName: model?.name,
-        concreteType: values.concreteType,
+        identity: values.identity ?? false,
       };
       if (selectedFieldIndex === -1) {
         const res = await createField(datasource, model?.name, typedField);

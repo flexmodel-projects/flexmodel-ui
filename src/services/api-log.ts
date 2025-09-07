@@ -5,7 +5,7 @@ import {PagedResult} from '@/types/record'
 /**
  * 获取 API 日志列表
  */
-export const getApiLogs = (filter?: {current?: number; pageSize?: number; keyword?: string; dateRange?: string; level?: string; isSuccess?: boolean}): Promise<PagedResult<ApiLogSchema>> => {
+export const getApiLogs = (filter?: {page?: number; size?: number; keyword?: string; dateRange?: string; level?: string; isSuccess?: boolean}): Promise<PagedResult<ApiLogSchema>> => {
   return api.get('/logs', filter)
 }
 
