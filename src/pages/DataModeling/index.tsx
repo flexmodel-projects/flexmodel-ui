@@ -79,7 +79,7 @@ const ModelingPage: React.FC = () => {
           max="40%"
           collapsible
         >
-          <div className="pr-1">
+          <div className="pr-2">
             <ModelExplorer
               datasource={activeDs}
               editable
@@ -89,7 +89,7 @@ const ModelingPage: React.FC = () => {
           </div>
         </Splitter.Panel>
         <Splitter.Panel>
-          <div className="pl-1">
+          <div className="pl-2">
             {renderModelView()}
           </div>
         </Splitter.Panel>

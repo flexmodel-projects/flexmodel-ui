@@ -64,7 +64,7 @@ const DatasourceManagement: React.FC = () => {
       setActiveDs(list[0] || null);
     } catch (error) {
       console.log(error);
-      message.error("Failed to load datasource list.");
+      message.error(t("failed_to_load_datasource_list"));
     } finally {
       setDsLoading(false);
     }
@@ -118,9 +118,9 @@ const DatasourceManagement: React.FC = () => {
         await deleteDatasource(activeDs.name);
         getDatasourceListHandler();
         setDeleteVisible(false);
-        message.success("Deleted successfully");
+        message.success(t("delete_datasource_success"));
       } catch {
-        message.error("Failed to delete datasource");
+        message.error(t("delete_datasource_failed"));
       }
     }
   };
@@ -143,7 +143,7 @@ const DatasourceManagement: React.FC = () => {
     if (!activeDs) return;
     const values = await scriptForm.validateFields();
     reqImportModels(activeDs.name, values).then(() =>
-      message.success("Models import successfully")
+      message.success(t("models_import_success"))
     );
     setImportVisible(false);
   };
@@ -222,14 +222,14 @@ const DatasourceManagement: React.FC = () => {
 
       <Modal
         open={deleteVisible}
-        title={`Delete '${activeDs?.name}'?`}
+        title={t("delete_datasource_confirm", { name: activeDs?.name })}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
-        okText="Delete"
+        okText={t("delete")}
         okButtonProps={{ danger: true }}
       >
         <p>
-          Are you sure you want to delete <strong>{activeDs?.name}</strong>?
+          {t("delete_datasource_confirm_desc", { name: activeDs?.name })}
         </p>
       </Modal>
 
@@ -238,7 +238,7 @@ const DatasourceManagement: React.FC = () => {
         open={exportVisible}
         onOk={() => setExportVisible(false)}
         onCancel={() => setExportVisible(false)}
-        title={`Export ${activeDs?.name} models`}
+        title={t("export_models_title", { name: activeDs?.name })}
       >
         <Form
           form={scriptForm}
@@ -261,7 +261,7 @@ const DatasourceManagement: React.FC = () => {
             }
           }}
         >
-          <Form.Item label="type" name="type">
+          <Form.Item label={t("type_label")} name="type">
             <Radio.Group>
               <Radio value="IDL">IDL</Radio>
               <Radio value="JSON">JSON</Radio>
@@ -278,10 +278,10 @@ const DatasourceManagement: React.FC = () => {
         open={importVisible}
         onOk={importModels}
         onCancel={() => setImportVisible(false)}
-        title={`Import ${activeDs?.name} models`}
+        title={t("import_models_title", { name: activeDs?.name })}
       >
         <Form form={scriptForm}>
-          <Form.Item label="type" name="type">
+          <Form.Item label={t("type_label")} name="type">
             <Radio.Group>
               <Radio value="IDL">IDL</Radio>
               <Radio value="JSON">JSON</Radio>

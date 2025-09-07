@@ -362,7 +362,7 @@ const UserDefineAPI: React.FC = () => {
     <PageContainer>
       <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-          <div className="pr-1">
+          <div className="pr-2">
             <Flex gap="small" align="center">
               <Input
                 placeholder={t("search_apis")}
@@ -477,7 +477,7 @@ const UserDefineAPI: React.FC = () => {
         </Splitter.Panel>
         <Splitter.Panel>
           {editForm?.type == "API" ? (
-            <div className="flex flex-col h-full pl-1">
+            <div className="flex flex-col h-full pl-2">
               <Space direction="vertical" size="small" className="mb-2">
                 <Flex gap="small" justify="flex-start" align="center" wrap>
                   <Input

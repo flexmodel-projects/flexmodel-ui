@@ -1,5 +1,6 @@
 import React from "react";
 import {theme, Typography} from "antd";
+import {useTranslation} from "react-i18next";
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   loading = false,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const containerStyle: React.CSSProperties = {
     height: 'calc(100vh - 64px)',
@@ -70,7 +72,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
               height: '100%',
             }}
           >
-            <div>加载中...</div>
+            <div>{t('loading')}</div>
           </div>
         ) : (
           children

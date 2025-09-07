@@ -377,5 +377,18 @@
   "identity_provider_delete_success": "删除成功",
   "identity_provider_delete_failed": "删除身份提供商失败",
   "identity_provider_delete_confirm": "确定要删除 '{{name}}' 吗？",
-  "identity_provider_delete_confirm_desc": "您确定要删除 <strong>{{name}}</strong> 吗？"
+  "identity_provider_delete_confirm_desc": "您确定要删除 <strong>{{name}}</strong> 吗？",
+  "failed_to_load_datasource_list": "加载数据源列表失败",
+  "type_label": "类型",
+  "connection_name_required": "请输入连接名称",
+  "connection_name_placeholder": "请输入连接名称",
+  "delete_datasource_confirm": "确定要删除 '{{name}}' 吗？",
+  "delete_datasource_confirm_desc": "您确定要删除 <strong>{{name}}</strong> 吗？",
+  "delete_datasource_success": "删除成功",
+  "delete_datasource_failed": "删除数据源失败",
+  "export_models_title": "导出 {{name}} 模型",
+  "import_models_title": "导入 {{name}} 模型",
+  "models_import_success": "模型导入成功",
+  "models_import_failed": "模型导入失败",
+  "loading": "加载中..."
 }
