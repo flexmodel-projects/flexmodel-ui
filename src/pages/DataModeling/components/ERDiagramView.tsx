@@ -1,12 +1,14 @@
 import React, {useCallback, useEffect, useRef} from "react";
-import {Card, theme} from "antd";
+import {theme} from "antd";
 import {Entity, Field} from '@/types/data-modeling';
-import type {Edge, Node} from '@xyflow/react';
 import {
+  Background,
   Controls,
+  Edge,
   Handle,
   MarkerType,
   MiniMap,
+  Node,
   Position,
   ReactFlow,
   ReactFlowProvider,
@@ -21,26 +23,34 @@ interface ERDiagramProps {
   data: Entity[];
 }
 
-const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
+const ERDiagram: React.FC<ERDiagramProps> = ({data}) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { token } = theme.useToken();
-  const { fitView } = useReactFlow();
+  const {token} = theme.useToken();
+  const {fitView} = useReactFlow();
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<any>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<any>>([]);
 
   const nodeTypes = {
-    erNode: ({ data }: { data: { entity: Entity } }) => (
-      <div style={{ position: 'relative' }}>
-        <Handle id="top" type="source" position={Position.Top} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="right" type="source" position={Position.Right} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="bottom" type="source" position={Position.Bottom} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="left" type="source" position={Position.Left} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="top-t" type="target" position={Position.Top} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="right-t" type="target" position={Position.Right} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="bottom-t" type="target" position={Position.Bottom} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <Handle id="left-t" type="target" position={Position.Left} style={{ opacity: 0, width: 0, height: 0, border: 'none' }} />
-        <ERNodeView entity={data.entity} />
+    erNode: ({data}: { data: { entity: Entity } }) => (
+      <div style={{position: 'relative'}}>
+        <Handle id="top" type="source" position={Position.Top}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="right" type="source" position={Position.Right}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="bottom" type="source" position={Position.Bottom}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="left" type="source" position={Position.Left}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="top-t" type="target" position={Position.Top}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="right-t" type="target" position={Position.Right}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="bottom-t" type="target" position={Position.Bottom}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <Handle id="left-t" type="target" position={Position.Left}
+                style={{opacity: 0, width: 0, height: 0, border: 'none'}}/>
+        <ERNodeView entity={data.entity}/>
       </div>
     ),
   };
@@ -53,10 +63,10 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
       const height = 60 + (entity.fields?.length || 0) * 22;
       return {
         id: String(entity.name),
-        position: { x, y },
-        data: { entity },
+        position: {x, y},
+        data: {entity},
         type: 'erNode',
-        style: { width, height },
+        style: {width, height},
         width,
         height,
         draggable: true,
@@ -64,7 +74,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
     });
 
     const nodeCenter = (n: any) => {
-      return { cx: n.position.x + (n.width || 200) / 2, cy: n.position.y + (n.height || 60) / 2 };
+      return {cx: n.position.x + (n.width || 200) / 2, cy: n.position.y + (n.height || 60) / 2};
     };
 
     const opposite = (side: string) => ({
@@ -142,25 +152,24 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
   }, [resizeGraph]);
 
   return (
-    <Card bodyStyle={{ padding: 0, height: '100%' }} style={{ width: '100%', height: '100%' }}>
+    <>
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            .react-flow__controls { background: transparent !important; box-shadow: none !important; }
             .react-flow__controls button { background: ${token.colorBgContainer} !important; color: ${token.colorText} !important; border: 1px solid ${token.colorBorderSecondary} !important; }
             .react-flow__controls button:hover { background: ${token.colorFillSecondary} !important; }
             .react-flow__controls button svg { fill: ${token.colorText} !important; }
           `,
         }}
       />
-      <div ref={containerRef} style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+      <div ref={containerRef} style={{width: '100%', height: '100%', overflow: 'hidden'}}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
-          defaultViewport={{ x: 0, y: 0, zoom: 0.6 }}
+          defaultViewport={{x: 0, y: 0, zoom: 0.6}}
           minZoom={0.2}
           maxZoom={2}
           fitView
@@ -168,22 +177,29 @@ const ERDiagram: React.FC<ERDiagramProps> = ({ data }) => {
           panOnDrag
           defaultEdgeOptions={{
             type: 'smoothstep',
-            markerEnd: { type: MarkerType.ArrowClosed },
-            style: { strokeWidth: 2, stroke: token.colorPrimary },
+            markerEnd: {type: MarkerType.ArrowClosed},
+            style: {strokeWidth: 2, stroke: token.colorPrimary},
           }}
         >
           <MiniMap
-            style={{ height: 120, bottom: 30, background: token.colorBgContainer, border: `1px solid ${token.colorBorderSecondary}`, boxShadow: token.boxShadowSecondary as string }}
+            style={{
+              height: 120,
+              bottom: 30,
+              background: token.colorBgContainer,
+              border: `1px solid ${token.colorBorderSecondary}`,
+              boxShadow: token.boxShadowSecondary as string
+            }}
             zoomable
             pannable
             nodeColor={() => token.colorTextTertiary}
             nodeStrokeColor={() => token.colorTextSecondary}
             maskColor={token.colorFillSecondary as string}
           />
-          <Controls style={{ bottom: 30 }} />
+          <Controls style={{bottom: 30}}/>
+          <Background/>
         </ReactFlow>
       </div>
-    </Card>
+    </>
   );
 };
 

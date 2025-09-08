@@ -21,7 +21,7 @@ import {EntitySchema, EnumSchema, NativeQuerySchema,} from "@/types/data-modelin
 
 
 const DatasourceManagement: React.FC = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [activeDs, setActiveDs] = useState<DatasourceSchema | null>(null);
   const [dsLoading, setDsLoading] = useState<boolean>(false);
@@ -81,11 +81,11 @@ const DatasourceManagement: React.FC = () => {
       const result = await validateDatasource(activeDs);
       if (result.success) {
         message.success(
-          t("test_connection_success_message", { time: result.time })
+          t("test_connection_success_message", {time: result.time})
         );
       } else {
         message.error(
-          t("test_connection_fail_message", { msg: result.errorMsg })
+          t("test_connection_fail_message", {msg: result.errorMsg})
         );
       }
     } catch (error) {
@@ -148,42 +148,53 @@ const DatasourceManagement: React.FC = () => {
     setImportVisible(false);
   };
 
-  const { Sider, Content } = Layout;
+  const {Sider, Content} = Layout;
 
   return (
     <>
-      <PageContainer title={activeDs?.name || t('datasource_management')} extra={
-        <>
-          {isEditing ? (
-            <Space>
-              <Button onClick={() => { setIsEditing(false); form.resetFields(); }}>{t("cancel")}</Button>
-              <Button type="primary" onClick={async () => { const values = await form.validateFields(); await handleEditDatasource(values); }}>{t("save")}</Button>
-            </Space>
-          ) : (
-            <Space>
-              <Button onClick={handleImport}>{t("import")}</Button>
-              <Button onClick={handleExport}>{t("export")}</Button>
-              <Button onClick={handleTestConnection} loading={testLoading}>
-                {t("test")}
-              </Button>
-              <Button
-                type="primary"
-                disabled={activeDs?.type === "SYSTEM"}
-                onClick={() => { setIsEditing(true); form.setFieldsValue(normalizeDatasource(activeDs as DatasourceSchema)); }}
-              >
-                {t("edit")}
-              </Button>
-            </Space>
-          )}
-        </>
-      }>
-        <Layout style={{ height: "100%", background: "transparent" }}>
-          <Sider width={320} style={{ background: "transparent", borderRight: "1px solid var(--ant-color-border)" }}>
-            <div style={{ height: "100%", overflow: "auto" }}>
+      <PageContainer
+        loading={dsLoading}
+        title={activeDs?.name || t('datasource_management')}
+        extra={
+          <>
+            {isEditing ? (
+              <Space>
+                <Button onClick={() => {
+                  setIsEditing(false);
+                  form.resetFields();
+                }}>{t("cancel")}</Button>
+                <Button type="primary" onClick={async () => {
+                  const values = await form.validateFields();
+                  await handleEditDatasource(values);
+                }}>{t("save")}</Button>
+              </Space>
+            ) : (
+              <Space>
+                <Button onClick={handleImport}>{t("import")}</Button>
+                <Button onClick={handleExport}>{t("export")}</Button>
+                <Button onClick={handleTestConnection} loading={testLoading}>
+                  {t("test")}
+                </Button>
+                <Button
+                  type="primary"
+                  disabled={activeDs?.type === "SYSTEM"}
+                  onClick={() => {
+                    setIsEditing(true);
+                    form.setFieldsValue(normalizeDatasource(activeDs as DatasourceSchema));
+                  }}
+                >
+                  {t("edit")}
+                </Button>
+              </Space>
+            )}
+          </>
+        }>
+        <Layout style={{height: "100%", background: "transparent"}}>
+          <Sider width={320} style={{background: "transparent", borderRight: "1px solid var(--ant-color-border)"}}>
+            <div style={{height: "100%", overflow: "auto"}}>
               <DataSourceExplorer
                 dsList={dsList}
                 activeDs={activeDs}
-                loading={dsLoading}
                 setActiveDs={setActiveDs}
                 setDeleteVisible={setDeleteVisible}
                 setDrawerVisible={setDrawerVisible}
@@ -191,16 +202,16 @@ const DatasourceManagement: React.FC = () => {
               />
             </div>
           </Sider>
-          <Content style={{ padding: "12px 20px", overflow: "auto" }}>
+          <Content style={{padding: "12px 20px", overflow: "auto"}}>
             {dsList.length > 0 && activeDs && (
               <Row>
                 <Col span={24}>
                   {isEditing ? (
                     <Form form={form} layout="vertical">
-                      <DataSourceForm />
+                      <DataSourceForm/>
                     </Form>
                   ) : (
-                    <DataSourceView data={activeDs} />
+                    <DataSourceView data={activeDs}/>
                   )}
                 </Col>
               </Row>
@@ -222,14 +233,14 @@ const DatasourceManagement: React.FC = () => {
 
       <Modal
         open={deleteVisible}
-        title={t("delete_datasource_confirm", { name: activeDs?.name })}
+        title={t("delete_datasource_confirm", {name: activeDs?.name})}
         onCancel={() => setDeleteVisible(false)}
         onOk={handleDelete}
         okText={t("delete")}
-        okButtonProps={{ danger: true }}
+        okButtonProps={{danger: true}}
       >
         <p>
-          {t("delete_datasource_confirm_desc", { name: activeDs?.name })}
+          {t("delete_datasource_confirm_desc", {name: activeDs?.name})}
         </p>
       </Modal>
 
@@ -238,7 +249,7 @@ const DatasourceManagement: React.FC = () => {
         open={exportVisible}
         onOk={() => setExportVisible(false)}
         onCancel={() => setExportVisible(false)}
-        title={t("export_models_title", { name: activeDs?.name })}
+        title={t("export_models_title", {name: activeDs?.name})}
       >
         <Form
           form={scriptForm}
@@ -268,7 +279,7 @@ const DatasourceManagement: React.FC = () => {
             </Radio.Group>
           </Form.Item>
           <Form.Item name="script">
-            <Input.TextArea rows={10} />
+            <Input.TextArea rows={10}/>
           </Form.Item>
         </Form>
       </Modal>
@@ -278,7 +289,7 @@ const DatasourceManagement: React.FC = () => {
         open={importVisible}
         onOk={importModels}
         onCancel={() => setImportVisible(false)}
-        title={t("import_models_title", { name: activeDs?.name })}
+        title={t("import_models_title", {name: activeDs?.name})}
       >
         <Form form={scriptForm}>
           <Form.Item label={t("type_label")} name="type">
@@ -288,7 +299,7 @@ const DatasourceManagement: React.FC = () => {
             </Radio.Group>
           </Form.Item>
           <Form.Item name="script" required>
-            <Input.TextArea rows={10} />
+            <Input.TextArea rows={10}/>
           </Form.Item>
         </Form>
       </Modal>

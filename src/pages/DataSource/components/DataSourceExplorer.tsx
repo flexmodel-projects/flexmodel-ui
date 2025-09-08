@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu, Spin} from "antd";
+import {Button, Divider, Dropdown, Menu} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 // 导入Tree组件
 import Tree from "@/components/explore/explore/Tree.jsx";
@@ -36,7 +36,6 @@ const DbsMap: Record<string, any> = {
 interface DataSourceExplorerProps {
   dsList: DatasourceSchema[];
   activeDs: DatasourceSchema | null;
-  loading: boolean;
   setActiveDs: (ds: DatasourceSchema) => void;
   setDeleteVisible: (visible: boolean) => void;
   setDrawerVisible: (visible: boolean) => void;
@@ -44,14 +43,13 @@ interface DataSourceExplorerProps {
 }
 
 const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
-  dsList,
-  activeDs,
-  loading,
-  setActiveDs,
-  setDeleteVisible,
-  setDrawerVisible,
-  t,
-}) => {
+                                                                 dsList,
+                                                                 activeDs,
+                                                                 setActiveDs,
+                                                                 setDeleteVisible,
+                                                                 setDrawerVisible,
+                                                                 t,
+                                                               }) => {
   // 将数据源列表转换为Tree组件需要的数据结构
   const treeData = {
     children: dsList.map((ds) => ({
@@ -72,9 +70,9 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
     if (nodeType === 'file' && item.datasource) {
       const dbKind = item.datasource.config?.dbKind;
       const IconComponent = DbsMap[dbKind];
-      return IconComponent ? <Icon component={IconComponent} style={{ fontSize: '16px' }} /> : <div />;
+      return IconComponent ? <Icon component={IconComponent} style={{fontSize: '16px'}}/> : <div/>;
     }
-    return <div />;
+    return <div/>;
   };
 
   // 更多按钮渲染函数
@@ -86,7 +84,7 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
             <Menu>
               <Menu.Item
                 className="text-red"
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined/>}
                 onClick={(e) => {
                   e.domEvent.stopPropagation();
                   setActiveDs(item.datasource);
@@ -111,22 +109,20 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
   };
 
   return (
-    <div style={{ minWidth: 200 }}>
-      <Spin spinning={loading}>
-        <Tree
-          tree={treeData}
-          selected={selectedItem}
-          onClickItem={(item) => setActiveDs(item.datasource)}
-          renderIcon={renderIcon}
-          renderMore={renderMore}
-        />
-      </Spin>
-      <Divider style={{ margin: "8px 0" }} />
+    <div style={{minWidth: 200}}>
+      <Tree
+        tree={treeData}
+        selected={selectedItem}
+        onClickItem={(item) => setActiveDs(item.datasource)}
+        renderIcon={renderIcon}
+        renderMore={renderMore}
+      />
+      <Divider style={{margin: "8px 0"}}/>
       <Button
         type="primary"
-        icon={<BlockOutlined />}
+        icon={<BlockOutlined/>}
         onClick={() => setDrawerVisible(true)}
-        style={{ width: "100%" }}
+        style={{width: "100%"}}
         ghost
       >
         {t("connect_datasource")}
