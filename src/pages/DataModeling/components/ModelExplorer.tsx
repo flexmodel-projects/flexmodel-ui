@@ -1,10 +1,10 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Button, Dropdown, Input, Menu, Modal, Select, Spin} from "antd";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {Button, Drawer, Dropdown, Input, Menu, message, Modal, Select, Spin} from "antd";
 import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
-import {getDatasourceList} from "@/services/datasource.ts";
-import {dropModel, getModelList,} from "@/services/model.ts";
+import {getDatasourceList, importModels} from "@/services/datasource.ts";
+import {createModel, dropModel, getModelList,} from "@/services/model.ts";
 import {useNavigate} from "react-router-dom";
-import ModelCreationDialog from "@/pages/DataModeling/components/ModelForm";
+import ModelForm from "@/pages/DataModeling/components/ModelForm";
 import IDLModelForm from "@/pages/DataModeling/components/IDLModelForm";
 import type {DatasourceSchema} from '@/types/data-source';
 import {useTranslation} from "react-i18next";
@@ -103,11 +103,68 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
   const [createModelDrawerVisible, setCreateModelDrawerVisible] = useState(false);
   const [createIDLModelVisible, setCreateIDLModelVisible] = useState(false);
   const [filterText, setFilterText] = useState<string>(""); // 监听搜索框输入
+
+  // 表单引用
+  const modelFormRef = useRef<any>(null);
+  const idlModelFormRef = useRef<any>(null);
   // 添加模型
   const addModel = async () => {
     setCreateModelDrawerVisible(false);
     setCreateIDLModelVisible(false);
     await reqModelList();
+  };
+
+  // 处理模型表单提交
+  const handleModelFormSubmit = async (formData: any) => {
+    try {
+      await createModel(activeDs, formData);
+      message.success(t('form_save_success'));
+      addModel();
+    } catch (error) {
+      console.error(error);
+      message.error(t('form_save_failed'));
+    }
+  };
+
+  // 处理IDL模型表单提交
+  const handleIDLModelFormSubmit = async (formData: any) => {
+    try {
+      await importModels(activeDs, formData);
+      message.success(t('model_created_success'));
+      addModel();
+    } catch (error) {
+      console.error(error);
+      message.error(t('model_creation_failed'));
+    }
+  };
+
+  // 处理模态框确认
+  const handleModelModalOk = () => {
+    if (modelFormRef.current) {
+      modelFormRef.current.submit();
+    }
+  };
+
+  const handleIDLModalOk = () => {
+    if (idlModelFormRef.current) {
+      idlModelFormRef.current.submit();
+    }
+  };
+
+  // 处理模态框取消
+  const handleModelModalCancel = () => {
+    setCreateModelDrawerVisible(false);
+    if (modelFormRef.current) {
+      modelFormRef.current.reset();
+    }
+  };
+
+  const handleIDLModalCancel = () => {
+    setCreateIDLModelVisible(false);
+    if (idlModelFormRef.current) {
+      idlModelFormRef.current.reset();
+    }
+
   };
 
   // 获取数据源列表
@@ -433,18 +490,54 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
       >
         {t("delete_dialog_text", { name: activeModel?.name })}
       </Modal>
-      <ModelCreationDialog
-        visible={createModelDrawerVisible}
-        datasource={activeDs}
-        onConfirm={addModel}
-        onCancel={() => setCreateModelDrawerVisible(false)}
-      />
-      <IDLModelForm
-        visible={createIDLModelVisible}
-        datasource={activeDs}
-        onConfirm={addModel}
-        onCancel={() => setCreateIDLModelVisible(false)}
-      />
+      <Drawer
+        title={t('create_model')}
+        open={createModelDrawerVisible}
+        onClose={() => setCreateModelDrawerVisible(false)}
+        width={800}
+        footer={
+          <div style={{ textAlign: 'left' }}>
+            <Button onClick={handleModelModalCancel} style={{ marginRight: 8 }}>
+              {t('cancel')}
+            </Button>
+            <Button onClick={handleModelModalOk} type="primary">
+              {t('confirm')}
+            </Button>
+          </div>
+        }
+      >
+        <ModelForm
+          ref={modelFormRef}
+          mode="create"
+          datasource={activeDs}
+          onConfirm={handleModelFormSubmit}
+          onCancel={handleModelModalCancel}
+        />
+      </Drawer>
+      <Drawer
+        title={t('create_model_by_idl')}
+        open={createIDLModelVisible}
+        onClose={handleIDLModalCancel}
+        width={1000}
+        footer={
+          <div style={{ textAlign: 'left' }}>
+            <Button onClick={handleIDLModalCancel} style={{ marginRight: 8 }}>
+              {t('cancel')}
+            </Button>
+            <Button onClick={handleIDLModalOk} type="primary">
+              {t('confirm')}
+            </Button>
+          </div>
+        }
+      >
+        <IDLModelForm
+          ref={idlModelFormRef}
+          mode="create"
+          datasource={activeDs}
+          onConfirm={handleIDLModelFormSubmit}
+          onCancel={handleIDLModalCancel}
+        />
+      </Drawer>
     </div>
   );
 };

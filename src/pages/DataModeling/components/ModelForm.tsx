@@ -1,27 +1,71 @@
 import React, {useState} from 'react';
-import {Button, Drawer, Form, message, Tabs} from 'antd';
+import {Form, message, Tabs} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {createModel} from '@/services/model.ts';
 import {Entity} from '@/types/data-modeling';
 import EntityForm from './EntityForm';
 import EnumForm from './EnumForm';
 import NativeQueryForm from './NativeQueryForm';
 
-interface CreateModelProps {
-  visible: boolean;
+interface ModelFormProps {
+  mode: 'create' | 'edit';
   datasource: string;
-  onConfirm: () => void;
+  currentValue?: any;
+  onConfirm: (form: any) => void;
   onCancel: () => void;
 }
 
-const ModelCreationDialog: React.FC<CreateModelProps> = ({
-  visible,
+const ModelForm = React.forwardRef<any, ModelFormProps>(({
+  mode: _mode, // eslint-disable-line @typescript-eslint/no-unused-vars
   datasource,
+  currentValue: _currentValue, // eslint-disable-line @typescript-eslint/no-unused-vars
   onConfirm,
   onCancel,
-}) => {
+}, ref) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('entity');
+
+  // 暴露提交方法给父组件
+  React.useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+    reset: handleCancel,
+    getFieldsValue: () => {
+      switch (activeTab) {
+        case 'entity':
+          return entityForm.getFieldsValue();
+        case 'enum':
+          return enumForm.getFieldsValue();
+        case 'nativeQuery':
+          return nativeQueryForm.getFieldsValue();
+        default:
+          return {};
+      }
+    },
+    setFieldsValue: (values: any) => {
+      switch (activeTab) {
+        case 'entity':
+          entityForm.setFieldsValue(values);
+          break;
+        case 'enum':
+          enumForm.setFieldsValue(values);
+          break;
+        case 'nativeQuery':
+          nativeQueryForm.setFieldsValue(values);
+          break;
+      }
+    },
+    validateFields: async () => {
+      switch (activeTab) {
+        case 'entity':
+          return await entityForm.validateFields();
+        case 'enum':
+          return await enumForm.validateFields();
+        case 'nativeQuery':
+          return await nativeQueryForm.validateFields();
+        default:
+          return {};
+      }
+    },
+  }));
 
   // 实体表单相关状态
   const [entityForm] = Form.useForm();
@@ -51,19 +95,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         fields: entityModel.fields,
         indexes: entityModel.indexes,
       };
-      await createModel(datasource, entityData);
-      message.success(t('form_save_success'));
-
-      // 清空表单内容
-      entityForm.resetFields();
-      setEntityModel({
-        name: '',
-        type: 'entity',
-        fields: [],
-        indexes: [],
-      });
-
-      onConfirm();
+      onConfirm(entityData);
     } catch (error) {
       console.error(error);
       message.error(t('form_save_failed'));
@@ -77,13 +109,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         ...values,
         type: 'enum',
       };
-      await createModel(datasource, enumData);
-      message.success(t('form_save_success'));
-
-      // 清空表单内容
-      enumForm.resetFields();
-
-      onConfirm();
+      onConfirm(enumData);
     } catch (error) {
       console.error(error);
       message.error(t('form_save_failed'));
@@ -97,13 +123,7 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
         ...values,
         type: 'native_query',
       };
-      await createModel(datasource, queryData);
-      message.success(t('form_save_success'));
-
-      // 清空表单内容
-      nativeQueryForm.resetFields();
-
-      onConfirm();
+      onConfirm(queryData);
     } catch (error) {
       console.error(error);
       message.error(t('form_save_failed'));
@@ -125,6 +145,20 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
       default:
         break;
     }
+  };
+
+  const handleCancel = () => {
+    // 清空表单内容
+    entityForm.resetFields();
+    enumForm.resetFields();
+    nativeQueryForm.resetFields();
+    setEntityModel({
+      name: '',
+      type: 'entity',
+      fields: [],
+      indexes: [],
+    });
+    onCancel();
   };
 
   const items = [
@@ -157,29 +191,12 @@ const ModelCreationDialog: React.FC<CreateModelProps> = ({
   ];
 
   return (
-    <Drawer
-      title={t('create_model')}
-      open={visible}
-      onClose={onCancel}
-      width={800}
-      footer={
-        <div style={{ textAlign: 'left' }}>
-          <Button onClick={onCancel} style={{ marginRight: 8 }}>
-            {t('cancel')}
-          </Button>
-          <Button onClick={handleSubmit} type="primary">
-            {t('confirm')}
-          </Button>
-        </div>
-      }
-    >
-      <Tabs
-        activeKey={activeTab}
-        onChange={handleTabChange}
-        items={items}
-      />
-    </Drawer>
+    <Tabs
+      activeKey={activeTab}
+      onChange={handleTabChange}
+      items={items}
+    />
   );
-};
+});
 
-export default ModelCreationDialog;
+export default ModelForm;

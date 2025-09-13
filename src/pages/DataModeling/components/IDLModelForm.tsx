@@ -1,26 +1,44 @@
 import React, {useState} from 'react';
-import {Button, Drawer, message, theme} from 'antd';
+import {message, theme} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {importModels} from '@/services/datasource';
 import {ScriptImportPayload, ScriptType} from '@/types/data-source';
 import IDLEditor from './IDLEditor';
 
-interface CreateModelProps {
-  visible: boolean;
+interface IDLModelFormProps {
+  mode: 'create' | 'edit';
   datasource: string;
-  onConfirm: () => void;
+  currentValue?: any;
+  onConfirm: (form: any) => void;
   onCancel: () => void;
 }
 
-const IDLModelForm: React.FC<CreateModelProps> = ({
-  visible,
-  datasource,
+const IDLModelForm = React.forwardRef<any, IDLModelFormProps>(({
+  mode: _mode, // eslint-disable-line @typescript-eslint/no-unused-vars
+  datasource: _datasource, // eslint-disable-line @typescript-eslint/no-unused-vars
+  currentValue: _currentValue, // eslint-disable-line @typescript-eslint/no-unused-vars
   onConfirm,
   onCancel,
-}) => {
+}, ref) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [loading, setLoading] = useState(false);
+
+  // 暴露提交方法给父组件
+  React.useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+    reset: handleCancel,
+    getFieldsValue: () => ({ idlCode }),
+    setFieldsValue: (values: any) => {
+      if (values.idlCode) {
+        setIdlCode(values.idlCode);
+      }
+    },
+    validateFields: async () => {
+      if (!idlCode.trim()) {
+        throw new Error(t('enter_idl_code'));
+      }
+      return { idlCode };
+    },
+  }));
   const [idlCode, setIdlCode] = useState(`// ${t('idl_syntax_example')}
 model example_model {
   id : Long @id @default(autoIncrement()),
@@ -43,17 +61,17 @@ enum ExampleEnum {
       return;
     }
 
-    setLoading(true);
-    try {
-      const payload: ScriptImportPayload = {
-        script: idlCode,
-        type: ScriptType.IDL
-      };
+    const payload: ScriptImportPayload = {
+      script: idlCode,
+      type: ScriptType.IDL
+    };
 
-      await importModels(datasource, payload);
-      message.success(t('model_created_success'));
-      // 清空编辑器内容
-      setIdlCode(`// ${t('idl_syntax_example')}
+    onConfirm(payload);
+  };
+
+  const handleCancel = () => {
+    // 清空编辑器内容
+    setIdlCode(`// ${t('idl_syntax_example')}
 model example_model {
   id : String @id @default(ulid()),
   name : String @length("255") @comment("${t('name')}"),
@@ -66,46 +84,19 @@ enum ExampleEnum {
   VALUE2,
   VALUE3
 }`);
-      onConfirm();
-    } catch (error) {
-      console.error(t('create_model_failed'), error);
-      message.error(t('model_creation_failed'));
-    } finally {
-      setLoading(false);
-    }
+    onCancel();
   };
 
   return (
-    <Drawer
-      title={t('create_model_by_idl')}
-      open={visible}
-      onClose={onCancel}
-      width={1000}
-      footer={
-        <div style={{ textAlign: 'left' }}>
-          <Button onClick={onCancel} style={{ marginRight: 8 }}>
-            {t('cancel')}
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            type="primary"
-            loading={loading}
-          >
-            {t('confirm')}
-          </Button>
-        </div>
-      }
-    >
-      <div style={{ height: '600px', border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius }}>
-        <IDLEditor
-          value={idlCode}
-          onChange={(value) => setIdlCode(value || '')}
-          height="100%"
-          showDocLink={true}
-        />
-      </div>
-    </Drawer>
+    <div style={{ height: '600px', border: `1px solid ${token.colorBorder}`, borderRadius: token.borderRadius }}>
+      <IDLEditor
+        value={idlCode}
+        onChange={(value) => setIdlCode(value || '')}
+        height="100%"
+        showDocLink={true}
+      />
+    </div>
   );
-};
+});
 
 export default IDLModelForm;
