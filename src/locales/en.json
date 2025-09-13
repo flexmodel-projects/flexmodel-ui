@@ -412,5 +412,6 @@
   "loading": "Loading...",
   "sort_asc": "Sort Ascending",
   "sort_desc": "Sort Descending",
-  "sort_cancel": "Cancel Sort"
+  "sort_cancel": "Cancel Sort",
+  "trigger": "Trigger"
 }

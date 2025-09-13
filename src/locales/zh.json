@@ -416,7 +416,7 @@
   "flow_mgr": "流程管理",
   "flow_design": "流程设计",
   "flow_instance": "流程实例监控",
-  "trigger_management": "触发器",
+  "trigger": "触发器",
   "create_trigger": "创建触发器",
   "edit_trigger": "编辑触发器",
   "trigger_type_cron": "定时触发",

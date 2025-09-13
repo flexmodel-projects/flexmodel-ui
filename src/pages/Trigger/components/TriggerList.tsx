@@ -247,7 +247,7 @@ const TriggerList: React.FC = () => {
   ];
 
   return (
-    <PageContainer title={t('trigger_management')}
+    <PageContainer title={t('trigger')}
       extra={
         <Button
           type="primary"
