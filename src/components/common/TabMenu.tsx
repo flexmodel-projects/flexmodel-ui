@@ -1,7 +1,6 @@
 import React, {forwardRef, ReactNode, useEffect, useImperativeHandle, useState} from "react";
-import {Tabs} from "antd";
+import {theme} from "antd";
 import {useLocation, useNavigate} from "react-router-dom";
-import styles from "./TabMenu.module.scss";
 
 export interface TabMenuItem {
   key: string;
@@ -32,7 +31,16 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
 }, ref) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeKey, setActiveKey] = useState(defaultActiveKey);
+  const { token } = theme.useToken();
+  
+  // 初始化时直接根据当前路径确定激活的标签页，避免闪动
+  const getInitialActiveKey = () => {
+    const path = location.pathname;
+    const currentTab = items.find((tab) => tab.path === path);
+    return currentTab ? currentTab.key : defaultActiveKey;
+  };
+  
+  const [activeKey, setActiveKey] = useState(getInitialActiveKey);
   const [refreshKey, setRefreshKey] = useState(0);
 
   // 根据当前路径设置激活的标签页
@@ -72,29 +80,97 @@ const TabMenu = forwardRef<TabMenuRef, TabMenuProps>(({
     refreshCurrentTab,
   }));
 
-  return (
-    <Tabs
-      className={`${styles.compactTabs} ${
-        className || ""
-      } `}
-      activeKey={activeKey}
-      onChange={onChange}
-      type="card"
-      size="small"
-      tabBarGutter={4}
-      tabBarExtraContent={tabBarExtraContent}
-      items={items.map((content) => {
-        const { label, key, icon, element: Element } = content;
+  const activeTab = items.find(tab => tab.key === activeKey);
+  const ActiveElement = activeTab?.element;
 
-        return {
-          label,
-          key,
-          className: "h-full",
-          children: <Element key={key === activeKey ? `${key}-${refreshKey}` : key}/>,
-          icon,
-        };
-      })}
-    />
+  return (
+    <div 
+      className={className}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}
+    >
+      {/* 自定义标签栏 */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          background: token.colorBgContainer,
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+          padding: '0 8px',
+          minHeight: '30px',
+          gap: '2px'
+        }}
+      >
+        {/* 标签页按钮 */}
+        <div style={{ display: 'flex', gap: '1px', flex: 1 }}>
+          {items.map((item) => {
+            const isActive = item.key === activeKey;
+            return (
+              <button
+                key={item.key}
+                onClick={() => onChange(item.key)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  padding: '2px 8px',
+                  border: 'none',
+                  borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
+                  background: isActive ? token.colorBgContainer : token.colorFillSecondary,
+                  color: isActive ? token.colorPrimary : token.colorTextSecondary,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '12px',
+                  fontWeight: isActive ? 500 : 400,
+                  position: 'relative',
+                  borderBottom: isActive ? `2px solid ${token.colorPrimary}` : '2px solid transparent',
+                  marginBottom: '-1px'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = token.colorFillTertiary;
+                    e.currentTarget.style.color = token.colorText;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = token.colorFillSecondary;
+                    e.currentTarget.style.color = token.colorTextSecondary;
+                  }
+                }}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        
+        {/* 右侧操作按钮 */}
+        {tabBarExtraContent && (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {tabBarExtraContent}
+          </div>
+        )}
+      </div>
+
+      {/* 内容区域 */}
+      <div
+        style={{
+          flex: 1,
+          overflow: 'hidden',
+          background: token.colorBgContainer
+        }}
+      >
+        {ActiveElement && (
+          <ActiveElement key={activeKey === activeKey ? `${activeKey}-${refreshKey}` : activeKey} />
+        )}
+      </div>
+    </div>
   );
 });
 

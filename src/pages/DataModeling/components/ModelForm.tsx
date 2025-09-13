@@ -185,7 +185,11 @@ const ModelForm = React.forwardRef<any, ModelFormProps>(({
       key: 'nativeQuery',
       label: t('new_native_query'),
       children: (
-        <NativeQueryForm form={nativeQueryForm} />
+        <NativeQueryForm 
+          form={nativeQueryForm} 
+          mode="create"
+          datasource={datasource}
+        />
       ),
     },
   ];

@@ -29,8 +29,6 @@ const TabPageContainer: React.FC<TabPageContainerProps> = ({
         background: token.colorBgContainer,
         borderRadius: token.borderRadius,
         border: `1px solid ${token.colorBorderSecondary}`,
-        display: 'flex',
-        flexDirection: 'column',
         overflow: 'hidden'
       }}
     >
