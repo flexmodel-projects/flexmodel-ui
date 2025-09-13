@@ -235,6 +235,8 @@
   "form_delete_fail": "Failed to delete",
   "field_delete_success": "Field deleted successfully",
   "field_delete_failed": "Failed to delete field",
+  "index_delete_success": "Index deleted successfully",
+  "index_delete_failed": "Failed to delete index",
   "app_description": "Make data access easier, more efficient, and more flexible!",
   "pagination_total_text": "{{start}}-{{end}} of {{total}} items",
   "help": "Help",

@@ -107,18 +107,46 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
       title: field.name,
       dataIndex: field.name,
       key: field.name,
+      width: 150,
+      minWidth: 120,
       sorter: true,
-      sortOrder: query.sort.find(s => s.field === field.name)?.order === 'ASC' ? 'ascend' : 
-                 query.sort.find(s => s.field === field.name)?.order === 'DESC' ? 'descend' : null,
+      sortOrder: query.sort.find(s => s.field === field.name)?.order === 'ASC' ? 'ascend' :
+        query.sort.find(s => s.field === field.name)?.order === 'DESC' ? 'descend' : null,
       render: (text: string) => {
+        // 如果值为 null 或 undefined，显示 "-"
+        if (text === null || text === undefined) {
+          return '-';
+        }
+
         const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
-        return (field.type === 'TEXT' || field.type === 'JSON') ? (
+
+        // 根据字段类型设置最大长度
+        let maxLength = 50; // 默认最大长度
+        if (field.type === 'String') {
+          maxLength = 30;
+        } else if (field.type === 'JSON') {
+          maxLength = 40;
+        } else if (field.type === 'Text') {
+          maxLength = 50;
+        } else if (field.type === 'Date' || field.type === 'DateTime') {
+          maxLength = 20;
+        } else if (field.type === 'Number' || field.type === 'Integer' || field.type === 'Float') {
+          maxLength = 15;
+        } else if (field.type === 'Boolean') {
+          maxLength = 10;
+        }
+
+        const displayText = fmtText && fmtText.length > maxLength
+          ? fmtText.substring(0, maxLength) + '...'
+          : fmtText;
+
+        return (field.type === 'String' || field.type === 'JSON' || field.type === 'Text') ? (
           <Tooltip title={fmtText}>
             <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', display: 'block' }}>
-              {fmtText}
+              {displayText}
             </span>
           </Tooltip>
-        ) : fmtText;
+        ) : displayText;
       },
     })) || [];
 
@@ -159,12 +187,12 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
 
   const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
     let newSort: Array<{ field: string; order: 'ASC' | 'DESC' }> = [];
-    
+
     if (sorter && sorter.field) {
       const order = sorter.order === 'ascend' ? 'ASC' : 'DESC';
       newSort = [{ field: sorter.field, order }];
     }
-    
+
     setQuery({ ...query, page: 1, sort: newSort });
   };
 
@@ -245,7 +273,10 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
             <Table
               sticky
               loading={loading}
-              scroll={{ y: 'calc(100vh - 400px)' }}
+              scroll={{
+                y: 'calc(100vh - 400px)',
+                x: 'max-content'
+              }}
               columns={columns}
               dataSource={records.list}
               pagination={false}
@@ -321,14 +352,12 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
         onOk={handleFormSubmit}
         width={600}
       >
-        <Form form={form} layout="vertical">
-          <RecordForm
-            model={model}
-            mode={editMode ? 'edit' : 'create'}
-            record={currentRecord}
-            form={form}
-          />
-        </Form>
+        <RecordForm
+          model={model}
+          mode={editMode ? 'edit' : 'create'}
+          record={currentRecord}
+          form={form}
+        />
       </Modal>
     );
   };

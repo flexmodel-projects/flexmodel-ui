@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {Button, message, Popconfirm, Space, Table, Tooltip,} from "antd";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {Button, message, Modal, Popconfirm, Space, Table, Tooltip,} from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -33,18 +33,21 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   const [currentVal, setCurrentVal] = useState<Field>(
     FieldInitialValues["STRING"]
   );
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const fieldFormRef = useRef<any>(null);
 
   const fetchFields = useCallback(async () => {
     // Replace this with actual fetch call
     // const res = await getFields(datasource, model?.name);
     setFieldList(model?.fields);
-  }, [datasource, model?.name]);
+  }, [model?.fields]);
 
   useEffect(() => {
     fetchFields();
   }, [fetchFields]);
 
   const handleNewField = () => {
+    setFormMode('create');
     setChangeDialogVisible(true);
     setSelectedFieldIndex(-1);
     setCurrentVal({
@@ -55,6 +58,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
 
   const handleEdit = (index: number) => {
     const field = fieldList[index];
+    setFormMode('edit');
     setSelectedFieldIndex(index);
 
     // 根据字段类型正确设置tmpType
@@ -102,6 +106,19 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
     } catch (error) {
       console.log(error);
       message.error(t("form_save_failed"));
+    }
+  };
+
+  const handleModalOk = () => {
+    if (fieldFormRef.current) {
+      fieldFormRef.current.submit();
+    }
+  };
+
+  const handleModalCancel = () => {
+    setChangeDialogVisible(false);
+    if (fieldFormRef.current) {
+      fieldFormRef.current.reset();
     }
   };
 
@@ -272,14 +289,23 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
         columns={columns}
         pagination={false}
       />
-      <FieldForm
-        visible={changeDialogVisible}
-        datasource={datasource}
-        model={model}
-        currentValue={currentVal}
-        onConfirm={addOrEditField}
-        onCancel={() => setChangeDialogVisible(false)}
-      />
+      <Modal
+        title={t("field_form_title")}
+        open={changeDialogVisible}
+        onCancel={handleModalCancel}
+        onOk={handleModalOk}
+        width={600}
+      >
+        <FieldForm
+          ref={fieldFormRef}
+          mode={formMode}
+          datasource={datasource}
+          model={model}
+          currentValue={currentVal}
+          onConfirm={addOrEditField}
+          onCancel={handleModalCancel}
+        />
+      </Modal>
     </>
   );
 };

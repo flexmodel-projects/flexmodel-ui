@@ -125,7 +125,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
   }
 
   return (
-    <>
+    <Form form={form} layout="vertical">
       {model.fields
         .filter((field: Field) => field.type !== 'Relation')
         .map((field: Field) => (
@@ -139,7 +139,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
             {renderFieldInput(field)}
           </Form.Item>
         ))}
-    </>
+    </Form>
   );
 };
 

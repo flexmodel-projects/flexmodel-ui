@@ -1,12 +1,12 @@
 import React, {useEffect} from "react";
-import {Button, Form, Input, Modal, Select, Switch, theme} from "antd";
+import {Button, Form, Input, Select, Switch} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {useTranslation} from "react-i18next";
 import {Index} from "@/types/data-modeling";
 
 
 interface IndexFormProps {
-  visible: boolean;
+  mode: 'create' | 'edit';
   datasource: string;
   model: any;
   currentValue: Index;
@@ -14,36 +14,42 @@ interface IndexFormProps {
   onCancel: () => void;
 }
 
-const IndexForm: React.FC<IndexFormProps> = ({
-  visible,
+const IndexForm = React.forwardRef<any, IndexFormProps>(({
+  mode: _mode, // eslint-disable-line @typescript-eslint/no-unused-vars
   model,
   currentValue,
   onConfirm,
   onCancel,
-}) => {
+}, ref) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
+  
+  // 将表单实例暴露给父组件
+  React.useImperativeHandle(ref, () => ({
+    submit: handleConfirm,
+    reset: handleCancel,
+    getFieldsValue: form.getFieldsValue,
+    setFieldsValue: form.setFieldsValue,
+    validateFields: form.validateFields,
+  }));
 
   useEffect(() => {
-    if (visible) {
-      if (currentValue && Object.keys(currentValue).length > 0) {
-        // 编辑现有索引时，设置表单值
-        form.setFieldsValue(currentValue);
-      } else {
-        // 添加新索引时，不清空表单，保持上次输入的内容
-        // 只有当表单完全为空时才设置初始值
-        const currentFormValues = form.getFieldsValue();
-        if (!currentFormValues.name && (!currentFormValues.fields || currentFormValues.fields.length === 0)) {
-          form.setFieldsValue({
-            name: '',
-            fields: [],
-            unique: false,
-          });
-        }
+    if (currentValue && Object.keys(currentValue).length > 0) {
+      // 编辑现有索引时，设置表单值
+      form.setFieldsValue(currentValue);
+    } else {
+      // 添加新索引时，不清空表单，保持上次输入的内容
+      // 只有当表单完全为空时才设置初始值
+      const currentFormValues = form.getFieldsValue();
+      if (!currentFormValues.name && (!currentFormValues.fields || currentFormValues.fields.length === 0)) {
+        form.setFieldsValue({
+          name: '',
+          fields: [],
+          unique: false,
+        });
       }
     }
-  }, [visible, currentValue, form]);
+  }, [currentValue, form]);
 
   const handleConfirm = () => {
     form.validateFields().then((values) => {
@@ -52,38 +58,16 @@ const IndexForm: React.FC<IndexFormProps> = ({
     });
   };
 
-  // 紧凑主题样式
-  const formStyle = {
-    
-  };
-
-  const inputStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const selectStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const buttonStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const spaceStyle = {
-    gap: token.marginXS,
+  // 处理表单取消
+  const handleCancel = () => {
+    form.resetFields();
+    onCancel();
   };
 
   return (
-    <Modal
-      title={t("index_form_title")}
-      open={visible}
-      onCancel={onCancel}
-      onOk={handleConfirm}
-      width={600}
-    >
-      <Form form={form} layout="vertical" style={formStyle}>
+    <Form form={form} layout="vertical">
         <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
-          <Input size="small" style={inputStyle} />
+          <Input />
         </Form.Item>
         <Form.Item name="unique" label={t("unique")} valuePropName="checked">
           <Switch />
@@ -108,18 +92,17 @@ const IndexForm: React.FC<IndexFormProps> = ({
                   required={false}
                   key={field.key}
                 >
-                  <div style={{ display: 'flex', gap: token.marginXS, alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <Form.Item
                       {...field}
                       name={[field.name, 'fieldName']}
                       validateTrigger={["onChange", "onBlur"]}
                       noStyle
                     >
-                                             <Select
-                         placeholder={t("select_field")}
-                         style={{ flex: 1, ...selectStyle }}
-                         size="small"
-                       >
+                      <Select
+                        placeholder={t("select_field")}
+                        style={{ flex: 1 }}
+                      >
                          {model?.fields
                            ?.filter((field: any) => field.type !== 'Relation')
                            ?.map((field: any) => (
@@ -137,8 +120,7 @@ const IndexForm: React.FC<IndexFormProps> = ({
                     >
                       <Select
                         placeholder={t("direction")}
-                        style={{ width: 120, ...selectStyle }}
-                        size="small"
+                        style={{ width: 120 }}
                       >
                         <Select.Option value="ASC">ASC</Select.Option>
                         <Select.Option value="DESC">DESC</Select.Option>
@@ -148,20 +130,17 @@ const IndexForm: React.FC<IndexFormProps> = ({
                       <MinusCircleOutlined
                         className="dynamic-delete-button"
                         onClick={() => remove(field.name)}
-                        style={{ color: token.colorTextSecondary }}
                       />
                     ) : null}
                   </div>
                 </Form.Item>
               ))}
               <Form.Item>
-                <div style={spaceStyle}>
+                <div style={{ display: 'flex', gap: 8 }}>
                   <Button
                     type="dashed"
                     onClick={() => add({ fieldName: '', direction: 'ASC' })}
                     icon={<PlusOutlined />}
-                    size="small"
-                    style={buttonStyle}
                   >
                     {t("add_field")}
                   </Button>
@@ -171,10 +150,9 @@ const IndexForm: React.FC<IndexFormProps> = ({
             </>
           )}
         </Form.List>
-      </Form>
-    </Modal>
+    </Form>
   );
-};
+});
 
 export default IndexForm;
 

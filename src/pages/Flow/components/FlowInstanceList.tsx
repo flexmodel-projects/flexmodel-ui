@@ -1,0 +1,258 @@
+import React, {useCallback, useEffect, useState} from 'react';
+import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
+import {EyeOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
+import PageContainer from '@/components/common/PageContainer';
+import {FlowInstance, FlowInstanceListParams, getFlowInstanceList, terminateFlowInstance} from '@/services/flow';
+import dayjs from 'dayjs';
+import {t} from 'i18next';
+
+const FlowInstanceList: React.FC = () => {
+
+  // 状态管理
+  const [loading, setLoading] = useState(false);
+  const [flowInstanceList, setFlowInstanceList] = useState<FlowInstance[]>([]);
+  const [total, setTotal] = useState(0);
+  const [searchParams, setSearchParams] = useState<FlowInstanceListParams>({
+    page: 1,
+    size: 20
+  });
+
+  // 获取流程实例列表
+  const fetchFlowInstanceList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getFlowInstanceList(searchParams);
+      setFlowInstanceList(response.list);
+      setTotal(response.total);
+    } catch (error) {
+      console.error('获取流程实例列表失败:', error);
+      message.error('获取流程实例列表失败');
+    } finally {
+      setLoading(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchFlowInstanceList();
+  }, [fetchFlowInstanceList]);
+
+  // 终止流程实例
+  const handleTerminateFlowInstance = async (flowInstanceId: string) => {
+    try {
+      await terminateFlowInstance(flowInstanceId);
+      message.success('流程实例终止成功');
+      fetchFlowInstanceList();
+    } catch (error) {
+      console.error('终止流程实例失败:', error);
+      message.error('终止流程实例失败');
+    }
+  };
+
+  // 获取状态标签
+  const getStatusTag = (status: number) => {
+    const statusMap = {
+      1: { text: '运行中', color: 'processing' },
+      2: { text: '已完成', color: 'success' },
+      3: { text: '已终止', color: 'error' },
+      4: { text: '已暂停', color: 'warning' }
+    };
+    const statusInfo = statusMap[status as keyof typeof statusMap] || { text: '未知', color: 'default' };
+    return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+  };
+
+  // 表格列定义
+  const columns = [
+    {
+      title: '流程实例ID',
+      dataIndex: 'flowInstanceId',
+      key: 'flowInstanceId',
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: '流程模块ID',
+      dataIndex: 'flowModuleId',
+      key: 'flowModuleId',
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: '流程部署ID',
+      dataIndex: 'flowDeployId',
+      key: 'flowDeployId',
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      width: 100,
+      render: (status: number) => getStatusTag(status),
+    },
+    {
+      title: '父流程实例ID',
+      dataIndex: 'parentFlowInstanceId',
+      key: 'parentFlowInstanceId',
+      width: 200,
+      ellipsis: true,
+      render: (text: string) => text || '-',
+    },
+    {
+      title: '调用者',
+      dataIndex: 'caller',
+      key: 'caller',
+      width: 120,
+    },
+    {
+      title: '操作者',
+      dataIndex: 'operator',
+      key: 'operator',
+      width: 120,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+      width: 180,
+      render: (time: string) => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'modifyTime',
+      key: 'modifyTime',
+      width: 180,
+      render: (time: string) => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      width: 150,
+      fixed: 'right' as const,
+      render: (_: any, record: FlowInstance) => (
+        <Space size="small">
+          <Tooltip title="查看详情">
+            <Button
+              type="link"
+              icon={<EyeOutlined />}
+              size="small"
+              onClick={() => {
+                // TODO: 实现查看详情功能
+                message.info('查看详情功能待实现');
+              }}
+            />
+          </Tooltip>
+          {record.status === 1 && (
+            <Tooltip title="终止">
+              <Popconfirm
+                title="确定要终止这个流程实例吗？"
+                onConfirm={() => handleTerminateFlowInstance(record.flowInstanceId)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <Button
+                  type="link"
+                  danger
+                  icon={<StopOutlined />}
+                  size="small"
+                />
+              </Popconfirm>
+            </Tooltip>
+          )}
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <PageContainer>
+      {/* 搜索和操作区域 */}
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Space>
+          <Input
+            placeholder="搜索流程实例ID"
+            prefix={<SearchOutlined />}
+            style={{ width: 200 }}
+            onChange={(e) => {
+              setSearchParams({
+                ...searchParams,
+                flowInstanceId: e.target.value || undefined,
+                page: 1
+              });
+            }}
+          />
+          <Select
+            placeholder="选择状态"
+            style={{ width: 120 }}
+            allowClear
+            onChange={(value) => {
+              setSearchParams({
+                ...searchParams,
+                status: value,
+                page: 1
+              });
+            }}
+          >
+            <Select.Option value={1}>运行中</Select.Option>
+            <Select.Option value={2}>已完成</Select.Option>
+            <Select.Option value={3}>已终止</Select.Option>
+            <Select.Option value={4}>已暂停</Select.Option>
+          </Select>
+        </Space>
+      </div>
+
+      {/* 流程实例列表表格 */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'calc(100vh - 200px)',
+        minHeight: 400
+      }}>
+        <div style={{
+          flex: 1,
+          minHeight: 0,
+          overflow: 'hidden'
+        }}>
+          <Table
+            columns={columns}
+            dataSource={flowInstanceList}
+            rowKey="flowInstanceId"
+            loading={loading}
+            pagination={false}
+            scroll={{ y: 'calc(100vh - 300px)', x: 1400 }}
+          />
+        </div>
+        {/* 分页区域 - 固定在底部 */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: 0,
+          position: 'relative',
+          zIndex: 1
+        }}>
+           <Pagination
+             current={searchParams.page}
+             pageSize={searchParams.size}
+             total={total}
+             showTotal={(total: number, range: any) =>
+               t("pagination_total_text", {
+                 start: range[0],
+                 end: range[1],
+                 total: total,
+               })
+             }
+             onChange={(page: number, size: number) => {
+               setSearchParams({
+                 ...searchParams,
+                 page,
+                 size
+               });
+             }}
+           />
+        </div>
+      </div>
+    </PageContainer>
+  );
+};
+
+export default FlowInstanceList;

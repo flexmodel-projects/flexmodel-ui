@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Form, Input} from 'antd';
+import React, {useRef, useState} from 'react';
+import {Form, Input, Modal} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {Entity, Field, Index} from '@/types/data-modeling';
 import FieldForm from './FieldForm';
@@ -23,6 +23,7 @@ const EntityForm: React.FC<EntityFormProps> = ({
   const { t } = useTranslation();
   const [changeFieldDialogVisible, setChangeFieldDialogVisible] = useState(false);
   const [changeIndexDialogVisible, setChangeIndexDialogVisible] = useState(false);
+  const [fieldFormMode, setFieldFormMode] = useState<'create' | 'edit'>('create');
   const [fieldForm, setFieldForm] = useState<Field>({
     name: '',
     type: 'String',
@@ -39,18 +40,24 @@ const EntityForm: React.FC<EntityFormProps> = ({
     fields: [],
     unique: false,
   });
+  const [indexFormMode, setIndexFormMode] = useState<'create' | 'edit'>('create');
+  const fieldFormRef = useRef<any>(null);
+  const indexFormRef = useRef<any>(null);
 
   const handleAddField = () => {
+    setFieldFormMode('create');
     // 不清空表单，保持上次输入的内容
     setChangeFieldDialogVisible(true);
   };
 
   const handleAddIndex = () => {
+    setIndexFormMode('create');
     // 不清空表单，保持上次输入的内容
     setChangeIndexDialogVisible(true);
   };
 
   const handleEditField = (field: Field) => {
+    setFieldFormMode('edit');
     setFieldForm(field);
     setChangeFieldDialogVisible(true);
   };
@@ -61,6 +68,7 @@ const EntityForm: React.FC<EntityFormProps> = ({
   };
 
   const handleEditIndex = (index: Index) => {
+    setIndexFormMode('edit');
     setIndexForm(index);
     setChangeIndexDialogVisible(true);
   };
@@ -80,6 +88,32 @@ const EntityForm: React.FC<EntityFormProps> = ({
     }
     onEntityModelChange({...entityModel, fields: updatedFields});
     setChangeFieldDialogVisible(false);
+  };
+
+  const handleFieldModalOk = () => {
+    if (fieldFormRef.current) {
+      fieldFormRef.current.submit();
+    }
+  };
+
+  const handleFieldModalCancel = () => {
+    setChangeFieldDialogVisible(false);
+    if (fieldFormRef.current) {
+      fieldFormRef.current.reset();
+    }
+  };
+
+  const handleIndexModalOk = () => {
+    if (indexFormRef.current) {
+      indexFormRef.current.submit();
+    }
+  };
+
+  const handleIndexModalCancel = () => {
+    setChangeIndexDialogVisible(false);
+    if (indexFormRef.current) {
+      indexFormRef.current.reset();
+    }
   };
 
   const addOrEditIndex = (values: Index) => {
@@ -124,24 +158,42 @@ const EntityForm: React.FC<EntityFormProps> = ({
       </div>
 
       {/* 字段表单弹窗 */}
-      <FieldForm
-        visible={changeFieldDialogVisible}
-        datasource={datasource}
-        model={entityModel}
-        currentValue={fieldForm}
-        onConfirm={addOrEditField}
-        onCancel={() => setChangeFieldDialogVisible(false)}
-      />
+      <Modal
+        title={t("field_form_title")}
+        open={changeFieldDialogVisible}
+        onCancel={handleFieldModalCancel}
+        onOk={handleFieldModalOk}
+        width={600}
+      >
+        <FieldForm
+          ref={fieldFormRef}
+          mode={fieldFormMode}
+          datasource={datasource}
+          model={entityModel}
+          currentValue={fieldForm}
+          onConfirm={addOrEditField}
+          onCancel={handleFieldModalCancel}
+        />
+      </Modal>
 
       {/* 索引表单弹窗 */}
-      <IndexForm
-        visible={changeIndexDialogVisible}
-        datasource={datasource}
-        model={entityModel}
-        currentValue={indexForm}
-        onConfirm={addOrEditIndex}
-        onCancel={() => setChangeIndexDialogVisible(false)}
-      />
+      <Modal
+        title={t("index_form_title")}
+        open={changeIndexDialogVisible}
+        onCancel={handleIndexModalCancel}
+        onOk={handleIndexModalOk}
+        width={600}
+      >
+        <IndexForm
+          ref={indexFormRef}
+          mode={indexFormMode}
+          datasource={datasource}
+          model={entityModel}
+          currentValue={indexForm}
+          onConfirm={addOrEditIndex}
+          onCancel={handleIndexModalCancel}
+        />
+      </Modal>
     </>
   );
 };

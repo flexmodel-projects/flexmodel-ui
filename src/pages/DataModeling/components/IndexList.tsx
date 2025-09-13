@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button, message, Popconfirm, Space, Table, Tag} from 'antd';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Button, message, Modal, Popconfirm, Space, Table, Tag} from 'antd';
 import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '@/services/model.ts';
 import IndexForm from "./IndexForm";
@@ -17,24 +17,28 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
   const [currentVal, setCurrentVal] = useState<Index>({name: '', fields: [], unique: false});
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const indexFormRef = useRef<any>(null);
 
   const fetchIndexes = useCallback(async () => {
     // Replace this with actual fetch call
     // const res = await getIndexes(datasource, model?.name);
     setIndexList(model?.indexes || []);
-  }, [datasource, model?.name]);
+  }, [model?.indexes]);
 
   useEffect(() => {
     fetchIndexes();
   }, [fetchIndexes]);
 
   const handleNewIndex = () => {
+    setFormMode('create');
     setChangeDialogVisible(true);
     setSelectedIndexKey(-1);
     setCurrentVal({name: '', fields: [], unique: false});
   };
 
   const handleEdit = (index: number) => {
+    setFormMode('edit');
     setSelectedIndexKey(index);
     setCurrentVal(indexList[index]);
     setChangeDialogVisible(true);
@@ -67,10 +71,23 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         setIndexList(updatedIndexes);
       }
       setChangeDialogVisible(false);
-      message.success('Index saved successfully');
+      message.success(t('form_save_success'));
     } catch (error) {
       console.error(error);
-      message.error('Failed to save index');
+      message.error(t('form_save_failed'));
+    }
+  };
+
+  const handleModalOk = () => {
+    if (indexFormRef.current) {
+      indexFormRef.current.submit();
+    }
+  };
+
+  const handleModalCancel = () => {
+    setChangeDialogVisible(false);
+    if (indexFormRef.current) {
+      indexFormRef.current.reset();
     }
   };
 
@@ -79,10 +96,10 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       const index = indexList[key];
       await dropIndex(datasource, model?.name as string, index.name);
       setIndexList(indexList.filter((_, i) => i !== key));
-      message.success('Index deleted successfully');
+      message.success(t('index_delete_success'));
     } catch (error) {
       console.error(error);
-      message.error('Failed to delete index');
+      message.error(t('index_delete_failed'));
     }
   };
 
@@ -102,7 +119,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         </Space>
       ),
     },
-    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? 'Yes' : 'No')},
+    {title: t('unique'), dataIndex: 'unique', key: 'unique', render: (unique: boolean) => (unique ? t('yes') : t('no'))},
     {
       title: t('operations'),
       key: 'operations',
@@ -150,14 +167,23 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
         columns={columns}
         pagination={false}
       />
-      <IndexForm
-        visible={changeDialogVisible}
-        datasource={datasource}
-        model={model}
-        currentValue={currentVal}
-        onConfirm={addOrEditIndex}
-        onCancel={() => setChangeDialogVisible(false)}
-      />
+      <Modal
+        title={t("index_form_title")}
+        open={changeDialogVisible}
+        onCancel={handleModalCancel}
+        onOk={handleModalOk}
+        width={600}
+      >
+        <IndexForm
+          ref={indexFormRef}
+          mode={formMode}
+          datasource={datasource}
+          model={model}
+          currentValue={currentVal}
+          onConfirm={addOrEditIndex}
+          onCancel={handleModalCancel}
+        />
+      </Modal>
     </>
   );
 };

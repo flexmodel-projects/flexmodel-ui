@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Form, Input, Modal, Select, Switch, theme} from "antd";
+import {Form, Input, Select, Switch} from "antd";
 import {getModelList} from "@/services/model.ts";
 import {useTranslation} from "react-i18next";
 import DefaultValueInput from "./DefaultValueInput";
@@ -7,7 +7,7 @@ import {Field} from "@/types/data-modeling";
 
 
 interface FieldFormProps {
-  visible: boolean;
+  mode: 'create' | 'edit';
   datasource: any;
   model: any;
   currentValue: any;
@@ -133,22 +133,37 @@ export const FieldInitialValues: any = {
   },
 };
 
-const FieldForm: React.FC<FieldFormProps> = ({
-  visible,
+const FieldForm = React.forwardRef<any, FieldFormProps>(({
+  mode,
   datasource,
   model,
   currentValue,
   onConfirm,
   onCancel,
-}) => {
+}, ref) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
+
+  // 将表单实例暴露给父组件
+  React.useImperativeHandle(ref, () => ({
+    submit: handleConfirm,
+    reset: handleCancel,
+    getFieldsValue: form.getFieldsValue,
+    setFieldsValue: form.setFieldsValue,
+    validateFields: form.validateFields,
+  }));
   const [modelList, setModelList] = useState<any[]>([]);
   const [RelationModel, setRelationModel] = useState<any>();
   const [tmpType, setTmpType] = useState<string>("");
 
-  const initialValues = {
+  const reqModelList = React.useCallback(async () => {
+    const data = await getModelList(datasource);
+    console.log('ModelList data:', data);
+    console.log('Enum models:', data.filter(item => item.type === "enum"));
+    setModelList(data);
+  }, [datasource]);
+
+  const initialValues = React.useMemo(() => ({
     name: "",
     type: "String",
     concreteType: "String",
@@ -166,36 +181,34 @@ const FieldForm: React.FC<FieldFormProps> = ({
     cascadeDelete: false,
     from: "",
     tmpType: "String",
-  };
+  }), []);
 
   useEffect(() => {
-    if (visible) {
-      reqModelList();
-      if (currentValue && Object.keys(currentValue).length > 0) {
-        // 编辑现有字段时，设置表单值，确保包含所有必要字段
-        form.setFieldsValue({
-          ...initialValues,
-          ...currentValue
-        });
-        // 根据字段类型正确设置tmpType
-        let tmpTypeValue = currentValue.tmpType;
-        if (!tmpTypeValue) {
-          if (currentValue.type === 'Relation' && currentValue.from) {
-            tmpTypeValue = `Relation:${currentValue.from}`;
-          } else if (currentValue.type === 'Enum' && currentValue.from) {
-            tmpTypeValue = `Enum:${currentValue.from}`;
-          } else {
-            tmpTypeValue = currentValue.type;
-          }
+    reqModelList();
+    if (currentValue && Object.keys(currentValue).length > 0) {
+      // 编辑现有字段时，设置表单值，确保包含所有必要字段
+      form.setFieldsValue({
+        ...initialValues,
+        ...currentValue
+      });
+      // 根据字段类型正确设置tmpType
+      let tmpTypeValue = currentValue.tmpType;
+      if (!tmpTypeValue) {
+        if (currentValue.type === 'Relation' && currentValue.from) {
+          tmpTypeValue = `Relation:${currentValue.from}`;
+        } else if (currentValue.type === 'Enum' && currentValue.from) {
+          tmpTypeValue = `Enum:${currentValue.from}`;
+        } else {
+          tmpTypeValue = currentValue.type;
         }
-        setTmpType(tmpTypeValue);
-      } else {
-        // 创建新字段时，清空表单并设置初始值
-        form.setFieldsValue(initialValues);
-        setTmpType("String");
       }
+      setTmpType(tmpTypeValue);
+    } else {
+      // 创建新字段时，清空表单并设置初始值
+      form.setFieldsValue(initialValues);
+      setTmpType("String");
     }
-  }, [visible, currentValue]);
+  }, [currentValue, form, initialValues, reqModelList]);
 
   useEffect(() => {
     if (tmpType?.startsWith("Relation:")) {
@@ -206,13 +219,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
       setRelationModel(null);
     }
   }, [modelList, tmpType]);
-
-  const reqModelList = async () => {
-    const data = await getModelList(datasource);
-    console.log('ModelList data:', data);
-    console.log('Enum models:', data.filter(item => item.type === "enum"));
-    setModelList(data);
-  };
 
   const handleTypeChange = (value: string) => {
     setTmpType(value);
@@ -300,201 +306,178 @@ const FieldForm: React.FC<FieldFormProps> = ({
     }
   };
 
-  // 紧凑主题样式
-  const formStyle = {
-
-  };
-
-  const inputStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
-  const selectStyle = {
-    fontSize: token.fontSizeSM,
-  };
-
   return (
-    <Modal
-      title={t("field_form_title")}
-      open={visible}
-      onCancel={handleCancel}
-      onOk={handleConfirm}
-      width={600}
+    <Form
+      form={form}
+      layout="vertical"
+      onValuesChange={handleFormChange}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onValuesChange={handleFormChange}
-        style={formStyle}
+      <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="comment" label={t("comment")}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="type" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item name="from" hidden>
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label={t("type")}
+        name="tmpType"
+        rules={[{ required: true }]}
       >
-        <Form.Item name="name" label={t("name")} rules={[{ required: true }]}>
-          <Input style={inputStyle} />
-        </Form.Item>
-        <Form.Item name="comment" label={t("comment")}>
-          <Input style={inputStyle} />
-        </Form.Item>
-        <Form.Item name="type" hidden>
-          <Input />
-        </Form.Item>
-        <Form.Item name="from" hidden>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={t("type")}
-          name="tmpType"
-          rules={[{ required: true }]}
+        <Select
+          onChange={handleTypeChange}
+          disabled={mode === 'edit'}
         >
-          <Select 
-            onChange={handleTypeChange} 
-            style={selectStyle}
-            disabled={currentValue && Object.keys(currentValue).length > 0}
-          >
-            <Select.OptGroup label={t("select_group_basic_field")}>
-              {BasicFieldTypes.map((item) => (
-                <Select.Option key={item.name} value={item.name}>
-                  {item.label}
+          <Select.OptGroup label={t("select_group_basic_field")}>
+            {BasicFieldTypes.map((item) => (
+              <Select.Option key={item.name} value={item.name}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+          <Select.OptGroup label={t("select_group_relation")}>
+            {modelList
+              .filter((item) => item.type === "entity")
+              .map((item) => (
+                <Select.Option
+                  key={item.name}
+                  value={`Relation:${item.name}`}
+                >
+                  {item.name}
                 </Select.Option>
               ))}
-            </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_relation")}>
-              {modelList
-                .filter((item) => item.type === "entity")
-                .map((item) => (
-                  <Select.Option
-                    key={item.name}
-                    value={`Relation:${item.name}`}
-                  >
-                    {item.name}
-                  </Select.Option>
-                ))}
-            </Select.OptGroup>
-            <Select.OptGroup label={t("select_group_enumeration")}>
-              {(() => {
-                const enumModels = modelList.filter((item) => item.type === "enum");
-                console.log('Enum models found:', enumModels.length, enumModels);
-                return enumModels.map((item) => (
-                  <Select.Option key={item.name} value={`Enum:${item.name}`}>
-                    {item.name}
-                  </Select.Option>
-                ));
-              })()}
-            </Select.OptGroup>
-          </Select>
-        </Form.Item>
-
-        {form.getFieldValue("tmpType") === "String" && (
-          <Form.Item label={t("length")} name="length">
-            <Input type="number" style={inputStyle} />
-          </Form.Item>
-        )}
-
-        {form.getFieldValue("tmpType") === "Decimal" && (
-          <>
-            <Form.Item label={t("precision")} name="precision">
-              <Input type="number" style={inputStyle} />
-            </Form.Item>
-            <Form.Item label={t("scale")} name="scale">
-              <Input type="number" style={inputStyle} />
-            </Form.Item>
-          </>
-        )}
-
-        {form.getFieldValue("tmpType")?.startsWith("Relation") && (
-          <>
-            <Form.Item
-              label={t("local_field")}
-              name="localField"
-              rules={[{ required: true }]}
-            >
-              <Select style={selectStyle}>
-                {model?.fields?.map((field: any) => (
-                  <Select.Option key={field.name} value={field.name}>
-                    {field.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label={t("foreign_field")}
-              name="foreignField"
-              rules={[{ required: true }]}
-            >
-              <Select style={selectStyle}>
-                {RelationModel?.fields?.map((field: any) => (
-                  <Select.Option key={field.name} value={field.name}>
-                    {field.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label={t("selection_multiple")}
-              name="multiple"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label={t("cascade_delete")}
-              name="cascadeDelete"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-          </>
-        )}
-
-        {form.getFieldValue("tmpType")?.startsWith("Enum") && (
-          <>
-            <Form.Item
-              label={t("selection_multiple")}
-              name="multiple"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-          </>
-        )}
-
-        <Form.Item label={t("unique")} name="unique" valuePropName="checked">
-          <Switch />
-        </Form.Item>
-        <Form.Item label={t("nullable")} name="nullable" valuePropName="checked">
-          <Switch />
-        </Form.Item>
-        <Form.Item label={t("identity")} name="identity" valuePropName="checked">
-          <Switch
-            disabled={(() => {
-              // 检查当前字段是否已经是identity
-              const currentFieldName = form.getFieldValue("name");
-              const currentIdentity = form.getFieldValue("identity");
-
-              // 如果当前字段已经是identity，则不禁用
-              if (currentIdentity) {
-                return false;
-              }
-
-              // 检查其他字段是否已经是identity
-              const existingIdentityField = model?.fields?.find((field: any) =>
-                field.identity === true && field.name !== currentFieldName
-              );
-
-              return !!existingIdentityField;
+          </Select.OptGroup>
+          <Select.OptGroup label={t("select_group_enumeration")}>
+            {(() => {
+              const enumModels = modelList.filter((item) => item.type === "enum");
+              console.log('Enum models found:', enumModels.length, enumModels);
+              return enumModels.map((item) => (
+                <Select.Option key={item.name} value={`Enum:${item.name}`}>
+                  {item.name}
+                </Select.Option>
+              ));
             })()}
-          />
+          </Select.OptGroup>
+        </Select>
+      </Form.Item>
+
+      {form.getFieldValue("tmpType") === "String" && (
+        <Form.Item label={t("length")} name="length">
+          <Input type="number" />
         </Form.Item>
-        <Form.Item label={t("default_value")} name="defaultValue">
-          <DefaultValueInput
-            fieldFn={() => form.getFieldsValue()}
-            value={form.getFieldValue("defaultValue")}
-            onChange={(val) => form.setFieldsValue({ defaultValue: val })}
-            modelList={modelList}
-          />
-        </Form.Item>
-      </Form>
-    </Modal>
+      )}
+
+      {form.getFieldValue("tmpType") === "Decimal" && (
+        <>
+          <Form.Item label={t("precision")} name="precision">
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item label={t("scale")} name="scale">
+            <Input type="number" />
+          </Form.Item>
+        </>
+      )}
+
+      {form.getFieldValue("tmpType")?.startsWith("Relation") && (
+        <>
+          <Form.Item
+            label={t("local_field")}
+            name="localField"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              {model?.fields?.map((field: any) => (
+                <Select.Option key={field.name} value={field.name}>
+                  {field.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label={t("foreign_field")}
+            name="foreignField"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              {RelationModel?.fields?.map((field: any) => (
+                <Select.Option key={field.name} value={field.name}>
+                  {field.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label={t("selection_multiple")}
+            name="multiple"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            label={t("cascade_delete")}
+            name="cascadeDelete"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+        </>
+      )}
+
+      {form.getFieldValue("tmpType")?.startsWith("Enum") && (
+        <>
+          <Form.Item
+            label={t("selection_multiple")}
+            name="multiple"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+        </>
+      )}
+
+      <Form.Item label={t("unique")} name="unique" valuePropName="checked">
+        <Switch />
+      </Form.Item>
+      <Form.Item label={t("nullable")} name="nullable" valuePropName="checked">
+        <Switch />
+      </Form.Item>
+      <Form.Item label={t("identity")} name="identity" valuePropName="checked">
+        <Switch
+          disabled={(() => {
+            // 检查当前字段是否已经是identity
+            const currentFieldName = form.getFieldValue("name");
+            const currentIdentity = form.getFieldValue("identity");
+
+            // 如果当前字段已经是identity，则不禁用
+            if (currentIdentity) {
+              return false;
+            }
+
+            // 检查其他字段是否已经是identity
+            const existingIdentityField = model?.fields?.find((field: any) =>
+              field.identity === true && field.name !== currentFieldName
+            );
+
+            return !!existingIdentityField;
+          })()}
+        />
+      </Form.Item>
+      <Form.Item label={t("default_value")} name="defaultValue">
+        <DefaultValueInput
+          fieldFn={() => form.getFieldsValue()}
+          value={form.getFieldValue("defaultValue")}
+          onChange={(val) => form.setFieldsValue({ defaultValue: val })}
+          modelList={modelList}
+        />
+      </Form.Item>
+    </Form>
   );
-};
+});
 
 export default FieldForm;
 

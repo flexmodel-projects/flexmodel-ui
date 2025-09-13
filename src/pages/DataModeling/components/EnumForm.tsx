@@ -1,100 +1,136 @@
-import React from 'react';
-import {Button, Form, Input, Space, theme} from 'antd';
+import React, {useEffect} from 'react';
+import {Button, Form, Input, Space} from 'antd';
 import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
+import type {Enum} from '@/types/data-modeling';
 
 interface EnumFormProps {
-  form: any;
+  form?: any;
+  mode?: 'create' | 'edit' | 'view';
+  datasource?: string;
+  model?: Partial<Enum>;
+  onConfirm?: (model: Enum) => void;
 }
 
-const EnumForm: React.FC<EnumFormProps> = ({ form }) => {
+const EnumForm = React.forwardRef<any, EnumFormProps>(({
+  form: externalForm,
+  mode = 'create',
+  datasource: _datasource, // eslint-disable-line @typescript-eslint/no-unused-vars
+  model,
+  onConfirm
+}, ref) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const [internalForm] = Form.useForm();
+  const form = externalForm || internalForm;
 
-  const buttonStyle = {
-    fontSize: token.fontSizeSM,
-  };
+  // 暴露提交方法给父组件
+  React.useImperativeHandle(ref, () => ({
+    submit: handleSave,
+    reset: () => form.resetFields(),
+    getFieldsValue: form.getFieldsValue,
+    setFieldsValue: form.setFieldsValue,
+    validateFields: form.validateFields,
+  }));
 
-  const spaceStyle = {
-    gap: token.marginXS,
+  // 初始化表单值
+  useEffect(() => {
+    if (model) {
+      form.setFieldsValue(model);
+    }
+  }, [model, form]);
+
+  // 处理保存
+  const handleSave = async () => {
+    try {
+      await form.validateFields();
+      if (onConfirm) {
+        onConfirm({
+          name: form.getFieldValue("name"),
+          type: "enum",
+          elements: form.getFieldValue("elements"),
+          comment: form.getFieldValue("comment"),
+        });
+      }
+    } catch (error) {
+      console.error("Validation failed", error);
+    }
   };
 
   return (
-    <div style={{ padding: '16px 0' }}>
-      <Form form={form} layout="vertical">
-        <Form.Item name="name" label={t('name')} rules={[{required: true}]}>
-          <Input size="small"/>
-        </Form.Item>
-        <Form.Item name="comment" label={t('comment')} rules={[{required: true}]}>
-          <Input size="small"/>
-        </Form.Item>
-        <Form.List
-          name="elements"
-          rules={[
-            {
-              validator: async (_, names) => {
-                if (!names || names.length < 2) {
-                  return Promise.reject(new Error(t('enum_element_size_valid')));
-                }
-              },
+    <Form form={form} layout="vertical" variant={mode === "view" ? "borderless" : "outlined"}>
+      <Form.Item
+        name="name"
+        label={t('name')}
+        rules={mode !== 'view' ? [{ required: true }] : []}
+      >
+        <Input readOnly={mode === 'view' || (!!model && mode === 'edit')} />
+      </Form.Item>
+      <Form.Item
+        name="comment"
+        label={t('comment')}
+      >
+        <Input readOnly={mode === 'view'} />
+      </Form.Item>
+      <Form.List
+        name="elements"
+        rules={mode !== 'view' ? [
+          {
+            validator: async (_, names) => {
+              if (!names || names.length < 2) {
+                return Promise.reject(new Error(t('enum_element_size_valid')));
+              }
             },
-          ]}
-        >
-          {(fields, {add, remove}, {errors}) => (
-            <>
-              {fields.map((field, index) => (
+          },
+        ] : []}
+      >
+        {(fields, { add, remove }, { errors }) => (
+          <>
+            {fields.map((field, index) => (
+              <Form.Item
+                label={index === 0 ? t("elements") : ''}
+                required={false}
+                key={field.key}
+              >
                 <Form.Item
-                  label={index === 0 ? t("elements") : ''}
-                  required={false}
-                  key={field.key}
+                  {...field}
+                  validateTrigger={['onChange', 'onBlur']}
+                  noStyle
                 >
-                  <Form.Item
-                    {...field}
-                    validateTrigger={['onChange', 'onBlur']}
-                    noStyle
-                  >
-                    <Input style={{width: '60%'}} size="small"/>
-                  </Form.Item>
-                  {fields.length > 1 ? (
-                    <MinusCircleOutlined
-                      className="dynamic-delete-button"
-                      onClick={() => remove(field.name)}
-                      style={{ marginLeft: token.marginXS, color: token.colorTextSecondary }}
-                    />
-                  ) : null}
+                  <Input readOnly={mode === 'view'} suffix={fields.length > 1 && mode !== 'view' ? <MinusCircleOutlined onClick={() => remove(field.name)} /> : null} />
                 </Form.Item>
-              ))}
-              <Form.Item>
-                <Space style={spaceStyle}>
-                  <Button
-                    type="dashed"
-                    onClick={() => {
-                      add('', 0);
-                    }}
-                    icon={<PlusOutlined/>}
-                    size="small"
-                    style={buttonStyle}
-                  >
-                    {t('add_element_at_top')}
-                  </Button>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    icon={<PlusOutlined/>}
-                    size="small"
-                    style={buttonStyle}
-                  >
-                    {t('add_element_at_bottom')}
-                  </Button>
-                  <Form.ErrorList errors={errors}/>
-                </Space>
+
               </Form.Item>
-            </>
-          )}
-        </Form.List>
-      </Form>
-    </div>
+            ))}
+            <Form.Item>
+              <Space style={{ display: 'flex', gap: 8 }}>
+                {mode !== 'view' && (
+                  <>
+                    <Button
+                      type="dashed"
+                      onClick={() => {
+                        add('', 0);
+                      }}
+                      icon={<PlusOutlined />}
+                    >
+                      {t('add_element_at_top')}
+                    </Button>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      icon={<PlusOutlined />}
+                    >
+                      {t('add_element_at_bottom')}
+                    </Button>
+                  </>
+                )}
+                <Form.ErrorList errors={errors} />
+              </Space>
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+    </Form>
   );
-};
+});
 
 export default EnumForm;

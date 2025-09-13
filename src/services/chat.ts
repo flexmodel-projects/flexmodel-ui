@@ -39,7 +39,7 @@ export interface Conversation {
  * 发送聊天消息（流式响应）
  */
 export const sendChatMessage = async (params: ChatRequest): Promise<Response> => {
-  return fetch('/api/f/chat/completions', {
+  return fetch('/api/f/ai/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -53,42 +53,42 @@ export const sendChatMessage = async (params: ChatRequest): Promise<Response> =>
  * 获取对话列表
  */
 export const getConversations = async (): Promise<Conversation[]> => {
-  return api.get<Conversation[]>('/chat/conversations');
+  return api.get<Conversation[]>('/ai/chat/conversations');
 };
 
 /**
  * 创建新对话
  */
 export const createConversation = async (params: CreateConversationRequest): Promise<Conversation> => {
-  return api.post<Conversation>('/chat/conversations', params);
+  return api.post<Conversation>('/ai/chat/conversations', params);
 };
 
 /**
  * 获取指定对话信息
  */
 export const getConversation = async (id: string): Promise<Conversation> => {
-  return api.get<Conversation>(`/chat/conversations/${id}`);
+  return api.get<Conversation>(`/ai/chat/conversations/${id}`);
 };
 
 /**
  * 删除指定对话
  */
 export const deleteConversation = async (id: string): Promise<void> => {
-  return api.delete<void>(`/chat/conversations/${id}`);
+  return api.delete<void>(`/ai/chat/conversations/${id}`);
 };
 
 /**
  * 获取对话消息列表
  */
 export const getConversationMessages = async (id: string): Promise<ChatMessage[]> => {
-  return api.get<ChatMessage[]>(`/chat/conversations/${id}/messages`);
+  return api.get<ChatMessage[]>(`/ai/chat/conversations/${id}/messages`);
 };
 
 /**
  * 向对话发送消息
  */
 export const sendMessage = async (conversationId: string, params: SendMessageRequest): Promise<Response> => {
-  return fetch(`/api/f/chat/conversations/${conversationId}/messages`, {
+  return fetch(`/api/ai/f/chat/conversations/${conversationId}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
