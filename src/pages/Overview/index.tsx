@@ -118,11 +118,14 @@ const StatisticsPage: React.FC = () => {
     setSelectedQuickSelect(type); // 设置选中状态
   };
 
-  // ECharts 配置 - 使用 Ant Design token，参考MonitoringChart样式
+  // ECharts 配置 - 使用 Ant Design token
   const chartConfig = {
     backgroundColor: 'transparent',
+    textStyle: {
+      color: token.colorText,
+    },
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
       backgroundColor: token.colorBgElevated,
       borderColor: token.colorBorder,
       textStyle: {
@@ -134,8 +137,6 @@ const StatisticsPage: React.FC = () => {
       textStyle: {
         color: token.colorText,
       },
-      top: 10,
-      right: 20,
     },
     grid: {
       left: '3%',
@@ -153,40 +154,18 @@ const StatisticsPage: React.FC = () => {
         },
       },
       axisLabel: {
-        color: token.colorTextSecondary,
-        fontSize: 12,
-        formatter: (value: string) => {
-          if (value.includes(':')) {
-            return value;
-          }
-          try {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-              return date.toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-              });
-            }
-          } catch {
-            // 转换失败，返回原值
-          }
-          return value;
-        },
-        interval: 0,
-        rotate: 45,
+        color: token.colorText,
       },
     },
     yAxis: {
-      type: 'value',
-      min: 0,
-      axisLabel: {
-        color: token.colorText,
-      },
+      type: "value",
       axisLine: {
         lineStyle: {
           color: token.colorBorder,
         },
+      },
+      axisLabel: {
+        color: token.colorText,
       },
       splitLine: {
         lineStyle: {
@@ -194,35 +173,6 @@ const StatisticsPage: React.FC = () => {
         },
       },
     },
-    dataZoom: [
-      {
-        type: 'slider',
-        show: true,
-        xAxisIndex: [0],
-        height: 30,
-        bottom: 10,
-        backgroundColor: token.colorFillSecondary,
-        fillerColor: token.colorPrimary + '20',
-        borderColor: token.colorBorder,
-        handleStyle: {
-          color: token.colorBgContainer,
-          borderColor: token.colorBorder,
-          borderWidth: 1,
-          shadowBlur: 3,
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2,
-        },
-        textStyle: {
-          color: token.colorTextSecondary,
-          fontSize: 12,
-        },
-        showDetail: false,
-        showDataShadow: true,
-        realtime: true,
-        filterMode: 'filter',
-      }
-    ],
     series: [
       {
         name: t("success"),
@@ -308,7 +258,7 @@ const StatisticsPage: React.FC = () => {
           <Col span={24}>
             <Card
               className="flex flex-1 flex-col overflow-hidden"
-              style={{ height: "450px" }}
+              style={{ height: "450px",marginBottom: 10 }}
               title={t("trend_analysis")}
               extra={
                 <Space>
