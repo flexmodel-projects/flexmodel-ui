@@ -437,5 +437,11 @@
   "update_failed": "更新失败",
   "delete_confirm": "确认删除",
   "active": "启用",
-  "inactive": "禁用"
+  "inactive": "禁用",
+  "cpu_usage": "CPU使用率",
+  "memory_usage": "内存使用情况",
+  "thread_monitoring": "线程监控",
+  "disk_io": "磁盘I/O",
+  "network_monitoring": "网络监控",
+  "jvm_monitoring": "JVM监控"
 }

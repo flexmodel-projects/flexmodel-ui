@@ -7,6 +7,7 @@ import {getOverview} from "@/services/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/Overview/index.module.scss";
 import type {ApiStat, OverviewResponse, RankingData, Statistics} from '@/types/overview.d.ts';
+import SystemMonitoring from './components/monitoring';
 
 const { RangePicker } = DatePicker;
 
@@ -248,11 +249,15 @@ const StatisticsPage: React.FC = () => {
             />
           </Col>
         </Row>
+
+        {/* 系统监控组件 */}
+        <SystemMonitoring />
+
         <Row style={{ marginTop: 10, flex: 1 }} gutter={16}>
           <Col span={24}>
             <Card
               className="flex flex-1 flex-col overflow-hidden"
-              style={{ height: "550px" }}
+              style={{ height: "450px" }}
               title={t("trend_analysis")}
               extra={
                 <Space>
@@ -295,7 +300,7 @@ const StatisticsPage: React.FC = () => {
             >
               <Row gutter={16} className="h-full">
                 <Col span={18}>
-                  <ReactECharts option={chartConfig} style={{ height: "100%" }} />
+                  <ReactECharts option={chartConfig} style={{ height: "420px" }} />
                 </Col>
                 <Col span={6} className="flex flex-col">
                   <div>
@@ -304,7 +309,7 @@ const StatisticsPage: React.FC = () => {
                     </div>
                     <List
                       style={{
-                        height: "450px",
+                        height: "300px",
                         overflowY: "auto",
                         overflowX: "hidden",
                       }}
@@ -328,6 +333,8 @@ const StatisticsPage: React.FC = () => {
             </Card>
           </Col>
         </Row>
+
+
       </Spin>
     </div>
   );
