@@ -48,7 +48,7 @@ const UnifiedMonitoring: React.FC = () => {
             return `${t('metrics.heap_memory')} ${Math.round(metricsData.memory.heap.usagePercentage || 0)}%`;
           case 'nonheap':
             return `${t('metrics.non_heap_memory')} ${Math.round(metricsData.memory.nonHeap.usagePercentage || 0)}%`;
-          case 'pools': {
+          case 'memory_pools': {
             const poolCount = Object.keys(metricsData.memory.memoryPools || {}).length;
             return `${t('metrics.memory_pools')} ${poolCount}${t('metrics.count')}`;
           }
@@ -57,13 +57,13 @@ const UnifiedMonitoring: React.FC = () => {
         }
       case 'thread':
         switch (cardKey) {
-          case 'stats':
+          case 'thread_stats':
             return `${t('metrics.thread')} ${Math.round(metricsData.threads.threadCount || 0)}${t('metrics.count')}`;
-          case 'states': {
+          case 'thread_states': {
             const stateCount = Object.keys(metricsData.threads.threadStates || {}).length;
             return `${t('metrics.thread_states')} ${stateCount}${t('metrics.kinds')}`;
           }
-          case 'details': {
+          case 'thread_details': {
             const detailCount = Object.keys(metricsData.threads.threadDetails || {}).length;
             return `${t('metrics.thread_details')} ${detailCount}${t('metrics.count')}`;
           }
@@ -72,9 +72,9 @@ const UnifiedMonitoring: React.FC = () => {
         }
       case 'network':
         switch (cardKey) {
-          case 'network-stats':
+          case 'network_stats':
             return `${t('metrics.network')} ${Math.round(metricsData.network.totalInterfaces || 0)}${t('metrics.interfaces_count')}`;
-          case 'interfaces': {
+          case 'network_interfaces': {
             const activeCount = metricsData.network.stats?.activeInterfaces || 0;
             return `${t('metrics.active_interfaces')} ${Math.round(activeCount)}${t('metrics.active_count')}`;
           }
@@ -83,7 +83,7 @@ const UnifiedMonitoring: React.FC = () => {
         }
       case 'disk':
         switch (cardKey) {
-          case 'disk-stats': {
+          case 'disk_stats': {
             const totalSpace = Math.round((metricsData.disk.totalSpace || 0) / (1024 * 1024 * 1024));
             return `${t('metrics.disk')} ${totalSpace}${t('metrics.gb')}`;
           }
@@ -125,19 +125,19 @@ const UnifiedMonitoring: React.FC = () => {
     memory: [
       { key: 'heap', title: generateTagTitle('memory', 'heap'), color: token.colorPrimary },
       { key: 'nonheap', title: generateTagTitle('memory', 'nonheap'), color: token.colorSuccess },
-      { key: 'pools', title: generateTagTitle('memory', 'pools'), color: token.colorWarning }
+      { key: 'memory_pools', title: generateTagTitle('memory', 'memory_pools'), color: token.colorWarning }
     ],
     thread: [
-      { key: 'stats', title: generateTagTitle('thread', 'stats'), color: token.colorPrimary },
-      { key: 'states', title: generateTagTitle('thread', 'states'), color: token.colorSuccess },
-      { key: 'details', title: generateTagTitle('thread', 'details'), color: token.colorWarning }
+      { key: 'thread_stats', title: generateTagTitle('thread', 'thread_stats'), color: token.colorPrimary },
+      { key: 'thread_states', title: generateTagTitle('thread', 'thread_states'), color: token.colorSuccess },
+      { key: 'thread_details', title: generateTagTitle('thread', 'thread_details'), color: token.colorWarning }
     ],
     network: [
-      { key: 'network-stats', title: generateTagTitle('network', 'network-stats'), color: token.colorPrimary },
-      { key: 'interfaces', title: generateTagTitle('network', 'interfaces'), color: token.colorSuccess }
+      { key: 'network_stats', title: generateTagTitle('network', 'network_stats'), color: token.colorPrimary },
+      { key: 'network_interfaces', title: generateTagTitle('network', 'network_interfaces'), color: token.colorSuccess }
     ],
     disk: [
-      { key: 'disk-stats', title: generateTagTitle('disk', 'disk-stats'), color: token.colorPrimary },
+      { key: 'disk_stats', title: generateTagTitle('disk', 'disk_stats'), color: token.colorPrimary },
       { key: 'filesystems', title: generateTagTitle('disk', 'filesystems'), color: token.colorSuccess }
     ],
     jvm: [
@@ -149,8 +149,8 @@ const UnifiedMonitoring: React.FC = () => {
 
   // 创建Popover内容
   const createPopoverContent = useCallback((cardKey: string) => (
-    <DetailedInfo activeTab={activeTab} metricsData={metricsData} cardKey={cardKey} />
-  ), [activeTab, metricsData]);
+    <DetailedInfo metricsData={metricsData} cardKey={cardKey} />
+  ), [metricsData]);
 
   if (loading && !metricsData) {
     return (
