@@ -1,0 +1,243 @@
+import React, {useCallback, useMemo, useState} from 'react';
+import {Alert, Card, Popover, Space, Spin, Tag, theme} from 'antd';
+import {useTranslation} from 'react-i18next';
+import {useMetricsData} from './useMetricsData';
+import MonitoringTabs from './MonitoringTabs';
+import DetailedInfo from './DetailedInfo';
+import MonitoringChart from './MonitoringChart';
+
+const { useToken } = theme;
+
+const UnifiedMonitoring: React.FC = () => {
+  const { t } = useTranslation();
+  const { token } = useToken();
+  const [activeTab, setActiveTab] = useState('system');
+  const [dataZoomRange, setDataZoomRange] = useState<{ start: number; end: number }>({ start: 0, end: 100 });
+  const { data: metricsData, loading, error, updateKey } = useMetricsData();
+
+  const handleTabChange = useCallback((key: string) => {
+    setActiveTab(key);
+  }, []);
+
+  const handleDataZoomChange = useCallback((range: { start: number; end: number }) => {
+    setDataZoomRange(range);
+  }, []);
+
+
+  // 生成Tag标题的函数
+  const generateTagTitle = useCallback((tabKey: string, cardKey: string) => {
+    if (!metricsData) return t('metrics.loading');
+
+    switch (tabKey) {
+      case 'system':
+        switch (cardKey) {
+          case 'cpu':
+            return `CPU ${Math.round(metricsData.cpu.processCpuLoad * 100)}%`;
+          case 'memory':
+            return `${t('metrics.memory')} ${Math.round(metricsData.cpu.totalPhysicalMemorySize / (1024 * 1024 * 1024))}${t('metrics.gb')}`;
+          case 'system':
+            return `${metricsData.cpu.name || t('metrics.operating_system')}`;
+          case 'jvm':
+            return `JVM ${metricsData.jvm.name || t('metrics.unknown')}`;
+          default:
+            return t('metrics.unknown');
+        }
+      case 'memory':
+        switch (cardKey) {
+          case 'heap':
+            return `${t('metrics.heap_memory')} ${Math.round(metricsData.memory.heap.usagePercentage || 0)}%`;
+          case 'nonheap':
+            return `${t('metrics.non_heap_memory')} ${Math.round(metricsData.memory.nonHeap.usagePercentage || 0)}%`;
+          case 'pools': {
+            const poolCount = Object.keys(metricsData.memory.memoryPools || {}).length;
+            return `${t('metrics.memory_pools')} ${poolCount}${t('metrics.count')}`;
+          }
+          default:
+            return t('metrics.unknown');
+        }
+      case 'thread':
+        switch (cardKey) {
+          case 'stats':
+            return `${t('metrics.thread')} ${Math.round(metricsData.threads.threadCount || 0)}${t('metrics.count')}`;
+          case 'states': {
+            const stateCount = Object.keys(metricsData.threads.threadStates || {}).length;
+            return `${t('metrics.thread_states')} ${stateCount}${t('metrics.kinds')}`;
+          }
+          case 'details': {
+            const detailCount = Object.keys(metricsData.threads.threadDetails || {}).length;
+            return `${t('metrics.thread_details')} ${detailCount}${t('metrics.count')}`;
+          }
+          default:
+            return t('metrics.unknown');
+        }
+      case 'network':
+        switch (cardKey) {
+          case 'network-stats':
+            return `${t('metrics.network')} ${Math.round(metricsData.network.totalInterfaces || 0)}${t('metrics.interfaces_count')}`;
+          case 'interfaces': {
+            const activeCount = metricsData.network.stats?.activeInterfaces || 0;
+            return `${t('metrics.active_interfaces')} ${Math.round(activeCount)}${t('metrics.active_count')}`;
+          }
+          default:
+            return t('metrics.unknown');
+        }
+      case 'disk':
+        switch (cardKey) {
+          case 'disk-stats': {
+            const totalSpace = Math.round((metricsData.disk.totalSpace || 0) / (1024 * 1024 * 1024));
+            return `${t('metrics.disk')} ${totalSpace}${t('metrics.gb')}`;
+          }
+          case 'filesystems': {
+            const fsCount = metricsData.disk.totalFileSystems || 0;
+            return `${t('metrics.file_systems')} ${Math.round(fsCount)}${t('metrics.file_systems_count')}`;
+          }
+          default:
+            return t('metrics.unknown');
+        }
+      case 'jvm':
+        switch (cardKey) {
+          case 'basic':
+            return `JVM ${metricsData.jvm.version || t('metrics.unknown')}`;
+          case 'properties': {
+            const propCount = Object.keys(metricsData.jvm.systemProperties || {}).length;
+            return `${t('metrics.system_properties')} ${propCount}${t('metrics.properties_count')}`;
+          }
+          case 'gc': {
+            const gcCount = Object.keys(metricsData.jvm.garbageCollectors || {}).length;
+            return `GC ${gcCount}${t('metrics.gc_count')}`;
+          }
+          default:
+            return t('metrics.unknown');
+        }
+      default:
+        return t('metrics.unknown');
+    }
+  }, [metricsData, t]);
+
+  // 每个Tab对应的Card标签配置
+  const cardTags = useMemo(() => ({
+    system: [
+      { key: 'cpu', title: generateTagTitle('system', 'cpu'), color: token.colorPrimary },
+      { key: 'memory', title: generateTagTitle('system', 'memory'), color: token.colorSuccess },
+      { key: 'system', title: generateTagTitle('system', 'system'), color: token.colorWarning },
+      { key: 'jvm', title: generateTagTitle('system', 'jvm'), color: token.colorInfo }
+    ],
+    memory: [
+      { key: 'heap', title: generateTagTitle('memory', 'heap'), color: token.colorPrimary },
+      { key: 'nonheap', title: generateTagTitle('memory', 'nonheap'), color: token.colorSuccess },
+      { key: 'pools', title: generateTagTitle('memory', 'pools'), color: token.colorWarning }
+    ],
+    thread: [
+      { key: 'stats', title: generateTagTitle('thread', 'stats'), color: token.colorPrimary },
+      { key: 'states', title: generateTagTitle('thread', 'states'), color: token.colorSuccess },
+      { key: 'details', title: generateTagTitle('thread', 'details'), color: token.colorWarning }
+    ],
+    network: [
+      { key: 'network-stats', title: generateTagTitle('network', 'network-stats'), color: token.colorPrimary },
+      { key: 'interfaces', title: generateTagTitle('network', 'interfaces'), color: token.colorSuccess }
+    ],
+    disk: [
+      { key: 'disk-stats', title: generateTagTitle('disk', 'disk-stats'), color: token.colorPrimary },
+      { key: 'filesystems', title: generateTagTitle('disk', 'filesystems'), color: token.colorSuccess }
+    ],
+    jvm: [
+      { key: 'basic', title: generateTagTitle('jvm', 'basic'), color: token.colorPrimary },
+      { key: 'properties', title: generateTagTitle('jvm', 'properties'), color: token.colorSuccess },
+      { key: 'gc', title: generateTagTitle('jvm', 'gc'), color: token.colorWarning }
+    ]
+  }), [generateTagTitle, token]);
+
+  // 创建Popover内容
+  const createPopoverContent = useCallback((cardKey: string) => (
+    <DetailedInfo activeTab={activeTab} metricsData={metricsData} cardKey={cardKey} />
+  ), [activeTab, metricsData]);
+
+  if (loading && !metricsData) {
+    return (
+      <Card
+        title={t('metrics.system_monitoring')}
+        style={{ height: '480px' }}
+        bodyStyle={{ height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Spin size="large" />
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card
+        title={t('metrics.system_monitoring')}
+        style={{ height: '480px' }}
+        bodyStyle={{ height: '430px', padding: '16px' }}
+      >
+        <Alert
+          message={t('metrics.monitoring_data_load_failed')}
+          description={error}
+          type="error"
+          showIcon
+        />
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      title={t('metrics.system_monitoring_details')}
+      style={{ minHeight: '400px' }}
+      bodyStyle={{ padding: '16px' }}
+    >
+      {/* 监控Tab切换 */}
+      <MonitoringTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        metricsData={metricsData}
+      />
+
+      {/* 详细监控信息 - 多个Card标签 */}
+      <div style={{ marginBottom: '16px' }}>
+        <Space wrap>
+          {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
+            <Popover
+              key={tag.key}
+              title={tag.title}
+              content={createPopoverContent(tag.key)}
+              trigger="hover"
+              placement="bottomLeft"
+              overlayStyle={{ maxWidth: '700px' }}
+            >
+              <Tag
+                color={tag.color}
+                style={{
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
+                }}
+              >
+                {tag.title}
+              </Tag>
+            </Popover>
+          ))}
+        </Space>
+      </div>
+
+      {/* 监控趋势图 */}
+      <MonitoringChart
+        activeTab={activeTab}
+        metricsData={metricsData}
+        dataZoomRange={dataZoomRange}
+        onDataZoomChange={handleDataZoomChange}
+        updateKey={updateKey}
+      />
+
+    </Card>
+  );
+};
+
+export default React.memo(UnifiedMonitoring);

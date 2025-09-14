@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import ReactECharts from 'echarts-for-react';
 import {theme} from 'antd';
+import {useTranslation} from 'react-i18next';
 import {getChartConfig, getCurrentTabData} from './chartUtils';
 
 const { useToken } = theme;
@@ -10,21 +11,25 @@ interface MonitoringChartProps {
   metricsData: any;
   dataZoomRange: { start: number; end: number };
   onDataZoomChange: (range: { start: number; end: number }) => void;
+  updateKey: number;
 }
 
 const MonitoringChart: React.FC<MonitoringChartProps> = ({
   activeTab,
   metricsData,
   dataZoomRange,
-  onDataZoomChange
+  onDataZoomChange,
+  updateKey
 }) => {
   const { token } = useToken();
+  const { t } = useTranslation();
   const chartRef = useRef<ReactECharts>(null);
 
-  const chartConfig = useMemo(() => getChartConfig(activeTab), [activeTab]);
+  const chartConfig = useMemo(() => getChartConfig(activeTab, t), [activeTab, t]);
   const currentTabData = useMemo(() => getCurrentTabData(metricsData, activeTab), [metricsData, activeTab]);
 
-  const chartOption = useMemo(() => ({
+  // 分离静态配置和动态数据
+  const staticConfig = useMemo(() => ({
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'axis',
@@ -52,14 +57,13 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
     },
     xAxis: {
       type: 'category',
-      data: currentTabData.time,
       axisLine: {
         lineStyle: {
           color: token.colorBorder,
         },
       },
       axisLabel: {
-        color: '#999999',
+        color: token.colorTextSecondary,
         fontSize: 12,
         formatter: (value: string) => {
           if (value.includes(':')) {
@@ -105,16 +109,14 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
         type: 'slider',
         show: true,
         xAxisIndex: [0],
-        start: dataZoomRange.start,
-        end: dataZoomRange.end,
         height: 30,
         bottom: 10,
-        backgroundColor: '#f0f0f0',
-        fillerColor: 'rgba(24, 144, 255, 0.2)',
-        borderColor: '#d9d9d9',
+        backgroundColor: token.colorFillSecondary,
+        fillerColor: token.colorPrimary + '20',
+        borderColor: token.colorBorder,
         handleStyle: {
-          color: '#ffffff',
-          borderColor: '#d9d9d9',
+          color: token.colorBgContainer,
+          borderColor: token.colorBorder,
           borderWidth: 1,
           shadowBlur: 3,
           shadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -122,13 +124,29 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
           shadowOffsetY: 2,
         },
         textStyle: {
-          color: '#666666',
+          color: token.colorTextSecondary,
           fontSize: 12,
         },
         showDetail: false,
         showDataShadow: true,
         realtime: true,
         filterMode: 'filter',
+      }
+    ],
+  }), [chartConfig, token]);
+
+  // 初始图表配置（包含数据）
+  const initialChartOption = useMemo(() => ({
+    ...staticConfig,
+    xAxis: {
+      ...staticConfig.xAxis,
+      data: currentTabData.time,
+    },
+    dataZoom: [
+      {
+        ...staticConfig.dataZoom[0],
+        start: dataZoomRange.start,
+        end: dataZoomRange.end,
       }
     ],
     series: [
@@ -191,7 +209,7 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
         },
       },
     ],
-  }), [chartConfig, currentTabData, dataZoomRange, token]);
+  }), [staticConfig, currentTabData, dataZoomRange, chartConfig, token]);
 
   const handleDataZoom = useCallback((params: any) => {
     if (params.batch && params.batch[0]) {
@@ -199,6 +217,27 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
       onDataZoomChange({ start, end });
     }
   }, [onDataZoomChange]);
+
+  // 使用setOption精确更新数据，保持选中状态
+  useEffect(() => {
+    if (chartRef.current && metricsData) {
+      const chartInstance = chartRef.current.getEchartsInstance();
+      if (chartInstance) {
+        // 只更新数据部分，不重新渲染整个图表
+        chartInstance.setOption({
+          xAxis: {
+            data: currentTabData.time,
+          },
+          series: [
+            { data: currentTabData.series1 },
+            { data: currentTabData.series2 },
+            { data: currentTabData.series3 },
+            { data: currentTabData.series4 },
+          ],
+        }, false, true); // 不合并，不懒更新
+      }
+    }
+  }, [currentTabData, updateKey, metricsData]);
 
   // 在数据更新后恢复dataZoom状态
   useEffect(() => {
@@ -223,14 +262,17 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
     <div style={{ marginTop: '24px' }}>
       <ReactECharts
         ref={chartRef}
-        option={chartOption}
+        option={initialChartOption}
         style={{ height: '350px', width: '100%' }}
         onEvents={{
           dataZoom: handleDataZoom
         }}
         key={`chart-${activeTab}`}
-        notMerge={true}
+        notMerge={false}
         lazyUpdate={true}
+        opts={{
+          renderer: 'canvas'
+        }}
       />
     </div>
   );

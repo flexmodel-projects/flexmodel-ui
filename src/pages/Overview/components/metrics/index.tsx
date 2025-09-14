@@ -3,7 +3,7 @@ import UnifiedMonitoring from './UnifiedMonitoring';
 
 const SystemMonitoring: React.FC = () => {
   return (
-    <div style={{ marginTop: 16 }}>
+    <div style={{ marginTop: 6 }}>
       <UnifiedMonitoring />
     </div>
   );

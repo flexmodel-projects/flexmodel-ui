@@ -17,6 +17,7 @@ export const useMetricsData = () => {
   const [data, setData] = useState<MetricsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [updateKey, setUpdateKey] = useState(0)
 
   const fetchMetrics = useCallback(async () => {
     try {
@@ -46,15 +47,15 @@ export const useMetricsData = () => {
 
         const newHistory = {
           time: [...prevHistory.time.slice(-29), timeStr],
-          cpu: [...prevHistory.cpu.slice(-29), metricsData.cpu.processCpuLoad * 100],
-          memory: [...prevHistory.memory.slice(-29), metricsData.memory.heap.usagePercentage],
-          disk: [...prevHistory.disk.slice(-29), metricsData.disk.diskIo.fileSystemStats.spaceUtilization],
+          cpu: [...prevHistory.cpu.slice(-29), Math.round(metricsData.cpu.processCpuLoad * 100)],
+          memory: [...prevHistory.memory.slice(-29), Math.round(metricsData.memory.heap.usagePercentage)],
+          disk: [...prevHistory.disk.slice(-29), Math.round(metricsData.disk.diskIo.fileSystemStats.spaceUtilization)],
           network: [...prevHistory.network.slice(-29),
             metricsData.network.stats.activeInterfaces > 0 ?
-            (metricsData.network.stats.activeInterfaces / metricsData.network.totalInterfaces * 100) : 0
+            Math.round(metricsData.network.stats.activeInterfaces / metricsData.network.totalInterfaces * 100) : 0
           ],
-          threads: [...prevHistory.threads.slice(-29), metricsData.threads.threadCount],
-          jvm: [...prevHistory.jvm.slice(-29), metricsData.memory.heap.usagePercentage],
+          threads: [...prevHistory.threads.slice(-29), Math.round(metricsData.threads.threadCount)],
+          jvm: [...prevHistory.jvm.slice(-29), Math.round(metricsData.memory.heap.usagePercentage)],
         }
 
         return {
@@ -62,6 +63,9 @@ export const useMetricsData = () => {
           history: newHistory,
         }
       })
+
+      // 增加更新键，用于触发图表更新但保持选中状态
+      setUpdateKey(prev => prev + 1)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '获取监控数据失败'
       setError(errorMessage)
@@ -97,5 +101,6 @@ export const useMetricsData = () => {
     loading,
     error,
     refetch: fetchMetrics,
+    updateKey,
   }
 }

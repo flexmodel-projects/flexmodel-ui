@@ -1,5 +1,5 @@
 import {CodeOutlined} from "@ant-design/icons";
-import {Button, Col, Dropdown, Menu, Row, Segmented, Space, Typography,} from "antd";
+import {Button, Col, Popover, Row, Segmented, Space, Typography,} from "antd";
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -48,24 +48,21 @@ const EntityView = ({ datasource, model }: Props) => {
             <Typography.Title level={5} style={{ margin: 0 }}>
               {model?.name} {model?.comment}
             </Typography.Title>
-            <Dropdown
-              arrow
-              overlay={
-                <Menu>
-                  <Menu.Item key="description">
-                    <Typography.Text strong>接口描述信息:</Typography.Text>
-                    <Typography.Paragraph
-                      copyable
-                      style={{ whiteSpace: "pre-wrap", margin: "8px 0 0 0" }}
-                    >
-                      {model?.idl}
-                    </Typography.Paragraph>
-                  </Menu.Item>
-                </Menu>
+            <Popover
+              content={
+                <div>
+                  <Typography.Paragraph
+                    copyable
+                    style={{ whiteSpace: "pre-wrap", margin: "8px 0 0 0" }}
+                  >
+                    {model?.idl}
+                  </Typography.Paragraph>
+                </div>
               }
+              title="接口描述"
             >
               <Button icon={<CodeOutlined />} type="text" size="small" />
-            </Dropdown>
+            </Popover>
           </Space>
         </Col>
         <Col>
