@@ -118,14 +118,11 @@ const StatisticsPage: React.FC = () => {
     setSelectedQuickSelect(type); // 设置选中状态
   };
 
-  // ECharts 配置 - 使用 Ant Design token
+  // ECharts 配置 - 使用 Ant Design token，参考MonitoringChart样式
   const chartConfig = {
     backgroundColor: 'transparent',
-    textStyle: {
-      color: token.colorText,
-    },
     tooltip: {
-      trigger: "axis",
+      trigger: 'axis',
       backgroundColor: token.colorBgElevated,
       borderColor: token.colorBorder,
       textStyle: {
@@ -137,16 +134,18 @@ const StatisticsPage: React.FC = () => {
       textStyle: {
         color: token.colorText,
       },
+      top: 10,
+      right: 20,
     },
     grid: {
-      top: "3%",
-      left: "3%",
-      right: "3%",
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      top: '15%',
       containLabel: true,
-      borderColor: token.colorBorder,
     },
     xAxis: {
-      type: "category",
+      type: 'category',
       data: apiStat.dateList,
       axisLine: {
         lineStyle: {
@@ -154,18 +153,40 @@ const StatisticsPage: React.FC = () => {
         },
       },
       axisLabel: {
-        color: token.colorText,
+        color: token.colorTextSecondary,
+        fontSize: 12,
+        formatter: (value: string) => {
+          if (value.includes(':')) {
+            return value;
+          }
+          try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+              return date.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+              });
+            }
+          } catch {
+            // 转换失败，返回原值
+          }
+          return value;
+        },
+        interval: 0,
+        rotate: 45,
       },
     },
     yAxis: {
-      type: "value",
+      type: 'value',
+      min: 0,
+      axisLabel: {
+        color: token.colorText,
+      },
       axisLine: {
         lineStyle: {
           color: token.colorBorder,
         },
-      },
-      axisLabel: {
-        color: token.colorText,
       },
       splitLine: {
         lineStyle: {
@@ -173,38 +194,67 @@ const StatisticsPage: React.FC = () => {
         },
       },
     },
+    dataZoom: [
+      {
+        type: 'slider',
+        show: true,
+        xAxisIndex: [0],
+        height: 30,
+        bottom: 10,
+        backgroundColor: token.colorFillSecondary,
+        fillerColor: token.colorPrimary + '20',
+        borderColor: token.colorBorder,
+        handleStyle: {
+          color: token.colorBgContainer,
+          borderColor: token.colorBorder,
+          borderWidth: 1,
+          shadowBlur: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+        },
+        textStyle: {
+          color: token.colorTextSecondary,
+          fontSize: 12,
+        },
+        showDetail: false,
+        showDataShadow: true,
+        realtime: true,
+        filterMode: 'filter',
+      }
+    ],
     series: [
       {
         name: t("success"),
-        type: "line",
+        type: 'line',
         data: apiStat.successData,
         smooth: true,
         lineStyle: {
-          width: 2,
-          color: token.colorSuccess
+          width: 3,
+          color: token.colorSuccess,
         },
         itemStyle: {
-          color: token.colorSuccess
+          color: token.colorSuccess,
         },
         areaStyle: {
-          color: token.colorSuccess + '20'
-        }
+          color: token.colorSuccess + '20',
+        },
       },
       {
         name: t("fail"),
-        type: "line",
+        type: 'line',
         data: apiStat.failData,
         smooth: true,
         lineStyle: {
-          width: 2,
-          color: token.colorError
+          width: 3,
+          color: token.colorError,
         },
         itemStyle: {
-          color: token.colorError
+          color: token.colorError,
         },
         areaStyle: {
-          color: token.colorError + '20'
-        }
+          color: token.colorError + '20',
+        },
       },
     ],
   };
