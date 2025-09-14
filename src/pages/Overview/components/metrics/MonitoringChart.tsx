@@ -259,22 +259,20 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
   }, [metricsData, dataZoomRange]);
 
   return (
-    <div style={{ marginTop: '24px' }}>
-      <ReactECharts
-        ref={chartRef}
-        option={initialChartOption}
-        style={{ height: '350px', width: '100%' }}
-        onEvents={{
-          dataZoom: handleDataZoom
-        }}
-        key={`chart-${activeTab}`}
-        notMerge={false}
-        lazyUpdate={true}
-        opts={{
-          renderer: 'canvas'
-        }}
-      />
-    </div>
+    <ReactECharts
+      ref={chartRef}
+      option={initialChartOption}
+      style={{ height: '350px', width: '100%' }}
+      onEvents={{
+        dataZoom: handleDataZoom
+      }}
+      key={`chart-${activeTab}`}
+      notMerge={false}
+      lazyUpdate={true}
+      opts={{
+        renderer: 'canvas'
+      }}
+    />
   );
 };
 

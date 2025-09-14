@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Card, Col, DatePicker, List, Row, Space, Spin, theme} from "antd";
-import ReactECharts from "echarts-for-react";
+import {Card, Col, Row, Spin, theme} from "antd";
 import dayjs, {Dayjs} from "dayjs";
 import {DatabaseOutlined, FlagOutlined, HourglassOutlined, RocketOutlined} from "@ant-design/icons";
 import {getOverview} from "@/services/overview.ts";
 import {useTranslation} from "react-i18next";
 import styles from "@/pages/Overview/index.module.scss";
 import type {ApiStat, OverviewResponse, RankingData, Statistics} from '@/types/overview.d.ts';
-import SystemMonitoring from './components/metrics';
+import TrendAnalysis from '@/components/common/TrendAnalysis';
+import UnifiedMonitoring from "@/pages/Overview/components/metrics/UnifiedMonitoring.tsx";
 
-const { RangePicker } = DatePicker;
 
 // 自定义统计卡片组件
 interface StatCardProps {
@@ -58,8 +57,6 @@ const StatisticsPage: React.FC = () => {
     dayjs().endOf("week"),
   ]);
 
-  // 添加选中状态管理
-  const [selectedQuickSelect, setSelectedQuickSelect] = useState<"today" | "week" | "month" | "year" | "custom">("week");
 
 
   useEffect(() => {
@@ -83,131 +80,10 @@ const StatisticsPage: React.FC = () => {
     loadData();
   }, [dateRange]);
 
-  const handleDateChange = (dates: [any, any] | null) => {
-    if (dates) {
-      setDateRange(dates);
-      setSelectedQuickSelect("custom"); // 当用户手动选择日期时，设置为自定义状态
-    }
+  const handleDateRangeChange = (newDateRange: [Dayjs, Dayjs]) => {
+    setDateRange(newDateRange);
   };
 
-  const handleQuickSelect = (type: "today" | "week" | "month" | "year") => {
-    let start: Dayjs, end: Dayjs;
-    const now = dayjs();
-    switch (type) {
-      case "today":
-        start = now.startOf("day");
-        end = now.endOf("day");
-        break;
-      case "week":
-        start = now.startOf("week");
-        end = now.endOf("week");
-        break;
-      case "month":
-        start = now.startOf("month");
-        end = now.endOf("month");
-        break;
-      case "year":
-        start = now.startOf("year");
-        end = now.endOf("year");
-        break;
-      default:
-        start = now.startOf("day");
-        end = now.endOf("day");
-    }
-    setDateRange([start, end]);
-    setSelectedQuickSelect(type); // 设置选中状态
-  };
-
-  // ECharts 配置 - 使用 Ant Design token
-  const chartConfig = {
-    backgroundColor: 'transparent',
-    textStyle: {
-      color: token.colorText,
-    },
-    tooltip: {
-      trigger: "axis",
-      backgroundColor: token.colorBgElevated,
-      borderColor: token.colorBorder,
-      textStyle: {
-        color: token.colorText,
-      },
-    },
-    legend: {
-      data: [t("success"), t("fail")],
-      textStyle: {
-        color: token.colorText,
-      },
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '15%',
-      top: '15%',
-      containLabel: true,
-    },
-    xAxis: {
-      type: 'category',
-      data: apiStat.dateList,
-      axisLine: {
-        lineStyle: {
-          color: token.colorBorder,
-        },
-      },
-      axisLabel: {
-        color: token.colorText,
-      },
-    },
-    yAxis: {
-      type: "value",
-      axisLine: {
-        lineStyle: {
-          color: token.colorBorder,
-        },
-      },
-      axisLabel: {
-        color: token.colorText,
-      },
-      splitLine: {
-        lineStyle: {
-          color: token.colorBorderSecondary,
-        },
-      },
-    },
-    series: [
-      {
-        name: t("success"),
-        type: 'line',
-        data: apiStat.successData,
-        smooth: true,
-        lineStyle: {
-          width: 3,
-          color: token.colorSuccess,
-        },
-        itemStyle: {
-          color: token.colorSuccess,
-        },
-        areaStyle: {
-          color: token.colorSuccess + '20',
-        },
-      },
-      {
-        name: t("fail"),
-        type: 'line',
-        data: apiStat.failData,
-        smooth: true,
-        lineStyle: {
-          width: 3,
-          color: token.colorError,
-        },
-        itemStyle: {
-          color: token.colorError,
-        },
-        areaStyle: {
-          color: token.colorError + '20',
-        },
-      },
-    ],
-  };
 
   return (
     <div
@@ -251,89 +127,15 @@ const StatisticsPage: React.FC = () => {
         </Row>
 
         {/* 系统监控组件 */}
-        <SystemMonitoring />
+        <UnifiedMonitoring />
 
         {/* 趋势分析组件 */}
-        <Row style={{ marginTop: 6, flex: 1 }} gutter={16}>
-          <Col span={24}>
-            <Card
-              className="flex flex-1 flex-col overflow-hidden"
-              style={{ height: "450px",marginBottom: 10 }}
-              title={t("trend_analysis")}
-              extra={
-                <Space>
-                  <Button
-                    onClick={() => handleQuickSelect("today")}
-                    type={selectedQuickSelect === "today" ? "primary" : "text"}
-                    size="small"
-                  >
-                    {t("today")}
-                  </Button>
-                  <Button
-                    onClick={() => handleQuickSelect("week")}
-                    type={selectedQuickSelect === "week" ? "primary" : "text"}
-                    size="small"
-                  >
-                    {t("week")}
-                  </Button>
-                  <Button
-                    onClick={() => handleQuickSelect("month")}
-                    type={selectedQuickSelect === "month" ? "primary" : "text"}
-                    size="small"
-                  >
-                    {t("month")}
-                  </Button>
-                  <Button
-                    onClick={() => handleQuickSelect("year")}
-                    type={selectedQuickSelect === "year" ? "primary" : "text"}
-                    size="small"
-                  >
-                    {t("year")}
-                  </Button>
-                  <RangePicker
-                    value={dateRange}
-                    onChange={handleDateChange}
-                    style={selectedQuickSelect === "custom" ? { borderColor: token.colorPrimary } : {}}
-                    size="small"
-                  />
-                </Space>
-              }
-            >
-              <Row gutter={16} className="h-full">
-                <Col span={18}>
-                  <ReactECharts option={chartConfig} style={{ height: "420px" }} />
-                </Col>
-                <Col span={6} className="flex flex-col">
-                  <div>
-                    <div style={{ fontSize: "16px", fontWeight: "500", marginBottom: "16px", color: token.colorText }}>
-                      {t("api_ranking")}
-                    </div>
-                    <List
-                      style={{
-                        height: "300px",
-                        overflowY: "auto",
-                        overflowX: "hidden",
-                      }}
-                      className="flex flex-1 relative"
-                      dataSource={rankingData}
-                      renderItem={(item, index) => (
-                        <List.Item style={{ padding: "10px 10px" }}>
-                          <div className="flex w-full justify-between">
-                            <Space className="overflow-hidden w-60">
-                              <Badge count={index + 1} showZero color={index < 3 ? "red" : "green"} />{" "}
-                              <span style={{ color: token.colorText }}>{item.name}</span>
-                            </Space>
-                            <span style={{ color: token.colorText }}>{item.total}</span>
-                          </div>
-                        </List.Item>
-                      )}
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        </Row>
+        <TrendAnalysis
+          apiStat={apiStat}
+          rankingData={rankingData}
+          dateRange={dateRange}
+          onDateRangeChange={handleDateRangeChange}
+        />
 
       </Spin>
     </div>

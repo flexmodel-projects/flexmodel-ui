@@ -5,12 +5,12 @@ interface UseFullscreenReturn {
   toggle: () => void;
   enter: () => void;
   exit: () => void;
-  ref: React.RefObject<HTMLElement>;
+  ref: React.RefObject<HTMLDivElement>;
 }
 
 export const useFullscreen = (backgroundColor?: string): UseFullscreenReturn => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const enter = useCallback(() => {
     if (!ref.current) return;

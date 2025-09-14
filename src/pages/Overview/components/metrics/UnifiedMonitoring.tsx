@@ -1,19 +1,23 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {Alert, Card, Popover, Space, Spin, Tag, theme} from 'antd';
+import {Alert, Button, Card, Popover, Space, Spin, Tag, theme} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {useMetricsData} from './useMetricsData';
 import MonitoringTabs from './MonitoringTabs';
 import DetailedInfo from './DetailedInfo';
 import MonitoringChart from './MonitoringChart';
+import {PageContainer} from '@/components/common';
+import {FullscreenExitOutlined, FullscreenOutlined} from '@ant-design/icons';
+import {useFullscreen} from '@/hooks/useFullscreen';
 
-const { useToken } = theme;
+const {useToken} = theme;
 
 const UnifiedMonitoring: React.FC = () => {
-  const { t } = useTranslation();
-  const { token } = useToken();
+  const {t} = useTranslation();
+  const {token} = useToken();
   const [activeTab, setActiveTab] = useState('system');
-  const [dataZoomRange, setDataZoomRange] = useState<{ start: number; end: number }>({ start: 0, end: 100 });
-  const { data: metricsData, loading, error, updateKey } = useMetricsData();
+  const [dataZoomRange, setDataZoomRange] = useState<{ start: number; end: number }>({start: 0, end: 100});
+  const {data: metricsData, loading, error, updateKey} = useMetricsData();
+  const {isFullscreen, toggle, ref} = useFullscreen();
 
   const handleTabChange = useCallback((key: string) => {
     setActiveTab(key);
@@ -117,49 +121,49 @@ const UnifiedMonitoring: React.FC = () => {
   // 每个Tab对应的Card标签配置
   const cardTags = useMemo(() => ({
     system: [
-      { key: 'cpu', title: generateTagTitle('system', 'cpu'), color: token.colorPrimary },
-      { key: 'physical_memory', title: generateTagTitle('system', 'physical_memory'), color: token.colorSuccess },
-      { key: 'system', title: generateTagTitle('system', 'system'), color: token.colorWarning },
-      { key: 'jvm', title: generateTagTitle('system', 'jvm'), color: token.colorInfo }
+      {key: 'cpu', title: generateTagTitle('system', 'cpu'), color: token.colorPrimary},
+      {key: 'physical_memory', title: generateTagTitle('system', 'physical_memory'), color: token.colorSuccess},
+      {key: 'system', title: generateTagTitle('system', 'system'), color: token.colorWarning},
+      {key: 'jvm', title: generateTagTitle('system', 'jvm'), color: token.colorInfo}
     ],
     memory: [
-      { key: 'heap', title: generateTagTitle('memory', 'heap'), color: token.colorPrimary },
-      { key: 'nonheap', title: generateTagTitle('memory', 'nonheap'), color: token.colorSuccess },
-      { key: 'memory_pools', title: generateTagTitle('memory', 'memory_pools'), color: token.colorWarning }
+      {key: 'heap', title: generateTagTitle('memory', 'heap'), color: token.colorPrimary},
+      {key: 'nonheap', title: generateTagTitle('memory', 'nonheap'), color: token.colorSuccess},
+      {key: 'memory_pools', title: generateTagTitle('memory', 'memory_pools'), color: token.colorWarning}
     ],
     thread: [
-      { key: 'thread_stats', title: generateTagTitle('thread', 'thread_stats'), color: token.colorPrimary },
-      { key: 'thread_states', title: generateTagTitle('thread', 'thread_states'), color: token.colorSuccess },
-      { key: 'thread_details', title: generateTagTitle('thread', 'thread_details'), color: token.colorWarning }
+      {key: 'thread_stats', title: generateTagTitle('thread', 'thread_stats'), color: token.colorPrimary},
+      {key: 'thread_states', title: generateTagTitle('thread', 'thread_states'), color: token.colorSuccess},
+      {key: 'thread_details', title: generateTagTitle('thread', 'thread_details'), color: token.colorWarning}
     ],
     network: [
-      { key: 'network_stats', title: generateTagTitle('network', 'network_stats'), color: token.colorPrimary },
-      { key: 'network_interfaces', title: generateTagTitle('network', 'network_interfaces'), color: token.colorSuccess }
+      {key: 'network_stats', title: generateTagTitle('network', 'network_stats'), color: token.colorPrimary},
+      {key: 'network_interfaces', title: generateTagTitle('network', 'network_interfaces'), color: token.colorSuccess}
     ],
     disk: [
-      { key: 'disk_stats', title: generateTagTitle('disk', 'disk_stats'), color: token.colorPrimary },
-      { key: 'filesystems', title: generateTagTitle('disk', 'filesystems'), color: token.colorSuccess }
+      {key: 'disk_stats', title: generateTagTitle('disk', 'disk_stats'), color: token.colorPrimary},
+      {key: 'filesystems', title: generateTagTitle('disk', 'filesystems'), color: token.colorSuccess}
     ],
     jvm: [
-      { key: 'basic', title: generateTagTitle('jvm', 'basic'), color: token.colorPrimary },
-      { key: 'properties', title: generateTagTitle('jvm', 'properties'), color: token.colorSuccess },
-      { key: 'gc', title: generateTagTitle('jvm', 'gc'), color: token.colorWarning }
+      {key: 'basic', title: generateTagTitle('jvm', 'basic'), color: token.colorPrimary},
+      {key: 'properties', title: generateTagTitle('jvm', 'properties'), color: token.colorSuccess},
+      {key: 'gc', title: generateTagTitle('jvm', 'gc'), color: token.colorWarning}
     ]
   }), [generateTagTitle, token]);
 
   // 创建Popover内容
   const createPopoverContent = useCallback((cardKey: string) => (
-    <DetailedInfo metricsData={metricsData} cardKey={cardKey} />
+    <DetailedInfo metricsData={metricsData} cardKey={cardKey}/>
   ), [metricsData]);
 
   if (loading && !metricsData) {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{ height: '480px' }}
-        bodyStyle={{ height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{height: '480px'}}
+        bodyStyle={{height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
       >
-        <Spin size="large" />
+        <Spin size="large"/>
       </Card>
     );
   }
@@ -168,8 +172,8 @@ const UnifiedMonitoring: React.FC = () => {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{ height: '480px' }}
-        bodyStyle={{ height: '430px', padding: '16px' }}
+        style={{height: '480px'}}
+        bodyStyle={{height: '430px', padding: '16px'}}
       >
         <Alert
           message={t('metrics.monitoring_data_load_failed')}
@@ -181,62 +185,73 @@ const UnifiedMonitoring: React.FC = () => {
     );
   }
 
+
   return (
-    <Card
-      title={t('metrics.system_monitoring')}
-      style={{ minHeight: '400px' }}
-      bodyStyle={{ padding: '16px' }}
-    >
-      {/* 监控Tab切换 */}
-      <MonitoringTabs
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        metricsData={metricsData}
-      />
+    <div ref={ref}>
+      <PageContainer
+        title={t('metrics.system_monitoring')}
+        style={{height: isFullscreen ? "100%" : "550px", width: '100%', marginTop: 6}}
+        extra={
+          <Button
+            type="text"
+            size="small"
+            icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+            onClick={toggle}
+            title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
+          />
+        }
+      >
+        {/* 监控Tab切换 */}
+        <MonitoringTabs
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          metricsData={metricsData}
+        />
 
-      {/* 详细监控信息 - 多个Card标签 */}
-      <div style={{ marginBottom: '16px' }}>
-        <Space wrap>
-          {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
-            <Popover
-              key={tag.key}
-              title={tag.title}
-              content={createPopoverContent(tag.key)}
-              trigger="hover"
-              placement="bottomLeft"
-              overlayStyle={{ maxWidth: '700px' }}
-            >
-              <Tag
-                color={tag.color}
-                style={{
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
-                }}
+        {/* 详细监控信息 - 多个Card标签 */}
+        <div style={{marginBottom: '16px'}}>
+          <Space wrap>
+            {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
+              <Popover
+                key={tag.key}
+                title={tag.title}
+                content={createPopoverContent(tag.key)}
+                trigger="hover"
+                placement="bottomLeft"
+                overlayStyle={{maxWidth: '700px'}}
               >
-                {tag.title}
-              </Tag>
-            </Popover>
-          ))}
-        </Space>
-      </div>
+                <Tag
+                  color={tag.color}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
+                  }}
+                >
+                  {tag.title}
+                </Tag>
+              </Popover>
+            ))}
+          </Space>
+        </div>
 
-      {/* 监控趋势图 */}
-      <MonitoringChart
-        activeTab={activeTab}
-        metricsData={metricsData}
-        dataZoomRange={dataZoomRange}
-        onDataZoomChange={handleDataZoomChange}
-        updateKey={updateKey}
-      />
+        {/* 监控趋势图 */}
+        <MonitoringChart
+          activeTab={activeTab}
+          metricsData={metricsData}
+          dataZoomRange={dataZoomRange}
+          onDataZoomChange={handleDataZoomChange}
+          updateKey={updateKey}
+        />
 
-    </Card>
+      </PageContainer>
+    </div>
   );
 };
 
