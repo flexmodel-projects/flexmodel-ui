@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 
 interface PageContainerProps {
   children: React.ReactNode;
-  title?: string;
+  title?: string | React.ReactNode;
   extra?: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
@@ -49,7 +49,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
         >
           {title && (
             <Typography.Title style={{ margin: 0 }} level={5}>
-              {title}
+              {typeof title === 'string' ? title : title}
             </Typography.Title>
           )}
           {extra && extra}

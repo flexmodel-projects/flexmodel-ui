@@ -1,12 +1,14 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Input, message, Pagination, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
+import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/common/PageContainer';
 import {deployFlow, FlowListParams, FlowModule, getFlowList} from '@/services/flow';
 import dayjs from 'dayjs';
 import {t} from 'i18next';
 
 const FlowList: React.FC = () => {
+  const navigate = useNavigate();
 
   // 状态管理
   const [loading, setLoading] = useState(false);
@@ -174,7 +176,7 @@ const FlowList: React.FC = () => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
-            message.info('新增功能待实现');
+            navigate('/flow/design');
           }}
         >
           新建流程

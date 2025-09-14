@@ -29,7 +29,7 @@ import UserDefineAPI from "@/pages/UserDefineAPI";
 import OpenAPI from "@/pages/OpenAPI";
 import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
-import FlowDesign from "@/pages/Flow/components/FlowDesign.tsx";
+import FlowDesign from "@/pages/FlowDesign/index.tsx";
 import FlowInstanceList from "@/pages/Flow/components/FlowInstanceList.tsx";
 import TriggerList from "@/pages/Trigger/components/TriggerList";
 
@@ -40,6 +40,7 @@ export interface RouteConfig {
   translationKey: string;
   children?: RouteConfig[];
   defaultChild?: string;
+  hideInMenu?: boolean;
 }
 
 export const routes: RouteConfig[] = [
@@ -121,18 +122,20 @@ export const routes: RouteConfig[] = [
         translationKey: "flow_mgr",
       },
       {
-        path: "/flow/design",
-        element: <FlowDesign/>,
-        icon: DatabaseOutlined,
-        translationKey: "flow_design",
-      },
-      {
         path: "/flow/instance",
         element: <FlowInstanceList/>,
         icon: PlayCircleOutlined,
         translationKey: "flow_instance",
+        hideInMenu: true,
       },
     ],
+  },
+  {
+    path: "/flow/design",
+    element: <FlowDesign/>,
+    icon: DatabaseOutlined,
+    translationKey: "flow_design",
+    hideInMenu: true,
   },
   {
     path: "/trigger",

@@ -29,14 +29,16 @@ const Sidebar: React.FC = () => {
 
   // 使用 useMemo 缓存菜单数据，避免每次渲染都重新创建
   const menuData = useMemo(() => {
-    return routes.map(route => {
-      const IconComponent = route.icon;
-      return {
-        key: route.path,
-        icon: <IconComponent />,
-        label: t(route.translationKey),
-      };
-    });
+    return routes
+      .filter(route => !route?.hideInMenu) // 过滤掉隐藏的路由
+      .map(route => {
+        const IconComponent = route.icon;
+        return {
+          key: route.path,
+          icon: <IconComponent />,
+          label: t(route.translationKey),
+        };
+      });
   }, [t]); // 只依赖翻译函数
 
   // 优化路由匹配逻辑，使用预计算的映射表
