@@ -32,9 +32,9 @@ const UnifiedMonitoring: React.FC = () => {
       case 'system':
         switch (cardKey) {
           case 'cpu':
-            return `CPU ${Math.round(metricsData.cpu.processCpuLoad * 100)}%`;
-          case 'memory':
-            return `${t('metrics.memory')} ${Math.round(metricsData.cpu.totalPhysicalMemorySize / (1024 * 1024 * 1024))}${t('metrics.gb')}`;
+            return `CPU ${Math.round(metricsData.cpu.processCpuLoad)}%`;
+          case 'physical_memory':
+            return `${t('metrics.physical_memory')} ${Math.round(metricsData.cpu.totalPhysicalMemorySize / (1024 * 1024 * 1024))}${t('metrics.gb')}`;
           case 'system':
             return `${metricsData.cpu.name || t('metrics.operating_system')}`;
           case 'jvm':
@@ -118,7 +118,7 @@ const UnifiedMonitoring: React.FC = () => {
   const cardTags = useMemo(() => ({
     system: [
       { key: 'cpu', title: generateTagTitle('system', 'cpu'), color: token.colorPrimary },
-      { key: 'memory', title: generateTagTitle('system', 'memory'), color: token.colorSuccess },
+      { key: 'physical_memory', title: generateTagTitle('system', 'physical_memory'), color: token.colorSuccess },
       { key: 'system', title: generateTagTitle('system', 'system'), color: token.colorWarning },
       { key: 'jvm', title: generateTagTitle('system', 'jvm'), color: token.colorInfo }
     ],

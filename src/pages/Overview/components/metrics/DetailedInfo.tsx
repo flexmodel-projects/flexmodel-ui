@@ -22,13 +22,14 @@ const DetailedInfo: React.FC<DetailedInfoProps> = ({ activeTab, metricsData, car
       case 'cpu':
         return (
           <Descriptions column={1} size="small">
-            <Descriptions.Item label={t('metrics.process_cpu_usage')}>{Math.round(metricsData.cpu.processCpuLoad * 100)}%</Descriptions.Item>
-            <Descriptions.Item label={t('metrics.system_cpu_usage')}>{Math.round(metricsData.cpu.systemCpuLoad * 100)}%</Descriptions.Item>
+            <Descriptions.Item label={t('metrics.system_load_average')}>{Math.round(metricsData.cpu.systemLoadAverage)}%</Descriptions.Item>
+            <Descriptions.Item label={t('metrics.process_cpu_usage')}>{Math.round(metricsData.cpu.processCpuLoad)}%</Descriptions.Item>
+            <Descriptions.Item label={t('metrics.system_cpu_usage')}>{Math.round(metricsData.cpu.systemCpuLoad)}%</Descriptions.Item>
             <Descriptions.Item label={t('metrics.available_processors')}>{Math.round(metricsData.cpu.availableProcessors)}{t('metrics.count')}</Descriptions.Item>
             <Descriptions.Item label={t('metrics.system_architecture')}>{metricsData.cpu.architecture}</Descriptions.Item>
           </Descriptions>
         );
-      case 'memory':
+      case 'physical_memory':
         return (
           <Descriptions column={1} size="small">
             <Descriptions.Item label={t('metrics.total_physical_memory')}>{Math.round(metricsData.cpu.totalPhysicalMemorySize / (1024 * 1024 * 1024))}{t('metrics.gb')}</Descriptions.Item>

@@ -18,7 +18,7 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
   const monitoringTabs: MonitoringTab[] = useMemo(() => {
     if (!metricsData) {
       return [
-        { key: 'system', title: t('metrics.system_overview'), value: 0, color: TAB_COLORS.primary, unit: '%' },
+        { key: 'system', title: t('metrics.system_summary'), value: 0, color: TAB_COLORS.primary, unit: '%' },
         { key: 'memory', title: t('metrics.memory'), value: 0, color: TAB_COLORS.error, unit: '%' },
         { key: 'thread', title: t('metrics.thread'), value: 0, color: TAB_COLORS.success, unit: t('metrics.count') },
         { key: 'network', title: t('metrics.network'), value: 0, color: TAB_COLORS.info, unit: t('metrics.count') },
@@ -30,8 +30,8 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
     return [
       {
         key: 'system',
-        title: t('metrics.system_overview'),
-        value: Math.round(metricsData.cpu.processCpuLoad * 100),
+        title: t('metrics.system_summary'),
+        value: Math.round(metricsData.cpu.processCpuLoad),
         color: TAB_COLORS.primary,
         unit: '%',
       },
