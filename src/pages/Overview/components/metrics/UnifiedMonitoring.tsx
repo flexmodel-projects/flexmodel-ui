@@ -183,7 +183,7 @@ const UnifiedMonitoring: React.FC = () => {
 
   return (
     <Card
-      title={t('metrics.system_monitoring_details')}
+      title={t('metrics.system_monitoring')}
       style={{ minHeight: '400px' }}
       bodyStyle={{ padding: '16px' }}
     >

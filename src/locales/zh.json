@@ -446,7 +446,6 @@
   "jvm_monitoring": "JVM监控",
   "metrics": {
     "system_monitoring": "系统监控",
-    "system_monitoring_details": "系统监控详情",
     "monitoring_data_load_failed": "监控数据加载失败",
     "loading": "加载中...",
     "system_summary": "系统概览",

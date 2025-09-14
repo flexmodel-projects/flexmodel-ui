@@ -416,7 +416,6 @@
   "trigger": "Trigger",
   "metrics": {
     "system_monitoring": "System Monitoring",
-    "system_monitoring_details": "System Monitoring Details",
     "monitoring_data_load_failed": "Failed to load monitoring data",
     "loading": "Loading...",
     "system_summary": "System Summary",
