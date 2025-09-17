@@ -160,10 +160,10 @@ const UnifiedMonitoring: React.FC = () => {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{height: '480px'}}
+        style={{height: '480px', marginTop: 6,}}
         bodyStyle={{height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
       >
-        <Spin size="large"/>
+        <Spin/>
       </Card>
     );
   }
@@ -172,7 +172,7 @@ const UnifiedMonitoring: React.FC = () => {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{height: '480px'}}
+        style={{height: '480px', marginTop: 6}}
         bodyStyle={{height: '430px', padding: '16px'}}
       >
         <Alert

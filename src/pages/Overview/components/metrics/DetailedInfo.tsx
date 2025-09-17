@@ -288,43 +288,40 @@ const DetailedInfo: React.FC<DetailedInfoProps> = ({metricsData, cardKey}) => {
       case 'thread_details': {
         const threadDetails = metricsData?.threads?.threads || metricsData?.threads?.threadDetails || {};
         return (
-          <div>
-            <h4>{t('metrics.thread_details')}</h4>
-            <Table
-              size="small"
-              dataSource={Object.entries(threadDetails).map(([id, thread]: [string, any]) => ({
-                key: id,
-                id: thread.threadId || id,
-                name: thread.threadName || thread.name || '未知',
-                state: thread.threadState || thread.state || 'UNKNOWN',
-                blockedCount: thread.blockedCount || 0,
-                waitedCount: thread.waitedCount || 0,
-                cpuTime: thread.cpuTime || 0,
-                userTime: thread.userTime || 0,
-              }))}
-              columns={[
-                {title: 'ID', dataIndex: 'id', key: 'id', width: 60},
-                {title: t('name'), dataIndex: 'name', key: 'name', ellipsis: true},
-                {
-                  title: t('metrics.status'),
-                  dataIndex: 'state',
-                  key: 'state',
-                  render: (state: string) => (
-                    <Tag
-                      color={state === 'RUNNABLE' ? 'green' : state === 'WAITING' ? 'orange' : state === 'BLOCKED' ? 'red' : 'default'}>
-                      {state}
-                    </Tag>
-                  )
-                },
-                {title: t('metrics.blocked_count'), dataIndex: 'blockedCount', key: 'blockedCount'},
-                {title: t('metrics.waited_count'), dataIndex: 'waitedCount', key: 'waitedCount'},
-                {title: t('metrics.cpu_time') + '(' + t('metrics.ms') + ')', dataIndex: 'cpuTime', key: 'cpuTime'},
-                {title: t('metrics.user_time') + '(' + t('metrics.ms') + ')', dataIndex: 'userTime', key: 'userTime'},
-              ]}
-              pagination={false}
-              scroll={{y: 200}}
-            />
-          </div>
+          <Table
+            size="small"
+            dataSource={Object.entries(threadDetails).map(([id, thread]: [string, any]) => ({
+              key: id,
+              id: thread.threadId || id,
+              name: thread.threadName || thread.name || '未知',
+              state: thread.threadState || thread.state || 'UNKNOWN',
+              blockedCount: thread.blockedCount || 0,
+              waitedCount: thread.waitedCount || 0,
+              cpuTime: thread.cpuTime || 0,
+              userTime: thread.userTime || 0,
+            }))}
+            columns={[
+              {title: 'ID', dataIndex: 'id', key: 'id', width: 60},
+              {title: t('name'), dataIndex: 'name', key: 'name', ellipsis: true},
+              {
+                title: t('metrics.status'),
+                dataIndex: 'state',
+                key: 'state',
+                render: (state: string) => (
+                  <Tag
+                    color={state === 'RUNNABLE' ? 'green' : state === 'WAITING' ? 'orange' : state === 'BLOCKED' ? 'red' : 'default'}>
+                    {state}
+                  </Tag>
+                )
+              },
+              {title: t('metrics.blocked_count'), dataIndex: 'blockedCount', key: 'blockedCount'},
+              {title: t('metrics.waited_count'), dataIndex: 'waitedCount', key: 'waitedCount'},
+              {title: t('metrics.cpu_time') + '(' + t('metrics.ms') + ')', dataIndex: 'cpuTime', key: 'cpuTime'},
+              {title: t('metrics.user_time') + '(' + t('metrics.ms') + ')', dataIndex: 'userTime', key: 'userTime'},
+            ]}
+            pagination={false}
+            scroll={{y: 200}}
+          />
         );
       }
 
