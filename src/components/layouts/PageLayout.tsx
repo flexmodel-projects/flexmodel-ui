@@ -1,6 +1,5 @@
 import React, {useState} from "react";
-import {FloatButton, Layout, Splitter, theme} from "antd";
-import {RobotOutlined} from "@ant-design/icons";
+import {Layout, Splitter, theme} from "antd";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "@/routes";
@@ -30,7 +29,7 @@ const PageLayout: React.FC = () => {
         marginLeft: isSidebarCollapsed ? 56 : 180, // 为固定的sidebar留出空间
         transition: "margin-left 0.3s cubic-bezier(0.4,0,0.2,1)" // 与sidebar动画同步
       }}>
-        <Header />
+        <Header onToggleAIChat={() => setIsAIChatVisible((v) => !v)} />
         <Layout.Content
           style={{
             flex: 1,
@@ -91,21 +90,6 @@ const PageLayout: React.FC = () => {
           onToggle={setIsAIChatVisible}
           isFloating={isAIChatFloating}
           onToggleFloating={setIsAIChatFloating}
-        />
-      )}
-
-      {/* 悬浮按钮 - 只在AI聊天面板隐藏时显示 */}
-      {!isAIChatVisible && (
-        <FloatButton
-          icon={<RobotOutlined />}
-          type="primary"
-          onClick={() => setIsAIChatVisible(true)}
-          style={{
-            right: 24,
-            bottom: 24,
-            zIndex: 1000
-          }}
-          tooltip="AI助手"
         />
       )}
     </Layout>

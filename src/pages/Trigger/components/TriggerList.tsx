@@ -1,23 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, message, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Tooltip} from 'antd';
+import {Button, message, Modal, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
+import TriggerForm from './TriggerForm';
+import {Trigger} from '@/types/trigger';
 
-const { Option } = Select;
-
-interface Trigger {
-  id: string;
-  name: string;
-  description?: string;
-  type: 'cron' | 'event';
-  status: 'active' | 'inactive';
-  flowId: string;
-  flowName: string;
-  config: any;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const TriggerList: React.FC = () => {
   const { t } = useTranslation();
@@ -25,7 +13,6 @@ const TriggerList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingTrigger, setEditingTrigger] = useState<Trigger | null>(null);
-  const [form] = Form.useForm();
 
   // 模拟数据
   useEffect(() => {
@@ -40,36 +27,50 @@ const TriggerList: React.FC = () => {
         {
           id: '1',
           name: '每日数据同步',
-          description: '每天凌晨2点执行数据同步流程',
+          description: '每天凌晨2点执行数据同步动作',
           type: 'cron',
           status: 'active',
           flowId: 'flow-1',
-          flowName: '数据同步流程',
-          config: { cron: '0 2 * * *' },
+          flowName: '数据同步动作',
+          config: {
+            triggerForm: 'cron',
+            cronExpression: '0 2 * * *',
+            timezone: 'Asia/Shanghai'
+          },
           createdAt: '2024-01-15 10:00:00',
           updatedAt: '2024-01-15 10:00:00'
         },
         {
           id: '2',
           name: '用户注册事件',
-          description: '当有新用户注册时触发欢迎流程',
+          description: '当有新用户注册时触发欢迎动作',
           type: 'event',
           status: 'active',
           flowId: 'flow-2',
-          flowName: '用户欢迎流程',
-          config: { event: 'user.registered' },
+          flowName: '用户欢迎动作',
+          config: {
+            datasourceName: 'default',
+            modelName: 'User',
+            mutationTypes: ['create'],
+            triggerTiming: 'after'
+          },
           createdAt: '2024-01-16 14:30:00',
           updatedAt: '2024-01-16 14:30:00'
         },
         {
           id: '3',
-          name: '手动备份流程',
-          description: '手动触发的数据备份流程',
+          name: '手动备份动作',
+          description: '手动触发的数据备份动作',
           type: 'event',
           status: 'inactive',
           flowId: 'flow-3',
-          flowName: '数据备份流程',
-          config: {},
+          flowName: '数据备份动作',
+          config: {
+            datasourceName: 'default',
+            modelName: 'Backup',
+            mutationTypes: ['create'],
+            triggerTiming: 'after'
+          },
           createdAt: '2024-01-17 09:15:00',
           updatedAt: '2024-01-17 09:15:00'
         }
@@ -84,13 +85,11 @@ const TriggerList: React.FC = () => {
 
   const handleCreate = () => {
     setEditingTrigger(null);
-    form.resetFields();
     setModalVisible(true);
   };
 
   const handleEdit = (trigger: Trigger) => {
     setEditingTrigger(trigger);
-    form.setFieldsValue(trigger);
     setModalVisible(true);
   };
 
@@ -143,7 +142,6 @@ const TriggerList: React.FC = () => {
         message.success(t('create_success'));
       }
       setModalVisible(false);
-      form.resetFields();
     } catch {
       message.error(editingTrigger ? t('update_failed') : t('create_failed'));
     }
@@ -282,76 +280,12 @@ const TriggerList: React.FC = () => {
         footer={null}
         width={600}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-        >
-          <Form.Item
-            name="name"
-            label={t('name')}
-            rules={[{ required: true, message: t('input_valid_msg', { name: t('name') }) }]}
-          >
-            <Input placeholder={t('enter_trigger_name')} />
-          </Form.Item>
-
-          <Form.Item
-            name="description"
-            label={t('description')}
-          >
-            <Input.TextArea
-              placeholder={t('enter_trigger_description')}
-              rows={3}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="type"
-            label={t('type')}
-            rules={[{ required: true, message: t('select_trigger_type') }]}
-          >
-            <Select placeholder={t('select_trigger_type')}>
-              <Option value="cron">{t('trigger_type_cron')}</Option>
-              <Option value="event">{t('trigger_type_event')}</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="flowId"
-            label={t('flow')}
-            rules={[{ required: true, message: t('select_flow') }]}
-          >
-            <Select placeholder={t('select_flow')}>
-              <Option value="flow-1">数据同步流程</Option>
-              <Option value="flow-2">用户欢迎流程</Option>
-              <Option value="flow-3">数据备份流程</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label={t('status')}
-            valuePropName="checked"
-            getValueFromEvent={(checked) => checked ? 'active' : 'inactive'}
-            getValueProps={(value) => ({ checked: value === 'active' })}
-          >
-            <Switch
-              checkedChildren={t('active')}
-              unCheckedChildren={t('inactive')}
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit">
-                {editingTrigger ? t('update') : t('create')}
-              </Button>
-              <Button onClick={() => setModalVisible(false)}>
-                {t('cancel')}
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
+        <TriggerForm
+          mode={editingTrigger ? 'edit' : 'create'}
+          trigger={editingTrigger || undefined}
+          onSubmit={handleSubmit}
+          onCancel={() => setModalVisible(false)}
+        />
       </Modal>
     </PageContainer>
   );
