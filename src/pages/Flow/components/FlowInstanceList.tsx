@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {EyeOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
 import {FlowInstance, FlowInstanceListParams, getFlowInstanceList, terminateFlowInstance} from '@/services/flow';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import {t} from 'i18next';
 
 const FlowInstanceList: React.FC = () => {
+  const {token} = theme.useToken();
 
   // 状态管理
   const [loading, setLoading] = useState(false);
@@ -51,12 +52,12 @@ const FlowInstanceList: React.FC = () => {
   // 获取状态标签
   const getStatusTag = (status: number) => {
     const statusMap = {
-      1: { text: '运行中', color: 'processing' },
-      2: { text: '已完成', color: 'success' },
-      3: { text: '已终止', color: 'error' },
-      4: { text: '已暂停', color: 'warning' }
+      1: {text: '运行中', color: 'processing'},
+      2: {text: '已完成', color: 'success'},
+      3: {text: '已终止', color: 'error'},
+      4: {text: '已暂停', color: 'warning'}
     };
-    const statusInfo = statusMap[status as keyof typeof statusMap] || { text: '未知', color: 'default' };
+    const statusInfo = statusMap[status as keyof typeof statusMap] || {text: '未知', color: 'default'};
     return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
   };
 
@@ -134,7 +135,7 @@ const FlowInstanceList: React.FC = () => {
           <Tooltip title="查看详情">
             <Button
               type="link"
-              icon={<EyeOutlined />}
+              icon={<EyeOutlined/>}
               size="small"
               onClick={() => {
                 // TODO: 实现查看详情功能
@@ -153,7 +154,7 @@ const FlowInstanceList: React.FC = () => {
                 <Button
                   type="link"
                   danger
-                  icon={<StopOutlined />}
+                  icon={<StopOutlined/>}
                   size="small"
                 />
               </Popconfirm>
@@ -166,89 +167,77 @@ const FlowInstanceList: React.FC = () => {
 
   return (
     <PageContainer>
-      {/* 搜索和操作区域 */}
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Space>
-          <Input
-            placeholder="搜索流程实例ID"
-            prefix={<SearchOutlined />}
-            style={{ width: 200 }}
-            onChange={(e) => {
-              setSearchParams({
-                ...searchParams,
-                flowInstanceId: e.target.value || undefined,
-                page: 1
-              });
-            }}
-          />
-          <Select
-            placeholder="选择状态"
-            style={{ width: 120 }}
-            allowClear
-            onChange={(value) => {
-              setSearchParams({
-                ...searchParams,
-                status: value,
-                page: 1
-              });
-            }}
-          >
-            <Select.Option value={1}>运行中</Select.Option>
-            <Select.Option value={2}>已完成</Select.Option>
-            <Select.Option value={3}>已终止</Select.Option>
-            <Select.Option value={4}>已暂停</Select.Option>
-          </Select>
-        </Space>
-      </div>
-
-      {/* 流程实例列表表格 */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: 'calc(100vh - 200px)',
-        minHeight: 400
-      }}>
-        <div style={{
-          flex: 1,
-          minHeight: 0,
-          overflow: 'hidden'
-        }}>
+      <div style={{display: 'flex', flexDirection: 'column', height: '96%'}}>
+        {/* 搜索和操作区域 */}
+        <div style={{marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <Space>
+            <Input
+              placeholder="搜索流程实例ID"
+              prefix={<SearchOutlined/>}
+              style={{width: 200}}
+              onChange={(e) => {
+                setSearchParams({
+                  ...searchParams,
+                  flowInstanceId: e.target.value || undefined,
+                  page: 1
+                });
+              }}
+            />
+            <Select
+              placeholder="选择状态"
+              style={{width: 120}}
+              allowClear
+              onChange={(value) => {
+                setSearchParams({
+                  ...searchParams,
+                  status: value,
+                  page: 1
+                });
+              }}
+            >
+              <Select.Option value={1}>运行中</Select.Option>
+              <Select.Option value={2}>已完成</Select.Option>
+              <Select.Option value={3}>已终止</Select.Option>
+              <Select.Option value={4}>已暂停</Select.Option>
+            </Select>
+          </Space>
+        </div>
+        {/* 流程实例列表表格 */}
+        <div style={{flex: 1, overflow: 'auto'}}>
           <Table
             columns={columns}
             dataSource={flowInstanceList}
             rowKey="flowInstanceId"
             loading={loading}
             pagination={false}
-            scroll={{ y: 'calc(100vh - 300px)', x: 1400 }}
           />
         </div>
         {/* 分页区域 - 固定在底部 */}
         <div style={{
+          padding: '16px 0',
+          borderTop: `1px solid ${token.colorBorderSecondary}`,
           display: 'flex',
-          justifyContent: 'flex-end',
-          flexShrink: 0,
-          position: 'relative',
-          zIndex: 1
+          justifyContent: 'flex-end'
         }}>
-           <Pagination
-             current={searchParams.page}
-             pageSize={searchParams.size}
-             total={total}
-             showTotal={(total: number, range: any) =>
-               t("pagination_total_text", {
-                 start: range[0],
-                 end: range[1],
-                 total: total,
-               })
-             }
-             onChange={(page: number, size: number) => {
-               setSearchParams({
-                 ...searchParams,
-                 page,
-                 size
-               });
-             }}
-           />
+          <Pagination
+            current={searchParams.page}
+            pageSize={searchParams.size}
+            total={total}
+            showTotal={(total: number, range: any) =>
+              t("pagination_total_text", {
+                start: range[0],
+                end: range[1],
+                total: total,
+              })
+            }
+            onChange={(page: number, size: number) => {
+              setSearchParams({
+                ...searchParams,
+                page,
+                size
+              });
+            }}
+          />
         </div>
       </div>
     </PageContainer>

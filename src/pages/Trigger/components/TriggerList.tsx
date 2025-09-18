@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, message, Modal, Pagination, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, Form, message, Modal, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
@@ -9,6 +9,8 @@ import {Trigger} from '@/types/trigger';
 
 const TriggerList: React.FC = () => {
   const {t} = useTranslation();
+  const { token } = theme.useToken();
+  const [form] = Form.useForm();
   const [triggers, setTriggers] = useState<Trigger[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -281,7 +283,7 @@ const TriggerList: React.FC = () => {
         </div>
         <div style={{
           padding: '16px 0',
-          borderTop: '1px solid #f0f0f0',
+          borderTop: `1px solid ${token.colorBorderSecondary}`,
           display: 'flex',
           justifyContent: 'flex-end'
         }}>
@@ -314,14 +316,14 @@ const TriggerList: React.FC = () => {
         title={editingTrigger ? t('trigger.edit') : t('trigger.create')}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
-        footer={null}
+        onOk={() => form.submit()}
         width={600}
       >
         <TriggerForm
           mode={editingTrigger ? 'edit' : 'create'}
           trigger={editingTrigger || undefined}
           onSubmit={handleSubmit}
-          onCancel={() => setModalVisible(false)}
+          form={form}
         />
       </Modal>
     </PageContainer>

@@ -1,19 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Row,
-  Select,
-  Space,
-  Switch,
-  TimePicker
-} from 'antd';
+import {Card, Checkbox, Col, Form, Input, InputNumber, Radio, Row, Select, TimePicker} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {
   COMMON_TIMEZONES,
@@ -41,16 +27,13 @@ export interface TriggerFormProps {
   form?: any;
   /** 提交回调 */
   onSubmit?: (values: any) => void;
-  /** 取消回调 */
-  onCancel?: () => void;
 }
 
 const TriggerForm: React.FC<TriggerFormProps> = ({
                                                    mode,
                                                    trigger,
                                                    form: externalForm,
-                                                   onSubmit,
-                                                   onCancel
+                                                   onSubmit
                                                  }) => {
   const {t} = useTranslation();
   const [internalForm] = Form.useForm();
@@ -223,33 +206,6 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
           <Option value="flow-3">数据备份动作</Option>
         </Select>
       </Form.Item>
-
-      <Form.Item
-        name="status"
-        label={t('status')}
-        valuePropName="checked"
-        getValueFromEvent={(checked) => checked ? 'active' : 'inactive'}
-        getValueProps={(value) => ({checked: value === 'active'})}
-      >
-        <Switch
-          checkedChildren={t('active')}
-          unCheckedChildren={t('inactive')}
-          disabled={mode === 'view'}
-        />
-      </Form.Item>
-
-      {mode !== 'view' && (
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              {mode === 'edit' ? t('update') : t('create')}
-            </Button>
-            <Button onClick={onCancel}>
-              {t('cancel')}
-            </Button>
-          </Space>
-        </Form.Item>
-      )}
     </Form>
   );
 };

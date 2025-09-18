@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Empty, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, Tooltip} from 'antd';
+import {Button, Empty, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, theme, Tooltip} from 'antd';
 import {ColumnsType} from 'antd/es/table';
 import {DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined, SearchOutlined, UpOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/services/record.ts";
@@ -12,6 +12,8 @@ const { TextArea } = Input;
 
 const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   const { t } = useTranslation();
+  const {token} = theme.useToken();
+
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -166,12 +168,10 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   });
 
   const paginationStyle = {
-    position: 'fixed' as const,
-    bottom: 30,
-    right: 30,
-    padding: '12px 24px',
-    backgroundColor: 'var(--ant-color-bg-container)',
-    zIndex: 1000,
+    padding: '16px 0',
+    borderTop: `1px solid ${token.colorBorderSecondary}`,
+    display: 'flex',
+    justifyContent: 'flex-end'
   };
 
   // 事件处理函数

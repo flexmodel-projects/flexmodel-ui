@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Input, message, Pagination, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, Input, message, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/common/PageContainer';
@@ -9,6 +9,7 @@ import {t} from 'i18next';
 
 const FlowList: React.FC = () => {
   const navigate = useNavigate();
+  const {token} = theme.useToken();
 
   // 状态管理
   const [loading, setLoading] = useState(false);
@@ -41,7 +42,7 @@ const FlowList: React.FC = () => {
   // 部署流程
   const handleDeployFlow = async (flowModuleId: string) => {
     try {
-      await deployFlow(flowModuleId, { flowModuleId });
+      await deployFlow(flowModuleId, {flowModuleId});
       message.success('流程部署成功');
       fetchFlowList();
     } catch (error) {
@@ -53,12 +54,12 @@ const FlowList: React.FC = () => {
   // 获取状态标签
   const getStatusTag = (status: number) => {
     const statusMap = {
-      1: { text: '草稿', color: 'default' },
-      2: { text: '设计', color: 'processing' },
-      3: { text: '测试', color: 'warning' },
-      4: { text: '已发布', color: 'success' }
+      1: {text: '草稿', color: 'default'},
+      2: {text: '设计', color: 'processing'},
+      3: {text: '测试', color: 'warning'},
+      4: {text: '已发布', color: 'success'}
     };
-    const statusInfo = statusMap[status as keyof typeof statusMap] || { text: '未知', color: 'default' };
+    const statusInfo = statusMap[status as keyof typeof statusMap] || {text: '未知', color: 'default'};
     return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
   };
 
@@ -115,7 +116,7 @@ const FlowList: React.FC = () => {
           <Tooltip title="编辑">
             <Button
               type="link"
-              icon={<EditOutlined />}
+              icon={<EditOutlined/>}
               size="small"
               onClick={() => {
                 // TODO: 实现编辑功能
@@ -126,7 +127,7 @@ const FlowList: React.FC = () => {
           <Tooltip title="部署">
             <Button
               type="link"
-              icon={<PlayCircleOutlined />}
+              icon={<PlayCircleOutlined/>}
               size="small"
               onClick={() => handleDeployFlow(record.flowModuleId)}
             />
@@ -144,7 +145,7 @@ const FlowList: React.FC = () => {
               <Button
                 type="link"
                 danger
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined/>}
                 size="small"
               />
             </Popconfirm>
@@ -156,84 +157,73 @@ const FlowList: React.FC = () => {
 
   return (
     <PageContainer>
-      {/* 搜索和操作区域 */}
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Space>
-          <Input
-            placeholder="搜索流程名称"
-            prefix={<SearchOutlined />}
-            style={{ width: 200 }}
-            onChange={(e) => {
-              setSearchParams({
-                ...searchParams,
-                flowName: e.target.value || undefined,
-                page: 1
-              });
-            }}
-          />
-        </Space>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            navigate('/flow/design');
-          }}
-        >
-          新建流程
-        </Button>
-      </div>
-
-      {/* 流程列表表格 */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: 'calc(100vh - 200px)',
-        minHeight: 400
-      }}>
-        <div style={{
-          flex: 1,
-          minHeight: 0,
-          overflow: 'hidden'
-        }}>
+      <div style={{display: 'flex', flexDirection: 'column', height: '96%'}}>
+        {/* 搜索和操作区域 */}
+        <div style={{marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <Space>
+            <Input
+              placeholder="搜索流程名称"
+              prefix={<SearchOutlined/>}
+              style={{width: 200}}
+              onChange={(e) => {
+                setSearchParams({
+                  ...searchParams,
+                  flowName: e.target.value || undefined,
+                  page: 1
+                });
+              }}
+            />
+            <Button
+              type="primary"
+              icon={<PlusOutlined/>}
+              onClick={() => {
+                navigate('/flow/design');
+              }}
+            >
+              新建流程
+            </Button>
+          </Space>
+        </div>
+        <div style={{flex: 1, overflow: 'auto'}}>
+          {/* 流程列表表格 */}
           <Table
             columns={columns}
             dataSource={flowList}
             rowKey="flowModuleId"
             loading={loading}
             pagination={false}
-            scroll={{ y: 'calc(100vh - 300px)', x: 1200 }}
           />
         </div>
+
         {/* 分页区域 - 固定在底部 */}
         <div style={{
+          padding: '16px 0',
+          borderTop: `1px solid ${token.colorBorderSecondary}`,
           display: 'flex',
-          justifyContent: 'flex-end',
-          flexShrink: 0,
-          position: 'relative',
-          zIndex: 1
+          justifyContent: 'flex-end'
         }}>
-           <Pagination
-             current={searchParams.page}
-             pageSize={searchParams.size}
-             total={total}
-             showTotal={(total: number, range: any) =>
-               t("pagination_total_text", {
-                 start: range[0],
-                 end: range[1],
-                 total: total,
-               })
-             }
-             onChange={(page: number, size: number) => {
-               setSearchParams({
-                 ...searchParams,
-                 page,
-                 size
-               });
-             }}
-           />
+          <Pagination
+            current={searchParams.page}
+            pageSize={searchParams.size}
+            total={total}
+            showTotal={(total: number, range: any) =>
+              t("pagination_total_text", {
+                start: range[0],
+                end: range[1],
+                total: total,
+              })
+            }
+            onChange={(page: number, size: number) => {
+              setSearchParams({
+                ...searchParams,
+                page,
+                size
+              });
+            }}
+          />
         </div>
       </div>
-    </PageContainer >
+    </PageContainer>
   );
 };
 
