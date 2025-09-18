@@ -13,7 +13,7 @@ const OIDCIdPForm: React.FC<Props> = ({ readOnly = false }) => {
 
   return (
     <>
-      <Form.Item hidden name="type" initialValue="oidc">
+      <Form.Item hidden name="type">
         <Input />
       </Form.Item>
       <Form.Item
