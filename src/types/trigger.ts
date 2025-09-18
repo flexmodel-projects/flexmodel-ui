@@ -81,13 +81,13 @@ export interface DayOfWeekOption {
 }
 
 export const DAYS_OF_WEEK: DayOfWeekOption[] = [
-  { value: 1, label: 'sunday' },
-  { value: 2, label: 'monday' },
-  { value: 3, label: 'tuesday' },
-  { value: 4, label: 'wednesday' },
-  { value: 5, label: 'thursday' },
-  { value: 6, label: 'friday' },
-  { value: 7, label: 'saturday' }
+  { value: 1, label: 'trigger.sunday' },
+  { value: 2, label: 'trigger.monday' },
+  { value: 3, label: 'trigger.tuesday' },
+  { value: 4, label: 'trigger.wednesday' },
+  { value: 5, label: 'trigger.thursday' },
+  { value: 6, label: 'trigger.friday' },
+  { value: 7, label: 'trigger.saturday' }
 ];
 
 // 间隔单位选项
@@ -97,20 +97,20 @@ export interface IntervalUnitOption {
 }
 
 export const INTERVAL_UNITS: IntervalUnitOption[] = [
-  { value: 'second', label: 'interval_seconds' },
-  { value: 'minute', label: 'interval_minutes' },
-  { value: 'hour', label: 'interval_hours' },
-  { value: 'day', label: 'interval_days' },
-  { value: 'week', label: 'interval_weeks' },
-  { value: 'month', label: 'interval_months' },
-  { value: 'year', label: 'interval_years' }
+  { value: 'second', label: 'trigger.interval_seconds' },
+  { value: 'minute', label: 'trigger.interval_minutes' },
+  { value: 'hour', label: 'trigger.interval_hours' },
+  { value: 'day', label: 'trigger.interval_days' },
+  { value: 'week', label: 'trigger.interval_weeks' },
+  { value: 'month', label: 'trigger.interval_months' },
+  { value: 'year', label: 'trigger.interval_years' }
 ];
 
 // 每日时间间隔的间隔单位选项（限制为秒、分钟、小时）
 export const DAILY_TIME_INTERVAL_UNITS: IntervalUnitOption[] = [
-  { value: 'second', label: 'interval_seconds' },
-  { value: 'minute', label: 'interval_minutes' },
-  { value: 'hour', label: 'interval_hours' }
+  { value: 'second', label: 'trigger.interval_seconds' },
+  { value: 'minute', label: 'trigger.interval_minutes' },
+  { value: 'hour', label: 'trigger.interval_hours' }
 ];
 
 // 变更类型选项
@@ -120,9 +120,9 @@ export interface MutationTypeOption {
 }
 
 export const MUTATION_TYPES: MutationTypeOption[] = [
-  { value: 'create', label: 'mutation_create' },
-  { value: 'update', label: 'mutation_update' },
-  { value: 'delete', label: 'mutation_delete' }
+  { value: 'create', label: 'trigger.mutation_create' },
+  { value: 'update', label: 'trigger.mutation_update' },
+  { value: 'delete', label: 'trigger.mutation_delete' }
 ];
 
 // 触发时机选项
@@ -132,6 +132,6 @@ export interface TriggerTimingOption {
 }
 
 export const TRIGGER_TIMINGS: TriggerTimingOption[] = [
-  { value: 'before', label: 'trigger_timing_before' },
-  { value: 'after', label: 'trigger_timing_after' }
+  { value: 'before', label: 'trigger.timing_before' },
+  { value: 'after', label: 'trigger.timing_after' }
 ];

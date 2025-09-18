@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, message, Modal, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
+import {Button, message, Modal, Pagination, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
@@ -8,11 +8,13 @@ import {Trigger} from '@/types/trigger';
 
 
 const TriggerList: React.FC = () => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const [triggers, setTriggers] = useState<Trigger[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingTrigger, setEditingTrigger] = useState<Trigger | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // 模拟数据
   useEffect(() => {
@@ -77,7 +79,7 @@ const TriggerList: React.FC = () => {
       ];
       setTriggers(mockTriggers);
     } catch {
-      message.error(t('load_triggers_failed'));
+      message.error(t('trigger.load_failed'));
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,7 @@ const TriggerList: React.FC = () => {
       // 模拟API调用
       const updatedTriggers = triggers.map(t =>
         t.id === trigger.id
-          ? { ...t, status: t.status === 'active' ? 'inactive' as const : 'active' as const }
+          ? {...t, status: t.status === 'active' ? 'inactive' as const : 'active' as const}
           : t
       );
       setTriggers(updatedTriggers);
@@ -124,7 +126,7 @@ const TriggerList: React.FC = () => {
         // 更新触发器
         const updatedTriggers = triggers.map(t =>
           t.id === editingTrigger.id
-            ? { ...t, ...values, updatedAt: new Date().toLocaleString() }
+            ? {...t, ...values, updatedAt: new Date().toLocaleString()}
             : t
         );
         setTriggers(updatedTriggers);
@@ -149,17 +151,23 @@ const TriggerList: React.FC = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'cron': return 'blue';
-      case 'event': return 'green';
-      default: return 'default';
+      case 'cron':
+        return 'blue';
+      case 'event':
+        return 'green';
+      default:
+        return 'default';
     }
   };
 
   const getTypeText = (type: string) => {
     switch (type) {
-      case 'cron': return t('trigger_type_cron');
-      case 'event': return t('trigger_type_event');
-      default: return type;
+      case 'cron':
+        return t('trigger.type_cron');
+      case 'event':
+        return t('trigger.type_event');
+      default:
+        return type;
     }
   };
 
@@ -186,7 +194,7 @@ const TriggerList: React.FC = () => {
       ),
     },
     {
-      title: t('flow_name'),
+      title: t('trigger.flow_name'),
       dataIndex: 'flowName',
       key: 'flowName',
     },
@@ -213,20 +221,20 @@ const TriggerList: React.FC = () => {
           <Tooltip title={record.status === 'active' ? t('pause') : t('start')}>
             <Button
               type="text"
-              icon={record.status === 'active' ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+              icon={record.status === 'active' ? <PauseCircleOutlined/> : <PlayCircleOutlined/>}
               onClick={() => handleToggleStatus(record)}
             />
           </Tooltip>
           <Tooltip title={t('edit')}>
             <Button
               type="text"
-              icon={<EditOutlined />}
+              icon={<EditOutlined/>}
               onClick={() => handleEdit(record)}
             />
           </Tooltip>
           <Popconfirm
             title={t('delete_confirm')}
-            description={t('delete_trigger_confirm_desc', { name: record.name })}
+            description={t('trigger.delete_confirm_desc', {name: record.name})}
             onConfirm={() => handleDelete(record.id)}
             okText={t('confirm')}
             cancelText={t('cancel')}
@@ -235,7 +243,7 @@ const TriggerList: React.FC = () => {
               <Button
                 type="text"
                 danger
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined/>}
               />
             </Tooltip>
           </Popconfirm>
@@ -244,37 +252,66 @@ const TriggerList: React.FC = () => {
     },
   ];
 
+  // 计算当前页显示的数据
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentData = triggers.slice(startIndex, endIndex);
+
   return (
-    <PageContainer title={t('trigger')}
-      extra={
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-        >
-          {t('create_trigger')}
-        </Button>
-      }
+    <PageContainer title={t('trigger.title')}
+                   extra={
+                     <Button
+                       type="primary"
+                       icon={<PlusOutlined/>}
+                       onClick={handleCreate}
+                     >
+                       {t('trigger.create')}
+                     </Button>
+                   }
     >
-      <Table
-        columns={columns}
-        dataSource={triggers}
-        loading={loading}
-        rowKey="id"
-        pagination={{
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) =>
-            t('pagination_total_text', {
-              start: range[0],
-              end: range[1],
-              total: total
-            }),
-        }}
-      />
+      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+        <div style={{flex: 1, overflow: 'auto'}}>
+          <Table
+            columns={columns}
+            dataSource={currentData}
+            loading={loading}
+            rowKey="id"
+            pagination={false}
+          />
+        </div>
+        <div style={{
+          padding: '16px 0',
+          borderTop: '1px solid #f0f0f0',
+          display: 'flex',
+          justifyContent: 'flex-end'
+        }}>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={triggers.length}
+            showSizeChanger={true}
+            showQuickJumper={true}
+            showTotal={(total, range) =>
+              t('pagination_total_text', {
+                start: range[0],
+                end: range[1],
+                total: total
+              })
+            }
+            onChange={(page, size) => {
+              setCurrentPage(page);
+              setPageSize(size || 10);
+            }}
+            onShowSizeChange={(_current: number, size: number) => {
+              setCurrentPage(1);
+              setPageSize(size);
+            }}
+          />
+        </div>
+      </div>
 
       <Modal
-        title={editingTrigger ? t('edit_trigger') : t('create_trigger')}
+        title={editingTrigger ? t('trigger.edit') : t('trigger.create')}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}

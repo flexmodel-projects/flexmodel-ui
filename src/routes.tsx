@@ -141,7 +141,7 @@ export const routes: RouteConfig[] = [
     path: "/trigger",
     element: <TriggerList/>,
     icon: ThunderboltOutlined,
-    translationKey: "trigger",
+    translationKey: "trigger.title",
   },
   {
     path: "/identity-providers",
