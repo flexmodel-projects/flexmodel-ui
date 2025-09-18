@@ -594,5 +594,6 @@
   },
   "model": "模型",
   "select_model": "选择模型",
-  "description": "描述"
+  "description": "描述",
+  "status": "状态"
 }

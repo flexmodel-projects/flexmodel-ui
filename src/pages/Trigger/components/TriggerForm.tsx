@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Checkbox, Col, Form, Input, InputNumber, Radio, Row, Select, TimePicker} from 'antd';
+import {Checkbox, Col, Divider, Form, Input, InputNumber, Radio, Row, Select, TimePicker} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {
   COMMON_TIMEZONES,
@@ -217,7 +217,8 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
   switch (formType) {
     case 'interval':
       return (
-        <Card title={t('trigger.interval_trigger')} size="small">
+        <>
+          <Divider orientation="left">{t('trigger.interval_trigger')}</Divider>
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item
@@ -284,12 +285,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               </Form.Item>
             </Col>
           </Row>
-        </Card>
+        </>
       );
 
     case 'cron':
       return (
-        <Card title={t('trigger.cron_trigger')} size="small">
+        <>
+          <Divider orientation="left">{t('trigger.cron_trigger')}</Divider>
           <Form.Item
             name={['config', 'cronExpression']}
             label={t('trigger.cron_expression')}
@@ -317,13 +319,14 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               ))}
             </Select>
           </Form.Item>
-        </Card>
+        </>
       );
 
 
     case 'daily_time_interval':
       return (
-        <Card title={t('trigger.daily_time_interval_trigger')} size="small">
+        <>
+          <Divider orientation="left">{t('trigger.daily_time_interval_trigger')}</Divider>
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item
@@ -420,7 +423,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               </Row>
             </Checkbox.Group>
           </Form.Item>
-        </Card>
+        </>
       );
 
     default:
@@ -438,7 +441,8 @@ const renderEventTriggerConfig = (
   handleDatasourceChange: (value: string) => void
 ) => {
   return (
-    <Card title={t('trigger.event_config')} size="small">
+    <>
+      <Divider orientation="left">{t('trigger.event_config')}</Divider>
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
@@ -513,7 +517,7 @@ const renderEventTriggerConfig = (
           </Form.Item>
         </Col>
       </Row>
-    </Card>
+    </>
   );
 };
 

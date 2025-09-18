@@ -594,5 +594,6 @@
   },
   "model": "Model",
   "select_model": "Select Model",
-  "description": "描述"
+  "description": "Description",
+  "status": "Status"
 }

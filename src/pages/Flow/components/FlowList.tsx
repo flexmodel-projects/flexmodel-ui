@@ -160,29 +160,27 @@ const FlowList: React.FC = () => {
       <div style={{display: 'flex', flexDirection: 'column', height: '96%'}}>
         {/* 搜索和操作区域 */}
         <div style={{marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Space>
-            <Input
-              placeholder="搜索流程名称"
-              prefix={<SearchOutlined/>}
-              style={{width: 200}}
-              onChange={(e) => {
-                setSearchParams({
-                  ...searchParams,
-                  flowName: e.target.value || undefined,
-                  page: 1
-                });
-              }}
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined/>}
-              onClick={() => {
-                navigate('/flow/design');
-              }}
-            >
-              新建流程
-            </Button>
-          </Space>
+          <Input
+            placeholder="搜索流程名称"
+            prefix={<SearchOutlined/>}
+            style={{width: 200}}
+            onChange={(e) => {
+              setSearchParams({
+                ...searchParams,
+                flowName: e.target.value || undefined,
+                page: 1
+              });
+            }}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined/>}
+            onClick={() => {
+              navigate('/flow/design');
+            }}
+          >
+            新建流程
+          </Button>
         </div>
         <div style={{flex: 1, overflow: 'auto'}}>
           {/* 流程列表表格 */}
