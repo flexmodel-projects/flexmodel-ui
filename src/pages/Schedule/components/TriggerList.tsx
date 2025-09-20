@@ -1,85 +1,45 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, message, Modal, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
-import {DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  ThunderboltOutlined
+} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
 import TriggerForm from './TriggerForm';
-import {Trigger} from '@/types/trigger';
+import {TriggerDTO} from '@/services/trigger';
 
 
 const TriggerList: React.FC = () => {
   const {t} = useTranslation();
   const { token } = theme.useToken();
   const [form] = Form.useForm();
-  const [triggers, setTriggers] = useState<Trigger[]>([]);
+  const [triggers, setTriggers] = useState<TriggerDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingTrigger, setEditingTrigger] = useState<Trigger | null>(null);
+  const [editingTrigger, setEditingTrigger] = useState<TriggerDTO | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  // 模拟数据
   useEffect(() => {
     loadTriggers();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentPage, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTriggers = async () => {
     setLoading(true);
     try {
-      // 模拟API调用
-      const mockTriggers: Trigger[] = [
-        {
-          id: '1',
-          name: '每日数据同步',
-          description: '每天凌晨2点执行数据同步动作',
-          type: 'cron',
-          status: 'active',
-          flowId: 'flow-1',
-          flowName: '数据同步动作',
-          config: {
-            triggerForm: 'cron',
-            cronExpression: '0 2 * * *',
-            timezone: 'Asia/Shanghai'
-          },
-          createdAt: '2024-01-15 10:00:00',
-          updatedAt: '2024-01-15 10:00:00'
-        },
-        {
-          id: '2',
-          name: '用户注册事件',
-          description: '当有新用户注册时触发欢迎动作',
-          type: 'event',
-          status: 'active',
-          flowId: 'flow-2',
-          flowName: '用户欢迎动作',
-          config: {
-            datasourceName: 'default',
-            modelName: 'User',
-            mutationTypes: ['create'],
-            triggerTiming: 'after'
-          },
-          createdAt: '2024-01-16 14:30:00',
-          updatedAt: '2024-01-16 14:30:00'
-        },
-        {
-          id: '3',
-          name: '手动备份动作',
-          description: '手动触发的数据备份动作',
-          type: 'event',
-          status: 'inactive',
-          flowId: 'flow-3',
-          flowName: '数据备份动作',
-          config: {
-            datasourceName: 'default',
-            modelName: 'Backup',
-            mutationTypes: ['create'],
-            triggerTiming: 'after'
-          },
-          createdAt: '2024-01-17 09:15:00',
-          updatedAt: '2024-01-17 09:15:00'
-        }
-      ];
-      setTriggers(mockTriggers);
+      const { getTriggerPage } = await import('@/services/trigger');
+      const response = await getTriggerPage({
+        page: currentPage,
+        size: pageSize
+      });
+      setTriggers(response.list);
+      setTotal(response.total);
     } catch {
       message.error(t('trigger.load_failed'));
     } finally {
@@ -92,31 +52,31 @@ const TriggerList: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleEdit = (trigger: Trigger) => {
+  const handleEdit = (trigger: TriggerDTO) => {
     setEditingTrigger(trigger);
     setModalVisible(true);
   };
 
   const handleDelete = async (id: string) => {
     try {
-      // 模拟API调用
-      setTriggers(triggers.filter(t => t.id !== id));
+      const { deleteTrigger } = await import('@/services/trigger');
+      await deleteTrigger(id);
       message.success(t('delete_success'));
+      loadTriggers(); // 重新加载数据
     } catch {
       message.error(t('delete_failed'));
     }
   };
 
-  const handleToggleStatus = async (trigger: Trigger) => {
+  const handleToggleStatus = async (trigger: TriggerDTO) => {
     try {
-      // 模拟API调用
-      const updatedTriggers = triggers.map(t =>
-        t.id === trigger.id
-          ? {...t, status: t.status === 'active' ? 'inactive' as const : 'active' as const}
-          : t
-      );
-      setTriggers(updatedTriggers);
+      const { patchTrigger } = await import('@/services/trigger');
+      await patchTrigger(trigger.id!, {
+        ...trigger,
+        state: !trigger.state
+      });
       message.success(t('status_updated_success'));
+      loadTriggers(); // 重新加载数据
     } catch {
       message.error(t('status_update_failed'));
     }
@@ -124,38 +84,44 @@ const TriggerList: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
+      const { createTrigger, updateTrigger } = await import('@/services/trigger');
       if (editingTrigger) {
         // 更新触发器
-        const updatedTriggers = triggers.map(t =>
-          t.id === editingTrigger.id
-            ? {...t, ...values, updatedAt: new Date().toLocaleString()}
-            : t
-        );
-        setTriggers(updatedTriggers);
+        await updateTrigger(editingTrigger.id!, {
+          ...values,
+          jobId: values.jobId || editingTrigger.jobId
+        });
         message.success(t('update_success'));
       } else {
         // 创建新触发器
-        const newTrigger: Trigger = {
-          id: Date.now().toString(),
+        await createTrigger({
           ...values,
-          status: 'active',
-          createdAt: new Date().toLocaleString(),
-          updatedAt: new Date().toLocaleString()
-        };
-        setTriggers([...triggers, newTrigger]);
+          jobId: values.jobId
+        });
         message.success(t('create_success'));
       }
       setModalVisible(false);
+      loadTriggers(); // 重新加载数据
     } catch {
       message.error(editingTrigger ? t('update_failed') : t('create_failed'));
     }
   };
 
+  const handleExecute = async (id: string) => {
+    try {
+      const { executeTrigger } = await import('@/services/trigger');
+      await executeTrigger(id);
+      message.success(t('trigger.execute_success'));
+    } catch {
+      message.error(t('trigger.execute_failed'));
+    }
+  };
+
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'cron':
+      case 'SCHEDULED':
         return 'blue';
-      case 'event':
+      case 'EVENT':
         return 'green';
       default:
         return 'default';
@@ -164,9 +130,9 @@ const TriggerList: React.FC = () => {
 
   const getTypeText = (type: string) => {
     switch (type) {
-      case 'cron':
-        return t('trigger.type_cron');
-      case 'event':
+      case 'SCHEDULED':
+        return t('trigger.type_scheduled');
+      case 'EVENT':
         return t('trigger.type_event');
       default:
         return type;
@@ -196,17 +162,17 @@ const TriggerList: React.FC = () => {
       ),
     },
     {
-      title: t('trigger.flow_name'),
-      dataIndex: 'flowName',
-      key: 'flowName',
+      title: t('trigger.job_name'),
+      dataIndex: 'jobName',
+      key: 'jobName',
     },
     {
       title: t('status'),
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => (
-        <Tag color={status === 'active' ? 'green' : 'red'}>
-          {status === 'active' ? t('active') : t('inactive')}
+      dataIndex: 'state',
+      key: 'state',
+      render: (state: boolean) => (
+        <Tag color={state ? 'green' : 'red'}>
+          {state ? t('active') : t('inactive')}
         </Tag>
       ),
     },
@@ -218,12 +184,19 @@ const TriggerList: React.FC = () => {
     {
       title: t('operations'),
       key: 'operations',
-      render: (_: any, record: Trigger) => (
+      render: (_: any, record: TriggerDTO) => (
         <Space>
-          <Tooltip title={record.status === 'active' ? t('pause') : t('start')}>
+          <Tooltip title={t('trigger.execute')}>
             <Button
               type="text"
-              icon={record.status === 'active' ? <PauseCircleOutlined/> : <PlayCircleOutlined/>}
+              icon={<ThunderboltOutlined/>}
+              onClick={() => handleExecute(record.id!)}
+            />
+          </Tooltip>
+          <Tooltip title={record.state ? t('pause') : t('start')}>
+            <Button
+              type="text"
+              icon={record.state ? <PauseCircleOutlined/> : <PlayCircleOutlined/>}
               onClick={() => handleToggleStatus(record)}
             />
           </Tooltip>
@@ -237,7 +210,7 @@ const TriggerList: React.FC = () => {
           <Popconfirm
             title={t('delete_confirm')}
             description={t('trigger.delete_confirm_desc', {name: record.name})}
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(record.id!)}
             okText={t('confirm')}
             cancelText={t('cancel')}
           >
@@ -254,10 +227,8 @@ const TriggerList: React.FC = () => {
     },
   ];
 
-  // 计算当前页显示的数据
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentData = triggers.slice(startIndex, endIndex);
+  // 直接使用API返回的数据，不需要客户端分页
+  const currentData = triggers;
 
   return (
     <PageContainer title={t('trigger.title')}
@@ -290,7 +261,7 @@ const TriggerList: React.FC = () => {
           <Pagination
             current={currentPage}
             pageSize={pageSize}
-            total={triggers.length}
+            total={total}
             showSizeChanger={true}
             showQuickJumper={true}
             showTotal={(total, range) =>

@@ -31,7 +31,7 @@ import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
 import FlowDesign from "@/pages/FlowDesign/index.tsx";
 import FlowInstanceList from "@/pages/Flow/components/FlowInstanceList.tsx";
-import TriggerList from "@/pages/Trigger/components/TriggerList";
+import Schedule from "@/pages/Schedule/index.tsx";
 
 export interface RouteConfig {
   path: string;
@@ -138,10 +138,10 @@ export const routes: RouteConfig[] = [
     hideInMenu: true,
   },
   {
-    path: "/trigger",
-    element: <TriggerList/>,
+    path: "/schedule",
+    element: <Schedule/>,
     icon: ThunderboltOutlined,
-    translationKey: "trigger.title",
+    translationKey: "schedule",
   },
   {
     path: "/identity-providers",

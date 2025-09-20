@@ -2,27 +2,26 @@ import React, {useEffect, useState} from 'react';
 import {Checkbox, Col, Divider, Form, Input, InputNumber, Radio, Row, Select, TimePicker} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {
-  COMMON_TIMEZONES,
   DAILY_TIME_INTERVAL_UNITS,
   DAYS_OF_WEEK,
   INTERVAL_UNITS,
   MUTATION_TYPES,
-  Trigger,
   TRIGGER_TIMINGS,
   TriggerFormType
 } from '@/types/trigger';
+import {TriggerDTO} from '@/services/trigger';
 import {getDatasourceList} from '@/services/datasource';
 import {getModelList} from '@/services/model';
 import {DatasourceSchema} from '@/types/data-source';
 import {EntitySchema, EnumSchema, NativeQuerySchema} from '@/types/data-modeling';
 
-const {Option} = Select;
+const { Option } = Select;
 
 export interface TriggerFormProps {
   /** 表单模式：create | edit | view */
   mode: 'create' | 'edit' | 'view';
   /** 编辑时的触发器数据 */
-  trigger?: Trigger;
+  trigger?: TriggerDTO;
   /** 外部Form实例 */
   form?: any;
   /** 提交回调 */
@@ -30,12 +29,12 @@ export interface TriggerFormProps {
 }
 
 const TriggerForm: React.FC<TriggerFormProps> = ({
-                                                   mode,
-                                                   trigger,
-                                                   form: externalForm,
-                                                   onSubmit
-                                                 }) => {
-  const {t} = useTranslation();
+  mode,
+  trigger,
+  form: externalForm,
+  onSubmit
+}) => {
+  const { t } = useTranslation();
   const [internalForm] = Form.useForm();
   const form = externalForm || internalForm;
   const [triggerFormType, setTriggerFormType] = useState<TriggerFormType>('interval');
@@ -88,7 +87,7 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
         setTriggerFormType(trigger.config.triggerForm);
       }
       // 设置选中的数据源
-      if (trigger.type === 'event' && 'datasourceName' in trigger.config) {
+      if (trigger.type === 'EVENT' && 'datasourceName' in trigger.config) {
         setSelectedDatasource(trigger.config.datasourceName);
       }
     } else if (mode === 'create') {
@@ -119,7 +118,7 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
       <Form.Item
         name="name"
         label={t('name')}
-        rules={[{required: true, message: t('input_valid_msg', {name: t('name')})}]}
+        rules={[{ required: true, message: t('input_valid_msg', { name: t('name') }) }]}
       >
         <Input
           placeholder={t('trigger.enter_name')}
@@ -141,28 +140,28 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
       <Form.Item
         name="type"
         label={t('type')}
-        rules={[{required: true, message: t('trigger.select_type')}]}
+        rules={[{ required: true, message: t('trigger.select_type') }]}
       >
         <Select
           placeholder={t('trigger.select_type')}
           disabled={mode === 'view'}
         >
-          <Option value="cron">{t('trigger.type_cron')}</Option>
-          <Option value="event">{t('trigger.type_event')}</Option>
+          <Option value="SCHEDULED">{t('trigger.type_scheduled')}</Option>
+          <Option value="EVENT">{t('trigger.type_event')}</Option>
         </Select>
       </Form.Item>
 
       {/* 当选择定时触发时，显示触发形式配置 */}
       <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.type !== currentValues.type}>
-        {({getFieldValue}) => {
+        {({ getFieldValue }) => {
           const triggerType = getFieldValue('type');
-          if (triggerType === 'cron') {
+          if (triggerType === 'SCHEDULED') {
             return (
               <>
                 <Form.Item
                   name="triggerForm"
                   label={t('trigger.form')}
-                  rules={[{required: true, message: t('trigger.select_form')}]}
+                  rules={[{ required: true, message: t('trigger.select_form') }]}
                 >
                   <Select
                     placeholder={t('trigger.select_form')}
@@ -177,35 +176,54 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
 
                 {/* 触发形式配置 */}
                 <Form.Item noStyle
-                           shouldUpdate={(prevValues, currentValues) => prevValues.triggerForm !== currentValues.triggerForm}>
-                  {({getFieldValue}) => {
+                  shouldUpdate={(prevValues, currentValues) => prevValues.triggerForm !== currentValues.triggerForm}>
+                  {({ getFieldValue }) => {
                     const formType = getFieldValue('triggerForm') || triggerFormType;
                     return renderTriggerFormConfig(formType, mode, t);
                   }}
                 </Form.Item>
               </>
             );
-          } else if (triggerType === 'event') {
+          } else if (triggerType === 'EVENT') {
             return renderEventTriggerConfig(mode, t, datasources, models, selectedDatasource, handleDatasourceChange);
           }
           return null;
         }}
       </Form.Item>
-
-      <Form.Item
-        name="flowId"
-        label={t('flow')}
-        rules={[{required: true, message: t('trigger.select_flow')}]}
-      >
-        <Select
-          placeholder={t('trigger.select_flow')}
-          disabled={mode === 'view'}
-        >
-          <Option value="flow-1">数据同步动作</Option>
-          <Option value="flow-2">用户欢迎动作</Option>
-          <Option value="flow-3">数据备份动作</Option>
-        </Select>
-      </Form.Item>
+       <Divider orientation="left">{t('trigger.job')}</Divider>
+       <Row gutter={16}>
+         <Col span={8}>
+           <Form.Item
+             name="jobType"
+             label={t('trigger.job_type')}
+             rules={[{ required: true, message: t('trigger.select_job_type') }]}
+           >
+             <Select
+               placeholder={t('trigger.select_job_type')}
+               disabled={mode === 'view'}
+               defaultValue="FLOW"
+             >
+               <Option value="FLOW">{t('flow')}</Option>
+             </Select>
+           </Form.Item>
+         </Col>
+         <Col span={16}>
+           <Form.Item
+             name="jobId"
+             label={t('trigger.job_name')}
+             rules={[{ required: true, message: t('trigger.select_job_name') }]}
+           >
+             <Select
+               placeholder={t('trigger.select_job_name')}
+               disabled={mode === 'view'}
+             >
+               <Option value="flow-1">数据同步动作</Option>
+               <Option value="flow-2">用户欢迎动作</Option>
+               <Option value="flow-3">数据备份动作</Option>
+             </Select>
+           </Form.Item>
+         </Col>
+       </Row>
     </Form>
   );
 };
@@ -220,25 +238,25 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
         <>
           <Divider orientation="left">{t('trigger.interval_trigger')}</Divider>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col span={8}>
               <Form.Item
                 name={['config', 'interval']}
                 label={t('trigger.interval_value')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.interval_value')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.interval_value') }) }]}
               >
                 <InputNumber
                   min={1}
                   placeholder={t('trigger.interval_value')}
                   disabled={mode === 'view'}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <Form.Item
                 name={['config', 'intervalUnit']}
                 label={t('trigger.interval_unit')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.interval_unit')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.interval_unit') }) }]}
               >
                 <Select
                   placeholder={t('trigger.interval_unit')}
@@ -252,7 +270,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <Form.Item
                 name={['config', 'repeatCount']}
                 label={t('trigger.repeat_count')}
@@ -262,26 +280,8 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
                   min={1}
                   placeholder={t('trigger.repeat_count')}
                   disabled={mode === 'view'}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                 />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                name={['config', 'timezone']}
-                label={t('trigger.timezone')}
-              >
-                <Select
-                  placeholder={t('trigger.timezone_placeholder')}
-                  disabled={mode === 'view'}
-                  allowClear
-                >
-                  {COMMON_TIMEZONES.map(timezone => (
-                    <Option key={timezone.value} value={timezone.value}>
-                      {timezone.label}
-                    </Option>
-                  ))}
-                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -295,29 +295,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
           <Form.Item
             name={['config', 'cronExpression']}
             label={t('trigger.cron_expression')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.cron_expression')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.cron_expression') }) }]}
             tooltip={t('trigger.cron_expression_help')}
           >
             <Input
               placeholder={t('trigger.cron_expression_placeholder')}
               disabled={mode === 'view'}
             />
-          </Form.Item>
-          <Form.Item
-            name={['config', 'timezone']}
-            label={t('trigger.timezone')}
-          >
-            <Select
-              placeholder={t('trigger.timezone_placeholder')}
-              disabled={mode === 'view'}
-              allowClear
-            >
-              {COMMON_TIMEZONES.map(timezone => (
-                <Option key={timezone.value} value={timezone.value}>
-                  {timezone.label}
-                </Option>
-              ))}
-            </Select>
           </Form.Item>
         </>
       );
@@ -332,13 +316,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               <Form.Item
                 name={['config', 'startTime']}
                 label={t('trigger.start_time')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.start_time')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.start_time') }) }]}
               >
                 <TimePicker
                   format="HH:mm:ss"
                   placeholder={t('trigger.start_time')}
                   disabled={mode === 'view'}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
@@ -346,13 +330,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               <Form.Item
                 name={['config', 'endTime']}
                 label={t('trigger.end_time')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.end_time')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.end_time') }) }]}
               >
                 <TimePicker
                   format="HH:mm:ss"
                   placeholder={t('trigger.end_time')}
                   disabled={mode === 'view'}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
@@ -360,13 +344,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               <Form.Item
                 name={['config', 'interval']}
                 label={t('trigger.interval_value')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.interval_value')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.interval_value') }) }]}
               >
                 <InputNumber
                   min={1}
                   placeholder={t('trigger.interval_value')}
                   disabled={mode === 'view'}
-                  style={{width: '100%'}}
+                  style={{ width: '100%' }}
                 />
               </Form.Item>
             </Col>
@@ -376,7 +360,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               <Form.Item
                 name={['config', 'intervalUnit']}
                 label={t('trigger.interval_unit')}
-                rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.interval_unit')})}]}
+                rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.interval_unit') }) }]}
               >
                 <Select
                   placeholder={t('trigger.interval_unit')}
@@ -391,27 +375,13 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name={['config', 'timezone']}
-                label={t('trigger.timezone')}
-              >
-                <Select
-                  placeholder={t('trigger.timezone_placeholder')}
-                  disabled={mode === 'view'}
-                  allowClear
-                >
-                  <Option value="Asia/Shanghai">Asia/Shanghai</Option>
-                  <Option value="UTC">UTC</Option>
-                  <Option value="America/New_York">America/New_York</Option>
-                  <Option value="Europe/London">Europe/London</Option>
-                </Select>
-              </Form.Item>
+              {/* 占位列，保持布局平衡 */}
             </Col>
           </Row>
           <Form.Item
             name={['config', 'daysOfWeek']}
             label={t('trigger.days_of_week')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.days_of_week')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.days_of_week') }) }]}
           >
             <Checkbox.Group disabled={mode === 'view'}>
               <Row>
@@ -448,7 +418,7 @@ const renderEventTriggerConfig = (
           <Form.Item
             name={['config', 'datasourceName']}
             label={t('datasource')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('datasource')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('datasource') }) }]}
           >
             <Select
               placeholder={t('select_datasource')}
@@ -467,7 +437,7 @@ const renderEventTriggerConfig = (
           <Form.Item
             name={['config', 'modelName']}
             label={t('model')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('model')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('model') }) }]}
           >
             <Select
               placeholder={t('select_model')}
@@ -487,7 +457,7 @@ const renderEventTriggerConfig = (
           <Form.Item
             name={['config', 'mutationTypes']}
             label={t('trigger.mutation_types')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.mutation_types')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.mutation_types') }) }]}
           >
             <Checkbox.Group disabled={mode === 'view'}>
               <Row>
@@ -504,7 +474,7 @@ const renderEventTriggerConfig = (
           <Form.Item
             name={['config', 'triggerTiming']}
             label={t('trigger.timing')}
-            rules={[{required: true, message: t('input_valid_msg', {name: t('trigger.timing')})}]}
+            rules={[{ required: true, message: t('input_valid_msg', { name: t('trigger.timing') }) }]}
             initialValue="after"
           >
             <Radio.Group disabled={mode === 'view'}>

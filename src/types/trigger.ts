@@ -46,7 +46,7 @@ export interface Trigger {
   id: string;
   name: string;
   description?: string;
-  type: 'cron' | 'event';
+  type: 'scheduled' | 'event';
   status: 'active' | 'inactive';
   flowId: string;
   flowName: string;
