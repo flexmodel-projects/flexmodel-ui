@@ -13,6 +13,7 @@ import {
   Space,
   Table,
   Tag,
+  theme,
 } from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
@@ -25,6 +26,7 @@ import ApiLogChart from "./components/ApiLogChart";
 const { RangePicker } = DatePicker;
 
 const LogViewer: React.FC = () => {
+  const { token } = theme.useToken();
   const { t } = useTranslation();
   const [tableData, setTableData] = useState<{ list: ApiLog[]; total: number }>({ list: [], total: 0 });
   const [log, setLog] = useState<ApiLog | null>(null);
@@ -34,7 +36,6 @@ const LogViewer: React.FC = () => {
   const [form] = Form.useForm();
   const [query, setQuery] = useState({ page: 1, size: 100 });
   const [settingsDialogVisible, setSettingsDialogVisible] = useState<boolean>(false);
-
 
 
   const getApiLogsHandler = async () => {
@@ -156,135 +157,142 @@ const LogViewer: React.FC = () => {
 
   return (
     <PageContainer>
-      {/* 搜索表单区域 */}
       <div style={{
-        marginBottom: '16px',
-        flexShrink: 0
-      }}>
-        <Form form={form}>
-          {expand && (
-            <Row gutter={16} style={{ marginBottom: '12px' }}>
-              <Col span={6}>
-                <Form.Item name="isSuccess" label={t("is_success")}>
-                  <Select style={{ width: "100%" }} allowClear>
-                    <Select.Option value={true}>{t("success")}</Select.Option>
-                    <Select.Option value={false}>{t("fail")}</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={18}>
-                <Form.Item name="dateRange" label={t("date_range")}>
-                  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px' }}>
-            <div style={{ flex: 1 }}>
-              <Form.Item
-                name="keyword"
-                label={t("search_keywords")}
-                style={{ marginBottom: 0 }}
-              >
-                <Input placeholder={t("search_keywords")} />
-              </Form.Item>
-            </div>
-            <div>
-              <Space>
-                <Button
-                  icon={<SearchOutlined />}
-                  type="primary"
-                  onClick={searchLog}
-                >
-                  {t("search")}
-                </Button>
-                <Button type="default" onClick={resetLog}>
-                  {t("reset")}
-                </Button>
-                <Button
-                  icon={<SettingOutlined />}
-                  onClick={() => setSettingsDialogVisible(true)}
-                />
-                <a onClick={() => setExpand(!expand)}>
-                  {expand ? (
-                    <>
-                      {t("collapse")} <UpOutlined />
-                    </>
-                  ) : (
-                    <>
-                      {t("expand")} <DownOutlined />
-                    </>
-                  )}
-                </a>
-              </Space>
-            </div>
-          </div>
-        </Form>
-      </div>
-
-      {/* 图表区域 */}
-      <div style={{
-        height: '200px',
-        marginBottom: '10px',
-        flexShrink: 0
-      }}>
-        <ApiLogChart chartData={chartData} />
-      </div>
-
-      {/* 表格区域 */}
-      <div style={{
-        flex: 1,
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        minHeight: 0,
-        overflow: 'hidden',
-        marginBottom: '10px'
+        padding: token.padding
       }}>
+        {/* 搜索表单区域 */}
+        <div style={{
+          marginBottom: '16px',
+          flexShrink: 0
+        }}>
+          <Form form={form}>
+            {expand && (
+              <Row gutter={16} style={{ marginBottom: '12px' }}>
+                <Col span={6}>
+                  <Form.Item name="isSuccess" label={t("is_success")}>
+                    <Select style={{ width: "100%" }} allowClear>
+                      <Select.Option value={true}>{t("success")}</Select.Option>
+                      <Select.Option value={false}>{t("fail")}</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={18}>
+                  <Form.Item name="dateRange" label={t("date_range")}>
+                    <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: "100%" }} />
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <Form.Item
+                  name="keyword"
+                  label={t("search_keywords")}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input placeholder={t("search_keywords")} />
+                </Form.Item>
+              </div>
+              <div>
+                <Space>
+                  <Button
+                    icon={<SearchOutlined />}
+                    type="primary"
+                    onClick={searchLog}
+                  >
+                    {t("search")}
+                  </Button>
+                  <Button type="default" onClick={resetLog}>
+                    {t("reset")}
+                  </Button>
+                  <Button
+                    icon={<SettingOutlined />}
+                    onClick={() => setSettingsDialogVisible(true)}
+                  />
+                  <a onClick={() => setExpand(!expand)}>
+                    {expand ? (
+                      <>
+                        {t("collapse")} <UpOutlined />
+                      </>
+                    ) : (
+                      <>
+                        {t("expand")} <DownOutlined />
+                      </>
+                    )}
+                  </a>
+                </Space>
+              </div>
+            </div>
+          </Form>
+        </div>
+
+        {/* 图表区域 */}
+        <div style={{
+          height: '200px',
+          marginBottom: '10px',
+          flexShrink: 0
+        }}>
+          <ApiLogChart chartData={chartData} />
+        </div>
+
+        {/* 表格区域 */}
         <div style={{
           flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
           minHeight: 0,
-          overflow: 'hidden'
+          overflow: 'hidden',
+          marginBottom: '10px'
         }}>
-          <Table
-            bordered={false}
-            virtual
-            scroll={{ y: expand ? 200 : 260 }}
-            columns={columns}
-            dataSource={tableData?.list}
-            rowKey="id"
-            rowClassName={() => "cursor-pointer"}
-            onRow={(record) => ({
-              onClick: () => showDetail(record),
-            })}
-            pagination={false}
+          <div style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: 'hidden'
+          }}>
+            <Table
+              bordered={false}
+              virtual
+              scroll={{ y: expand ? 230 : 290 }}
+              columns={columns}
+              dataSource={tableData?.list}
+              rowKey="id"
+              rowClassName={() => "cursor-pointer"}
+              onRow={(record) => ({
+                onClick: () => showDetail(record),
+              })}
+              pagination={false}
+            />
+          </div>
+        </div>
+
+        {/* 分页区域 - 固定在底部 */}
+        <div style={{
+          padding: '20px 0',
+          margin: '20px 0',
+          borderTop: `1px solid ${token.colorBorderSecondary}`,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: 0
+        }}>
+          <Pagination
+            current={query.page}
+            pageSize={query.size}
+            total={tableData.total}
+            showTotal={(total, range) =>
+              t("pagination_total_text", {
+                start: range[0],
+                end: range[1],
+                total: total,
+              })
+            }
+            onChange={(page, size) =>
+              setQuery({ ...query, page, size })
+            }
           />
         </div>
-      </div>
-
-      {/* 分页区域 - 固定在底部 */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        flexShrink: 0,
-        padding: '50px 0',
-        position: 'relative',
-        zIndex: 1
-      }}>
-        <Pagination
-          current={query.page}
-          pageSize={query.size}
-          total={tableData.total}
-          showTotal={(total, range) =>
-            t("pagination_total_text", {
-              start: range[0],
-              end: range[1],
-              total: total,
-            })
-          }
-          onChange={(page, size) =>
-            setQuery({ ...query,  page, size })
-          }
-        />
       </div>
 
       <Drawer

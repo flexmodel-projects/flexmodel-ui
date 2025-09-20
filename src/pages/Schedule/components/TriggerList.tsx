@@ -139,6 +139,15 @@ const TriggerList: React.FC = () => {
     }
   };
 
+  const getJobTypeText = (jobType: string) => {
+    switch (jobType) {
+      case 'FLOW':
+        return t('flow');
+      default:
+        return jobType;
+    }
+  };
+
   const columns = [
     {
       title: t('name'),
@@ -158,6 +167,16 @@ const TriggerList: React.FC = () => {
       render: (type: string) => (
         <Tag color={getTypeColor(type)}>
           {getTypeText(type)}
+        </Tag>
+      ),
+    },
+    {
+      title: t('trigger.job_type'),
+      dataIndex: 'jobType',
+      key: 'jobType',
+      render: (jobType: string) => (
+        <Tag color="blue">
+          {getJobTypeText(jobType)}
         </Tag>
       ),
     },

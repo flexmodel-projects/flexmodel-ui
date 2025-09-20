@@ -9,6 +9,7 @@ export interface Trigger {
   description?: string;
   type: TriggerType;
   config: Record<string, any>;
+  jobType: string; // 任务类型，如 "FLOW"
   jobId: string; // flowId
   state: boolean;
   createdAt?: string;
@@ -40,7 +41,7 @@ export interface TriggerListParams {
 export const getTriggerPage = (
   params?: TriggerListParams,
 ): Promise<PageDTOTriggerDTO> => {
-  return api.get("/triggers", { ...params });
+  return api.get("/schedule/triggers", { ...params });
 };
 
 /**
@@ -49,7 +50,7 @@ export const getTriggerPage = (
  * @returns 创建的触发器
  */
 export const createTrigger = (data: Trigger): Promise<Trigger> => {
-  return api.post("/triggers", data);
+  return api.post("/schedule/triggers", data);
 };
 
 /**
@@ -58,7 +59,7 @@ export const createTrigger = (data: Trigger): Promise<Trigger> => {
  * @returns 触发器详情
  */
 export const getTrigger = (id: string): Promise<TriggerDTO> => {
-  return api.get(`/triggers/${id}`);
+  return api.get(`/schedule/triggers/${id}`);
 };
 
 /**
@@ -68,7 +69,7 @@ export const getTrigger = (id: string): Promise<TriggerDTO> => {
  * @returns 更新后的触发器
  */
 export const updateTrigger = (id: string, data: Trigger): Promise<Trigger> => {
-  return api.put(`/triggers/${id}`, data);
+  return api.put(`/schedule/triggers/${id}`, data);
 };
 
 /**
@@ -78,7 +79,7 @@ export const updateTrigger = (id: string, data: Trigger): Promise<Trigger> => {
  * @returns 更新后的触发器
  */
 export const patchTrigger = (id: string, data: Trigger): Promise<Trigger> => {
-  return api.patch(`/triggers/${id}`, data);
+  return api.patch(`/schedule/triggers/${id}`, data);
 };
 
 /**
@@ -87,7 +88,7 @@ export const patchTrigger = (id: string, data: Trigger): Promise<Trigger> => {
  * @returns 删除结果
  */
 export const deleteTrigger = (id: string): Promise<void> => {
-  return api.delete(`/triggers/${id}`);
+  return api.delete(`/schedule/triggers/${id}`);
 };
 
 /**
@@ -96,5 +97,5 @@ export const deleteTrigger = (id: string): Promise<void> => {
  * @returns 执行结果
  */
 export const executeTrigger = (id: string): Promise<void> => {
-  return api.post(`/triggers/${id}/execute`);
+  return api.post(`/schedule/triggers/${id}/execute`);
 };
