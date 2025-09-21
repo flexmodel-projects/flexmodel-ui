@@ -11,6 +11,7 @@ export interface Trigger {
   config: Record<string, any>;
   jobType: string; // 任务类型，如 "FLOW"
   jobId: string; // flowId
+  jobGroup: string;
   state: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -29,6 +30,9 @@ export interface PageDTOTriggerDTO {
 
 export interface TriggerListParams {
   name?: string;
+  jobGroup?: string;
+  jobType?: string;
+  jobId?: string;
   page?: number;
   size?: number;
 }
@@ -41,7 +45,7 @@ export interface TriggerListParams {
 export const getTriggerPage = (
   params?: TriggerListParams,
 ): Promise<PageDTOTriggerDTO> => {
-  return api.get("/schedule/triggers", { ...params });
+  return api.get("/triggers", {...params});
 };
 
 /**
@@ -50,7 +54,7 @@ export const getTriggerPage = (
  * @returns 创建的触发器
  */
 export const createTrigger = (data: Trigger): Promise<Trigger> => {
-  return api.post("/schedule/triggers", data);
+  return api.post("/triggers", data);
 };
 
 /**
@@ -59,7 +63,7 @@ export const createTrigger = (data: Trigger): Promise<Trigger> => {
  * @returns 触发器详情
  */
 export const getTrigger = (id: string): Promise<TriggerDTO> => {
-  return api.get(`/schedule/triggers/${id}`);
+  return api.get(`/triggers/${id}`);
 };
 
 /**
@@ -69,7 +73,7 @@ export const getTrigger = (id: string): Promise<TriggerDTO> => {
  * @returns 更新后的触发器
  */
 export const updateTrigger = (id: string, data: Trigger): Promise<Trigger> => {
-  return api.put(`/schedule/triggers/${id}`, data);
+  return api.put(`/triggers/${id}`, data);
 };
 
 /**
@@ -79,7 +83,7 @@ export const updateTrigger = (id: string, data: Trigger): Promise<Trigger> => {
  * @returns 更新后的触发器
  */
 export const patchTrigger = (id: string, data: Trigger): Promise<Trigger> => {
-  return api.patch(`/schedule/triggers/${id}`, data);
+  return api.patch(`/triggers/${id}`, data);
 };
 
 /**
@@ -88,7 +92,7 @@ export const patchTrigger = (id: string, data: Trigger): Promise<Trigger> => {
  * @returns 删除结果
  */
 export const deleteTrigger = (id: string): Promise<void> => {
-  return api.delete(`/schedule/triggers/${id}`);
+  return api.delete(`/triggers/${id}`);
 };
 
 /**
@@ -97,5 +101,5 @@ export const deleteTrigger = (id: string): Promise<void> => {
  * @returns 执行结果
  */
 export const executeTrigger = (id: string): Promise<void> => {
-  return api.post(`/schedule/triggers/${id}/execute`);
+  return api.post(`/triggers/${id}/execute`);
 };

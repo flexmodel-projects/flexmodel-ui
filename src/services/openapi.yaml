@@ -1874,7 +1874,11 @@ paths:
       parameters:
       - description: 流程模块ID
         in: query
-        name: flowModuleId
+        name: flowKey
+        schema:
+          type: string
+      - name: flowModuleId
+        in: query
         schema:
           type: string
       - description: 流程名称
@@ -2403,6 +2407,61 @@ paths:
           $ref: "#/components/responses/BadRequest"
       security:
       - BearerAuth: []
+  /api/f/jobs/logs:
+    get:
+      tags:
+      - 【Flexmodel】任务
+      parameters:
+      - name: endTime
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDateTime"
+      - name: isSuccess
+        in: query
+        schema:
+          type: boolean
+      - name: jobId
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: "1"
+      - name: size
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: "20"
+      - name: startTime
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDateTime"
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: triggerId
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageDTOJobExecutionLog"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+      summary: Find Log Page
+      security:
+      - BearerAuth: []
   /api/f/logs:
     get:
       summary: 获取接口日志列表
@@ -2803,6 +2862,18 @@ paths:
       tags:
       - 【Flexmodel】触发器
       parameters:
+      - name: jobGroup
+        in: query
+        schema:
+          type: string
+      - name: jobId
+        in: query
+        schema:
+          type: string
+      - name: jobType
+        in: query
+        schema:
+          type: string
       - name: name
         in: query
         schema:
@@ -2883,6 +2954,35 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalError"
+      security:
+      - BearerAuth: []
+    patch:
+      summary: 部分更新触发器
+      tags:
+      - 【Flexmodel】触发器
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trigger"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trigger"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "400":
+          $ref: "#/components/responses/BadRequest"
       security:
       - BearerAuth: []
     get:
@@ -4155,6 +4255,59 @@ components:
           description: 是否唯一
         modelName:
           type: string
+    JobExecutionLog:
+      type: object
+      properties:
+        id:
+          type: string
+        triggerId:
+          type: string
+        jobId:
+          type: string
+        jobGroup:
+          type: string
+        jobType:
+          type: string
+        jobName:
+          type: string
+        executionStatus:
+          type: string
+        startTime:
+          $ref: "#/components/schemas/LocalDateTime"
+        endTime:
+          $ref: "#/components/schemas/LocalDateTime"
+        executionDuration:
+          type: integer
+          format: int64
+        isSuccess:
+          type: boolean
+        errorMessage:
+          type: string
+        errorStackTrace: {}
+        inputData: {}
+        outputData: {}
+        retryCount:
+          type: integer
+          format: int32
+        maxRetryCount:
+          type: integer
+          format: int32
+        schedulerName:
+          type: string
+        instanceName:
+          type: string
+        firedTime:
+          type: integer
+          format: int64
+        scheduledTime:
+          type: integer
+          format: int64
+        tenantId:
+          type: string
+        createdAt:
+          $ref: "#/components/schemas/LocalDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/LocalDateTime"
     JvmIoInfo:
       type: object
       properties:
@@ -4555,6 +4708,16 @@ components:
           type: string
           readOnly: true
           description: 修改时间
+    PageDTOJobExecutionLog:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            $ref: "#/components/schemas/JobExecutionLog"
+        total:
+          type: integer
+          format: int64
     PageDTOTriggerDTO:
       type: object
       properties:
@@ -5113,9 +5276,11 @@ components:
         type:
           $ref: "#/components/schemas/TriggerType"
         config: {}
-        executorId:
+        jobType:
           type: string
-        executorType:
+        jobGroup:
+          type: string
+        jobId:
           type: string
         state:
           type: boolean
@@ -5135,9 +5300,11 @@ components:
         type:
           $ref: "#/components/schemas/TriggerType"
         config: {}
-        executorId:
+        jobType:
           type: string
-        executorType:
+        jobGroup:
+          type: string
+        jobId:
           type: string
         state:
           type: boolean
@@ -5145,7 +5312,7 @@ components:
           $ref: "#/components/schemas/LocalDateTime"
         updatedAt:
           $ref: "#/components/schemas/LocalDateTime"
-        executorName:
+        jobName:
           type: string
         nextFireTime:
           $ref: "#/components/schemas/LocalDateTime"
@@ -5200,6 +5367,8 @@ components:
 tags:
 - name: 【Flexmodel】GraphQL
   description: GraphQL接口信息
+- name: 【Flexmodel】任务
+  description: 任务管理
 - name: 【Flexmodel】接口定义
   description: 接口定义管理
 - name: 【Flexmodel】接口文档

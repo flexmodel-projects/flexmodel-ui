@@ -1,9 +1,10 @@
 // Quartz触发形式类型定义
 
-export type TriggerFormType = 'interval' | 'cron' | 'daily_time_interval';
+export type TriggerFormType = 'event' | 'interval' | 'cron';
 
 // 统一间隔触发配置（合并了SimpleTrigger和CalendarIntervalTrigger）
 export interface IntervalTriggerConfig {
+  type: 'interval';
   interval: number; // 间隔值
   intervalUnit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year'; // 间隔单位
   repeatCount?: number; // 重复次数，不设置表示无限重复
@@ -12,22 +13,15 @@ export interface IntervalTriggerConfig {
 
 // CronTrigger配置
 export interface CronTriggerConfig {
+  type: 'cron';
   cronExpression: string; // Cron表达式
   timezone?: string; // 时区
 }
 
-// DailyTimeIntervalTrigger配置
-export interface DailyTimeIntervalTriggerConfig {
-  startTime: string; // 开始时间 (HH:mm:ss)
-  endTime: string; // 结束时间 (HH:mm:ss)
-  interval: number; // 间隔值
-  intervalUnit: 'second' | 'minute' | 'hour'; // 间隔单位
-  daysOfWeek: number[]; // 星期几 (1=周日, 2=周一, ..., 7=周六)
-  timezone?: string; // 时区
-}
 
 // EventTrigger配置
 export interface EventTriggerConfig {
+  type: 'event';
   datasourceName: string; // 数据源名称
   modelName: string; // 模型名称
   mutationTypes: ('create' | 'update' | 'delete')[]; // 变更类型：增/删/改
@@ -38,7 +32,6 @@ export interface EventTriggerConfig {
 export type TriggerConfig = 
   | IntervalTriggerConfig 
   | CronTriggerConfig 
-  | DailyTimeIntervalTriggerConfig
   | EventTriggerConfig;
 
 // 触发器接口
@@ -106,12 +99,6 @@ export const INTERVAL_UNITS: IntervalUnitOption[] = [
   { value: 'year', label: 'trigger.interval_years' }
 ];
 
-// 每日时间间隔的间隔单位选项（限制为秒、分钟、小时）
-export const DAILY_TIME_INTERVAL_UNITS: IntervalUnitOption[] = [
-  { value: 'second', label: 'trigger.interval_seconds' },
-  { value: 'minute', label: 'trigger.interval_minutes' },
-  { value: 'hour', label: 'trigger.interval_hours' }
-];
 
 // 变更类型选项
 export interface MutationTypeOption {

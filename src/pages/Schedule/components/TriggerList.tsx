@@ -12,9 +12,18 @@ import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
 import TriggerForm from './TriggerForm';
 import {TriggerDTO} from '@/services/trigger';
+import {EntitySchema} from '@/types/data-modeling';
 
+interface TriggerListProps {
+  /** 数据源名称（用于事件触发模式） */
+  datasource?: string;
+  /** 模型信息（用于事件触发模式） */
+  model?: EntitySchema;
+  /** 是否只显示事件触发 */
+  eventOnly?: boolean;
+}
 
-const TriggerList: React.FC = () => {
+const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly = false }) => {
   const {t} = useTranslation();
   const { token } = theme.useToken();
   const [form] = Form.useForm();
@@ -28,16 +37,23 @@ const TriggerList: React.FC = () => {
 
   useEffect(() => {
     loadTriggers();
-  }, [currentPage, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentPage, pageSize, eventOnly, datasource, model]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTriggers = async () => {
     setLoading(true);
     try {
       const { getTriggerPage } = await import('@/services/trigger');
-      const response = await getTriggerPage({
+      const params: any = {
         page: currentPage,
         size: pageSize
-      });
+      };
+      
+      // 在eventOnly模式下，使用jobGroup过滤
+      if (eventOnly && datasource && model) {
+        params.jobGroup = `${datasource}_${model.name}`;
+      }
+      
+      const response = await getTriggerPage(params);
       setTriggers(response.list);
       setTotal(response.total);
     } catch {
@@ -314,6 +330,9 @@ const TriggerList: React.FC = () => {
           trigger={editingTrigger || undefined}
           onSubmit={handleSubmit}
           form={form}
+          datasource={datasource}
+          model={model}
+          eventOnly={eventOnly}
         />
       </Modal>
     </PageContainer>

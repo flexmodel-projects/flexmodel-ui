@@ -429,11 +429,9 @@
     "form": "Trigger Form",
     "form_interval": "Interval Trigger",
     "form_cron": "Cron Expression",
-    "form_daily_time_interval": "Daily Time Range",
     "select_form": "Please select trigger form",
     "interval_trigger": "Interval Trigger",
     "cron_trigger": "Cron Trigger",
-    "daily_time_interval_trigger": "Daily Time Interval Trigger",
     "enter_name": "Please enter trigger name",
     "enter_description": "Please enter trigger description",
     "select_type": "Please select trigger type",
@@ -602,5 +600,6 @@
   "model": "Model",
   "select_model": "Select Model",
   "description": "Description",
-  "status": "Status"
+  "status": "Status",
+  "job_execution_log": "Job Execution Log"
 }

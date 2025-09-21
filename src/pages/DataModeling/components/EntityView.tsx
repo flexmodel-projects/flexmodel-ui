@@ -7,34 +7,38 @@ import CodeView from "./CodeView";
 import FieldList from "./FieldList";
 import IndexList from "./IndexList";
 import RecordList from "./RecordList";
+import TriggerWrapper from "@/pages/DataModeling/components/TriggerWrapper.tsx";
 
 interface Props {
   datasource: string;
   model: any;
 }
 
-const EntityView = ({ datasource, model }: Props) => {
-  const { t } = useTranslation();
+const EntityView = ({datasource, model}: Props) => {
+  const {t} = useTranslation();
   const [selectedItem, setSelectedItem] = useState<string>("field");
 
   // 选项设置
   const options = [
-    { label: t("field"), value: "field" },
-    { label: t("index"), value: "index" },
-    { label: t("record"), value: "record" },
-    { label: t("code"), value: "code" },
+    {label: t("field"), value: "field"},
+    {label: t("index"), value: "index"},
+    {label: t("record"), value: "record"},
+    {label: t("trigger.title"), value: "trigger"},
+    {label: t("code"), value: "code"},
   ];
 
   const renderContent = () => {
     switch (selectedItem) {
       case "field":
-        return <FieldList datasource={datasource} model={model} />;
+        return <FieldList datasource={datasource} model={model}/>;
       case "index":
-        return <IndexList datasource={datasource} model={model} />;
+        return <IndexList datasource={datasource} model={model}/>;
       case "record":
-        return <RecordList datasource={datasource} model={model} />;
+        return <RecordList datasource={datasource} model={model}/>;
       case "code":
-        return <CodeView datasource={datasource} model={model} />;
+        return <CodeView datasource={datasource} model={model}/>;
+      case "trigger":
+        return <TriggerWrapper datasource={datasource} model={model}/>;
       default:
         return null;
     }
@@ -42,10 +46,10 @@ const EntityView = ({ datasource, model }: Props) => {
 
   return (
     <>
-      <Row align="middle" justify="space-between" style={{ marginBottom: 16 }}>
+      <Row align="middle" justify="space-between" style={{marginBottom: 16}}>
         <Col>
           <Space align="center">
-            <Typography.Title level={5} style={{ margin: 0 }}>
+            <Typography.Title level={5} style={{margin: 0}}>
               {model?.name} {model?.comment}
             </Typography.Title>
             <Popover
@@ -53,7 +57,7 @@ const EntityView = ({ datasource, model }: Props) => {
                 <div>
                   <Typography.Paragraph
                     copyable
-                    style={{ whiteSpace: "pre-wrap", margin: "8px 0 0 0" }}
+                    style={{whiteSpace: "pre-wrap", margin: "8px 0 0 0"}}
                   >
                     {model?.idl}
                   </Typography.Paragraph>
@@ -61,7 +65,7 @@ const EntityView = ({ datasource, model }: Props) => {
               }
               title="接口描述"
             >
-              <Button icon={<CodeOutlined />} type="text" size="small" />
+              <Button icon={<CodeOutlined/>} type="text" size="small"/>
             </Popover>
           </Space>
         </Col>
