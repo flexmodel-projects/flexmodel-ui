@@ -39,8 +39,8 @@ const GraphQLAPI: React.FC = () => {
 
   return (
     <PageContainer
-      title={settings?.security.graphqlEndpointPath ? 
-        `${t('graphql_endpoint')}: ${config?.apiRootPath || ''}${settings.security.graphqlEndpointPath}` : 
+      title={settings?.security.graphqlEndpointPath ?
+        `${t('graphql_endpoint')}: ${config?.apiRootPath || ''}${settings.security.graphqlEndpointPath}` :
         t('graphql_api_title')
       }
       extra={
@@ -49,45 +49,58 @@ const GraphQLAPI: React.FC = () => {
             type="text"
             icon={<SettingOutlined/>}
             onClick={() => setSettingsModalVisible(true)}
-            >
-              {t('graphql_settings')}
-            </Button>
+          >
+            {t('graphql_settings')}
+          </Button>
         </Space>
       }
     >
       <GraphQL
         data={{
           query: `
-# Welcome to GraphiQL
-#
-# GraphiQL is an in-browser tool for writing, validating, and testing
-# GraphQL queries.
-#
-# Type queries into this side of the screen, and you will see intelligent
-# typeaheads aware of the current GraphQL type schema and live syntax and
-# validation errors highlighted within the text.
-#
-# GraphQL queries typically start with a "{" character. Lines that start
-# with a # are ignored.
-#
-# An example GraphQL query might look like:
-#
-#     {
-#       field(arg: "value") {
-#         subField
+# 欢迎使用Flexmodel GraphQL API
+# 使用前请先熟悉语法文档：https://www.graphql.org/learn/ ， 以下为一些指令的示例
+# 转换结果： 在使用 GraphQL 查询数据时，由于查询的层级可能较深，有时需要将多层嵌套的数据进行扁平化处理，以便于前端使用。
+# query MyQuery {
+#   courses: system_list_Student(where: {studentName: {_in: ["李四", "王五"]}}) {
+#     classId
+#     studentName
+#   }
+#   total: system_aggregate_Student(where: {studentName: {_in: ["李四", "王五"]}}) @transform(get: "_count") {
+#     _count
+#     _max {
+#       age
+#     }
+#   }
+#   maxAge: system_aggregate_Student(where: {studentName: {_in: ["李四", "王五"]}}) @transform(get: "_max.age") {
+#     _max {
+#       age
+#     }
+#   }
+# }
+# 将 @transform 作用于对象/数组类型的选择集上，将其拍扁，提取出对应的字段。
+# 跨源关联： 将前一个查询的返回值作为参数传递给下一个查询。
+# query MyQuery($studentId: Int @internal) {
+#   courses: system_list_Student(where: {studentName: {_in: ["李四", "王五"]}}) {
+#     id @export(as: "studentId")
+#     classId
+#     studentName
+#     courses {
+#       courseName
+#       courseNo
+#     }
+#     _join {
+#       detail: system_find_one_StudentDetail(where: {studentId: {_eq: $studentId}}) {
+#         description
 #       }
 #     }
+#   }
+# }
 #
-# Keyboard shortcuts:
+# 通过 @export 导出参数，在_join中引用，参数名必须与导出的参数名一致。
+# 通过 @internal 指定是一个内部参数，不返回给客户端。
 #
-#   Prettify query:  Shift-Ctrl-P (or press the prettify button)
-#
-#  Merge fragments:  Shift-Ctrl-M (or press the merge button)
-#
-#        Run Query:  Ctrl-Enter (or press the play button)
-#
-#    Auto Complete:  Space (or just start typing)
-#
+
 
 `,
         }}
