@@ -66,6 +66,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        width: '100%',
         overflow: 'hidden',
         color: token.colorText
       }}>
@@ -77,6 +78,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
             overflow: 'auto',
             padding: token.paddingSM,
             backgroundColor: token.colorBgContainer,
+            width: '100%',
             display: 'flex',
             flexDirection: 'column',
             gap: token.marginMD

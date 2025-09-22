@@ -21,13 +21,11 @@ const { Text } = Typography;
 const { Option } = Select;
 
 interface ConsoleProps {
-  isVisible: boolean;
   onToggle: () => void;
-  onHeightChange?: (height: number) => void;
 }
 
 
-const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }) => {
+const Console: React.FC<ConsoleProps> = ({ onToggle }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const [filterLevel, setFilterLevel] = useState<string>('ALL');
@@ -35,8 +33,6 @@ const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }
   const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState('');
   const [fontSize, setFontSize] = useState(12);
   const [displayLimit, setDisplayLimit] = useState<number>(100); // 默认显示100条
-  const [consoleHeight, setConsoleHeight] = useState(300); // 控制台高度
-  const [isDragging, setIsDragging] = useState(false); // 是否正在拖动
 
   // 使用WebSocket Hook
   const {
@@ -114,53 +110,6 @@ const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }
     }
   }, [logsEndRef]);
 
-  // 拖动处理函数
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-
-    const newHeight = window.innerHeight - e.clientY;
-    // 限制高度范围：最小150px，最大600px
-    const clampedHeight = Math.max(150, Math.min(600, newHeight));
-    setConsoleHeight(clampedHeight);
-    onHeightChange?.(clampedHeight);
-  }, [isDragging, onHeightChange]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // 监听鼠标事件
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = 'ns-resize';
-      document.body.style.userSelect = 'none';
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
-  // 初始化时通知高度
-  useEffect(() => {
-    onHeightChange?.(consoleHeight);
-  }, [consoleHeight, onHeightChange]);
-
   // 获取日志级别颜色 - 使用useCallback缓存
   const getLevelColor = useCallback((level: string) => {
     switch (level) {
@@ -233,64 +182,24 @@ const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }
     }
   }, [filteredLogs.length, displayLimit, filterLevel, debouncedSearchKeyword, logsEndRef]);
 
-  // 当控制台首次打开时，滚动到底部
+  // 打开时滚动到底部（交由父组件控制可见性，这里仅在有日志时尝试）
   useEffect(() => {
-    if (isVisible && filteredLogs.length > 0) {
-      // 控制台打开时，延迟滚动确保DOM完全渲染
+    if (filteredLogs.length > 0) {
       setTimeout(() => {
         scrollToBottom();
       }, 200);
     }
-  }, [isVisible, filteredLogs.length, scrollToBottom]);
-
-
-
-  if (!isVisible) {
-    return;
-  }
+  }, [filteredLogs.length, scrollToBottom]);
 
   return (
     <div style={{
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      height: `${consoleHeight}px`,
-      background: token.colorBgContainer,
-      borderTop: `1px solid ${token.colorBorder}`,
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 1000,
-      boxShadow: '0 -2px 8px rgba(0,0,0,0.1)'
+      height: '100%',
+      width: '100%',
+      borderTop: `1px solid ${token.colorBorder}`,
+      background: token.colorBgContainer
     }}>
-      {/* 拖动条 */}
-      <div
-        style={{
-          height: '6px',
-          background: isDragging ? token.colorPrimary : token.colorBorder,
-          cursor: 'ns-resize',
-          borderBottom: `1px solid ${token.colorBorder}`,
-          transition: isDragging ? 'none' : 'background-color 0.2s ease',
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        onMouseDown={handleMouseDown}
-        title={t('console.drag_to_resize')}
-      >
-        {/* 拖动指示器 */}
-        <div
-          style={{
-            width: '20px',
-            height: '2px',
-            background: isDragging ? token.colorBgContainer : token.colorTextSecondary,
-            borderRadius: '1px',
-            opacity: isDragging ? 1 : 0.6,
-            transition: 'opacity 0.2s ease'
-          }}
-        />
-      </div>
       {/* 控制栏 */}
       <div style={{
         padding: '8px 16px',
@@ -298,7 +207,8 @@ const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: token.colorFillQuaternary
+        background: token.colorFillQuaternary,
+        width: '100%'
       }}>
         <Space>
           <Text strong>{t('console.title')}</Text>
@@ -424,7 +334,8 @@ const Console: React.FC<ConsoleProps> = ({ isVisible, onToggle, onHeightChange }
         fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
         fontSize: `${fontSize}px`,
         lineHeight: '1.4',
-        background: token.colorBgLayout
+        background: token.colorBgLayout,
+        width: '100%'
       }} onScroll={handleContentScroll}>
         {filteredLogs.length === 0 ? (
           <div style={{

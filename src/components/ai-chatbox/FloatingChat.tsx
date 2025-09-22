@@ -115,11 +115,13 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
       </div>
 
       {/* 聊天内容区域 */}
-      <ChatContent
-        messages={messages}
-        isLoading={isLoading}
-        onSendMessage={onSendMessage}
-      />
+      <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
+        <ChatContent
+          messages={messages}
+          isLoading={isLoading}
+          onSendMessage={onSendMessage}
+        />
+      </div>
     </div>
   );
 };

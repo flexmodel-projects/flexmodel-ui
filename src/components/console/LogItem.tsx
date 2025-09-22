@@ -19,18 +19,15 @@ const LogItem: React.FC<LogItemProps> = React.memo(({ log, getLevelColor, token,
       flexWrap: 'wrap' as const,
       wordBreak: 'break-all' as const
     },
-    icon: { color: token.colorSuccess, fontSize: '12px', flexShrink: 0 },
-    timestamp: { color: token.colorTextSecondary, minWidth: '150px', flexShrink: 0 },
+    timestamp: { color: token.colorTextSecondary, flexShrink: 0 },
     level: { fontWeight: 'bold', minWidth: '30px', flexShrink: 0 },
     source: {
       color: token.colorTextSecondary,
-      minWidth: '200px',
       wordBreak: 'break-all' as const,
       overflowWrap: 'break-word' as const
     },
     thread: {
       color: token.colorTextSecondary,
-      minWidth: '60px',
       wordBreak: 'break-all' as const,
       overflowWrap: 'break-word' as const
     },
@@ -39,7 +36,6 @@ const LogItem: React.FC<LogItemProps> = React.memo(({ log, getLevelColor, token,
       wordBreak: 'break-all' as const,
       overflowWrap: 'break-word' as const,
       flex: 1,
-      minWidth: '200px'
     },
     dataContainer: {
       marginLeft: '20px',
@@ -94,7 +90,6 @@ const LogItem: React.FC<LogItemProps> = React.memo(({ log, getLevelColor, token,
   return (
     <div style={styles.container}>
       <div style={styles.logLine}>
-        <span style={styles.icon}>🌿</span>
         <span style={styles.timestamp}>
           {log.timestamp}
         </span>

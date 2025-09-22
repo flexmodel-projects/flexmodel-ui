@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Layout, Splitter, theme} from "antd";
+import {Layout, theme} from "antd";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import {RenderRoutes} from "@/routes";
@@ -7,6 +7,7 @@ import {useSidebar} from "@/store/appStore";
 import AIChatBox from "@/components/ai-chatbox/index";
 import Console from "@/components/console/Console.tsx";
 import {Message} from "../ai-chatbox/types";
+import ResizablePanel from "@/components/common/ResizablePanel";
 
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
@@ -16,7 +17,6 @@ const PageLayout: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isConsoleVisible, setIsConsoleVisible] = useState(false);
-  const [consoleHeight, setConsoleHeight] = useState(300);
 
   return (
     <Layout style={{
@@ -41,32 +41,29 @@ const PageLayout: React.FC = () => {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            minHeight: 0, // 重要：允许 flex 子元素收缩
-            overflow: "hidden", // 改为hidden，让Splitter控制滚动
-            marginTop: token.controlHeight * 1.5, // 为固定的header留出空间
-            marginBottom: isConsoleVisible ? consoleHeight : 0, // 为Console留出空间
-            transition: "margin-bottom 0.3s cubic-bezier(0.4,0,0.2,1)" // 平滑过渡
+            minHeight: 0,
+            overflow: "hidden",
+            marginTop: token.controlHeight * 1.5
           }}
         >
-          <Splitter style={{ height: '100%' }}>
-            <Splitter.Panel style={{
-              padding: token.padding,
-              display: 'flex',
-              flex: 1,
-              minHeight: 0,
-              overflow: 'auto'
-            }}>
-              <RenderRoutes />
-            </Splitter.Panel>
-
-            {/* 固定模式下的AI聊天面板 */}
-            {isAIChatVisible && !isAIChatFloating && (
-              <Splitter.Panel
-                defaultSize="25%"
-                style={{
-                  overflow: 'hidden'
-                }}
-              >
+          <ResizablePanel
+            visible={isConsoleVisible}
+            placement="bottom"
+            defaultSize={300}
+            minSize={150}
+            maxSize={600}
+            renderPanel={() => (
+              <Console onToggle={() => setIsConsoleVisible((v) => !v)} />
+            )}
+          >
+            <ResizablePanel
+              visible={isAIChatVisible && !isAIChatFloating}
+              placement="right"
+              defaultSize={420}
+              minSize={320}
+              maxSize={600}
+              mainStyle={{ padding: token.padding }}
+              renderPanel={() => (
                 <AIChatBox
                   conversationId={conversationId}
                   messages={messages}
@@ -79,9 +76,11 @@ const PageLayout: React.FC = () => {
                   isFloating={isAIChatFloating}
                   onToggleFloating={setIsAIChatFloating}
                 />
-              </Splitter.Panel>
-            )}
-          </Splitter>
+              )}
+            >
+              <RenderRoutes />
+            </ResizablePanel>
+          </ResizablePanel>
         </Layout.Content>
       </Layout>
 
@@ -101,12 +100,7 @@ const PageLayout: React.FC = () => {
         />
       )}
 
-      {/* Console控制台 */}
-      <Console
-        isVisible={isConsoleVisible}
-        onToggle={() => setIsConsoleVisible((v) => !v)}
-        onHeightChange={setConsoleHeight}
-      />
+      {/* Console 控制台已内联至底部 ResizablePanel 中 */}
     </Layout>
   );
 };

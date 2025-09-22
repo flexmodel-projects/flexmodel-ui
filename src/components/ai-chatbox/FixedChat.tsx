@@ -20,6 +20,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
     <div
       style={{
         height: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: token.colorBgContainer,
