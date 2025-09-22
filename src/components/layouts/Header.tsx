@@ -7,6 +7,7 @@ import {useLocale, useSidebar, useTheme} from "@/store/appStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {
+  ConsoleSqlOutlined,
   FileSearchOutlined,
   GlobalOutlined,
   HomeOutlined,
@@ -22,10 +23,11 @@ import {getFullRoutePath} from "@/routes";
 
 type HeaderProps = {
   onToggleAIChat?: () => void;
+  onToggleConsole?: () => void;
 };
 
 
-const Header: React.FC<HeaderProps> = ({ onToggleAIChat }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
   const { t } = useTranslation();
   const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
   const { setLocale: setLocaleStore, currentLang } = useLocale();
@@ -147,6 +149,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat }) => {
               </g>
             </svg>}
             onClick={onToggleAIChat}
+          />
+          <Button
+            icon={<ConsoleSqlOutlined />}
+            onClick={onToggleConsole}
           />
           <Switch
             checked={isDark}

@@ -5,6 +5,7 @@ import Header from "./Header";
 import {RenderRoutes} from "@/routes";
 import {useSidebar} from "@/store/appStore";
 import AIChatBox from "@/components/ai-chatbox/index";
+import Console from "@/components/console/Console.tsx";
 import {Message} from "../ai-chatbox/types";
 
 const PageLayout: React.FC = () => {
@@ -14,6 +15,8 @@ const PageLayout: React.FC = () => {
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isConsoleVisible, setIsConsoleVisible] = useState(false);
+  const [consoleHeight, setConsoleHeight] = useState(300);
 
   return (
     <Layout style={{
@@ -29,7 +32,10 @@ const PageLayout: React.FC = () => {
         marginLeft: isSidebarCollapsed ? 56 : 180, // 为固定的sidebar留出空间
         transition: "margin-left 0.3s cubic-bezier(0.4,0,0.2,1)" // 与sidebar动画同步
       }}>
-        <Header onToggleAIChat={() => setIsAIChatVisible((v) => !v)} />
+        <Header
+          onToggleAIChat={() => setIsAIChatVisible((v) => !v)}
+          onToggleConsole={() => setIsConsoleVisible((v) => !v)}
+        />
         <Layout.Content
           style={{
             flex: 1,
@@ -38,6 +44,8 @@ const PageLayout: React.FC = () => {
             minHeight: 0, // 重要：允许 flex 子元素收缩
             overflow: "hidden", // 改为hidden，让Splitter控制滚动
             marginTop: token.controlHeight * 1.5, // 为固定的header留出空间
+            marginBottom: isConsoleVisible ? consoleHeight : 0, // 为Console留出空间
+            transition: "margin-bottom 0.3s cubic-bezier(0.4,0,0.2,1)" // 平滑过渡
           }}
         >
           <Splitter style={{ height: '100%' }}>
@@ -92,6 +100,13 @@ const PageLayout: React.FC = () => {
           onToggleFloating={setIsAIChatFloating}
         />
       )}
+
+      {/* Console控制台 */}
+      <Console
+        isVisible={isConsoleVisible}
+        onToggle={() => setIsConsoleVisible((v) => !v)}
+        onHeightChange={setConsoleHeight}
+      />
     </Layout>
   );
 };
