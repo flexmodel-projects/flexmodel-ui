@@ -7,7 +7,7 @@ import {useLocale, useSidebar, useTheme} from "@/store/appStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {
-  ConsoleSqlOutlined,
+  CodeOutlined,
   FileSearchOutlined,
   GlobalOutlined,
   HomeOutlined,
@@ -151,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
             onClick={onToggleAIChat}
           />
           <Button
-            icon={<ConsoleSqlOutlined />}
+            icon={<CodeOutlined />}
             onClick={onToggleConsole}
           />
           <Switch

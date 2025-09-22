@@ -277,7 +277,7 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
                      </Button>
                    }
     >
-      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+      <div style={{display: 'flex', flexDirection: 'column', height: '95%'}}>
         <div style={{flex: 1, overflow: 'auto'}}>
           <Table
             columns={columns}
