@@ -185,7 +185,7 @@ const JobExecutionLogList: React.FC = () => {
 
   return (
     <PageContainer title={t('job_execution_log')}>
-      <div style={{display: 'flex', flexDirection: 'column', height: '95%'}}>
+      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         <div style={{ marginBottom: 16 }}>
           <Form
             form={form}

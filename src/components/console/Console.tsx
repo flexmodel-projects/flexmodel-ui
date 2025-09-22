@@ -116,7 +116,7 @@ const Console: React.FC<ConsoleProps> = ({ onToggle }) => {
       case 'ERROR': return token.colorError;
       case 'WARN': return token.colorWarning;
       case 'INFO': return token.colorInfo;
-      case 'DEBUG': return token.colorTextSecondary;
+      case 'DEBUG': return token.colorSuccessText;
       default: return token.colorText;
     }
   }, [token.colorError, token.colorWarning, token.colorInfo, token.colorTextSecondary, token.colorText]);

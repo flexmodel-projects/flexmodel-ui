@@ -157,7 +157,7 @@ const FlowList: React.FC = () => {
 
   return (
     <PageContainer>
-      <div style={{display: 'flex', flexDirection: 'column', height: '96%'}}>
+      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         {/* 搜索和操作区域 */}
         <div style={{marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <Input
