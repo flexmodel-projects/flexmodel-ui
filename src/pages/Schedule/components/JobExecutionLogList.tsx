@@ -87,13 +87,17 @@ const JobExecutionLogList: React.FC = () => {
     }
 
     setCurrentPage(1);
-    loadLogs(params);
+    loadLogs({
+      ...params,
+      page: 1,
+      size: pageSize,
+    });
   };
 
   const handleReset = () => {
     form.resetFields();
     setCurrentPage(1);
-    loadLogs();
+    loadLogs({ page: 1, size: pageSize });
   };
 
   const handlePageChange = (page: number, size?: number) => {
@@ -108,15 +112,23 @@ const JobExecutionLogList: React.FC = () => {
     setDetailModalVisible(true);
   };
 
-  const getStatusTag = (isSuccess: boolean) => {
-    if (isSuccess) {
+  const getStatusTag = (executionStatus: string | undefined) => {
+    if (executionStatus === 'SUCCESS') {
       return <Tag color="success">成功</Tag>;
-    } else {
+    } else if (executionStatus === 'RUNNING') {
+      return <Tag color="processing">运行中</Tag>;
+    } else if (executionStatus === 'FAILED') {
       return <Tag color="error">失败</Tag>;
+    } else {
+      return <Tag color="default">未知</Tag>;
     }
   };
 
-  const formatDuration = (duration: number) => {
+  const formatDuration = (duration: number | undefined) => {
+
+    if (!duration) {
+      return '-';
+    }
     if (duration < 1000) {
       return `${duration}ms`;
     } else if (duration < 60000) {
@@ -147,9 +159,9 @@ const JobExecutionLogList: React.FC = () => {
     },
     {
       title: '执行状态',
-      key: 'status',
+      key: 'executionStatus',
       width: 100,
-      render: (_: any, record: JobExecutionLog) => getStatusTag(record.isSuccess),
+      render: (_: any, record: JobExecutionLog) => getStatusTag(record.executionStatus),
     },
     {
       title: '开始时间',
@@ -185,7 +197,7 @@ const JobExecutionLogList: React.FC = () => {
 
   return (
     <PageContainer title={t('job_execution_log')}>
-      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div style={{ marginBottom: 16 }}>
           <Form
             form={form}
@@ -232,14 +244,13 @@ const JobExecutionLogList: React.FC = () => {
           </Form>
         </div>
 
-        <div style={{flex: 1, overflow: 'auto'}}>
+        <div style={{ flex: 1, overflow: 'auto' }}>
           <Table
             columns={columns}
             dataSource={logs}
             loading={loading}
             rowKey="id"
             pagination={false}
-            scroll={{ x: 1000, y: 'calc(100vh - 320px)' }}
             size="small"
           />
         </div>
@@ -260,7 +271,10 @@ const JobExecutionLogList: React.FC = () => {
               `第 ${range[0]}-${range[1]} 条，共 ${total} 条`
             }
             onChange={handlePageChange}
-            onShowSizeChange={handlePageChange}
+            onShowSizeChange={(_current, size) => {
+              setCurrentPage(1);
+              setPageSize(size);
+            }}
           />
         </div>
       </div>
@@ -294,7 +308,7 @@ const JobExecutionLogList: React.FC = () => {
               {selectedLog.triggerId}
             </Descriptions.Item>
             <Descriptions.Item label="执行状态">
-              {getStatusTag(selectedLog.isSuccess)}
+              {getStatusTag(selectedLog.executionStatus)}
             </Descriptions.Item>
             <Descriptions.Item label="开始时间">
               {dayjs(selectedLog.startTime).format('YYYY-MM-DD HH:mm:ss')}

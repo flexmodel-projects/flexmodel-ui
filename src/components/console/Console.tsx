@@ -45,7 +45,7 @@ const Console: React.FC<ConsoleProps> = ({ onToggle }) => {
     logsEndRef,
     setAutoScrollEnabled
   } = useConsoleLogs({
-    maxLogs: 3000, // 减少到3000条以提高性能
+    maxLogs: 1000, // 减少到1000条以提高性能
     autoScroll: true
   });
 
