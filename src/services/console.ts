@@ -40,10 +40,9 @@ class ConsoleWebSocketService {
       return `${protocol}//${window.location.host}/api/f/json-rpc-ws`;
     }
 
-    // 生产环境中，直接连接到后端服务
-    const baseUrl = window.location.origin;
-    const wsUrl = baseUrl.replace(/^https?:\/\//, 'ws://').replace(/^https:\/\//, 'wss://');
-    return `${wsUrl}/api/f/json-rpc-ws`;
+    // 生产环境中，根据页面协议选择 ws/wss，并与当前 host 保持一致
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${window.location.host}/api/f/json-rpc-ws`;
   }
 
   private connect(): void {
