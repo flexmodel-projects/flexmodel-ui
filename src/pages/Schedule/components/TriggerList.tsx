@@ -47,12 +47,12 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
         page: currentPage,
         size: pageSize
       };
-      
+
       // 在eventOnly模式下，使用jobGroup过滤
       if (eventOnly && datasource && model) {
         params.jobGroup = `${datasource}_${model.name}`;
       }
-      
+
       const response = await getTriggerPage(params);
       setTriggers(response.list);
       setTotal(response.total);
@@ -270,6 +270,7 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
                    extra={
                      <Button
                        type="primary"
+                       size="small"
                        icon={<PlusOutlined/>}
                        onClick={handleCreate}
                      >
