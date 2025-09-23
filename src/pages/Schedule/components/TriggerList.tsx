@@ -263,8 +263,6 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
   ];
 
   // 直接使用API返回的数据，不需要客户端分页
-  const currentData = triggers;
-
   return (
     <PageContainer title={t('trigger.title')}
                    extra={
@@ -282,7 +280,7 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
         <div style={{flex: 1, overflow: 'auto'}}>
           <Table
             columns={columns}
-            dataSource={currentData}
+            dataSource={triggers}
             loading={loading}
             rowKey="id"
             pagination={false}

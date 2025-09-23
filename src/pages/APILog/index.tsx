@@ -270,8 +270,7 @@ const LogViewer: React.FC = () => {
 
         {/* 分页区域 - 固定在底部 */}
         <div style={{
-          padding: '20px 0',
-          margin: '20px 0',
+          padding: '15px 0',
           borderTop: `1px solid ${token.colorBorderSecondary}`,
           display: 'flex',
           justifyContent: 'flex-end',
