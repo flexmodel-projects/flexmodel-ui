@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {EyeOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
@@ -17,6 +17,8 @@ const FlowInstanceList: React.FC = () => {
     page: 1,
     size: 20
   });
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
+  const [tableScrollY, setTableScrollY] = useState<number>(0);
 
   // 获取流程实例列表
   const fetchFlowInstanceList = useCallback(async () => {
@@ -36,6 +38,26 @@ const FlowInstanceList: React.FC = () => {
   useEffect(() => {
     fetchFlowInstanceList();
   }, [fetchFlowInstanceList]);
+
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    const updateHeight = () => {
+      setTableScrollY(container.clientHeight);
+    };
+
+    updateHeight();
+
+    const ro = new ResizeObserver(() => updateHeight());
+    ro.observe(container);
+
+    window.addEventListener('resize', updateHeight);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
 
   // 终止流程实例
   const handleTerminateFlowInstance = async (flowInstanceId: string) => {
@@ -203,12 +225,13 @@ const FlowInstanceList: React.FC = () => {
           </Space>
         </div>
         {/* 流程实例列表表格 */}
-        <div style={{flex: 1, overflow: 'auto'}}>
+        <div ref={tableContainerRef} style={{flex: 1, overflow: 'hidden'}}>
           <Table
             columns={columns}
             dataSource={flowInstanceList}
             rowKey="flowInstanceId"
             loading={loading}
+            scroll={{ y: tableScrollY || undefined }}
             pagination={false}
           />
         </div>

@@ -283,6 +283,7 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
             dataSource={triggers}
             loading={loading}
             rowKey="id"
+            scroll={{ y: '60vh' }}
             pagination={false}
           />
         </div>

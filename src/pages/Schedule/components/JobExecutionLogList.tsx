@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Button,
   DatePicker,
@@ -37,10 +37,33 @@ const JobExecutionLogList: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedLog, setSelectedLog] = useState<JobExecutionLog | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
+  const [tableScrollY, setTableScrollY] = useState<number>(0);
 
   useEffect(() => {
     loadLogs();
   }, [currentPage, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    const updateHeight = () => {
+      // 直接使用容器可用高度，作为 Table 的滚动高度
+      setTableScrollY(container.clientHeight);
+    };
+
+    updateHeight();
+
+    const ro = new ResizeObserver(() => updateHeight());
+    ro.observe(container);
+
+    window.addEventListener('resize', updateHeight);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
 
   const loadLogs = async (params?: JobExecutionLogParams) => {
     setLoading(true);
@@ -244,7 +267,7 @@ const JobExecutionLogList: React.FC = () => {
           </Form>
         </div>
 
-        <div style={{ flex: 1, overflow: 'auto' }}>
+        <div ref={tableContainerRef} style={{ flex: 1, overflow: 'hidden' }}>
           <Table
             columns={columns}
             dataSource={logs}
@@ -252,6 +275,7 @@ const JobExecutionLogList: React.FC = () => {
             rowKey="id"
             pagination={false}
             size="small"
+            scroll={{ y: tableScrollY || undefined}}
           />
         </div>
 
