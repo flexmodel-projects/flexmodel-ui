@@ -70,16 +70,6 @@ class ConsoleWebSocketService {
 
           // 处理JSON-RPC响应
           if (data.jsonrpc === '2.0') {
-            // 处理ping/pong响应
-            if (data.result === 'pong') {
-              console.log('WebSocket ping/pong successful');
-              return;
-            }
-            // 处理echo响应
-            if (data.result && data.result !== 'pong') {
-              console.log('WebSocket echo response:', data.result);
-              return;
-            }
             // 处理错误响应
             if (data.error) {
               console.error('WebSocket JSON-RPC error:', data.error);
@@ -89,7 +79,36 @@ class ConsoleWebSocketService {
               });
               return;
             }
-            // 处理日志事件 (method: "logEvent")
+
+            // 处理 ping/pong
+            if (data.result === 'pong') {
+              console.log('WebSocket ping/pong successful');
+              return;
+            }
+
+            // 处理新的控制台日志格式：result.messageType === 'log'
+            if (data.result && data.result.messageType === 'log' && data.result.object) {
+              const o = data.result.object;
+              const logEntry: LogEntry = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 23),
+                level: (o.level || 'INFO') as LogEntry['level'],
+                source: o.logger || 'unknown',
+                thread: o.thread || 'unknown',
+                message: o.message || '',
+                data: o.data
+              };
+              this.notifyListeners({ type: 'log', data: logEntry });
+              return;
+            }
+
+            // 兼容旧的 echo 流程
+            if (data.result && typeof data.result === 'string' && data.result !== 'pong') {
+              console.log('WebSocket echo response:', data.result);
+              return;
+            }
+
+            // 兼容旧的日志事件 (method: 'logEvent')
             if (data.method === 'logEvent') {
               const logEntry: LogEntry = {
                 id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -100,11 +119,7 @@ class ConsoleWebSocketService {
                 message: data.message || '',
                 data: undefined
               };
-
-              this.notifyListeners({
-                type: 'log',
-                data: logEntry
-              });
+              this.notifyListeners({ type: 'log', data: logEntry });
               return;
             }
           }
