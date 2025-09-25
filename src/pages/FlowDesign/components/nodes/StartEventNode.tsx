@@ -1,33 +1,34 @@
 import React from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
-import {PlayCircleOutlined} from '@ant-design/icons';
+import {theme} from 'antd';
 
 const StartEventNode: React.FC<NodeProps> = ({ data, selected }) => {
+  const { token } = theme.useToken();
   return (
     <div
       style={{
-        width: 60,
-        height: 60,
-        borderRadius: '50%',
-        background: selected ? '#e6f7ff' : '#f6ffed',
-        border: selected ? '2px solid #1890ff' : '2px solid #52c41a',
+        width: 96,
+        height: 48,
+        background: selected ? token.colorPrimaryBg : token.colorBgContainer,
+        border: `2px solid ${selected ? token.colorPrimary : token.colorBorder}`,
+        borderRadius: 9999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '20px',
-        color: '#52c41a',
+        padding: '0 10px',
         position: 'relative',
+        boxShadow: selected ? '0 4px 12px rgba(24,144,255,0.25)' : '0 1px 3px rgba(0,0,0,0.08)'
       }}
     >
-      <PlayCircleOutlined />
+      <span style={{ fontSize: 12, color: token.colorText, fontWeight: 500 }}>{String(data.name || '开始')}</span>
       <Handle
         type="source"
         position={Position.Right}
         id="right"
         style={{
-          background: '#52c41a',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 5,
+          height: 5,
         }}
       />
       <Handle
@@ -35,9 +36,9 @@ const StartEventNode: React.FC<NodeProps> = ({ data, selected }) => {
         position={Position.Top}
         id="top"
         style={{
-          background: '#52c41a',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 5,
+          height: 5,
         }}
       />
       <Handle
@@ -45,9 +46,9 @@ const StartEventNode: React.FC<NodeProps> = ({ data, selected }) => {
         position={Position.Bottom}
         id="bottom"
         style={{
-          background: '#52c41a',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 5,
+          height: 5,
         }}
       />
       <Handle
@@ -55,29 +56,11 @@ const StartEventNode: React.FC<NodeProps> = ({ data, selected }) => {
         position={Position.Left}
         id="left"
         style={{
-          background: '#52c41a',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 5,
+          height: 5,
         }}
       />
-      {data.name ? (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: -25,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '12px',
-            color: '#666',
-            whiteSpace: 'nowrap',
-            maxWidth: 100,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {String(data.name)}
-        </div>
-      ) : null}
     </div>
   );
 };

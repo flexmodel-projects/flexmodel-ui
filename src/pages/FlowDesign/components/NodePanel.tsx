@@ -13,6 +13,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import {NodePanelItem, NodeType} from '../types/flow.d';
+import {categoryTitle, nodeCatalog} from '../components/nodes/catalog';
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -20,27 +21,8 @@ const { Text } = Typography;
 const NodePanel: React.FC = () => {
   const [draggedNode, setDraggedNode] = useState<NodeType | null>(null);
 
-  // 节点配置
-  const nodeConfigs: NodePanelItem[] = [
-    // 人工节点
-    { type: 'userTask', label: '人工任务', icon: 'user-check', category: 'activities' },
-
-    // 自动节点
-    { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks' },
-    { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks' },
-    { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks' },
-    { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks' },
-    { type: 'serviceTask', label: '延时节点', icon: 'delay', category: 'serviceTasks' },
-
-    // 网关节点
-    { type: 'exclusiveGateway', label: '排他网关', icon: 'gateway-exclusive', category: 'gateways' },
-    { type: 'parallelGateway', label: '并行网关', icon: 'gateway-parallel', category: 'gateways' },
-    { type: 'inclusiveGateway', label: '包容网关', icon: 'gateway-inclusive', category: 'gateways' },
-
-
-    // 高级
-    { type: 'callActivity', label: '子流程', icon: 'call-service', category: 'advanced' },
-  ];
+  // 节点配置（与加号菜单共用）
+  const nodeConfigs: NodePanelItem[] = nodeCatalog;
 
   // 获取图标组件
   const getIcon = (iconType: string) => {
@@ -84,16 +66,7 @@ const NodePanel: React.FC = () => {
   }, {} as Record<string, NodePanelItem[]>);
 
   // 获取分类标题
-  const getCategoryTitle = (category: string) => {
-    const titles: Record<string, string> = {
-      events: '开始事件',
-      activities: '人工节点',
-      serviceTasks: '自动节点',
-      gateways: '网关节点',
-      advanced: '高级',
-    };
-    return titles[category] || category;
-  };
+  const getCategoryTitle = (category: string) => (categoryTitle as Record<string, string>)[category] || category;
 
   return (
     <Card title="节点选择面板" style={{ height: '100%' }}>

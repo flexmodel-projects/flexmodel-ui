@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {Button, Layout, Space} from 'antd';
+import {Button, Layout, Space, theme} from 'antd';
 import {useNavigate} from 'react-router-dom';
 import {
   ArrowLeftOutlined,
@@ -23,6 +23,7 @@ import {
   Node,
   NodeTypes,
   ReactFlow,
+  ReactFlowInstance,
   ReactFlowProvider,
   useEdgesState,
   useNodesState,
@@ -73,11 +74,13 @@ interface CustomEdge extends Edge {
     conditionsequenceflow: string;
     defaultConditions: string;
     onDelete: (edgeId: string) => void;
+    onInsert?: (edgeId: string, nodeType: string) => void;
   };
 }
 
 const FlowDesign: React.FC = () => {
   const navigate = useNavigate();
+  const { token } = theme.useToken();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<CustomEdge>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
@@ -86,6 +89,8 @@ const FlowDesign: React.FC = () => {
   const [flowStatus, setFlowStatus] = useState<'enabled' | 'disabled'>('enabled');
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [propertyPanelVisible, setPropertyPanelVisible] = useState(false);
+  const [zoomPercent, setZoomPercent] = useState(100);
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<Node, CustomEdge> | null>(null);
 
   // 处理节点删除
   const handleNodeDelete = useCallback((nodeId: string) => {
@@ -106,21 +111,32 @@ const FlowDesign: React.FC = () => {
   // 初始化默认节点
   React.useEffect(() => {
     if (nodes.length === 0) {
+      const startId = 'start-node';
+      const endId = 'end-node';
       const defaultNodes: Node[] = [
         {
-          id: 'start-node',
+          id: startId,
           type: 'startEvent',
           position: { x: 100, y: 100 },
           data: { name: '开始', onDelete: handleNodeDelete },
         },
         {
-          id: 'end-node',
+          id: endId,
           type: 'endEvent',
           position: { x: 400, y: 100 },
           data: { name: '结束', onDelete: handleNodeDelete },
         },
       ];
       setNodes(defaultNodes);
+      setEdges([{
+        id: generateId('SequenceFlow'),
+        type: 'arrow',
+        source: startId,
+        target: endId,
+        sourceHandle: null,
+        targetHandle: null,
+        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+      } as CustomEdge]);
     }
   }, [nodes.length, setNodes, handleNodeDelete]);
 
@@ -135,10 +151,57 @@ const FlowDesign: React.FC = () => {
     });
   }, [setEdges]);
 
+  // 在线路上插入一个节点（替换当前边为两条边）
+  const handleInsertNode = useCallback((edgeId: string, nodeType: string) => {
+    setEdges((currentEdges) => {
+      const edge = currentEdges.find((e) => e.id === edgeId);
+      if (!edge) return currentEdges;
+
+      const sourceNode = nodes.find((n) => n.id === edge.source);
+      const targetNode = nodes.find((n) => n.id === edge.target);
+      if (!sourceNode || !targetNode) return currentEdges;
+
+      const midX = (sourceNode.position.x + targetNode.position.x) / 2;
+      const midY = (sourceNode.position.y + targetNode.position.y) / 2;
+
+      const newNode: Node = {
+        id: generateId(nodeType),
+        type: nodeType as any,
+        position: { x: midX, y: midY },
+        data: { name: '', onDelete: handleNodeDelete },
+      };
+
+      const firstEdge: CustomEdge = {
+        id: generateId('SequenceFlow'),
+        type: 'arrow',
+        source: edge.source,
+        target: newNode.id,
+        sourceHandle: null,
+        targetHandle: null,
+        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+      };
+      const secondEdge: CustomEdge = {
+        id: generateId('SequenceFlow'),
+        type: 'arrow',
+        source: newNode.id,
+        target: edge.target,
+        sourceHandle: null,
+        targetHandle: null,
+        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+      };
+
+      // 同步更新节点
+      setNodes((nds) => [...nds, newNode]);
+
+      // 用两条新边替换旧边
+      return [...currentEdges.filter((e) => e.id !== edgeId), firstEdge, secondEdge];
+    });
+  }, [nodes, handleEdgeDelete, handleNodeDelete, setEdges, setNodes]);
+
   // 处理节点连接
   const onConnect = useCallback(
     (params: Connection) => {
-      const newEdge = {
+      const newEdge: CustomEdge = {
         ...params,
         id: generateId('SequenceFlow'),
         type: 'arrow' as const,
@@ -146,11 +209,12 @@ const FlowDesign: React.FC = () => {
           conditionsequenceflow: '',
           defaultConditions: 'false',
           onDelete: handleEdgeDelete,
+          onInsert: (edgeId: string, nodeType: string) => handleInsertNode(edgeId, nodeType),
         },
       };
-      setEdges((eds) => addEdge(newEdge, eds));
+      setEdges((eds) => addEdge(newEdge as any, eds as any) as any);
     },
-    [setEdges, handleEdgeDelete]
+    [setEdges, handleEdgeDelete, handleInsertNode]
   );
 
   // 处理节点选择
@@ -173,15 +237,14 @@ const FlowDesign: React.FC = () => {
       const nodeType = event.dataTransfer.getData('application/reactflow');
       if (!nodeType) return;
 
-      const position = {
-        x: event.clientX - 280, // 减去左侧面板宽度
-        y: event.clientY - 64,  // 减去顶部工具栏高度
-      };
+      const point = reactFlowInstance
+        ? reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY })
+        : { x: event.clientX - 280, y: event.clientY - 64 };
 
       const newNode: Node = {
         id: generateId(nodeType),
         type: nodeType,
-        position,
+        position: point,
         data: {
           name: '',
           onDelete: handleNodeDelete,
@@ -190,7 +253,7 @@ const FlowDesign: React.FC = () => {
 
       setNodes((nds) => [...nds, newNode]);
     },
-    [setNodes, handleNodeDelete]
+    [reactFlowInstance, setNodes, handleNodeDelete]
   );
 
   // 处理拖拽悬停
@@ -198,6 +261,12 @@ const FlowDesign: React.FC = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
   }, []);
+
+  // 实时更新缩放显示
+  const handleMove = useCallback((_event: any, viewport: { zoom: number }) => {
+    const percent = Math.round((((viewport?.zoom ?? reactFlowInstance?.getViewport().zoom) || 1) * 100));
+    setZoomPercent(percent);
+  }, [reactFlowInstance]);
 
   // 保存流程
   const handleSave = useCallback(() => {
@@ -226,6 +295,8 @@ const FlowDesign: React.FC = () => {
   const handleDraft = useCallback(() => {
     console.log('暂存流程');
   }, []);
+
+  // moved above
 
   // 加载示例数据
   const loadExampleData = useCallback(() => {
@@ -365,9 +436,9 @@ const FlowDesign: React.FC = () => {
            />
            <Button icon={<UndoOutlined />} />
            <Button icon={<RedoOutlined />} />
-           <Button icon={<ZoomOutOutlined />} />
-           <span>100%</span>
-           <Button icon={<ZoomInOutlined />} />
+          <Button icon={<ZoomOutOutlined />} onClick={() => reactFlowInstance?.zoomOut?.()} />
+          <span>{zoomPercent}%</span>
+          <Button icon={<ZoomInOutlined />} onClick={() => reactFlowInstance?.zoomIn?.()} />
            <Button onClick={loadExampleData}>加载示例</Button>
            <Button onClick={handleDraft}>暂存</Button>
            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
@@ -422,14 +493,18 @@ const FlowDesign: React.FC = () => {
               onPaneClick={onPaneClick}
               onDrop={onDrop}
               onDragOver={onDragOver}
+              onMove={handleMove}
+              onInit={(instance) => setReactFlowInstance(instance)}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
+              snapToGrid
+              snapGrid={[16, 16]}
               attributionPosition="bottom-left"
             >
-              <Background />
-              <Controls />
-              <MiniMap pannable />
+              <Background/>
+              <Controls position="bottom-right" />
+              <MiniMap pannable maskColor={token.colorFillTertiary as any} nodeColor={token.colorFillSecondary as any} />
             </ReactFlow>
           </Content>
 

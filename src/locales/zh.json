@@ -622,7 +622,7 @@
     "stay_at_bottom_off": "始终置底：关",
     "no_logs": "暂无日志数据",
     "drag_to_resize": "拖动调整控制台高度",
-    "ws_disconnected": "已断开WebSocket连接",
+    "ws_disconnected": "已断开连接",
     "connecting": "正在连接...",
     "ping_sent": "已发送ping测试",
     "ws_not_connected": "WebSocket未连接",

@@ -1,0 +1,40 @@
+import {NodeType} from '../../types/flow.d';
+
+export type NodeCategory = 'activities' | 'serviceTasks' | 'gateways' | 'advanced';
+
+export interface NodeCatalogItem {
+  type: NodeType;
+  label: string;
+  icon: string;
+  category: NodeCategory;
+}
+
+// 统一节点目录：左侧面板与连线“+”菜单共用
+export const nodeCatalog: NodeCatalogItem[] = [
+  // 人工节点
+  { type: 'userTask', label: '人工任务', icon: 'user-check', category: 'activities' },
+
+  // 自动节点
+  { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks' },
+  { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks' },
+  { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks' },
+  { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks' },
+  { type: 'serviceTask', label: '延时节点', icon: 'delay', category: 'serviceTasks' },
+
+  // 网关节点
+  { type: 'exclusiveGateway', label: '排他网关', icon: 'gateway-exclusive', category: 'gateways' },
+  { type: 'parallelGateway', label: '并行网关', icon: 'gateway-parallel', category: 'gateways' },
+  { type: 'inclusiveGateway', label: '包容网关', icon: 'gateway-inclusive', category: 'gateways' },
+
+  // 高级
+  { type: 'callActivity', label: '子流程', icon: 'call-service', category: 'advanced' },
+];
+
+export const categoryTitle: Record<NodeCategory, string> = {
+  activities: '人工节点',
+  serviceTasks: '自动节点',
+  gateways: '网关节点',
+  advanced: '高级',
+};
+
+

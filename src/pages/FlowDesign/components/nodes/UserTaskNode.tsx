@@ -1,25 +1,26 @@
 import React, {useState} from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
 import {DeleteOutlined, UserOutlined} from '@ant-design/icons';
-import {Button} from 'antd';
+import {Button, theme} from 'antd';
 
 const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const { token } = theme.useToken();
   return (
     <div
       style={{
-        minWidth: 120,
-        minHeight: 60,
-        background: selected ? '#e6f7ff' : '#f0f9ff',
-        border: selected ? '2px solid #1890ff' : '2px solid #1890ff',
-        borderRadius: 8,
+        minWidth: 140,
+        minHeight: 64,
+        background: selected ? token.colorPrimaryBg : token.colorBgContainer,
+        border: `2px solid ${selected ? token.colorPrimary : token.colorBorder}`,
+        borderRadius: 10,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '8px 12px',
+        padding: '10px 14px',
         position: 'relative',
-        boxShadow: selected ? '0 4px 12px rgba(24, 144, 255, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: selected ? '0 4px 12px rgba(24, 144, 255, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -29,9 +30,9 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Left}
         id="left"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
       <Handle
@@ -39,9 +40,9 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Right}
         id="right"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
       <Handle
@@ -49,9 +50,9 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Top}
         id="top"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
       <Handle
@@ -59,9 +60,9 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Top}
         id="top-source"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
       <Handle
@@ -69,9 +70,9 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Bottom}
         id="bottom"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
       <Handle
@@ -79,15 +80,15 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         position={Position.Bottom}
         id="bottom-source"
         style={{
-          background: '#1890ff',
-          width: 8,
-          height: 8,
+          background: token.colorBorder,
+          width: 6,
+          height: 6,
         }}
       />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <UserOutlined style={{ fontSize: '16px', color: '#1890ff' }} />
-        <div style={{ fontSize: '12px', color: '#1890ff', fontWeight: 500 }}>
+        <UserOutlined style={{ fontSize: '16px', color: token.colorPrimary }} />
+        <div style={{ fontSize: '13px', color: token.colorText, fontWeight: 500 }}>
           {String(data.name || '用户任务')}
         </div>
       </div>
@@ -114,10 +115,10 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#fff',
-            border: '1px solid #d9d9d9',
+            backgroundColor: token.colorBgContainer,
+            border: `1px solid ${token.colorBorder}`,
             borderRadius: '50%',
-            color: '#ff4d4f',
+            color: token.colorError,
             zIndex: 1000,
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           }}

@@ -623,7 +623,7 @@
     "stay_at_bottom_off": "Stay at bottom: OFF",
     "no_logs": "No logs",
     "drag_to_resize": "Drag to resize console height",
-    "ws_disconnected": "WebSocket disconnected",
+    "ws_disconnected": "Disconnected",
     "connecting": "Connecting...",
     "ping_sent": "Ping sent",
     "ws_not_connected": "WebSocket not connected",
