@@ -185,48 +185,6 @@ const DetailedInfo: React.FC<DetailedInfoProps> = ({metricsData, cardKey}) => {
           </Descriptions>
         );
       }
-      case 'properties': {
-        const systemProperties = metricsData?.jvm?.systemProperties || {};
-        return (
-          <div>
-            <Table
-              size="small"
-              dataSource={Object.entries(systemProperties).map(([key, value]: [string, any]) => ({
-                key,
-                property: key,
-                value: value || '未知',
-              }))}
-              columns={[
-                {
-                  title: t('metrics.property_name'),
-                  dataIndex: 'property',
-                  key: 'property',
-                  width: '40%',
-                  ellipsis: true
-                },
-                {
-                  title: t('metrics.property_value'),
-                  dataIndex: 'value',
-                  key: 'value',
-                  width: '60%',
-                  render: (value: string) => (
-                    <div style={{
-                      fontFamily: 'monospace',
-                      fontSize: '12px',
-                      wordBreak: 'break-all',
-                      maxWidth: '100%'
-                    }}>
-                      {value}
-                    </div>
-                  )
-                },
-              ]}
-              pagination={false}
-              scroll={{y: 200}}
-            />
-          </div>
-        );
-      }
       case 'gc': {
         const garbageCollectors = metricsData?.jvm?.garbageCollectors || {};
         return (

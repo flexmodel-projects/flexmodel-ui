@@ -143,7 +143,6 @@ export interface JvmMetricsResponse {
   totalLoadedClassCount: number
   unloadedClassCount: number
   garbageCollectors: Record<string, GarbageCollectorInfo>
-  systemProperties: Record<string, string>
 }
 
 export interface MemoryMetricsResponse {

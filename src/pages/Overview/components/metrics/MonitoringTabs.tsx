@@ -19,7 +19,6 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
     if (!metricsData) {
       return [
         { key: 'system', title: t('metrics.system_summary'), value: 0, color: TAB_COLORS.primary, unit: '%' },
-        { key: 'memory', title: t('metrics.memory'), value: 0, color: TAB_COLORS.error, unit: '%' },
         { key: 'thread', title: t('metrics.thread'), value: 0, color: TAB_COLORS.success, unit: t('metrics.count') },
         { key: 'network', title: t('metrics.network'), value: 0, color: TAB_COLORS.info, unit: t('metrics.count') },
         { key: 'disk', title: t('metrics.disk'), value: 0, color: TAB_COLORS.warning, unit: '%' },
@@ -40,13 +39,6 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
         title: t('metrics.jvm'),
         value: Math.round(metricsData.memory.heap.usagePercentage),
         color: TAB_COLORS.primary,
-        unit: '%',
-      },
-      {
-        key: 'memory',
-        title: t('metrics.memory'),
-        value: Math.round(metricsData.memory.heap.usagePercentage),
-        color: TAB_COLORS.error,
         unit: '%',
       },
       {

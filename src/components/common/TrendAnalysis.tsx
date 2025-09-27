@@ -157,8 +157,22 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
       <Col span={24}>
         <Card
           className="flex flex-1 flex-col overflow-hidden"
-          style={{ height: "450px", marginBottom: 10 }}
+          style={{ 
+            height: "450px", 
+            marginBottom: 10,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            borderRadius: '12px',
+            overflow: 'hidden'          
+          }}
           title={t("trend_analysis")}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08)';
+          }}
           extra={
             <Space>
               <Button

@@ -5,7 +5,6 @@ import {useMetricsData} from './useMetricsData';
 import MonitoringTabs from './MonitoringTabs';
 import DetailedInfo from './DetailedInfo';
 import MonitoringChart from './MonitoringChart';
-import {PageContainer} from '@/components/common';
 import {FullscreenExitOutlined, FullscreenOutlined} from '@ant-design/icons';
 import {useFullscreen} from '@/hooks/useFullscreen';
 
@@ -43,19 +42,6 @@ const UnifiedMonitoring: React.FC = () => {
             return `${metricsData.cpu.name || t('metrics.operating_system')}`;
           case 'jvm':
             return `JVM ${metricsData.jvm.name || t('metrics.unknown')}`;
-          default:
-            return t('metrics.unknown');
-        }
-      case 'memory':
-        switch (cardKey) {
-          case 'heap':
-            return `${t('metrics.heap_memory')} ${Math.round(metricsData.memory.heap.usagePercentage || 0)}%`;
-          case 'nonheap':
-            return `${t('metrics.non_heap_memory')} ${Math.round(metricsData.memory.nonHeap.usagePercentage || 0)}%`;
-          case 'memory_pools': {
-            const poolCount = Object.keys(metricsData.memory.memoryPools || {}).length;
-            return `${t('metrics.memory_pools')} ${poolCount}${t('metrics.count')}`;
-          }
           default:
             return t('metrics.unknown');
         }
@@ -102,13 +88,17 @@ const UnifiedMonitoring: React.FC = () => {
         switch (cardKey) {
           case 'basic':
             return `JVM ${metricsData.jvm.version || t('metrics.unknown')}`;
-          case 'properties': {
-            const propCount = Object.keys(metricsData.jvm.systemProperties || {}).length;
-            return `${t('metrics.system_properties')} ${propCount}${t('metrics.properties_count')}`;
-          }
           case 'gc': {
             const gcCount = Object.keys(metricsData.jvm.garbageCollectors || {}).length;
             return `GC ${gcCount}${t('metrics.gc_count')}`;
+          }
+          case 'heap':
+            return `${t('metrics.heap_memory')} ${Math.round(metricsData.memory.heap.usagePercentage || 0)}%`;
+          case 'nonheap':
+            return `${t('metrics.non_heap_memory')} ${Math.round(metricsData.memory.nonHeap.usagePercentage || 0)}%`;
+          case 'memory_pools': {
+            const poolCount = Object.keys(metricsData.memory.memoryPools || {}).length;
+            return `${t('metrics.memory_pools')} ${poolCount}${t('metrics.count')}`;
           }
           default:
             return t('metrics.unknown');
@@ -126,11 +116,6 @@ const UnifiedMonitoring: React.FC = () => {
       {key: 'system', title: generateTagTitle('system', 'system'), color: token.colorWarning},
       {key: 'jvm', title: generateTagTitle('system', 'jvm'), color: token.colorInfo}
     ],
-    memory: [
-      {key: 'heap', title: generateTagTitle('memory', 'heap'), color: token.colorPrimary},
-      {key: 'nonheap', title: generateTagTitle('memory', 'nonheap'), color: token.colorSuccess},
-      {key: 'memory_pools', title: generateTagTitle('memory', 'memory_pools'), color: token.colorWarning}
-    ],
     thread: [
       {key: 'thread_stats', title: generateTagTitle('thread', 'thread_stats'), color: token.colorPrimary},
       {key: 'thread_states', title: generateTagTitle('thread', 'thread_states'), color: token.colorSuccess},
@@ -146,8 +131,10 @@ const UnifiedMonitoring: React.FC = () => {
     ],
     jvm: [
       {key: 'basic', title: generateTagTitle('jvm', 'basic'), color: token.colorPrimary},
-      {key: 'properties', title: generateTagTitle('jvm', 'properties'), color: token.colorSuccess},
-      {key: 'gc', title: generateTagTitle('jvm', 'gc'), color: token.colorWarning}
+      {key: 'gc', title: generateTagTitle('jvm', 'gc'), color: token.colorWarning},
+      {key: 'heap', title: generateTagTitle('jvm', 'heap'), color: token.colorPrimary},
+      {key: 'nonheap', title: generateTagTitle('jvm', 'nonheap'), color: token.colorSuccess},
+      {key: 'memory_pools', title: generateTagTitle('jvm', 'memory_pools'), color: token.colorWarning}
     ]
   }), [generateTagTitle, token]);
 
@@ -160,7 +147,7 @@ const UnifiedMonitoring: React.FC = () => {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{height: '480px', marginTop: 6,}}
+        style={{height: '480px', marginTop: 0,}}
         bodyStyle={{height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
       >
         <Spin/>
@@ -172,7 +159,7 @@ const UnifiedMonitoring: React.FC = () => {
     return (
       <Card
         title={t('metrics.system_monitoring')}
-        style={{height: '480px', marginTop: 6}}
+        style={{height: '480px', marginTop: 0}}
         bodyStyle={{height: '430px', padding: '16px'}}
       >
         <Alert
@@ -188,9 +175,16 @@ const UnifiedMonitoring: React.FC = () => {
 
   return (
     <div ref={ref}>
-      <PageContainer
+      <Card
+        style={{
+          height: isFullscreen ? "100%" : "550px", 
+          width: '100%', 
+          marginTop: 0,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          borderRadius: '12px',
+          overflow: 'hidden'
+        }}
         title={t('metrics.system_monitoring')}
-        style={{height: isFullscreen ? "100%" : "550px", width: '100%', marginTop: 6}}
         extra={
           <Button
             type="text"
@@ -200,6 +194,14 @@ const UnifiedMonitoring: React.FC = () => {
             title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
           />
         }
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-1px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08)';
+        }}
       >
         {/* 监控Tab切换 */}
         <MonitoringTabs
@@ -222,9 +224,6 @@ const UnifiedMonitoring: React.FC = () => {
               >
                 <Tag
                   color={tag.color}
-                  style={{
-                    cursor: 'pointer',
-                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-1px)';
                     e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
@@ -250,7 +249,7 @@ const UnifiedMonitoring: React.FC = () => {
           updateKey={updateKey}
         />
 
-      </PageContainer>
+      </Card>
     </div>
   );
 };

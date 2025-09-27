@@ -17,12 +17,6 @@ export const getChartLegends = (t: (key: string) => string) => ({
     t('metrics.thread'), 
     `${t('metrics.disk')} ${t('metrics.usage_percentage')} (%)`
   ],
-  memory: [
-    `${t('metrics.memory')} ${t('metrics.usage_percentage')} (%)`, 
-    `${t('metrics.non_heap_memory')} ${t('metrics.usage_percentage')} (%)`, 
-    `${t('metrics.total_physical_memory')} (${t('metrics.mb')})`, 
-    `${t('metrics.free_physical_memory')} (${t('metrics.mb')})`
-  ],
   thread: [
     t('metrics.current_threads'), 
     t('metrics.active_interfaces'), 
@@ -52,7 +46,6 @@ export const getChartLegends = (t: (key: string) => string) => ({
 // 获取标题配置的函数，支持国际化
 export const getChartTitles = (t: (key: string) => string) => ({
   system: t('metrics.system_monitoring_trend'),
-  memory: t('metrics.memory_monitoring_trend'),
   thread: t('metrics.thread_monitoring_trend'),
   disk: t('metrics.disk_io_monitoring_trend'),
   network: t('metrics.network_monitoring_trend'),

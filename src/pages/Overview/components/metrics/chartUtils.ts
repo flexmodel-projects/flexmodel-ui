@@ -56,14 +56,6 @@ export const getCurrentTabData = (metricsData: any, activeTab: string) => {
         series3: history.threads,
         series4: history.disk,
       };
-    case 'memory':
-      return {
-        time: history.time,
-        series1: history.memory,
-        series2: history.memory.map(() => Math.round(metricsData.memory.nonHeap.usagePercentage)),
-        series3: history.memory.map(() => Math.round(metricsData.cpu.totalPhysicalMemorySize / (1024 * 1024))),
-        series4: history.memory.map(() => Math.round(metricsData.cpu.freePhysicalMemorySize / (1024 * 1024))),
-      };
     case 'thread':
       return {
         time: history.time,

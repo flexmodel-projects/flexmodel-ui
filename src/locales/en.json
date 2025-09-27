@@ -571,7 +571,6 @@
     "start_time": "Start Time",
     "total_loaded_classes": "Total Loaded Classes",
     "unloaded_classes": "Unloaded Classes",
-    "system_properties": "System Properties",
     "property_name": "Property Name",
     "property_value": "Property Value",
     "collector_name": "Collector Name",
