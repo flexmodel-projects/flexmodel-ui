@@ -265,7 +265,7 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
                     <List.Item style={{ padding: "10px 10px" }}>
                       <div className="flex w-full justify-between">
                         <Space className="overflow-hidden w-60">
-                          <Badge count={index + 1} showZero color={index < 3 ? "red" : "green"} />{" "}
+                          <Badge count={index + 1} showZero color={index < 3 ? token.colorError : token.colorPrimary} />{" "}
                           <span style={{ color: token.colorText }}>{item.name}</span>
                         </Space>
                         <span style={{ color: token.colorText }}>{item.total}</span>
