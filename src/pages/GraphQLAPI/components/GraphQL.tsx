@@ -47,7 +47,7 @@ const GraphiQLInitializer: React.FC<{
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      
+
       timeoutRef.current = setTimeout(() => {
         const currentQuery = queryEditor.getValue() || "";
         const currentVariables = variableEditor.getValue() || "{}";
@@ -94,13 +94,13 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   useEffect(() => {
     const styleId = 'graphiql-execute-button-custom';
     let styleElement = document.getElementById(styleId) as HTMLStyleElement;
-    
+
     if (!styleElement) {
       styleElement = document.createElement('style');
       styleElement.id = styleId;
       document.head.appendChild(styleElement);
     }
-    
+
     styleElement.textContent = `
       .graphiql-container .graphiql-toolbar > button:first-child {
         background-color: ${token.colorPrimary} !important;
@@ -144,11 +144,11 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
       .graphiql-container .monaco-editor,
       .graphiql-container .monaco-editor .margin,
       .graphiql-container .monaco-editor .view-lines {
-        font-size: ${token.fontSizeSM}px !important;
+        font-size: ${token.fontSize}px !important;
         line-height: 1.5 !important;
       }
     `;
-    
+
     return () => {
       const element = document.getElementById(styleId);
       if (element) {

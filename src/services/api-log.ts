@@ -12,6 +12,6 @@ export const getApiLogs = (filter?: {page?: number; size?: number; keyword?: str
 /**
  * 获取 API 日志统计
  */
-export const getApiLogStat = (filter?: {keyword?: string; dateRange?: string; level?: string; isSuccess?: boolean}): Promise<ApiLogStatSchema[]> => {
+export const getApiLogStat = (filter?: {keyword?: string; dateRange?: string; level?: string; isSuccess?: boolean}): Promise<ApiLogStatSchema> => {
   return api.get('/logs/stat', filter)
 }

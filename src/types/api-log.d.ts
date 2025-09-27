@@ -32,6 +32,10 @@ export interface ApiLogSchema {
 }
 
 export interface ApiLogStatSchema {
-  date: string;
-  total: number;
-} 
+  apiStatList: {
+    date: string;
+    total: number;
+  }[];
+  apiChart: any;
+  apiRankingList: any[];
+}

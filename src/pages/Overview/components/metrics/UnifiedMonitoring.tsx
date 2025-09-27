@@ -1,7 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Alert, Button, Card, Popover, Space, Spin, Tag, theme} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {useMetricsData} from './useMetricsData';
 import MonitoringTabs from './MonitoringTabs';
 import DetailedInfo from './DetailedInfo';
 import MonitoringChart from './MonitoringChart';
@@ -10,12 +9,23 @@ import {useFullscreen} from '@/hooks/useFullscreen';
 
 const {useToken} = theme;
 
-const UnifiedMonitoring: React.FC = () => {
+interface UnifiedMonitoringProps {
+  metricsData: any;
+  loading: boolean;
+  error: string | null;
+  updateKey: number;
+}
+
+const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
+  metricsData,
+  loading,
+  error,
+  updateKey
+}) => {
   const {t} = useTranslation();
   const {token} = useToken();
   const [activeTab, setActiveTab] = useState('system');
   const [dataZoomRange, setDataZoomRange] = useState<{ start: number; end: number }>({start: 0, end: 100});
-  const {data: metricsData, loading, error, updateKey} = useMetricsData();
   const {isFullscreen, toggle, ref} = useFullscreen();
 
   const handleTabChange = useCallback((key: string) => {

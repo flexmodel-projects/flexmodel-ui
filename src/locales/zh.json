@@ -640,5 +640,11 @@
     "suggest_clear_logs": "建议清空日志",
     "too_many_items_may_affect_perf": "显示条数较多，可能影响性能"
   },
-  "console_test": "控制台测试"
+  "flow_count": "流程数量",
+  "trigger_count": "触发器数量",
+  "exec_count":"执行次数",
+  "exec_success": "执行成功",
+  "exec_failure": "执行失败",
+  "request_count": "请求数量",
+  "model_count": "模型数量"
 }

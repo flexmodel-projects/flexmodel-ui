@@ -46,7 +46,7 @@ const LogViewer: React.FC = () => {
 
   const getApiLogStatHandler = async () => {
     const filter = form.getFieldsValue();
-    const statList: any[] = await getApiLogStat(getFilterQuery(filter));
+    const statList: any[] = (await getApiLogStat(getFilterQuery(filter)))?.apiStatList || [];
     setChartData({
       xAxis: statList.map((stat) => stat.date),
       series: statList.map((stat) => stat.total)

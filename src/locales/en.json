@@ -640,5 +640,12 @@
     "performance_status": "Performance",
     "suggest_clear_logs": "Suggest clearing logs",
     "too_many_items_may_affect_perf": "Too many items may affect performance"
-  }
+  },
+  "flow_count": "Flow Count",
+  "trigger_count": "Trigger Count",
+  "exec_count":"Exec Count",
+  "exec_success": "Exec Success",
+  "exec_failure": "Exec Failure",
+  "request_count": "Request",
+  "model_count": "Model"
 }
