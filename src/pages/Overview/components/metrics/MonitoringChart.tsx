@@ -163,7 +163,23 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
           color: token.colorPrimary,
         },
         areaStyle: {
-          color: token.colorPrimary + '20',
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorPrimary + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorPrimary + '0D'
+              }
+            ]
+          }
         },
       },
       {
@@ -179,7 +195,23 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
           color: token.colorSuccess,
         },
         areaStyle: {
-          color: token.colorSuccess + '20',
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorSuccess + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorSuccess + '0D'
+              }
+            ]
+          }
         },
       },
       {
@@ -188,11 +220,30 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
         data: currentTabData.series3,
         smooth: true,
         lineStyle: {
-          width: 2,
+          width: 3,
           color: token.colorWarning,
         },
         itemStyle: {
           color: token.colorWarning,
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorWarning + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorWarning + '0D'
+              }
+            ]
+          }
         },
       },
       {
@@ -201,11 +252,30 @@ const MonitoringChart: React.FC<MonitoringChartProps> = ({
         data: currentTabData.series4,
         smooth: true,
         lineStyle: {
-          width: 2,
-          color: token.colorInfo,
+          width: 3,
+          color: token.colorError,
         },
         itemStyle: {
-          color: token.colorInfo,
+          color: token.colorError,
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorError + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorError + '0D'
+              }
+            ]
+          }
         },
       },
     ],

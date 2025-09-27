@@ -124,13 +124,29 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
         smooth: true,
         lineStyle: {
           width: 3,
-          color: token.colorSuccess,
+          color: token.colorPrimary,
         },
         itemStyle: {
-          color: token.colorSuccess,
+          color: token.colorPrimary,
         },
         areaStyle: {
-          color: token.colorSuccess + '20',
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorPrimary + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorPrimary + '0D'
+              }
+            ]
+          }
         },
       },
       {
@@ -146,7 +162,23 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
           color: token.colorError,
         },
         areaStyle: {
-          color: token.colorError + '20',
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: token.colorError + '4D'
+              },
+              {
+                offset: 1,
+                color: token.colorError + '0D'
+              }
+            ]
+          }
         },
       },
     ],
@@ -157,12 +189,12 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
       <Col span={24}>
         <Card
           className="flex flex-1 flex-col overflow-hidden"
-          style={{ 
-            height: "450px", 
+          style={{
+            height: "450px",
             marginBottom: 10,
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             borderRadius: '12px',
-            overflow: 'hidden'          
+            overflow: 'hidden'
           }}
           title={t("trend_analysis")}
           onMouseEnter={(e) => {
