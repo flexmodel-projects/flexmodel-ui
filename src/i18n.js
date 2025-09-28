@@ -3,6 +3,9 @@ import {initReactI18next} from 'react-i18next';
 import en from './locales/en.json'
 import zh from './locales/zh.json'
 import LanguageDetector from 'i18next-browser-languagedetector';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
 
 const resources = {
   "en": {
@@ -29,5 +32,8 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     }
   });
+
+// 设置 dayjs 语言
+dayjs.locale(currentLocale);
 
 export default i18n;

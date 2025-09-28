@@ -4,6 +4,7 @@ import {getGlobalProfile} from '../services/global';
 import {getDarkModeFromStorage, setDarkModeToStorage} from '../utils/darkMode';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
+import dayjs from 'dayjs';
 
 // 类型定义
 export interface ConfigState {
@@ -92,6 +93,8 @@ export const useAppStore = create<AppState>()(
         setLocale: (locale, lang) => {
           set({locale, currentLang: lang});
           localStorage.setItem('i18nextLng', lang);
+          // 同步更新 dayjs 语言
+          dayjs.locale(lang);
         },
         toggleLanguage: () => {
           const {currentLang} = get();
@@ -99,6 +102,8 @@ export const useAppStore = create<AppState>()(
           const newLocale = newLang === 'zh' ? zhCN : enUS;
           set({locale: newLocale, currentLang: newLang});
           localStorage.setItem('i18nextLng', newLang);
+          // 同步更新 dayjs 语言
+          dayjs.locale(newLang);
         },
 
         // 侧边栏相关actions
