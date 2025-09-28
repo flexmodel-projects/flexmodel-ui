@@ -162,7 +162,7 @@ const ApiInfoCard: React.FC<{ stats: Statistics; color: string }> = ({ stats, co
     >
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: '3px',
         flexWrap: 'wrap'
       }}>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
@@ -214,7 +214,7 @@ const FlowOrchestrationCard: React.FC<{ stats: Statistics; color: string }> = ({
     >
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: '3px',
         flexWrap: 'wrap'
       }}>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
@@ -227,7 +227,7 @@ const FlowOrchestrationCard: React.FC<{ stats: Statistics; color: string }> = ({
         </div>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
           <div style={{ fontSize: '10px', color: 'var(--ant-color-text-secondary)', marginBottom: '1px' }}>
-            {t("exec_count")}
+            {t("exec_success")}
           </div>
           <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ant-color-success)' }}>
             {stats.flowExecCount}
@@ -250,7 +250,7 @@ const TaskSchedulingCard: React.FC<{ stats: Statistics; color: string }> = ({ st
     >
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: '3px',
         flexWrap: 'wrap'
       }}>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
@@ -294,7 +294,7 @@ const DataCard: React.FC<{ stats: Statistics; color: string }> = ({ stats, color
     >
       <div style={{
         display: 'flex',
-        gap: '8px',
+        gap: '3px',
         flexWrap: 'wrap'
       }}>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
