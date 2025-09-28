@@ -114,7 +114,7 @@ const StatCard: React.FC<{
           justifyContent: 'center',
           flexShrink: 0,
           background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-          boxShadow: `0 4px 12px ${color}30`,
+          boxShadow: `0 4px 12px ${color}30, 0 3px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08)`,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}>
           {icon}

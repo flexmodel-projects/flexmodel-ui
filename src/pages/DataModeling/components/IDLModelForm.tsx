@@ -22,10 +22,28 @@ const IDLModelForm = React.forwardRef<any, IDLModelFormProps>(({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  // 重置表单内容（不调用onCancel）
+  const resetForm = () => {
+    setIdlCode(`// ${t('idl_syntax_example')}
+model example_model {
+  id : String @id @default(ulid()),
+  name : String @length("255") @comment("${t('name')}"),
+  createdAt : DateTime @default(now()),
+  enabled : Boolean @default("true"),
+}
+
+enum ExampleEnum {
+  VALUE1,
+  VALUE2,
+  VALUE3
+}`);
+  };
+
   // 暴露提交方法给父组件
   React.useImperativeHandle(ref, () => ({
     submit: handleSubmit,
-    reset: handleCancel,
+    reset: resetForm,
+    cancel: handleCancel,
     getFieldsValue: () => ({ idlCode }),
     setFieldsValue: (values: any) => {
       if (values.idlCode) {
@@ -70,20 +88,6 @@ enum ExampleEnum {
   };
 
   const handleCancel = () => {
-    // 清空编辑器内容
-    setIdlCode(`// ${t('idl_syntax_example')}
-model example_model {
-  id : String @id @default(ulid()),
-  name : String @length("255") @comment("${t('name')}"),
-  createdAt : DateTime @default(now()),
-  enabled : Boolean @default("true"),
-}
-
-enum ExampleEnum {
-  VALUE1,
-  VALUE2,
-  VALUE3
-}`);
     onCancel();
   };
 

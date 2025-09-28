@@ -535,7 +535,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
           mode="create"
           datasource={activeDs}
           onConfirm={handleIDLModelFormSubmit}
-          onCancel={handleIDLModalCancel}
+          onCancel={() => setCreateIDLModelVisible(false)}
         />
       </Drawer>
     </div>
