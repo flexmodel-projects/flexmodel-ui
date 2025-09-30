@@ -5,9 +5,7 @@ export interface LayoutedNode extends Node {
   position: { x: number; y: number };
 }
 
-export interface LayoutedEdge extends Edge {
-  // 边不需要额外的布局属性
-}
+export type LayoutedEdge = Edge;
 
 /**
  * 使用 Dagre 算法对节点进行自动布局
@@ -127,17 +125,28 @@ export const getSmartLayoutedElements = (
   const edgeCount = edges.length;
 
   // 根据节点和边的数量选择合适的预设
-  let preset = layoutPresets.leftToRight;
+  let preset: { direction: 'TB' | 'BT' | 'LR' | 'RL'; nodeWidth: number; nodeHeight: number };
 
   if (nodeCount > 15 || edgeCount > 20) {
-    // 复杂图形使用宽松布局
-    preset = layoutPresets.spacious;
+    // 复杂图形使用宽松布局，但保持传入的方向
+    preset = {
+      direction: direction,
+      nodeWidth: 160,
+      nodeHeight: 100
+    };
   } else if (nodeCount < 5 && edgeCount < 5) {
     // 简单图形可以使用紧凑布局
     preset = {
       direction: direction,
       nodeWidth: 120,
       nodeHeight: 70
+    };
+  } else {
+    // 默认使用左到右布局，但保持传入的方向
+    preset = {
+      direction: direction,
+      nodeWidth: 140,
+      nodeHeight: 80
     };
   }
 
