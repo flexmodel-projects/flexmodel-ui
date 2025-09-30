@@ -16,12 +16,19 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   onNodePropertyChange,
 }) => {
   const [form] = Form.useForm();
-  const [propertiesText, setPropertiesText] = React.useState('');
+  const [nodeProperties, setNodeProperties] = React.useState<Record<string, any>>({});
 
   // 当选中节点变化时，更新表单
   React.useEffect(() => {
     if (selectedNode) {
-      const properties = selectedNode.data?.properties as any || {};
+      const baseProperties = (selectedNode.data?.properties as any) || {};
+      // 首次进入时若没有properties，回填常用字段
+      const properties = {
+        name: selectedNode.data?.name,
+        positionX: Math.round(selectedNode.position.x),
+        positionY: Math.round(selectedNode.position.y),
+        ...baseProperties,
+      } as any;
       form.setFieldsValue({
         ...selectedNode.data,
         id: selectedNode.id,
@@ -32,40 +39,79 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         height: selectedNode.style?.height || 60,
         enabled: selectedNode.data?.enabled !== false, // 默认为true
       });
-      // 更新properties文本
-      setPropertiesText(JSON.stringify(properties, null, 2));
+      // 更新本地属性状态
+      setNodeProperties(properties);
     } else {
       form.resetFields();
-      setPropertiesText('');
+      setNodeProperties({});
     }
   }, [selectedNode, form]);
 
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
     if (selectedNode) {
-      // 将坐标信息保存到properties中
+      // 同步基础字段到data，并把名称与坐标写入properties
       const updatedData = {
         ...selectedNode.data,
+        name: allValues.name,
         properties: {
           ...(selectedNode.data?.properties as any || {}),
+          name: allValues.name,
           positionX: allValues.positionX,
           positionY: allValues.positionY,
         }
       };
+      // 实时同步本地属性
+      const nextProps = {
+        ...(selectedNode.data?.properties as any || {}),
+        name: allValues.name,
+        positionX: allValues.positionX,
+        positionY: allValues.positionY,
+      } as any;
+      setNodeProperties(nextProps);
       onNodePropertyChange(selectedNode.id, updatedData);
     }
   };
 
   // 处理properties文本变化
   const handlePropertiesChange = (value: string) => {
-    setPropertiesText(value);
     if (selectedNode) {
       try {
         // 尝试解析JSON
         const properties = value.trim() ? JSON.parse(value) : {};
+
+        // 将 properties 中的关键字段同步到表单
+        const nextName = properties.name !== undefined ? properties.name : form.getFieldValue('name');
+        const nextPositionX = properties.positionX !== undefined ? properties.positionX : form.getFieldValue('positionX');
+        const nextPositionY = properties.positionY !== undefined ? properties.positionY : form.getFieldValue('positionY');
+
+        form.setFieldsValue({
+          name: nextName,
+          positionX: nextPositionX,
+          positionY: nextPositionY,
+        });
+
+        // 同步到节点数据（顶层与 properties 中都写入），并更新本地属性状态
+        const updatedProps = {
+          ...(selectedNode.data?.properties as any || {}),
+          ...properties,
+          name: nextName,
+          positionX: nextPositionX,
+          positionY: nextPositionY,
+        };
+        setNodeProperties(updatedProps);
         onNodePropertyChange(selectedNode.id, {
           ...selectedNode.data,
-          properties
+          name: nextName,
+          positionX: nextPositionX,
+          positionY: nextPositionY,
+          properties: {
+            ...(selectedNode.data?.properties as any || {}),
+            ...properties,
+            name: nextName,
+            positionX: nextPositionX,
+            positionY: nextPositionY,
+          }
         });
       } catch (error) {
         // JSON格式错误时，不更新properties，但保留文本内容
@@ -85,7 +131,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           return (
             <Form.Item label="Properties (可编辑)">
               <Input.TextArea
-                value={propertiesText}
+                value={JSON.stringify(nodeProperties, null, 2)}
                 onChange={(e) => handlePropertiesChange(e.target.value)}
                 rows={8}
                 style={{
@@ -104,7 +150,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           return (
             <Form.Item label="Properties (可编辑)">
               <Input.TextArea
-                value={propertiesText}
+                value={JSON.stringify(nodeProperties, null, 2)}
                 onChange={(e) => handlePropertiesChange(e.target.value)}
                 rows={8}
                 style={{
@@ -129,7 +175,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               </Form.Item>
               <Form.Item label="Properties (可编辑)">
                 <Input.TextArea
-                  value={propertiesText}
+                  value={JSON.stringify(nodeProperties, null, 2)}
                   onChange={(e) => handlePropertiesChange(e.target.value)}
                   rows={8}
                   style={{
@@ -149,7 +195,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           return (
             <Form.Item label="Properties (可编辑)">
               <Input.TextArea
-                value={propertiesText}
+                value={JSON.stringify(nodeProperties, null, 2)}
                 onChange={(e) => handlePropertiesChange(e.target.value)}
                 rows={8}
                 style={{

@@ -180,6 +180,7 @@ const ERDiagram: React.FC<ERDiagramProps> = ({data}) => {
             markerEnd: {type: MarkerType.ArrowClosed},
             style: {strokeWidth: 2, stroke: token.colorPrimary},
           }}
+          proOptions={{ hideAttribution: true }}
         >
           <MiniMap
             style={{

@@ -1,10 +1,11 @@
 import React from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
-import {PlusCircleOutlined} from '@ant-design/icons';
-import {theme} from 'antd';
+import {DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {Button, theme} from 'antd';
 
-const ParallelGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
+const ParallelGatewayNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   const { token } = theme.useToken();
+  const [isHovered, setIsHovered] = React.useState(false);
   return (
     <div
       style={{
@@ -20,6 +21,8 @@ const ParallelGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
         borderRadius: 8,
         boxShadow: selected ? '0 4px 12px rgba(24, 144, 255, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <Handle
         type="target"
@@ -82,6 +85,37 @@ const ParallelGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
         }}
       />
 
+      {isHovered && (
+        <Button
+          type="text"
+          size="small"
+          icon={<DeleteOutlined />}
+          onClick={(e) => {
+            e.stopPropagation();
+            (data as any)?.onDelete?.(id);
+          }}
+          style={{
+            position: 'absolute',
+            top: -8,
+            right: -8,
+            width: 20,
+            height: 20,
+            minWidth: 20,
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: token.colorBgContainer,
+            border: `1px solid ${token.colorBorder}`,
+            borderRadius: '50%',
+            color: token.colorError,
+            zIndex: 1000,
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          }}
+          title="删除节点"
+        />
+      )}
+
       <PlusCircleOutlined
         style={{
           fontSize: '20px',
@@ -90,24 +124,22 @@ const ParallelGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
         }}
       />
 
-      {((data.properties as any)?.name || data.name) ? (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: -25,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '12px',
-            color: token.colorTextSecondary,
-            whiteSpace: 'nowrap',
-            maxWidth: 100,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {String((data.properties as any)?.name || data.name)}
-        </div>
-      ) : null}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -25,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '12px',
+          color: token.colorTextSecondary,
+          whiteSpace: 'nowrap',
+          maxWidth: 100,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {String((data.properties as any)?.name || data.name || '并行网关')}
+      </div>
     </div>
   );
 };

@@ -48,7 +48,7 @@ import {FlowElementType} from '@/pages/FlowDesign/types/flow.d';
 import {generateId} from '@/pages/FlowDesign/utils/flow';
 import {getSmartLayoutedElements} from '@/pages/FlowDesign/utils/autoLayout';
 import {PageContainer} from '@/components/common';
-import {getFlowModule, updateFlow, UpdateFlowRequest} from '@/services/flow';
+import {deployFlow, getFlowModule, updateFlow, UpdateFlowRequest} from '@/services/flow';
 
 const { Sider, Content } = Layout;
 
@@ -241,7 +241,7 @@ const FlowDesign: React.FC = () => {
             type: nodeType,
             position: { x: nodePositionX, y: nodePositionY },
             data: {
-              name: element.properties?.name || element.key,
+              name: element.properties?.name || '',
               ...element.properties,
               onDelete: () => { }, // 临时空函数，避免类型错误
             },
@@ -490,9 +490,55 @@ const FlowDesign: React.FC = () => {
   }, [nodes, edges, flowModuleId, flowName, flowKey, flowRemark]);
 
   // 发布流程
-  const handleDeploy = useCallback(() => {
-    console.log('发布流程');
-  }, []);
+  const handleDeploy = useCallback(async () => {
+    if (!flowModuleId) {
+      message.error('流程ID不存在，无法发布');
+      return;
+    }
+
+    const flowModel = {
+      flowElementList: [
+        ...nodes.map(node => ({
+          key: node.id,
+          type: getNodeType(node.type || 'userTask'),
+          incoming: edges.filter(edge => edge.target === node.id).map(edge => edge.id),
+          outgoing: edges.filter(edge => edge.source === node.id).map(edge => edge.id),
+          properties: {
+            ...(node.data?.properties || {}),
+            positionX: (node.data?.properties as any)?.positionX ?? Math.round(node.position.x),
+            positionY: (node.data?.properties as any)?.positionY ?? Math.round(node.position.y),
+          },
+        })),
+        ...edges.map(edge => ({
+          key: edge.id,
+          type: FlowElementType.SEQUENCE_FLOW,
+          incoming: [edge.source],
+          outgoing: [edge.target],
+          properties: edge.data || {},
+        })),
+      ],
+    };
+
+    try {
+      const updateData: UpdateFlowRequest = {
+        flowName,
+        flowKey,
+        remark: flowRemark,
+        flowModel: JSON.stringify(flowModel),
+      };
+      await updateFlow(flowModuleId, updateData);
+      const res = await deployFlow(flowModuleId, { flowModuleId });
+      if (res?.flowDeployId) {
+        message.success('发布成功');
+        loadFlowDetail(flowModuleId);
+      } else {
+        message.warning('发布已提交');
+      }
+    } catch (e) {
+      console.error('发布流程失败:', e);
+      message.error('发布失败');
+    }
+  }, [edges, flowKey, flowModuleId, flowName, flowRemark, nodes, loadFlowDetail]);
 
   // moved above
 
@@ -513,107 +559,6 @@ const FlowDesign: React.FC = () => {
     }, 100);
   }, [nodes, edges, reactFlowInstance, setNodes, setEdges]);
 
-  // 加载示例数据
-  const loadExampleData = useCallback(() => {
-    const exampleNodes: Node[] = [
-      {
-        id: 'startEvent1',
-        type: 'startEvent',
-        position: { x: 100, y: 100 },
-        data: { name: '开始', onDelete: handleNodeDelete },
-      },
-      {
-        id: 'userTask1',
-        type: 'userTask',
-        position: { x: 300, y: 100 },
-        data: { name: '填写节点', onDelete: handleNodeDelete },
-      },
-      {
-        id: 'exclusiveGateway1',
-        type: 'exclusiveGateway',
-        position: { x: 500, y: 100 },
-        data: { name: '金额>5000', hookInfoIds: '[1,2]', onDelete: handleNodeDelete },
-      },
-      {
-        id: 'userTask2',
-        type: 'userTask',
-        position: { x: 700, y: 50 },
-        data: { name: '总经理审批', onDelete: handleNodeDelete },
-      },
-      {
-        id: 'userTask3',
-        type: 'userTask',
-        position: { x: 700, y: 150 },
-        data: { name: '业务经理审批', onDelete: handleNodeDelete },
-      },
-      {
-        id: 'endEvent1',
-        type: 'endEvent',
-        position: { x: 900, y: 100 },
-        data: { name: '结束', onDelete: handleNodeDelete },
-      },
-    ];
-
-    const exampleEdges: CustomEdge[] = [
-      {
-        id: 'sequenceFlow1',
-        type: 'arrow',
-        source: 'startEvent1',
-        target: 'userTask1',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete },
-      },
-      {
-        id: 'sequenceFlow2',
-        type: 'arrow',
-        source: 'userTask1',
-        target: 'exclusiveGateway1',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete },
-      },
-      {
-        id: 'sequenceFlow3',
-        type: 'arrow',
-        source: 'exclusiveGateway1',
-        target: 'userTask2',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: 'a>1&&b==1', defaultConditions: 'false', onDelete: handleEdgeDelete },
-      },
-      {
-        id: 'sequenceFlow4',
-        type: 'arrow',
-        source: 'exclusiveGateway1',
-        target: 'userTask3',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'true', onDelete: handleEdgeDelete },
-      },
-      {
-        id: 'sequenceFlow5',
-        type: 'arrow',
-        source: 'userTask2',
-        target: 'endEvent1',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete },
-      },
-      {
-        id: 'sequenceFlow6',
-        type: 'arrow',
-        source: 'userTask3',
-        target: 'endEvent1',
-        sourceHandle: null,
-        targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete },
-      },
-    ];
-
-    setNodes(exampleNodes);
-    setEdges(exampleEdges);
-  }, [setNodes, setEdges, handleEdgeDelete, handleNodeDelete]);
 
   return (
     <PageContainer title={<>
@@ -667,7 +612,6 @@ const FlowDesign: React.FC = () => {
           >
             自动布局
           </Button>
-          <Button onClick={loadExampleData}>加载示例</Button>
           <Button onClick={handleDeploy}>发布</Button>
           <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
             保存
@@ -740,7 +684,7 @@ const FlowDesign: React.FC = () => {
                 fitView
                 snapToGrid
                 snapGrid={[16, 16]}
-                attributionPosition="bottom-left"
+                proOptions={{ hideAttribution: true }}
               >
                 <Background />
                 <Controls position="bottom-right" />
