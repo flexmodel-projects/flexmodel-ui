@@ -133,7 +133,7 @@ export const routes: RouteConfig[] = [
     ],
   },
   {
-    path: "/flow/design",
+    path: "/flow/design/:flowModuleId",
     element: <FlowDesign/>,
     icon: DatabaseOutlined,
     translationKey: "flow_design",

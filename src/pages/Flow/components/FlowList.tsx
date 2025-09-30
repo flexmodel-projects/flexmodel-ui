@@ -1,9 +1,17 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Input, message, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
+import {Button, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/common/PageContainer';
-import {deployFlow, FlowListParams, FlowModule, getFlowList} from '@/services/flow';
+import {
+  createFlow,
+  CreateFlowRequest,
+  deleteFlow,
+  deployFlow,
+  FlowListParams,
+  FlowModule,
+  getFlowList
+} from '@/services/flow';
 import dayjs from 'dayjs';
 import {t} from 'i18next';
 
@@ -19,6 +27,11 @@ const FlowList: React.FC = () => {
     page: 1,
     size: 20
   });
+
+  // 创建流程相关状态
+  const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [form] = Form.useForm();
 
   // 获取流程列表
   const fetchFlowList = useCallback(async () => {
@@ -48,6 +61,47 @@ const FlowList: React.FC = () => {
     } catch (error) {
       console.error('部署流程失败:', error);
       message.error('部署流程失败');
+    }
+  };
+
+  // 创建流程
+  const handleCreateFlow = async () => {
+    try {
+      const values = await form.validateFields();
+      setCreateLoading(true);
+
+      const createData: CreateFlowRequest = {
+        flowKey: values.flowKey,
+        flowName: values.flowName,
+        remark: values.remark || '',
+      };
+
+      const response = await createFlow(createData);
+      message.success('流程创建成功');
+        setCreateModalVisible(false);
+        form.resetFields();
+        // 跳转到编辑页面
+        navigate(`/flow/design/${response.flowModuleId}`);
+        // 刷新列表
+        fetchFlowList();
+    } catch (error) {
+      console.error('创建流程失败:', error);
+      message.error('创建流程失败');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  // 删除流程
+  const handleDeleteFlow = async (flowModuleId: string) => {
+    try {
+      await deleteFlow(flowModuleId);
+      message.success('流程删除成功');
+      // 刷新列表
+      fetchFlowList();
+    } catch (error) {
+      console.error('删除流程失败:', error);
+      message.error('删除流程失败');
     }
   };
 
@@ -119,8 +173,7 @@ const FlowList: React.FC = () => {
               icon={<EditOutlined/>}
               size="small"
               onClick={() => {
-                // TODO: 实现编辑功能
-                message.info('编辑功能待实现');
+                navigate(`/flow/design/${record.flowModuleId}`);
               }}
             />
           </Tooltip>
@@ -135,12 +188,11 @@ const FlowList: React.FC = () => {
           <Tooltip title="删除">
             <Popconfirm
               title="确定要删除这个流程吗？"
-              onConfirm={() => {
-                // TODO: 实现删除功能
-                message.info('删除功能待实现');
-              }}
-              okText="确定"
+              description="删除后无法恢复，请谨慎操作"
+              onConfirm={() => handleDeleteFlow(record.flowModuleId)}
+              okText="确定删除"
               cancelText="取消"
+              okType="danger"
             >
               <Button
                 type="link"
@@ -176,7 +228,7 @@ const FlowList: React.FC = () => {
             type="primary"
             icon={<PlusOutlined/>}
             onClick={() => {
-              navigate('/flow/design');
+              setCreateModalVisible(true);
             }}
           >
             新建流程
@@ -221,6 +273,64 @@ const FlowList: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* 创建流程Modal */}
+      <Modal
+        title="新建流程"
+        open={createModalVisible}
+        onOk={handleCreateFlow}
+        onCancel={() => {
+          setCreateModalVisible(false);
+          form.resetFields();
+        }}
+        confirmLoading={createLoading}
+        okText="创建"
+        cancelText="取消"
+        width={500}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          requiredMark={false}
+        >
+          <Form.Item
+            label="流程名称"
+            name="flowName"
+            rules={[
+              { required: true, message: '请输入流程名称' },
+              { max: 50, message: '流程名称不能超过50个字符' }
+            ]}
+          >
+            <Input placeholder="请输入流程名称" />
+          </Form.Item>
+
+          <Form.Item
+            label="流程键"
+            name="flowKey"
+            rules={[
+              { required: true, message: '请输入流程键' },
+              { max: 50, message: '流程键不能超过50个字符' }
+            ]}
+          >
+            <Input placeholder="请输入流程键" />
+          </Form.Item>
+
+          <Form.Item
+            label="备注"
+            name="remark"
+            rules={[
+              { max: 200, message: '备注不能超过200个字符' }
+            ]}
+          >
+            <Input.TextArea
+              placeholder="请输入流程备注"
+              rows={3}
+              showCount
+              maxLength={200}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageContainer>
   );
 };

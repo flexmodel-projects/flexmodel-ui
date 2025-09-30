@@ -90,7 +90,7 @@ const InclusiveGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
         }}
       />
 
-      {data.name ? (
+      {((data.properties as any)?.name || data.name) ? (
         <div
           style={{
             position: 'absolute',
@@ -105,7 +105,7 @@ const InclusiveGatewayNode: React.FC<NodeProps> = ({ data, selected }) => {
             textOverflow: 'ellipsis',
           }}
         >
-          {String(data.name)}
+          {String((data.properties as any)?.name || data.name)}
         </div>
       ) : null}
     </div>

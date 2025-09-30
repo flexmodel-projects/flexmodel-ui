@@ -38,7 +38,7 @@ const CallActivityNode: React.FC<NodeProps> = ({ data, selected, id }) => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         <LinkOutlined style={{ fontSize: '14px' }} />
-        <span style={{ fontWeight: 500 }}>{data?.label as string || '子流程'}</span>
+        <span style={{ fontWeight: 500 }}>{(data?.properties as any)?.name || data?.label as string || '子流程'}</span>
       </div>
 
       <Handle

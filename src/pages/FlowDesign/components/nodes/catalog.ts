@@ -1,6 +1,6 @@
 import {NodeType} from '../../types/flow.d';
 
-export type NodeCategory = 'activities' | 'serviceTasks' | 'gateways' | 'advanced';
+export type NodeCategory = 'events' | 'activities' | 'serviceTasks' | 'gateways' | 'advanced';
 
 export interface NodeCatalogItem {
   type: NodeType;
@@ -9,8 +9,12 @@ export interface NodeCatalogItem {
   category: NodeCategory;
 }
 
-// 统一节点目录：左侧面板与连线“+”菜单共用
+// 统一节点目录：左侧面板与连线"+"菜单共用
 export const nodeCatalog: NodeCatalogItem[] = [
+  // 事件节点
+  { type: 'startEvent', label: '开始事件', icon: 'start-event', category: 'events' },
+  { type: 'endEvent', label: '结束事件', icon: 'end-event', category: 'events' },
+
   // 人工节点
   { type: 'userTask', label: '人工任务', icon: 'user-check', category: 'activities' },
 
@@ -31,6 +35,7 @@ export const nodeCatalog: NodeCatalogItem[] = [
 ];
 
 export const categoryTitle: Record<NodeCategory, string> = {
+  events: '事件节点',
   activities: '人工节点',
   serviceTasks: '自动节点',
   gateways: '网关节点',

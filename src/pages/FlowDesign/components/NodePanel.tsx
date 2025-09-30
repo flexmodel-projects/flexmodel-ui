@@ -8,8 +8,10 @@ import {
   InfoCircleOutlined,
   LinkOutlined,
   MinusCircleOutlined,
+  PlayCircleOutlined,
   PlusCircleOutlined,
   SettingOutlined,
+  StopOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {NodePanelItem, NodeType} from '../types/flow.d';
@@ -27,6 +29,8 @@ const NodePanel: React.FC = () => {
   // 获取图标组件
   const getIcon = (iconType: string) => {
     const iconMap: Record<string, React.ReactNode> = {
+      'start-event': <PlayCircleOutlined style={{ color: '#52c41a' }} />,
+      'end-event': <StopOutlined style={{ color: '#ff4d4f' }} />,
       'user-check': <CheckCircleOutlined style={{ color: '#1890ff' }} />,
       'user-info': <InfoCircleOutlined style={{ color: '#52c41a' }} />,
       'user-edit': <EditOutlined style={{ color: '#faad14' }} />,
@@ -70,7 +74,7 @@ const NodePanel: React.FC = () => {
 
   return (
     <Card title="节点选择面板" style={{ height: '100%' }}>
-      <Collapse defaultActiveKey={['activities', 'gateways', 'serviceTasks', 'advanced']} ghost>
+      <Collapse defaultActiveKey={['events', 'activities', 'gateways', 'serviceTasks', 'advanced']} ghost>
         {Object.entries(categorizedNodes).map(([category, nodes]) => (
           <Panel
             header={getCategoryTitle(category)}

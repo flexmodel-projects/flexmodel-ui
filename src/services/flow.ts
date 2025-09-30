@@ -60,6 +60,21 @@ export interface DeployFlowResponse {
   flowModuleId: string;
 }
 
+export interface UpdateFlowRequest {
+  flowName?: string;
+  flowKey?: string;
+  remark?: string;
+  flowModel?: string;
+  tenant?: string;
+  caller?: string;
+  operator?: string;
+}
+
+export interface UpdateFlowResponse {
+  errCode: number;
+  errMsg: string;
+}
+
 export interface StartProcessRequest {
   flowModuleId?: string;
   flowDeployId?: string;
@@ -305,6 +320,16 @@ export const deployFlow = (
 };
 
 /**
+ * 更新流程
+ */
+export const updateFlow = (
+  flowModuleId: string,
+  data: UpdateFlowRequest,
+): Promise<UpdateFlowResponse> => {
+  return api.put(`/flows/${flowModuleId}`, data);
+};
+
+/**
  * 获取流程实例列表
  */
 export const getFlowInstanceList = (
@@ -349,6 +374,20 @@ export const rollbackTask = (
   data: RollbackTaskRequest,
 ): Promise<RollbackTaskResponse> => {
   return api.post(`/flows/instances/${flowInstanceId}/rollback`, data);
+};
+
+/**
+ * 删除流程模块
+ */
+export interface DeleteFlowResponse {
+  errCode: number;
+  errMsg: string;
+}
+
+export const deleteFlow = (
+  flowModuleId: string,
+): Promise<DeleteFlowResponse> => {
+  return api.delete(`/flows/${flowModuleId}`);
 };
 
 /**
