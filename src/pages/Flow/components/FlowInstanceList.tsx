@@ -86,25 +86,36 @@ const FlowInstanceList: React.FC = () => {
   // 表格列定义
   const columns = [
     {
+      title: '流程名称',
+      dataIndex: 'flowName',
+      key: 'flowName',
+      width: 120,
+      ellipsis: true,
+    },
+    {
+      title: '流程键',
+      dataIndex: 'flowKey',
+      key: 'flowKey',
+      width: 120,
+      ellipsis: true,
+    },
+    {
       title: '流程实例ID',
       dataIndex: 'flowInstanceId',
       key: 'flowInstanceId',
       width: 200,
-      ellipsis: true,
     },
     {
       title: '流程模块ID',
       dataIndex: 'flowModuleId',
       key: 'flowModuleId',
       width: 200,
-      ellipsis: true,
     },
     {
       title: '流程部署ID',
       dataIndex: 'flowDeployId',
       key: 'flowDeployId',
       width: 200,
-      ellipsis: true,
     },
     {
       title: '状态',
@@ -231,7 +242,7 @@ const FlowInstanceList: React.FC = () => {
             dataSource={flowInstanceList}
             rowKey="flowInstanceId"
             loading={loading}
-            scroll={{ y: tableScrollY || undefined }}
+            scroll={{y: tableScrollY || undefined}}
             pagination={false}
           />
         </div>
