@@ -3,14 +3,16 @@ import {Button, Form, Input, message, Modal, Pagination, Popconfirm, Space, Tabl
 import {DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/common/PageContainer';
+import Editor from '@monaco-editor/react';
+import {getDarkModeFromStorage} from '@/utils/darkMode';
 import {
   createFlow,
   CreateFlowRequest,
   deleteFlow,
-  deployFlow,
   FlowListParams,
   FlowModule,
-  getFlowList
+  getFlowList,
+  startProcess
 } from '@/services/flow';
 import dayjs from 'dayjs';
 import {t} from 'i18next';
@@ -52,16 +54,56 @@ const FlowList: React.FC = () => {
     fetchFlowList();
   }, [fetchFlowList]);
 
-  // 部署流程
-  const handleDeployFlow = async (flowModuleId: string) => {
-    try {
-      await deployFlow(flowModuleId, {flowModuleId});
-      message.success('流程部署成功');
-      fetchFlowList();
-    } catch (error) {
-      console.error('部署流程失败:', error);
-      message.error('部署流程失败');
-    }
+  // 启动流程实例
+  const handleStartProcess = async (flowModuleId: string) => {
+    let variablesText = '{}';
+    const isDark = getDarkModeFromStorage();
+    // 示例：{"orderId":123,"user":"tom"}
+    Modal.confirm({
+      width: 500,
+      title: '启动流程实例',
+      content: (
+        <div>
+          <div style={{ marginBottom: 8 }}>请输入流程变量（JSON）</div>
+          <div style={{ border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 6 }}>
+            <Editor
+              height="240px"
+              defaultLanguage="json"
+              defaultValue={variablesText}
+              theme={isDark ? 'vs-dark' : 'light'}
+              options={{
+                minimap: { enabled: false },
+                wordWrap: 'on',
+                scrollBeyondLastLine: false,
+                formatOnPaste: true,
+                formatOnType: true,
+              }}
+              onChange={(value) => {
+                variablesText = (value || '').toString();
+              }}
+            />
+          </div>
+        </div>
+      ),
+      okText: '启动',
+      cancelText: '取消',
+      onOk: async () => {
+        let variables: Record<string, any> = {};
+        const text = (variablesText || '').trim();
+        if (text.length === 0) {
+          variables = {};
+        } else {
+          try {
+            variables = JSON.parse(text);
+          } catch (e) {
+            message.error('变量需为合法的 JSON');
+            throw e as Error;
+          }
+        }
+        await startProcess({ flowModuleId, variables });
+        message.success('流程已启动');
+      },
+    });
   };
 
   // 创建流程
@@ -167,6 +209,14 @@ const FlowList: React.FC = () => {
       fixed: 'right' as const,
       render: (_: any, record: FlowModule) => (
         <Space size="small">
+          <Tooltip title="启动流程实例">
+            <Button
+              type="link"
+              icon={<PlayCircleOutlined/>}
+              size="small"
+              onClick={() => handleStartProcess(record.flowModuleId)}
+            />
+          </Tooltip>
           <Tooltip title="编辑">
             <Button
               type="link"
@@ -175,14 +225,6 @@ const FlowList: React.FC = () => {
               onClick={() => {
                 navigate(`/flow/design/${record.flowModuleId}`);
               }}
-            />
-          </Tooltip>
-          <Tooltip title="部署">
-            <Button
-              type="link"
-              icon={<PlayCircleOutlined/>}
-              size="small"
-              onClick={() => handleDeployFlow(record.flowModuleId)}
             />
           </Tooltip>
           <Tooltip title="删除">

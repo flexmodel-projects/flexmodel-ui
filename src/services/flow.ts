@@ -76,10 +76,9 @@ export interface UpdateFlowResponse {
 }
 
 export interface StartProcessRequest {
-  flowModuleId?: string;
-  flowDeployId?: string;
-  variables?: InstanceData[];
-  runtimeContext?: RuntimeContext;
+  flowModuleId?: string; // 流程模块ID，flowModuleId和flowDeployId必须有一个
+  flowDeployId?: string; // 流程部署ID，flowModuleId和flowDeployId必须有一个
+  variables?: Record<string, any>; // 流程变量
 }
 
 export interface StartProcessResponse {
@@ -92,18 +91,17 @@ export interface StartProcessResponse {
   nodeExecuteResults?: NodeExecuteResult[];
   extendProperties?: Record<string, any>;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
 }
 
 export interface CommitTaskRequest {
   flowInstanceId: string;
   nodeInstanceId?: string;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
   tenant?: string;
   caller?: string;
   operator?: string;
   taskInstanceId?: string;
-  runtimeContext?: RuntimeContext;
   extendProperties?: Record<string, any>;
   callActivityFlowModuleId?: string;
 }
@@ -116,7 +114,7 @@ export interface CommitTaskResponse {
   nodeExecuteResults?: NodeExecuteResult[];
   extendProperties?: Record<string, any>;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
 }
 
 export interface RollbackTaskRequest {
@@ -126,7 +124,6 @@ export interface RollbackTaskRequest {
   caller?: string;
   operator?: string;
   taskInstanceId?: string;
-  runtimeContext?: RuntimeContext;
   extendProperties?: Record<string, any>;
 }
 
@@ -138,7 +135,7 @@ export interface RollbackTaskResponse {
   nodeExecuteResults?: NodeExecuteResult[];
   extendProperties?: Record<string, any>;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
 }
 
 export interface TerminateResponse {
@@ -149,13 +146,7 @@ export interface TerminateResponse {
   nodeExecuteResults?: NodeExecuteResult[];
   extendProperties?: Record<string, any>;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
-}
-
-export interface InstanceData {
-  key: string;
-  type: string;
-  value: any;
+  variables?: Record<string, any>;
 }
 
 export interface RuntimeContext {
@@ -173,7 +164,7 @@ export interface RuntimeContext {
   currentNodeModel?: FlowElement;
   currentNodeInstance?: NodeInstanceBO;
   instanceDataId?: string;
-  instanceDataMap?: Record<string, InstanceData>;
+  instanceDataMap?: Record<string, any>;
   processStatus?: number;
   callActivityFlowModuleId?: string;
   callActivityRuntimeResultList?: RuntimeResult[];
@@ -202,7 +193,7 @@ export interface NodeInstanceBO {
 }
 
 export interface ExtendRuntimeContext {
-  branchExecuteDataMap?: Record<string, InstanceData>;
+  branchExecuteDataMap?: Record<string, any>;
   branchSuspendNodeInstance?: NodeInstanceBO;
   currentNodeModel?: FlowElement;
   exception?: TurboException;
@@ -221,14 +212,14 @@ export interface RuntimeResult {
   nodeExecuteResults?: NodeExecuteResult[];
   extendProperties?: Record<string, any>;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
 }
 
 export interface NodeExecuteResult {
   errCode: number;
   errMsg: string;
   activeTaskInstance?: NodeInstance;
-  variables?: InstanceData[];
+  variables?: Record<string, any>;
 }
 
 export interface NodeInstance {

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Layout, message, Space, theme} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
-import {ArrowLeftOutlined, MenuUnfoldOutlined, SaveOutlined, SettingOutlined} from '@ant-design/icons';
+import {ArrowLeftOutlined, MenuUnfoldOutlined, SettingOutlined} from '@ant-design/icons';
 import {
   addEdge,
   Background,
@@ -568,7 +568,7 @@ const FlowDesign: React.FC = () => {
       extra={
         <Space>
           <Button onClick={handleDeploy}>发布</Button>
-          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+          <Button type="primary" onClick={handleSave}>
             保存
           </Button>
         </Space>

@@ -89,7 +89,7 @@ const UserTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <UserOutlined style={{ fontSize: '16px', color: token.colorPrimary }} />
         <div style={{ fontSize: '13px', color: token.colorText, fontWeight: 500 }}>
-          {String((data.properties as any)?.name || data.name || '用户任务')}
+          {String((data.properties as any)?.name || data.name || '提交节点')}
         </div>
       </div>
 

@@ -56,7 +56,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
         </div>
       )}
       <div
-        className="page-content"
+        className="page-container-content"
         style={{
           flex: 1,
           padding: token.padding,

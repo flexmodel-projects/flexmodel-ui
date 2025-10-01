@@ -14,7 +14,7 @@ export interface NodeCatalogItem {
 export const nodeCatalog: NodeCatalogItem[] = [
 
   // 人工节点
-  { type: 'userTask', label: '人工任务', icon: 'user-task', category: 'activities' },
+  { type: 'userTask', label: '提交节点', icon: 'user-task', category: 'activities' },
 
   // 自动节点
   { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks', subType: 'add-record' },
