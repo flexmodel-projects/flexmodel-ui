@@ -8,6 +8,7 @@ export enum FlowElementType {
   PARALLEL_GATEWAY = 6,
   INCLUSIVE_GATEWAY = 7,
   CALL_ACTIVITY = 8,
+  SERVICE_TASK = 9,
 }
 
 // 流程元素基础接口
@@ -68,6 +69,17 @@ export interface SequenceFlow extends FlowElement {
   };
 }
 
+// 服务任务节点
+export interface ServiceTask extends FlowNode {
+  type: FlowElementType.SERVICE_TASK;
+  properties: {
+    name?: string;
+    subType?: 'add-record' | 'update-record' | 'query-record' | 'delete-record';
+    // 根据 subType 的不同，可以有不同的属性配置
+    [key: string]: any;
+  };
+}
+
 // 调用子流程节点
 export interface CallActivity extends FlowNode {
   type: FlowElementType.CALL_ACTIVITY;
@@ -90,7 +102,7 @@ export interface FlowModel {
 }
 
 // 节点类型定义
-export type NodeType = 
+export type NodeType =
   | 'startEvent'
   | 'endEvent'
   | 'userTask'
@@ -106,6 +118,7 @@ export interface NodePanelItem {
   label: string;
   icon: string;
   category: 'events' | 'gateways' | 'activities' | 'serviceTasks' | 'advanced';
+  subType?: string; // 用于区分自动节点的细分类型
 }
 
 // 流程状态

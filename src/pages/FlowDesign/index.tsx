@@ -3,7 +3,6 @@ import {Button, Layout, message, Space, theme} from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import {
   ArrowLeftOutlined,
-  FileTextOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PartitionOutlined,
@@ -50,7 +49,7 @@ import {getSmartLayoutedElements} from '@/pages/FlowDesign/utils/autoLayout';
 import {PageContainer} from '@/components/common';
 import {deployFlow, getFlowModule, updateFlow, UpdateFlowRequest} from '@/services/flow';
 
-const { Sider, Content } = Layout;
+const {Sider, Content} = Layout;
 
 // 自定义节点类型
 const nodeTypes: NodeTypes = {
@@ -85,12 +84,12 @@ interface CustomEdge extends Edge {
 
 const FlowDesign: React.FC = () => {
   const navigate = useNavigate();
-  const { flowModuleId: routeFlowModuleId } = useParams<{ flowModuleId: string }>();
-  const { token } = theme.useToken();
+  const {flowModuleId: routeFlowModuleId} = useParams<{ flowModuleId: string }>();
+  const {token} = theme.useToken();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<CustomEdge>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [flowName, setFlowName] = useState('合同审批');
+  const [flowName, setFlowName] = useState('');
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [propertyPanelVisible, setPropertyPanelVisible] = useState(false);
   const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
@@ -101,8 +100,6 @@ const FlowDesign: React.FC = () => {
   const [flowKey, setFlowKey] = useState('');
   const [flowRemark, setFlowRemark] = useState('');
 
-  // 编辑模式相关状态
-  const [isEditMode, setIsEditMode] = useState(false);
   const [flowModuleId, setFlowModuleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const hasInitialized = useRef(false);
@@ -164,8 +161,8 @@ const FlowDesign: React.FC = () => {
       const newNode: Node = {
         id: generateId(nodeType),
         type: nodeType as any,
-        position: { x: midX, y: midY },
-        data: { name: '', onDelete: handleNodeDelete },
+        position: {x: midX, y: midY},
+        data: {name: '', onDelete: handleNodeDelete},
       };
 
       const firstEdge: CustomEdge = {
@@ -175,7 +172,12 @@ const FlowDesign: React.FC = () => {
         target: newNode.id,
         sourceHandle: null,
         targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+        data: {
+          conditionsequenceflow: '',
+          defaultConditions: 'false',
+          onDelete: handleEdgeDelete,
+          onInsert: (id: string, t: string) => handleInsertNode(id, t)
+        },
       };
       const secondEdge: CustomEdge = {
         id: generateId('SequenceFlow'),
@@ -184,7 +186,12 @@ const FlowDesign: React.FC = () => {
         target: edge.target,
         sourceHandle: null,
         targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+        data: {
+          conditionsequenceflow: '',
+          defaultConditions: 'false',
+          onDelete: handleEdgeDelete,
+          onInsert: (id: string, t: string) => handleInsertNode(id, t)
+        },
       };
 
       // 同步更新节点
@@ -199,7 +206,7 @@ const FlowDesign: React.FC = () => {
   const parseFlowModel = useCallback((flowModelStr: string) => {
     try {
       const flowModel = JSON.parse(flowModelStr);
-      const { flowElementList } = flowModel;
+      const {flowElementList} = flowModel;
 
       if (!flowElementList || !Array.isArray(flowElementList)) {
         return;
@@ -224,8 +231,10 @@ const FlowDesign: React.FC = () => {
             data: {
               conditionsequenceflow: element.properties?.conditionsequenceflow || '',
               defaultConditions: element.properties?.defaultConditions || 'false',
-              onDelete: () => { }, // 临时空函数，避免类型错误
-              onInsert: () => { }, // 临时空函数，避免类型错误
+              onDelete: () => {
+              }, // 临时空函数，避免类型错误
+              onInsert: () => {
+              }, // 临时空函数，避免类型错误
             },
           });
         } else {
@@ -239,11 +248,12 @@ const FlowDesign: React.FC = () => {
           parsedNodes.push({
             id: element.key,
             type: nodeType,
-            position: { x: nodePositionX, y: nodePositionY },
+            position: {x: nodePositionX, y: nodePositionY},
             data: {
               name: element.properties?.name || '',
               ...element.properties,
-              onDelete: () => { }, // 临时空函数，避免类型错误
+              onDelete: () => {
+              }, // 临时空函数，避免类型错误
             },
           });
 
@@ -292,8 +302,6 @@ const FlowDesign: React.FC = () => {
     if (!hasInitialized.current && routeFlowModuleId) {
       hasInitialized.current = true;
 
-      // 编辑模式
-      setIsEditMode(true);
       setFlowModuleId(routeFlowModuleId);
       loadFlowDetail(routeFlowModuleId);
     } else if (!hasInitialized.current && !routeFlowModuleId) {
@@ -306,21 +314,21 @@ const FlowDesign: React.FC = () => {
 
   // 初始化默认节点（仅在非编辑模式下）
   React.useEffect(() => {
-    if (nodes.length === 0 && !isEditMode) {
+    if (nodes.length === 0) {
       const startId = 'start-node';
       const endId = 'end-node';
       const defaultNodes: Node[] = [
         {
           id: startId,
           type: 'startEvent',
-          position: { x: 100, y: 100 },
-          data: { name: '开始', onDelete: handleNodeDelete },
+          position: {x: 100, y: 100},
+          data: {name: '开始', onDelete: handleNodeDelete},
         },
         {
           id: endId,
           type: 'endEvent',
-          position: { x: 400, y: 100 },
-          data: { name: '结束', onDelete: handleNodeDelete },
+          position: {x: 400, y: 100},
+          data: {name: '结束', onDelete: handleNodeDelete},
         },
       ];
       setNodes(defaultNodes);
@@ -331,11 +339,16 @@ const FlowDesign: React.FC = () => {
         target: endId,
         sourceHandle: null,
         targetHandle: null,
-        data: { conditionsequenceflow: '', defaultConditions: 'false', onDelete: handleEdgeDelete, onInsert: (id: string, t: string) => handleInsertNode(id, t) },
+        data: {
+          conditionsequenceflow: '',
+          defaultConditions: 'false',
+          onDelete: handleEdgeDelete,
+          onInsert: (id: string, t: string) => handleInsertNode(id, t)
+        },
       } as CustomEdge]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes.length, isEditMode]); // 简化依赖，避免循环
+  }, [nodes.length]); // 简化依赖，避免循环
 
   // 为节点和边添加回调函数（使用useEffect确保在解析后添加）
   useEffect(() => {
@@ -405,12 +418,25 @@ const FlowDesign: React.FC = () => {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      const nodeType = event.dataTransfer.getData('application/reactflow');
-      if (!nodeType) return;
+      const dragDataStr = event.dataTransfer.getData('application/reactflow');
+      if (!dragDataStr) return;
+
+      let nodeType: string;
+      let subType: string | undefined;
+
+      try {
+        // 尝试解析新的JSON格式
+        const dragData = JSON.parse(dragDataStr);
+        nodeType = dragData.nodeType;
+        subType = dragData.subType;
+      } catch {
+        // 兼容旧的字符串格式
+        nodeType = dragDataStr;
+      }
 
       const point = reactFlowInstance
-        ? reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY })
-        : { x: event.clientX - 280, y: event.clientY - 64 };
+        ? reactFlowInstance.screenToFlowPosition({x: event.clientX, y: event.clientY})
+        : {x: event.clientX - 280, y: event.clientY - 64};
 
       const newNode: Node = {
         id: generateId(nodeType),
@@ -419,6 +445,8 @@ const FlowDesign: React.FC = () => {
         data: {
           name: '',
           onDelete: handleNodeDelete,
+          // 如果有subType，添加到properties中
+          ...(subType && {properties: {subType}}),
         },
       };
 
@@ -527,7 +555,7 @@ const FlowDesign: React.FC = () => {
         flowModel: JSON.stringify(flowModel),
       };
       await updateFlow(flowModuleId, updateData);
-      const res = await deployFlow(flowModuleId, { flowModuleId });
+      const res = await deployFlow(flowModuleId, {flowModuleId});
       if (res?.flowDeployId) {
         message.success('发布成功');
         loadFlowDetail(flowModuleId);
@@ -544,7 +572,7 @@ const FlowDesign: React.FC = () => {
 
   // 自动布局功能 - 使用智能布局减少连线重叠
   const handleAutoLayout = useCallback(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getSmartLayoutedElements(
+    const {nodes: layoutedNodes, edges: layoutedEdges} = getSmartLayoutedElements(
       nodes,
       edges,
       'LR' // 横向布局
@@ -555,72 +583,59 @@ const FlowDesign: React.FC = () => {
 
     // 自动适应视图
     setTimeout(() => {
-      reactFlowInstance?.fitView({ padding: 0.2 });
+      reactFlowInstance?.fitView({padding: 0.2});
     }, 100);
   }, [nodes, edges, reactFlowInstance, setNodes, setEdges]);
 
 
   return (
-    <PageContainer title={<>
+    <PageContainer title={<Space>
       <Button
-        type="default"
-        icon={<ArrowLeftOutlined />}
+        icon={<ArrowLeftOutlined/>}
         onClick={() => navigate(-1)}
-        style={{
-          marginRight: 12,
-          padding: '4px 8px',
-          height: 'auto',
-          border: '1px solid #d9d9d9',
-          borderRadius: '6px',
-          backgroundColor: '#fff',
-          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-        }}
         title="返回上一页"
-      >
-        返回
-      </Button>
-      <FileTextOutlined style={{ marginRight: 8 }} />
-      {isEditMode ? `正在编辑「${flowName}」` : `正在创建「${flowName}」`}
+      />
+      {flowName}
       <Button
         type="text"
-        icon={<SettingOutlined />}
+        icon={<SettingOutlined/>}
         onClick={() => setSettingsPanelVisible(true)}
         title="流程设置"
       />
-    </>}
-      extra={
-        <Space>
-          <Button
-            icon={leftPanelCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
-            title={leftPanelCollapsed ? '显示节点面板' : '隐藏节点面板'}
-          />
-          <Button
-            icon={<MenuUnfoldOutlined />}
-            onClick={() => setPropertyPanelVisible(true)}
-            title="打开属性面板"
-          />
-          <Button icon={<UndoOutlined />} />
-          <Button icon={<RedoOutlined />} />
-          <Button icon={<ZoomOutOutlined />} onClick={() => reactFlowInstance?.zoomOut?.()} />
-          <span>{zoomPercent}%</span>
-          <Button icon={<ZoomInOutlined />} onClick={() => reactFlowInstance?.zoomIn?.()} />
-          <Button
-            icon={<PartitionOutlined />}
-            onClick={handleAutoLayout}
-            title="自动布局"
-          >
-            自动布局
-          </Button>
-          <Button onClick={handleDeploy}>发布</Button>
-          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
-            保存
-          </Button>
-        </Space>
-      }
+    </Space>}
+                   extra={
+                     <Space>
+                       <Button
+                         icon={leftPanelCollapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+                         onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
+                         title={leftPanelCollapsed ? '显示节点面板' : '隐藏节点面板'}
+                       />
+                       <Button
+                         icon={<MenuUnfoldOutlined/>}
+                         onClick={() => setPropertyPanelVisible(true)}
+                         title="打开属性面板"
+                       />
+                       <Button icon={<UndoOutlined/>}/>
+                       <Button icon={<RedoOutlined/>}/>
+                       <Button icon={<ZoomOutOutlined/>} onClick={() => reactFlowInstance?.zoomOut?.()}/>
+                       <span>{zoomPercent}%</span>
+                       <Button icon={<ZoomInOutlined/>} onClick={() => reactFlowInstance?.zoomIn?.()}/>
+                       <Button
+                         icon={<PartitionOutlined/>}
+                         onClick={handleAutoLayout}
+                         title="自动布局"
+                       >
+                         自动布局
+                       </Button>
+                       <Button onClick={handleDeploy}>发布</Button>
+                       <Button type="primary" icon={<SaveOutlined/>} onClick={handleSave}>
+                         保存
+                       </Button>
+                     </Space>
+                   }
     >
       <ReactFlowProvider>
-        <Layout style={{ height: 'calc(100vh - 135px)' }}>
+        <Layout style={{height: 'calc(100vh - 135px)'}}>
           {/* 左侧节点面板 */}
           <Sider
             width={280}
@@ -631,16 +646,16 @@ const FlowDesign: React.FC = () => {
               borderRight: '1px solid var(--ant-color-border)'
             }}
           >
-            <NodePanel />
+            <NodePanel/>
           </Sider>
 
           {/* 中间画布区域 */}
-          <Content style={{ position: 'relative' }}>
+          <Content style={{position: 'relative'}}>
             {/* 左侧面板隐藏时的提示按钮 */}
             {leftPanelCollapsed && (
               <Button
                 type="primary"
-                icon={<MenuUnfoldOutlined />}
+                icon={<MenuUnfoldOutlined/>}
                 onClick={() => setLeftPanelCollapsed(false)}
                 style={{
                   position: 'absolute',
@@ -684,11 +699,12 @@ const FlowDesign: React.FC = () => {
                 fitView
                 snapToGrid
                 snapGrid={[16, 16]}
-                proOptions={{ hideAttribution: true }}
+                proOptions={{hideAttribution: true}}
               >
-                <Background />
-                <Controls position="bottom-right" />
-                <MiniMap pannable maskColor={token.colorFillTertiary as any} nodeColor={token.colorFillSecondary as any} />
+                <Background/>
+                <Controls position="bottom-right"/>
+                <MiniMap pannable maskColor={token.colorFillTertiary as any}
+                         nodeColor={token.colorFillSecondary as any}/>
               </ReactFlow>
             )}
           </Content>
@@ -704,7 +720,7 @@ const FlowDesign: React.FC = () => {
             setNodes((nds) =>
               nds.map((node) => {
                 if (node.id === nodeId) {
-                  const updatedNode = { ...node, data: { ...node.data, ...properties } };
+                  const updatedNode = {...node, data: {...node.data, ...properties}};
 
                   // 如果properties中包含坐标信息，更新节点位置
                   if (properties.positionX !== undefined || properties.positionY !== undefined) {

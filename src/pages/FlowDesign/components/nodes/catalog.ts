@@ -7,6 +7,7 @@ export interface NodeCatalogItem {
   label: string;
   icon: string;
   category: NodeCategory;
+  subType?: string; // 用于区分自动节点的细分类型
 }
 
 // 统一节点目录：左侧面板与连线"+"菜单共用
@@ -19,11 +20,10 @@ export const nodeCatalog: NodeCatalogItem[] = [
   { type: 'userTask', label: '人工任务', icon: 'user-check', category: 'activities' },
 
   // 自动节点
-  { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks' },
-  { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks' },
-  { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks' },
-  { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks' },
-  { type: 'serviceTask', label: '延时节点', icon: 'delay', category: 'serviceTasks' },
+  { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks', subType: 'add-record' },
+  { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks', subType: 'update-record' },
+  { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks', subType: 'query-record' },
+  { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks', subType: 'delete-record' },
 
   // 网关节点
   { type: 'exclusiveGateway', label: '排他网关', icon: 'gateway-exclusive', category: 'gateways' },

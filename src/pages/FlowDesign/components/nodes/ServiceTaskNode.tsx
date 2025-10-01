@@ -1,11 +1,56 @@
 import React, {useState} from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
-import {DeleteOutlined, SettingOutlined} from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
 import {Button, theme} from 'antd';
 
 const ServiceTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { token } = theme.useToken();
+
+  // 根据 subType 获取图标和颜色
+  const getSubTypeIcon = (subType?: string) => {
+    const iconProps = { fontSize: '16px' };
+
+    switch (subType) {
+      case 'add-record':
+        return <PlusOutlined {...iconProps} style={{ color: token.colorSuccess }} />;
+      case 'update-record':
+        return <EditOutlined {...iconProps} style={{ color: token.colorWarning }} />;
+      case 'query-record':
+        return <SearchOutlined {...iconProps} style={{ color: token.colorInfo }} />;
+      case 'delete-record':
+        return <MinusOutlined {...iconProps} style={{ color: token.colorError }} />;
+      default:
+        return <SettingOutlined {...iconProps} style={{ color: token.colorPrimary }} />;
+    }
+  };
+
+  // 根据 subType 获取显示文本
+  const getDisplayText = (subType?: string) => {
+    const baseName = (data.properties as any)?.name || data.name || '自动任务';
+
+    switch (subType) {
+      case 'add-record':
+        return `新增记录`;
+      case 'update-record':
+        return `更新记录`;
+      case 'query-record':
+        return `查询记录`;
+      case 'delete-record':
+        return `删除记录`;
+      case 'delay':
+        return `延时节点`;
+      default:
+        return baseName;
+    }
+  };
 
   return (
     <div
@@ -87,9 +132,9 @@ const ServiceTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
       />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <SettingOutlined style={{ fontSize: '16px', color: token.colorPrimary }} />
+        {getSubTypeIcon((data.properties as any)?.subType)}
         <div style={{ fontSize: '13px', color: token.colorText, fontWeight: 500 }}>
-          {String((data.properties as any)?.name || data.name || '自动任务')}
+          {getDisplayText((data.properties as any)?.subType)}
         </div>
       </div>
 

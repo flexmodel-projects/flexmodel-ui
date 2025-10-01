@@ -49,10 +49,12 @@ const NodePanel: React.FC = () => {
   };
 
   // 处理拖拽开始
-  const handleDragStart = (e: React.DragEvent, nodeType: NodeType) => {
+  const handleDragStart = (e: React.DragEvent, nodeType: NodeType, subType?: string) => {
     setDraggedNode(nodeType);
     e.dataTransfer.effectAllowed = 'copy';
-    e.dataTransfer.setData('application/reactflow', nodeType);
+    // 传递节点类型和子类型信息
+    const dragData = { nodeType, subType };
+    e.dataTransfer.setData('application/reactflow', JSON.stringify(dragData));
   };
 
   // 处理拖拽结束
@@ -88,7 +90,7 @@ const NodePanel: React.FC = () => {
                     size="small"
                     hoverable
                     draggable
-                    onDragStart={(e) => handleDragStart(e, node.type)}
+                    onDragStart={(e) => handleDragStart(e, node.type, node.subType)}
                     onDragEnd={handleDragEnd}
                     style={{
                       opacity: draggedNode === node.type ? 0.5 : 1,

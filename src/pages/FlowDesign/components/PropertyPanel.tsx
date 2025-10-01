@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Divider, Drawer, Form, Input} from 'antd';
+import {Card, Divider, Drawer, Form, Input, InputNumber} from 'antd';
 import {Node} from '@xyflow/react';
 
 interface PropertyPanelProps {
@@ -120,6 +120,104 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     }
   };
 
+  // 渲染服务任务节点属性配置
+  const renderServiceTaskProperties = () => {
+    const subType = (selectedNode?.data?.properties as any)?.subType;
+
+    switch (subType) {
+      case 'add-record':
+        return (
+          <>
+            <Form.Item label="数据源" name={['properties', 'dataSource']}>
+              <Input placeholder="请选择数据源" />
+            </Form.Item>
+            <Form.Item label="表名" name={['properties', 'tableName']}>
+              <Input placeholder="请输入表名" />
+            </Form.Item>
+            <Form.Item label="字段映射" name={['properties', 'fieldMapping']}>
+              <Input.TextArea placeholder="请输入字段映射配置" rows={4} />
+            </Form.Item>
+          </>
+        );
+
+      case 'update-record':
+        return (
+          <>
+            <Form.Item label="数据源" name={['properties', 'dataSource']}>
+              <Input placeholder="请选择数据源" />
+            </Form.Item>
+            <Form.Item label="表名" name={['properties', 'tableName']}>
+              <Input placeholder="请输入表名" />
+            </Form.Item>
+            <Form.Item label="更新条件" name={['properties', 'updateCondition']}>
+              <Input placeholder="请输入更新条件" />
+            </Form.Item>
+            <Form.Item label="更新字段" name={['properties', 'updateFields']}>
+              <Input.TextArea placeholder="请输入更新字段配置" rows={4} />
+            </Form.Item>
+          </>
+        );
+
+      case 'query-record':
+        return (
+          <>
+            <Form.Item label="数据源" name={['properties', 'dataSource']}>
+              <Input placeholder="请选择数据源" />
+            </Form.Item>
+            <Form.Item label="表名" name={['properties', 'tableName']}>
+              <Input placeholder="请输入表名" />
+            </Form.Item>
+            <Form.Item label="查询条件" name={['properties', 'queryCondition']}>
+              <Input placeholder="请输入查询条件" />
+            </Form.Item>
+            <Form.Item label="返回字段" name={['properties', 'returnFields']}>
+              <Input placeholder="请输入返回字段，用逗号分隔" />
+            </Form.Item>
+            <Form.Item label="排序字段" name={['properties', 'orderBy']}>
+              <Input placeholder="请输入排序字段" />
+            </Form.Item>
+            <Form.Item label="限制条数" name={['properties', 'limit']}>
+              <InputNumber placeholder="请输入限制条数" min={1} />
+            </Form.Item>
+          </>
+        );
+
+      case 'delete-record':
+        return (
+          <>
+            <Form.Item label="数据源" name={['properties', 'dataSource']}>
+              <Input placeholder="请选择数据源" />
+            </Form.Item>
+            <Form.Item label="表名" name={['properties', 'tableName']}>
+              <Input placeholder="请输入表名" />
+            </Form.Item>
+            <Form.Item label="删除条件" name={['properties', 'deleteCondition']}>
+              <Input placeholder="请输入删除条件" />
+            </Form.Item>
+          </>
+        );
+
+      default:
+        return (
+          <Form.Item label="Properties (可编辑)">
+            <Input.TextArea
+              value={JSON.stringify(nodeProperties, null, 2)}
+              onChange={(e) => handlePropertiesChange(e.target.value)}
+              rows={8}
+              style={{
+                fontFamily: 'monospace',
+                fontSize: '12px'
+              }}
+              placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
+            />
+            <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+              提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
+            </div>
+          </Form.Item>
+        );
+    }
+  };
+
   // 渲染节点属性配置
   const renderNodeProperties = () => {
 
@@ -164,6 +262,9 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               </div>
             </Form.Item>
           );
+
+        case 'serviceTask':
+          return renderServiceTaskProperties();
 
         case 'exclusiveGateway':
         case 'parallelGateway':
