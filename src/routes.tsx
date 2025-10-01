@@ -42,7 +42,8 @@ export interface RouteConfig {
   translationKey: string;
   children?: RouteConfig[];
   defaultChild?: string;
-  hideInMenu?: boolean;
+  hideInMenu?: boolean; // 是否在左侧菜单
+  hideLayout?: boolean; // 是否在页面布局中隐藏
 }
 
 export const routes: RouteConfig[] = [
@@ -128,7 +129,6 @@ export const routes: RouteConfig[] = [
         element: <FlowInstanceList/>,
         icon: PlayCircleOutlined,
         translationKey: "flow_instance",
-        hideInMenu: true,
       },
     ],
   },
@@ -138,6 +138,7 @@ export const routes: RouteConfig[] = [
     icon: DatabaseOutlined,
     translationKey: "flow_design",
     hideInMenu: true,
+    hideLayout: true,
   },
   {
     path: "/schedule",
@@ -191,6 +192,25 @@ export const getRouteByPath = (path: string): RouteConfig | undefined => {
   }
 
   return route;
+};
+
+// 检查当前路径是否应该隐藏布局
+export const shouldHideLayout = (currentPath: string): boolean => {
+  // 处理动态路由参数（如 /flow/design/:flowModuleId）
+  const route = routes.find(route => {
+    if (route.path === currentPath) {
+      return true;
+    }
+    // 检查是否匹配动态路由
+    if (route.path.includes(':')) {
+      const routePattern = route.path.replace(/:[^/]+/g, '[^/]+');
+      const regex = new RegExp(`^${routePattern}$`);
+      return regex.test(currentPath);
+    }
+    return false;
+  });
+
+  return route?.hideLayout || false;
 };
 
 // 获取路由的完整路径（包括父路由）

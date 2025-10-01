@@ -12,12 +12,9 @@ export interface NodeCatalogItem {
 
 // 统一节点目录：左侧面板与连线"+"菜单共用
 export const nodeCatalog: NodeCatalogItem[] = [
-  // 事件节点
-  { type: 'startEvent', label: '开始事件', icon: 'start-event', category: 'events' },
-  { type: 'endEvent', label: '结束事件', icon: 'end-event', category: 'events' },
 
   // 人工节点
-  { type: 'userTask', label: '人工任务', icon: 'user-check', category: 'activities' },
+  { type: 'userTask', label: '人工任务', icon: 'user-task', category: 'activities' },
 
   // 自动节点
   { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks', subType: 'add-record' },
@@ -29,6 +26,10 @@ export const nodeCatalog: NodeCatalogItem[] = [
   { type: 'exclusiveGateway', label: '排他网关', icon: 'gateway-exclusive', category: 'gateways' },
   { type: 'parallelGateway', label: '并行网关', icon: 'gateway-parallel', category: 'gateways' },
   { type: 'inclusiveGateway', label: '包容网关', icon: 'gateway-inclusive', category: 'gateways' },
+
+  // 事件节点
+  { type: 'startEvent', label: '开始事件', icon: 'start-event', category: 'events' },
+  { type: 'endEvent', label: '结束事件', icon: 'end-event', category: 'events' },
 
   // 高级
   { type: 'callActivity', label: '子流程', icon: 'call-service', category: 'advanced' },

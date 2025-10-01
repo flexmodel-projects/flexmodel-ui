@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
-import {Button} from 'antd';
+import {Button, theme} from 'antd';
 import {DeleteOutlined, LinkOutlined} from '@ant-design/icons';
 
 const CallActivityNode: React.FC<NodeProps> = ({ data, selected, id }) => {
   const [isHovered, setIsHovered] = useState(false);
-
+  const { token } = theme.useToken();
   return (
     <div
       style={{
@@ -74,12 +74,12 @@ const CallActivityNode: React.FC<NodeProps> = ({ data, selected, id }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'var(--ant-color-error)',
-            borderColor: 'var(--ant-color-error)',
-            color: 'var(--ant-color-white)',
+            backgroundColor: token.colorBgContainer,
+            border: `1px solid ${token.colorBorder}`,
             borderRadius: '50%',
-            fontSize: '10px',
+            color: token.colorError,
             zIndex: 1000,
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           }}
         />
       ) : null}

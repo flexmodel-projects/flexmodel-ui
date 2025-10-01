@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {Layout, theme} from "antd";
+import {useLocation} from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import {RenderRoutes} from "@/routes";
+import {RenderRoutes, shouldHideLayout} from "@/routes";
 import {useSidebar} from "@/store/appStore";
 import AIChatBox from "@/components/ai-chatbox/index";
 import Console from "@/components/console/Console.tsx";
@@ -12,11 +13,18 @@ import ResizablePanel from "@/components/common/ResizablePanel";
 const PageLayout: React.FC = () => {
   const { token } = theme.useToken();
   const { isSidebarCollapsed } = useSidebar();
+  const location = useLocation();
+  const hideLayout = shouldHideLayout(location.pathname);
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const [isAIChatFloating, setIsAIChatFloating] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isConsoleVisible, setIsConsoleVisible] = useState(false);
+
+  // 如果需要隐藏布局，直接渲染路由内容
+  if (hideLayout) {
+    return <RenderRoutes />;
+  }
 
   return (
     <Layout style={{
