@@ -653,7 +653,19 @@ const FlowDesign: React.FC = () => {
             setNodes((nds) =>
               nds.map((node) => {
                 if (node.id === nodeId) {
-                  const updatedNode = { ...node, data: { ...node.data, ...properties } };
+                  // 正确合并节点数据，保留原有的properties
+                  const updatedNode = { 
+                    ...node, 
+                    data: { 
+                      ...node.data, 
+                      ...properties,
+                      // 确保properties字段被正确合并而不是覆盖
+                      properties: {
+                        ...(node.data?.properties || {}),
+                        ...(properties.properties || {})
+                      }
+                    } 
+                  };
 
                   // 如果properties中包含坐标信息，更新节点位置
                   if (properties.positionX !== undefined || properties.positionY !== undefined) {

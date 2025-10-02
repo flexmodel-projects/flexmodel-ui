@@ -224,13 +224,7 @@ export interface NodeExecuteResult {
   variables?: Record<string, any>;
 }
 
-export interface NodeInstance {
-  modelKey?: string;
-  modelName?: string;
-  status: number;
-  subFlowInstanceIdList?: string[];
-  subElementInstanceList?: ElementInstance[];
-  instanceDataId?: string;
+export interface NodeInstance extends ElementInstance {
   nodeInstanceId: string;
   flowElementType?: number;
   subNodeResultList?: RuntimeResult[];
@@ -240,8 +234,8 @@ export interface NodeInstance {
 }
 
 export interface ElementInstance {
-  modelKey?: string;
-  modelName?: string;
+  key?: string;
+  name?: string;
   properties?: Record<string, any>;
   status: number;
   nodeInstanceId: string;
@@ -271,6 +265,25 @@ export interface FlowInstanceListParams {
   size?: number;
   status?: number;
 }
+
+export const FlowInstanceStatus = {
+  DEFAULT: 0,    // 默认值
+  ACTIVE: 1,     // 执行完成
+  RUNNING: 2,  // 执行中
+  TERMINATED: 3, // 已终止
+  END: 4,     // 执行结束 主要是解决从父流程实例回滚到已执行结束的子流程实例的情况
+} as const;
+
+// 节点实例状态枚举
+export const NodeInstanceStatus = {
+  DEFAULT: 0,    // 数据库默认值
+  COMPLETED: 1,  // 处理成功
+  ACTIVE: 2,     // 处理中
+  FAILED: 3,     // 处理失败
+  DISABLED: 4,   // 处理已撤销
+} as const;
+
+export type NodeInstanceStatusType = typeof NodeInstanceStatus[keyof typeof NodeInstanceStatus];
 
 /**
  * 获取流程列表
@@ -394,3 +407,16 @@ export const terminateFlowInstance = (
     `/flows/instances/${flowInstanceId}/terminate?effectiveForSubFlowInstance=${effectiveForSubFlowInstance}`,
   );
 };
+
+/**
+ * 获取流程实例的用户任务列表
+ */
+export const getFlowUserTasks = (
+  flowInstanceId: string,
+): Promise<NodeInstance[]> => {
+  return api.get(`/flows/instances/${flowInstanceId}/user-tasks`);
+};
+
+export const isSuccess = (errCode: number): boolean => {
+  return errCode >= 1000 && errCode < 2000;
+}

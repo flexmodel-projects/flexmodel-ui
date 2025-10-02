@@ -50,17 +50,6 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
     if (selectedNode) {
-      // 同步基础字段到data，并把名称与坐标写入properties
-      const updatedData = {
-        ...selectedNode.data,
-        name: allValues.name,
-        properties: {
-          ...(selectedNode.data?.properties as any || {}),
-          name: allValues.name,
-          positionX: allValues.positionX,
-          positionY: allValues.positionY,
-        }
-      };
       // 实时同步本地属性
       const nextProps = {
         ...(selectedNode.data?.properties as any || {}),
@@ -69,7 +58,14 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         positionY: allValues.positionY,
       } as any;
       setNodeProperties(nextProps);
-      onNodePropertyChange(selectedNode.id, updatedData);
+      
+      // 传递统一格式的数据给父组件
+      onNodePropertyChange(selectedNode.id, {
+        name: allValues.name,
+        positionX: allValues.positionX,
+        positionY: allValues.positionY,
+        properties: nextProps
+      });
     }
   };
 
@@ -100,18 +96,13 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           positionY: nextPositionY,
         };
         setNodeProperties(updatedProps);
+        
+        // 传递统一格式的数据给父组件
         onNodePropertyChange(selectedNode.id, {
-          ...selectedNode.data,
           name: nextName,
           positionX: nextPositionX,
           positionY: nextPositionY,
-          properties: {
-            ...(selectedNode.data?.properties as any || {}),
-            ...properties,
-            name: nextName,
-            positionX: nextPositionX,
-            positionY: nextPositionY,
-          }
+          properties: updatedProps
         });
       } catch (error) {
         // JSON格式错误时，不更新properties，但保留文本内容

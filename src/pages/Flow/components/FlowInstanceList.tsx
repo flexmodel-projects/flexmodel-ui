@@ -1,8 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, theme, Tooltip} from 'antd';
-import {EyeOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
+import {EyeOutlined, HistoryOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
-import {FlowInstance, FlowInstanceListParams, getFlowInstanceList, terminateFlowInstance} from '@/services/flow';
+import UserTasksDrawer from './UserTasksDrawer.tsx';
+import {
+  FlowInstance,
+  FlowInstanceListParams,
+  getFlowInstanceList,
+  getFlowUserTasks,
+  NodeInstance,
+  terminateFlowInstance
+} from '@/services/flow';
 import dayjs from 'dayjs';
 import {t} from 'i18next';
 
@@ -20,6 +28,12 @@ const FlowInstanceList: React.FC = () => {
   });
   const tableContainerRef = useRef<HTMLDivElement | null>(null);
   const [tableScrollY, setTableScrollY] = useState<number>(0);
+
+  // 用户任务相关状态
+  const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [currentFlowInstance, setCurrentFlowInstance] = useState<FlowInstance | null>(null);
+  const [userTasks, setUserTasks] = useState<NodeInstance[]>([]);
 
   // 获取流程实例列表
   const fetchFlowInstanceList = useCallback(async () => {
@@ -79,6 +93,23 @@ const FlowInstanceList: React.FC = () => {
     }
   };
 
+  // 获取用户任务
+  const handleShowHistory = async (record: FlowInstance) => {
+    setCurrentFlowInstance(record);
+    setHistoryDrawerVisible(true);
+    setHistoryLoading(true);
+
+    try {
+      const tasks = await getFlowUserTasks(record.flowInstanceId);
+      setUserTasks(tasks);
+    } catch (error) {
+      console.error('获取用户任务失败:', error);
+      message.error('获取用户任务失败');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   // 获取状态标签
   const getStatusTag = (status: number) => {
     const statusMap = {
@@ -91,6 +122,7 @@ const FlowInstanceList: React.FC = () => {
     const statusInfo = statusMap[status as keyof typeof statusMap] || {text: '未知', color: 'default'};
     return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
   };
+
 
   // 表格列定义
   const columns = [
@@ -170,7 +202,7 @@ const FlowInstanceList: React.FC = () => {
     {
       title: '操作',
       key: 'actions',
-      width: 150,
+      width: 180,
       fixed: 'right' as const,
       render: (_: any, record: FlowInstance) => (
         <Space size="small">
@@ -183,6 +215,14 @@ const FlowInstanceList: React.FC = () => {
                 // TODO: 实现查看详情功能
                 message.info('查看详情功能待实现');
               }}
+            />
+          </Tooltip>
+          <Tooltip title="用户操作记录">
+            <Button
+              type="link"
+              icon={<HistoryOutlined/>}
+              size="small"
+              onClick={() => handleShowHistory(record)}
             />
           </Tooltip>
           {record.status === 2 && (
@@ -284,6 +324,31 @@ const FlowInstanceList: React.FC = () => {
             }}
           />
         </div>
+
+        {/* 用户任务 Drawer */}
+        <UserTasksDrawer
+          visible={historyDrawerVisible}
+          loading={historyLoading}
+          currentFlowInstance={currentFlowInstance}
+          userTasks={userTasks}
+          onClose={() => setHistoryDrawerVisible(false)}
+          onCommitted={async () => {
+            // 刷新用户任务
+            if (currentFlowInstance) {
+              try {
+                setHistoryLoading(true);
+                const tasks = await getFlowUserTasks(currentFlowInstance.flowInstanceId);
+                setUserTasks(tasks);
+              } catch {
+                // 忽略错误提示，保持最小打扰
+              } finally {
+                setHistoryLoading(false);
+              }
+            }
+            // 刷新实例列表
+            fetchFlowInstanceList();
+          }}
+        />
       </div>
     </PageContainer>
   );
