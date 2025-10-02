@@ -31,7 +31,7 @@ import InclusiveGatewayNode from '@/pages/FlowDesign/components/nodes/InclusiveG
 import CallActivityNode from '@/pages/FlowDesign/components/nodes/CallActivityNode';
 import SequenceFlowNode from '@/pages/FlowDesign/components/nodes/SequenceFlowNode';
 import ArrowEdge from '@/pages/FlowDesign/components/edges/ArrowEdge';
-import {FlowElementType} from '@/pages/FlowDesign/types/flow.d';
+import {FlowElementType} from '@/pages/FlowDesign/types/flow.ts';
 import {generateId} from '@/pages/FlowDesign/utils/flow';
 import {PageContainer} from '@/components/common';
 import {deployFlow, getFlowModule, updateFlow, UpdateFlowRequest} from '@/services/flow';

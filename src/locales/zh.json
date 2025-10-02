@@ -418,6 +418,7 @@
   "flow_mgr": "流程管理",
   "flow_design": "流程设计",
   "flow_instance": "流程实例监控",
+  "flow_instance_detail":"流程实例详情",
   "schedule": "任务调度",
   "trigger": {
     "title": "触发器",

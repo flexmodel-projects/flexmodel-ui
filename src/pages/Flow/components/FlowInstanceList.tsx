@@ -3,6 +3,7 @@ import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Ta
 import {EyeOutlined, HistoryOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
 import UserTasksDrawer from './UserTasksDrawer.tsx';
+import {useNavigate} from 'react-router-dom';
 import {
   FlowInstance,
   FlowInstanceListParams,
@@ -16,7 +17,7 @@ import {t} from 'i18next';
 
 const FlowInstanceList: React.FC = () => {
   const {token} = theme.useToken();
-
+  const navigate = useNavigate();
   // 状态管理
   const [loading, setLoading] = useState(false);
   const [terminatingIds, setTerminatingIds] = useState<Set<string>>(new Set());
@@ -212,8 +213,7 @@ const FlowInstanceList: React.FC = () => {
               icon={<EyeOutlined/>}
               size="small"
               onClick={() => {
-                // TODO: 实现查看详情功能
-                message.info('查看详情功能待实现');
+                navigate(`/flow/instance/${record.flowInstanceId}`);
               }}
             />
           </Tooltip>

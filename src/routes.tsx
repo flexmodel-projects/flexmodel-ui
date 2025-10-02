@@ -34,6 +34,7 @@ import FlowInstanceList from "@/pages/Flow/components/FlowInstanceList.tsx";
 import Schedule from "@/pages/Schedule/index.tsx";
 import TriggerList from "./pages/Schedule/components/TriggerList";
 import JobExecutionLogList from "./pages/Schedule/components/JobExecutionLogList";
+import FlowDetail from "./pages/FlowDetail";
 
 export interface RouteConfig {
   path: string;
@@ -49,37 +50,37 @@ export interface RouteConfig {
 export const routes: RouteConfig[] = [
   {
     path: "/",
-    element: <Overview/>,
+    element: <Overview />,
     icon: HomeOutlined,
     translationKey: "overview",
   },
   {
     path: "/api",
-    element: <ApiView/>,
+    element: <ApiView />,
     icon: ApiOutlined,
     translationKey: "api",
     children: [
       {
         path: "/api/user-define",
-        element: <UserDefineAPI/>,
+        element: <UserDefineAPI />,
         icon: DeploymentUnitOutlined,
         translationKey: "user_define_api",
       },
       {
         path: "/api/graphql",
-        element: <GraphQLAPI/>,
+        element: <GraphQLAPI />,
         icon: DeploymentUnitOutlined,
         translationKey: "graphql_api",
       },
       {
         path: "/api/open-api",
-        element: <OpenAPI/>,
+        element: <OpenAPI />,
         icon: FileTextOutlined,
         translationKey: "open_api",
       },
       {
         path: "/api/log",
-        element: <APILog/>,
+        element: <APILog />,
         icon: LineChartOutlined,
         translationKey: "api_log",
       },
@@ -87,26 +88,26 @@ export const routes: RouteConfig[] = [
   },
   {
     path: "/data",
-    element: <DataView/>,
+    element: <DataView />,
     icon: CloudServerOutlined,
     translationKey: "data",
     defaultChild: "modeling",
     children: [
       {
         path: "/data/modeling",
-        element: <DataModeling/>,
+        element: <DataModeling />,
         icon: ContainerOutlined,
         translationKey: "data_modeling",
       },
       {
         path: "/data/source",
-        element: <DataSource/>,
+        element: <DataSource />,
         icon: DatabaseOutlined,
         translationKey: "data_source",
       },
       {
         path: "/data/er",
-        element: <ERView/>,
+        element: <ERView />,
         icon: BranchesOutlined,
         translationKey: "er_view",
       },
@@ -114,27 +115,35 @@ export const routes: RouteConfig[] = [
   },
   {
     path: "/flow",
-    element: <Flow/>,
+    element: <Flow />,
     icon: NodeIndexOutlined,
     translationKey: "flow",
     children: [
       {
         path: "/flow/mgr",
-        element: <FlowList/>,
+        element: <FlowList />,
         icon: BranchesOutlined,
         translationKey: "flow_mgr",
       },
       {
         path: "/flow/instance",
-        element: <FlowInstanceList/>,
+        element: <FlowInstanceList />,
         icon: PlayCircleOutlined,
         translationKey: "flow_instance",
       },
     ],
   },
   {
+    path: "/flow/instance/:flowInstanceId",
+    element: <FlowDetail />,
+    icon: PlayCircleOutlined,
+    translationKey: "flow_instance_detail",
+    hideInMenu: true,
+    hideLayout: true,
+  },
+  {
     path: "/flow/design/:flowModuleId",
-    element: <FlowDesign/>,
+    element: <FlowDesign />,
     icon: DatabaseOutlined,
     translationKey: "flow_design",
     hideInMenu: true,
@@ -142,19 +151,19 @@ export const routes: RouteConfig[] = [
   },
   {
     path: "/schedule",
-    element: <Schedule/>,
+    element: <Schedule />,
     icon: ThunderboltOutlined,
     translationKey: "schedule",
     children: [
       {
         path: "/schedule/trigger",
-        element: <TriggerList/>,
+        element: <TriggerList />,
         icon: ThunderboltOutlined,
         translationKey: "trigger.title",
       },
       {
         path: "/schedule/job-execution-log",
-        element: <JobExecutionLogList/>,
+        element: <JobExecutionLogList />,
         icon: PlayCircleOutlined,
         translationKey: "job_execution_log",
       },
@@ -162,13 +171,13 @@ export const routes: RouteConfig[] = [
   },
   {
     path: "/identity-providers",
-    element: <IdentityProvider/>,
+    element: <IdentityProvider />,
     icon: UserOutlined,
     translationKey: "identity_providers",
   },
   {
     path: "/settings",
-    element: <Settings/>,
+    element: <Settings />,
     icon: SettingOutlined,
     translationKey: "settings",
   },
@@ -248,10 +257,10 @@ export const getAllRoutePaths = (): string[] => {
 };
 
 // 为 react-router-dom 提供纯路由配置
-export const routerRoutes = routes.map(({path, element, children}) => {
-  const route: any = {path, element};
+export const routerRoutes = routes.map(({ path, element, children }) => {
+  const route: any = { path, element };
   if (children) {
-    route.children = children.map(({path: childPath, element: childElement}) => ({
+    route.children = children.map(({ path: childPath, element: childElement }) => ({
       path: childPath,
       element: childElement,
     }));

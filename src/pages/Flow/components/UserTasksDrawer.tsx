@@ -120,13 +120,7 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
       description: (
         <div style={{marginTop: 8}}>
           <div style={{marginBottom: 4}}>
-            <strong>流程实例ID:</strong> {currentFlowInstance.flowInstanceId}
-          </div>
-          <div style={{marginBottom: 4}}>
-            <strong>流程名称:</strong> {currentFlowInstance.flowName || '未知'}
-          </div>
-          <div style={{marginBottom: 4}}>
-            <strong>修改时间:</strong> {dayjs(currentFlowInstance.modifyTime).format('YYYY-MM-DD HH:mm:ss')}
+            <strong>完成时间:</strong> {dayjs(currentFlowInstance.modifyTime).format('YYYY-MM-DD HH:mm:ss')}
           </div>
         </div>
       ),
@@ -354,9 +348,6 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
               ),
               description: (
                 <div style={{marginTop: 8}}>
-                  <div style={{marginBottom: 4}}>
-                    <strong>流程开始</strong>
-                  </div>
                   <div style={{marginBottom: 4}}>
                     <strong>创建时间:</strong> {currentFlowInstance ? dayjs(currentFlowInstance.createTime).format('YYYY-MM-DD HH:mm:ss') : ''}
                   </div>

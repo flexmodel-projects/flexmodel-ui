@@ -310,9 +310,7 @@ export const getFlowModule = (
   flowModuleId: string,
   flowDeployId?: string,
 ): Promise<FlowModuleDetail> => {
-  return api.get(`/flows/${flowModuleId}`, {
-    params: flowDeployId ? { flowDeployId } : undefined,
-  });
+  return api.get(`/flows/${flowModuleId}`, flowDeployId ? { flowDeployId } : undefined);
 };
 
 /**
@@ -420,3 +418,9 @@ export const getFlowUserTasks = (
 export const isSuccess = (errCode: number): boolean => {
   return errCode >= 1000 && errCode < 2000;
 }
+
+export const getElementInstances= (
+  flowInstanceId: string,
+): Promise<NodeInstance[]> => {
+  return api.get(`/flows/instances/${flowInstanceId}/elements`);
+};
