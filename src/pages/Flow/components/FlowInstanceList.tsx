@@ -60,16 +60,16 @@ const FlowInstanceList: React.FC = () => {
     };
   }, []);
 
-  // 中止流程实例
+  // 终止流程实例
   const handleTerminateFlowInstance = async (flowInstanceId: string) => {
     setTerminatingIds(prev => new Set(prev).add(flowInstanceId));
     try {
       await terminateFlowInstance(flowInstanceId);
-      message.success('流程实例中止成功');
+      message.success('流程实例终止成功');
       fetchFlowInstanceList();
     } catch (error) {
-      console.error('中止流程实例失败:', error);
-      message.error('中止流程实例失败');
+      console.error('终止流程实例失败:', error);
+      message.error('终止流程实例失败');
     } finally {
       setTerminatingIds(prev => {
         const newSet = new Set(prev);
