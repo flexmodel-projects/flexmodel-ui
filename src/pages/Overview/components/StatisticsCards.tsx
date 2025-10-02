@@ -227,7 +227,7 @@ const FlowOrchestrationCard: React.FC<{ stats: Statistics; color: string }> = ({
         </div>
         <div style={{ textAlign: 'center', minWidth: '45px' }}>
           <div style={{ fontSize: '10px', color: 'var(--ant-color-text-secondary)', marginBottom: '1px' }}>
-            {t("exec_success")}
+            {t("exec_count")}
           </div>
           <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ant-color-success)' }}>
             {stats.flowExecCount}

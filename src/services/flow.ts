@@ -17,7 +17,9 @@ export interface FlowInstance {
   flowInstanceId: string;
   flowModuleId: string;
   flowDeployId: string;
-  status: number; // 1-运行中，2-已完成，3-已终止，4-已暂停
+  flowName?: string;
+  flowKey?: string;
+  status: number; // 1-已完成，2-运行中，3-已终止，4-已完成
   parentFlowInstanceId?: string;
   tenant: string;
   caller: string;

@@ -11,6 +11,7 @@ const FlowInstanceList: React.FC = () => {
 
   // 状态管理
   const [loading, setLoading] = useState(false);
+  const [terminatingIds, setTerminatingIds] = useState<Set<string>>(new Set());
   const [flowInstanceList, setFlowInstanceList] = useState<FlowInstance[]>([]);
   const [total, setTotal] = useState(0);
   const [searchParams, setSearchParams] = useState<FlowInstanceListParams>({
@@ -59,25 +60,33 @@ const FlowInstanceList: React.FC = () => {
     };
   }, []);
 
-  // 终止流程实例
+  // 中止流程实例
   const handleTerminateFlowInstance = async (flowInstanceId: string) => {
+    setTerminatingIds(prev => new Set(prev).add(flowInstanceId));
     try {
       await terminateFlowInstance(flowInstanceId);
-      message.success('流程实例终止成功');
+      message.success('流程实例中止成功');
       fetchFlowInstanceList();
     } catch (error) {
-      console.error('终止流程实例失败:', error);
-      message.error('终止流程实例失败');
+      console.error('中止流程实例失败:', error);
+      message.error('中止流程实例失败');
+    } finally {
+      setTerminatingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(flowInstanceId);
+        return newSet;
+      });
     }
   };
 
   // 获取状态标签
   const getStatusTag = (status: number) => {
     const statusMap = {
-      1: {text: '运行中', color: 'processing'},
-      2: {text: '已完成', color: 'success'},
-      3: {text: '已终止', color: 'error'},
-      4: {text: '已暂停', color: 'warning'}
+      0: {text: '初始化', color: 'error'},
+      1: {text: '已完成', color: 'success'},
+      2: {text: '运行中', color: 'processing'},
+      3: {text: '已终止', color: 'warning'},
+      4: {text: '已结束', color: 'primary'}
     };
     const statusInfo = statusMap[status as keyof typeof statusMap] || {text: '未知', color: 'default'};
     return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
@@ -176,19 +185,21 @@ const FlowInstanceList: React.FC = () => {
               }}
             />
           </Tooltip>
-          {record.status === 1 && (
+          {record.status === 2 && (
             <Tooltip title="终止">
               <Popconfirm
                 title="确定要终止这个流程实例吗？"
                 onConfirm={() => handleTerminateFlowInstance(record.flowInstanceId)}
-                okText="确定"
+                okText="确定终止"
                 cancelText="取消"
+                okButtonProps={{ danger: true }}
               >
                 <Button
                   type="link"
                   danger
                   icon={<StopOutlined/>}
                   size="small"
+                  loading={terminatingIds.has(record.flowInstanceId)}
                 />
               </Popconfirm>
             </Tooltip>
@@ -228,10 +239,10 @@ const FlowInstanceList: React.FC = () => {
                 });
               }}
             >
-              <Select.Option value={1}>运行中</Select.Option>
-              <Select.Option value={2}>已完成</Select.Option>
+              <Select.Option value={1}>已完成</Select.Option>
+              <Select.Option value={2}>运行中</Select.Option>
               <Select.Option value={3}>已终止</Select.Option>
-              <Select.Option value={4}>已暂停</Select.Option>
+              <Select.Option value={4}>已结束</Select.Option>
             </Select>
           </Space>
         </div>
