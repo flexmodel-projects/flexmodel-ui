@@ -49,14 +49,14 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
   // 获取任务状态标签
   const getTaskStatusTag = (status: number) => {
     const taskStatusMap = {
-      [NodeInstanceStatus.DEFAULT]: {text: '默认', color: 'default'},
-      [NodeInstanceStatus.COMPLETED]: {text: '已完成', color: 'success'},
-      [NodeInstanceStatus.ACTIVE]: {text: '处理中', color: 'processing'},
-      [NodeInstanceStatus.FAILED]: {text: '处理失败', color: 'error'},
-      [NodeInstanceStatus.DISABLED]: {text: '已撤销', color: 'warning'},
+      [NodeInstanceStatus.DEFAULT]: {text: '未处理', color: token.colorTextSecondary},
+      [NodeInstanceStatus.COMPLETED]: {text: '已完成', color: token.colorSuccess},
+      [NodeInstanceStatus.ACTIVE]: {text: '处理中', color: token.colorInfo},
+      [NodeInstanceStatus.FAILED]: {text: '失败', color: token.colorError},
+      [NodeInstanceStatus.DISABLED]: {text: '撤销', color: token.colorTextTertiary},
     };
-    const statusInfo = taskStatusMap[status as keyof typeof taskStatusMap] || {text: '未知', color: 'default'};
-    return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+    const statusInfo = taskStatusMap[status as keyof typeof taskStatusMap] || {text: '未知', color: token.colorTextSecondary};
+    return <Tag color={statusInfo.color as any}>{statusInfo.text}</Tag>;
   };
 
   // 获取步骤状态和图标
