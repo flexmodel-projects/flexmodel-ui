@@ -82,7 +82,8 @@ const NodePanel: React.FC<NodePanelProps> = ({onHide}) => {
   return (
     <Card
       title="节点选择面板"
-      style={{height: '100%'}}
+      style={{height: '100%', display: 'flex', flexDirection: 'column'}}
+      bodyStyle={{flex: 1, overflowY: 'auto', padding: '12px'}}
       extra={
         <Button
           type="text"

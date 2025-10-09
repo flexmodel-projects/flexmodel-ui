@@ -76,6 +76,7 @@ const FlowDesign: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<CustomEdge>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [selectedEdge, setSelectedEdge] = useState<CustomEdge | null>(null);
   const [flowName, setFlowName] = useState('');
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [propertyPanelVisible, setPropertyPanelVisible] = useState(false);
@@ -403,12 +404,21 @@ const FlowDesign: React.FC = () => {
   // 处理节点选择
   const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
+    setSelectedEdge(null);
+    setPropertyPanelVisible(true);
+  }, []);
+
+  // 处理边选择
+  const onEdgeClick = useCallback((_event: React.MouseEvent, edge: CustomEdge) => {
+    setSelectedEdge(edge);
+    setSelectedNode(null);
     setPropertyPanelVisible(true);
   }, []);
 
   // 处理画布点击
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
+    setSelectedEdge(null);
     setPropertyPanelVisible(false);
   }, []);
 
@@ -562,7 +572,9 @@ const FlowDesign: React.FC = () => {
   // moved above
 
   return (
-    <PageContainer loading={loading}
+    <PageContainer 
+      loading={loading}
+      contentPadding={0}
       title={<Space>
         <Button
           icon={<ArrowLeftOutlined />}
@@ -629,6 +641,7 @@ const FlowDesign: React.FC = () => {
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
               onNodeClick={onNodeClick}
+              onEdgeClick={onEdgeClick}
               onPaneClick={onPaneClick}
               onDrop={onDrop}
               onDragOver={onDragOver}
@@ -659,6 +672,7 @@ const FlowDesign: React.FC = () => {
         {/* 属性配置面板 - Drawer */}
         <PropertyPanel
           selectedNode={selectedNode}
+          selectedEdge={selectedEdge}
           visible={propertyPanelVisible}
           onClose={() => setPropertyPanelVisible(false)}
           onNodePropertyChange={(nodeId, properties) => {
@@ -702,6 +716,36 @@ const FlowDesign: React.FC = () => {
               })
             );
           }}
+          onEdgePropertyChange={(edgeId, data) => {
+            setEdges((eds) =>
+              eds.map((edge) => {
+                if (edge.id === edgeId) {
+                  return {
+                    ...edge,
+                    data: {
+                      ...edge.data,
+                      ...data,
+                    },
+                  };
+                }
+                return edge;
+              })
+            );
+            // 更新当前选中的边
+            setSelectedEdge((prevEdge) => {
+              if (prevEdge && prevEdge.id === edgeId) {
+                return {
+                  ...prevEdge,
+                  data: {
+                    ...prevEdge.data,
+                    ...data,
+                  },
+                };
+              }
+              return prevEdge;
+            });
+          }}
+          nodes={nodes}
         />
 
         {/* 流程设置面板 */}

@@ -1,19 +1,37 @@
 import React from 'react';
-import {Card, Divider, Drawer, Form, Input, InputNumber} from 'antd';
-import {Node} from '@xyflow/react';
+import {Card, Divider, Drawer, Form, Input, InputNumber, Radio} from 'antd';
+import {Edge, Node} from '@xyflow/react';
+
+interface CustomEdge extends Edge {
+  type: 'arrow';
+  sourceHandle: string | null;
+  targetHandle: string | null;
+  data: {
+    conditionsequenceflow: string;
+    defaultConditions: string;
+    onDelete: (edgeId: string) => void;
+    onInsert?: (edgeId: string, nodeType: string) => void;
+  };
+}
 
 interface PropertyPanelProps {
   selectedNode: Node | null;
+  selectedEdge: CustomEdge | null;
   visible: boolean;
   onClose: () => void;
   onNodePropertyChange: (nodeId: string, properties: Record<string, any>) => void;
+  onEdgePropertyChange: (edgeId: string, data: Record<string, any>) => void;
+  nodes: Node[];
 }
 
 const PropertyPanel: React.FC<PropertyPanelProps> = ({
   selectedNode,
+  selectedEdge,
   visible,
   onClose,
   onNodePropertyChange,
+  onEdgePropertyChange,
+  nodes,
 }) => {
   const [form] = Form.useForm();
   const [nodeProperties, setNodeProperties] = React.useState<Record<string, any>>({});
@@ -43,11 +61,20 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       });
       // 更新本地属性状态
       setNodeProperties(properties);
+    } else if (selectedEdge) {
+      // 当选中边时，更新表单
+      form.setFieldsValue({
+        edgeId: selectedEdge.id,
+        sourceNode: selectedEdge.source,
+        targetNode: selectedEdge.target,
+        conditionsequenceflow: selectedEdge.data?.conditionsequenceflow || '',
+        defaultConditions: selectedEdge.data?.defaultConditions || 'false',
+      });
     } else {
       form.resetFields();
       setNodeProperties({});
     }
-  }, [selectedNode, form]);
+  }, [selectedNode, selectedEdge, form]);
 
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
@@ -68,6 +95,12 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         positionX: allValues.positionX,
         positionY: allValues.positionY,
         properties: nextProps
+      });
+    } else if (selectedEdge) {
+      // 处理边属性变化
+      onEdgePropertyChange(selectedEdge.id, {
+        conditionsequenceflow: allValues.conditionsequenceflow || '',
+        defaultConditions: allValues.defaultConditions || 'false',
       });
     }
   };
@@ -250,6 +283,109 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     }
   };
 
+  // 获取节点名称
+  const getNodeName = (nodeId: string): string => {
+    const node = nodes.find(n => n.id === nodeId);
+    return (node?.data?.name as string) || nodeId;
+  };
+
+  // 检查源节点是否为网关节点
+  const isSourceNodeGateway = () => {
+    if (!selectedEdge) return false;
+    const sourceNode = nodes.find(n => n.id === selectedEdge.source);
+    if (!sourceNode) return false;
+    return ['exclusiveGateway', 'parallelGateway', 'inclusiveGateway'].includes(sourceNode.type || '');
+  };
+
+  // 渲染边属性配置
+  const renderEdgeProperties = () => {
+    if (!selectedEdge) return null;
+
+    const isGateway = isSourceNodeGateway();
+
+    return (
+      <>
+        <Card title="连线信息" size="small">
+          <Form
+            form={form}
+            layout="vertical"
+            size="small"
+            onValuesChange={handleFormChange}
+          >
+            <Form.Item label="连线ID" name="edgeId">
+              <Input disabled />
+            </Form.Item>
+            <Form.Item label="源节点" name="sourceNode">
+              <Input 
+                disabled 
+                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.source)})</span>} 
+              />
+            </Form.Item>
+            <Form.Item label="目标节点" name="targetNode">
+              <Input 
+                disabled 
+                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.target)})</span>} 
+              />
+            </Form.Item>
+          </Form>
+        </Card>
+        <Divider style={{margin: '16px 0'}} />
+        <Card title="连线条件" size="small">
+          <Form
+            form={form}
+            layout="vertical"
+            size="small"
+            onValuesChange={handleFormChange}
+          >
+            {isGateway && (
+              <>
+                <Form.Item 
+                  label="条件表达式" 
+                  name="conditionsequenceflow"
+                  tooltip="条件表达式，例如：${score > 60}，用于判断是否执行该路径"
+                >
+                  <Input.TextArea
+                    placeholder="请输入条件表达式，例如：${score > 60}"
+                    rows={4}
+                    style={{
+                      fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                      fontSize: '13px'
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item 
+                  label="默认路径" 
+                  name="defaultConditions"
+                  tooltip="是否为默认路径，当所有条件都不满足时执行默认路径"
+                >
+                  <Radio.Group>
+                    <Radio value="true">是</Radio>
+                    <Radio value="false">否</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+                  <p><strong>条件表达式说明：</strong></p>
+                  <ul style={{ paddingLeft: '20px', marginTop: '4px' }}>
+                    <li>使用 ${'{'}expression{'}'} 格式编写条件</li>
+                    <li>可以访问流程变量，如：${'{'} score {'>'} 60 {'}'}</li>
+                    <li>支持比较运算符：{'>'}、{'<'}、==、!=、{'>'}=、{'<'}=</li>
+                    <li>支持逻辑运算符：&&（与）、||（或）、!（非）</li>
+                    <li>默认路径无需设置条件表达式</li>
+                  </ul>
+                </div>
+              </>
+            )}
+            {!isGateway && (
+              <div style={{ color: '#999', padding: '16px', textAlign: 'center' }}>
+                普通连线无需设置条件
+              </div>
+            )}
+          </Form>
+        </Card>
+      </>
+    );
+  };
+
   // 渲染节点属性配置
   const renderNodeProperties = () => {
 
@@ -386,7 +522,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
 
   return (
     <Drawer
-      title={form.getFieldValue('name')}
+      title={selectedEdge ? '连线属性' : form.getFieldValue('name')}
       placement="right"
       width={400}
       open={visible}
@@ -397,7 +533,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       getContainer={false}
     >
       <div style={{ height: '100%', overflow: 'auto' }}>
-        {renderNodeProperties()}
+        {selectedEdge ? renderEdgeProperties() : renderNodeProperties()}
       </div>
     </Drawer>
   );
