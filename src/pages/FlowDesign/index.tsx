@@ -96,6 +96,7 @@ const FlowDesign: React.FC = () => {
       [FlowElementType.START_EVENT]: 'startEvent',
       [FlowElementType.END_EVENT]: 'endEvent',
       [FlowElementType.USER_TASK]: 'userTask',
+      [FlowElementType.SERVICE_TASK]: 'serviceTask',
       [FlowElementType.EXCLUSIVE_GATEWAY]: 'exclusiveGateway',
       [FlowElementType.PARALLEL_GATEWAY]: 'parallelGateway',
       [FlowElementType.INCLUSIVE_GATEWAY]: 'inclusiveGateway',
@@ -148,7 +149,11 @@ const FlowDesign: React.FC = () => {
         id: generateId(nodeType),
         type: nodeType as any,
         position: { x: midX, y: midY },
-        data: { name: '', onDelete: handleNodeDelete },
+        data: { 
+          name: '', 
+          properties: {}, // 始终创建 properties 对象
+          onDelete: handleNodeDelete 
+        },
       };
 
       const firstEdge: CustomEdge = {
@@ -237,7 +242,7 @@ const FlowDesign: React.FC = () => {
             position: { x: nodePositionX, y: nodePositionY },
             data: {
               name: element.properties?.name || '',
-              ...element.properties,
+              properties: element.properties || {}, // 保持 properties 作为嵌套对象
               onDelete: () => {
               }, // 临时空函数，避免类型错误
             },
@@ -308,13 +313,21 @@ const FlowDesign: React.FC = () => {
           id: startId,
           type: 'startEvent',
           position: { x: 100, y: 100 },
-          data: { name: '开始', onDelete: handleNodeDelete },
+          data: { 
+            name: '开始', 
+            properties: {}, // 始终创建 properties 对象
+            onDelete: handleNodeDelete 
+          },
         },
         {
           id: endId,
           type: 'endEvent',
           position: { x: 400, y: 100 },
-          data: { name: '结束', onDelete: handleNodeDelete },
+          data: { 
+            name: '结束', 
+            properties: {}, // 始终创建 properties 对象
+            onDelete: handleNodeDelete 
+          },
         },
       ];
       setNodes(defaultNodes);
@@ -430,9 +443,8 @@ const FlowDesign: React.FC = () => {
         position: point,
         data: {
           name: '',
+          properties: subType ? { subType } : {}, // 始终创建 properties 对象
           onDelete: handleNodeDelete,
-          // 如果有subType，添加到properties中
-          ...(subType && { properties: { subType } }),
         },
       };
 
@@ -654,17 +666,17 @@ const FlowDesign: React.FC = () => {
               nds.map((node) => {
                 if (node.id === nodeId) {
                   // 正确合并节点数据，保留原有的properties
-                  const updatedNode = { 
-                    ...node, 
-                    data: { 
-                      ...node.data, 
+                  const updatedNode = {
+                    ...node,
+                    data: {
+                      ...node.data,
                       ...properties,
                       // 确保properties字段被正确合并而不是覆盖
                       properties: {
                         ...(node.data?.properties || {}),
                         ...(properties.properties || {})
                       }
-                    } 
+                    }
                   };
 
                   // 如果properties中包含坐标信息，更新节点位置
@@ -714,6 +726,7 @@ function getNodeType(nodeType: string): FlowElementType {
     startEvent: FlowElementType.START_EVENT,
     endEvent: FlowElementType.END_EVENT,
     userTask: FlowElementType.USER_TASK,
+    serviceTask: FlowElementType.SERVICE_TASK,
     exclusiveGateway: FlowElementType.EXCLUSIVE_GATEWAY,
     parallelGateway: FlowElementType.PARALLEL_GATEWAY,
     inclusiveGateway: FlowElementType.INCLUSIVE_GATEWAY,

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
 import {
+  CodeOutlined,
   DeleteOutlined,
   EditOutlined,
   MinusOutlined,
@@ -10,46 +11,62 @@ import {
 } from '@ant-design/icons';
 import {Button, theme} from 'antd';
 
-const ServiceTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
+const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { token } = theme.useToken();
+  const {token} = theme.useToken();
 
   // 根据 subType 获取图标和颜色
   const getSubTypeIcon = (subType?: string) => {
-    const iconProps = { fontSize: '16px' };
-
+    const iconProps = {fontSize: '16px'};
     switch (subType) {
       case 'add-record':
-        return <PlusOutlined {...iconProps} style={{ color: token.colorSuccess }} />;
+        return <PlusOutlined {...iconProps} style={{color: token.colorSuccess}}/>;
       case 'update-record':
-        return <EditOutlined {...iconProps} style={{ color: token.colorWarning }} />;
+        return <EditOutlined {...iconProps} style={{color: token.colorWarning}}/>;
       case 'query-record':
-        return <SearchOutlined {...iconProps} style={{ color: token.colorInfo }} />;
+        return <SearchOutlined {...iconProps} style={{color: token.colorInfo}}/>;
       case 'delete-record':
-        return <MinusOutlined {...iconProps} style={{ color: token.colorError }} />;
+        return <MinusOutlined {...iconProps} style={{color: token.colorError}}/>;
+      case 'js':
+        return <CodeOutlined {...iconProps} style={{color: '#f7df1e'}}/>;
+      case 'groovy':
+        return <CodeOutlined {...iconProps} style={{color: '#4298b8'}}/>;
       default:
-        return <SettingOutlined {...iconProps} style={{ color: token.colorPrimary }} />;
+        return <SettingOutlined {...iconProps} style={{color: token.colorPrimary}}/>;
     }
   };
 
   // 根据 subType 获取显示文本
   const getDisplayText = (subType?: string) => {
-    const baseName = (data.properties as any)?.name || data.name || '自动任务';
+    const displayName = (data.properties as any)?.name || data.name;
 
+    let baseName: string = '自动任务';
     switch (subType) {
       case 'add-record':
-        return `新增记录`;
+        baseName = `新增记录`;
+        break;
       case 'update-record':
-        return `更新记录`;
+        baseName = `更新记录`;
+        break;
       case 'query-record':
-        return `查询记录`;
+        baseName = `查询记录`;
+        break;
       case 'delete-record':
-        return `删除记录`;
+        baseName = `删除记录`;
+        break;
       case 'delay':
-        return `延时节点`;
+        baseName = `延时节点`;
+        break;
+      case 'js':
+        baseName = 'JS脚本';
+        break;
+      case 'groovy':
+        baseName = 'Groovy脚本';
+        break;
       default:
-        return baseName;
+        baseName = '自动任务';
     }
+    return displayName || baseName;
   };
 
   return (
@@ -131,9 +148,9 @@ const ServiceTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         }}
       />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
         {getSubTypeIcon((data.properties as any)?.subType)}
-        <div style={{ fontSize: '13px', color: token.colorText, fontWeight: 500 }}>
+        <div style={{fontSize: '13px', color: token.colorText, fontWeight: 500}}>
           {getDisplayText((data.properties as any)?.subType)}
         </div>
       </div>
@@ -142,7 +159,7 @@ const ServiceTaskNode: React.FC<NodeProps> = ({ data, selected, id }) => {
         <Button
           type="text"
           size="small"
-          icon={<DeleteOutlined />}
+          icon={<DeleteOutlined/>}
           onClick={(e) => {
             e.stopPropagation();
             if (data?.onDelete && typeof data.onDelete === 'function') {

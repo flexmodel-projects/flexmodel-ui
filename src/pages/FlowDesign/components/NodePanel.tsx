@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Button, Card, Col, Collapse, Row, Space, Typography} from 'antd';
 import {
   CloseCircleOutlined,
+  CodeOutlined,
   EditOutlined,
   FileAddOutlined,
   LinkOutlined,
@@ -45,6 +46,8 @@ const NodePanel: React.FC<NodePanelProps> = ({onHide}) => {
       'update-record': <EditOutlined style={{color: '#1890ff'}}/>,
       'query-record': <SearchOutlined style={{color: '#1890ff'}}/>,
       'delete-record': <MinusOutlined style={{color: '#1890ff'}}/>,
+      'js-script': <CodeOutlined style={{color: '#f7df1e'}}/>,
+      'groovy-script': <CodeOutlined style={{color: '#4298b8'}}/>,
       'call-service': <LinkOutlined style={{color: '#722ed1'}}/>,
     };
     return iconMap[iconType] || <UserOutlined/>;

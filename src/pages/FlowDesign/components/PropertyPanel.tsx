@@ -38,6 +38,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         width: selectedNode.style?.width || 120,
         height: selectedNode.style?.height || 60,
         enabled: selectedNode.data?.enabled !== false, // 默认为true
+        // 设置嵌套的 properties 字段
+        properties: baseProperties,
       });
       // 更新本地属性状态
       setNodeProperties(properties);
@@ -50,9 +52,10 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
     if (selectedNode) {
-      // 实时同步本地属性
+      // 合并所有属性，包括嵌套的 properties 字段
       const nextProps = {
         ...(selectedNode.data?.properties as any || {}),
+        ...(allValues.properties || {}), // 合并嵌套的 properties 字段
         name: allValues.name,
         positionX: allValues.positionX,
         positionY: allValues.positionY,
@@ -116,6 +119,44 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     const subType = (selectedNode?.data?.properties as any)?.subType;
 
     switch (subType) {
+      case 'js':
+        return (
+          <>
+            <Form.Item label="脚本类型">
+              <Input value="JavaScript" disabled />
+            </Form.Item>
+            <Form.Item label="脚本内容" name={['properties', 'script']}>
+              <Input.TextArea
+                placeholder="请输入JavaScript脚本，例如：&#10;return 'Hello, World!';"
+                rows={12}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
+            </Form.Item>
+          </>
+        );
+
+      case 'groovy':
+        return (
+          <>
+            <Form.Item label="脚本类型">
+              <Input value="Groovy" disabled />
+            </Form.Item>
+            <Form.Item label="脚本内容" name={['properties', 'script']}>
+              <Input.TextArea
+                placeholder="请输入Groovy脚本，例如：&#10;return 'Hello, World!'"
+                rows={12}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
+            </Form.Item>
+          </>
+        );
+
       case 'add-record':
         return (
           <>
