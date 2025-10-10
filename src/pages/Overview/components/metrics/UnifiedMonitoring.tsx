@@ -153,23 +153,12 @@ const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
     <DetailedInfo metricsData={metricsData} cardKey={cardKey}/>
   ), [metricsData]);
 
-  if (loading && !metricsData) {
-    return (
-      <Card
-        title={t('metrics.system_monitoring')}
-        style={{height: '480px', marginTop: 0,}}
-      >
-        <Spin/>
-      </Card>
-    );
-  }
-
   if (error) {
     return (
       <Card
         title={t('metrics.system_monitoring')}
         style={{height: '480px', marginTop: 0}}
-        bodyStyle={{height: '430px', padding: '16px'}}
+        styles={{body: {height: '430px', padding: '16px'}}}
       >
         <Alert
           message={t('metrics.monitoring_data_load_failed')}
@@ -183,67 +172,70 @@ const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
 
 
   return (
-    <Card
-      ref={ref}
-      hoverable
-      title={t('metrics.system_monitoring')}
-      extra={
-        <Button
-          type="text"
-          size="small"
-          icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
-          onClick={toggle}
-          title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
+    <Spin spinning={loading && !metricsData}>
+      <Card
+        ref={ref}
+        hoverable
+        title={t('metrics.system_monitoring')}
+        extra={
+          <Button
+            type="text"
+            size="small"
+            icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+            onClick={toggle}
+            title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
+          />
+        }
+      >
+        {/* 监控Tab切换 */}
+        <MonitoringTabs
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+          metricsData={metricsData}
         />
-      }
-    >
-      {/* 监控Tab切换 */}
-      <MonitoringTabs
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        metricsData={metricsData}
-      />
 
-      {/* 详细监控信息 - 多个Card标签 */}
-      <div style={{marginBottom: '16px'}}>
-        <Space wrap>
-          {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
-            <Popover
-              key={tag.key}
-              title={tag.title}
-              content={createPopoverContent(tag.key)}
-              trigger="hover"
-              placement="bottomLeft"
-              overlayStyle={{maxWidth: '700px'}}
-            >
-              <Tag
-                color={tag.color}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
-                }}
+        {/* 详细监控信息 - 多个Card标签 */}
+        <div style={{marginBottom: '16px'}}>
+          <Space wrap>
+            {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
+              <Popover
+                key={tag.key}
+                title={tag.title}
+                content={createPopoverContent(tag.key)}
+                trigger="hover"
+                placement="bottomLeft"
+                overlayStyle={{maxWidth: '700px'}}
               >
-                {tag.title}
-              </Tag>
-            </Popover>
-          ))}
-        </Space>
-      </div>
+                <Tag
+                  color={tag.color}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
+                  }}
+                >
+                  {tag.title}
+                </Tag>
+              </Popover>
+            ))}
+          </Space>
+        </div>
 
-      {/* 监控趋势图 */}
-      <MonitoringChart
-        activeTab={activeTab}
-        metricsData={metricsData}
-        dataZoomRange={dataZoomRange}
-        onDataZoomChange={handleDataZoomChange}
-        updateKey={updateKey}
-      />
+        {/* 监控趋势图 */}
+        <MonitoringChart
+          activeTab={activeTab}
+          metricsData={metricsData}
+          dataZoomRange={dataZoomRange}
+          onDataZoomChange={handleDataZoomChange}
+          updateKey={updateKey}
+        />
 
-    </Card>
+      </Card>
+    </Spin>
+
   );
 };
 
