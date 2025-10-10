@@ -17,11 +17,11 @@ interface UnifiedMonitoringProps {
 }
 
 const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
-  metricsData,
-  loading,
-  error,
-  updateKey
-}) => {
+                                                               metricsData,
+                                                               loading,
+                                                               error,
+                                                               updateKey
+                                                             }) => {
   const {t} = useTranslation();
   const {token} = useToken();
   const [activeTab, setActiveTab] = useState('system');
@@ -158,7 +158,6 @@ const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
       <Card
         title={t('metrics.system_monitoring')}
         style={{height: '480px', marginTop: 0,}}
-        bodyStyle={{height: '430px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
       >
         <Spin/>
       </Card>
@@ -184,83 +183,67 @@ const UnifiedMonitoring: React.FC<UnifiedMonitoringProps> = ({
 
 
   return (
-    <div ref={ref}>
-      <Card
-        style={{
-          height: isFullscreen ? "100%" : "550px", 
-          width: '100%', 
-          marginTop: 0,
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          borderRadius: '12px',
-          overflow: 'hidden'
-        }}
-        title={t('metrics.system_monitoring')}
-        extra={
-          <Button
-            type="text"
-            size="small"
-            icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
-            onClick={toggle}
-            title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
-          />
-        }
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-1px)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.08)';
-        }}
-      >
-        {/* 监控Tab切换 */}
-        <MonitoringTabs
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          metricsData={metricsData}
+    <Card
+      ref={ref}
+      hoverable
+      title={t('metrics.system_monitoring')}
+      extra={
+        <Button
+          type="text"
+          size="small"
+          icon={isFullscreen ? <FullscreenExitOutlined/> : <FullscreenOutlined/>}
+          onClick={toggle}
+          title={isFullscreen ? t('exit_fullscreen') : t('fullscreen')}
         />
+      }
+    >
+      {/* 监控Tab切换 */}
+      <MonitoringTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        metricsData={metricsData}
+      />
 
-        {/* 详细监控信息 - 多个Card标签 */}
-        <div style={{marginBottom: '16px'}}>
-          <Space wrap>
-            {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
-              <Popover
-                key={tag.key}
-                title={tag.title}
-                content={createPopoverContent(tag.key)}
-                trigger="hover"
-                placement="bottomLeft"
-                overlayStyle={{maxWidth: '700px'}}
+      {/* 详细监控信息 - 多个Card标签 */}
+      <div style={{marginBottom: '16px'}}>
+        <Space wrap>
+          {cardTags[activeTab as keyof typeof cardTags]?.map((tag) => (
+            <Popover
+              key={tag.key}
+              title={tag.title}
+              content={createPopoverContent(tag.key)}
+              trigger="hover"
+              placement="bottomLeft"
+              overlayStyle={{maxWidth: '700px'}}
+            >
+              <Tag
+                color={tag.color}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
+                }}
               >
-                <Tag
-                  color={tag.color}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = `0 4px 8px ${tag.color}40`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = `0 2px 4px ${tag.color}20`;
-                  }}
-                >
-                  {tag.title}
-                </Tag>
-              </Popover>
-            ))}
-          </Space>
-        </div>
+                {tag.title}
+              </Tag>
+            </Popover>
+          ))}
+        </Space>
+      </div>
 
-        {/* 监控趋势图 */}
-        <MonitoringChart
-          activeTab={activeTab}
-          metricsData={metricsData}
-          dataZoomRange={dataZoomRange}
-          onDataZoomChange={handleDataZoomChange}
-          updateKey={updateKey}
-        />
+      {/* 监控趋势图 */}
+      <MonitoringChart
+        activeTab={activeTab}
+        metricsData={metricsData}
+        dataZoomRange={dataZoomRange}
+        onDataZoomChange={handleDataZoomChange}
+        updateKey={updateKey}
+      />
 
-      </Card>
-    </div>
+    </Card>
   );
 };
 

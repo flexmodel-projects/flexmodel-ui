@@ -11,8 +11,8 @@ import {Message} from "../ai-chatbox/types";
 import ResizablePanel from "@/components/common/ResizablePanel";
 
 const PageLayout: React.FC = () => {
-  const { token } = theme.useToken();
-  const { isSidebarCollapsed } = useSidebar();
+  const {token} = theme.useToken();
+  const {isSidebarCollapsed} = useSidebar();
   const location = useLocation();
   const hideLayout = shouldHideLayout(location.pathname);
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
@@ -23,7 +23,7 @@ const PageLayout: React.FC = () => {
 
   // 如果需要隐藏布局，直接渲染路由内容
   if (hideLayout) {
-    return <RenderRoutes />;
+    return <RenderRoutes/>;
   }
 
   return (
@@ -31,7 +31,7 @@ const PageLayout: React.FC = () => {
       height: "100vh",
       overflow: "hidden" // 防止整体页面滚动
     }}>
-      <Sidebar />
+      <Sidebar/>
       <Layout style={{
         height: "100vh",
         display: "flex",
@@ -61,7 +61,7 @@ const PageLayout: React.FC = () => {
             minSize={150}
             maxSize={600}
             renderPanel={() => (
-              <Console onToggle={() => setIsConsoleVisible((v) => !v)} />
+              <Console onToggle={() => setIsConsoleVisible((v) => !v)}/>
             )}
           >
             <ResizablePanel
@@ -70,7 +70,7 @@ const PageLayout: React.FC = () => {
               defaultSize={420}
               minSize={320}
               maxSize={600}
-              mainStyle={{ padding: token.padding }}
+              mainStyle={{padding: token.padding}}
               renderPanel={() => (
                 <AIChatBox
                   conversationId={conversationId}
@@ -86,7 +86,7 @@ const PageLayout: React.FC = () => {
                 />
               )}
             >
-              <RenderRoutes />
+              <RenderRoutes/>
             </ResizablePanel>
           </ResizablePanel>
         </Layout.Content>

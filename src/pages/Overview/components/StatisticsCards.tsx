@@ -267,7 +267,7 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({ stats }) => {
   const { token } = theme.useToken();
 
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: '8px' }}>
+    <Row gutter={[8, 8]} style={{ marginBottom: '8px'}}>
       <Col xs={24} sm={12} lg={6}>
         <ApiInfoCard
           stats={stats}
