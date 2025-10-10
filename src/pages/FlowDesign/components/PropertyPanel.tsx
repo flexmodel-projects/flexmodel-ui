@@ -1,6 +1,8 @@
 import React from 'react';
-import {Card, Divider, Drawer, Form, Input, InputNumber, Radio} from 'antd';
+import {Button, Card, Divider, Drawer, Form, Input, InputNumber, Popover, Radio, Space, Typography} from 'antd';
 import {Edge, Node} from '@xyflow/react';
+import ScriptEditor from '../../../components/common/ScriptEditor';
+import {CodeOutlined} from '@ant-design/icons';
 
 interface CustomEdge extends Edge {
   type: 'arrow';
@@ -88,7 +90,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         positionY: allValues.positionY,
       } as any;
       setNodeProperties(nextProps);
-      
+
       // 传递统一格式的数据给父组件
       onNodePropertyChange(selectedNode.id, {
         name: allValues.name,
@@ -132,7 +134,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           positionY: nextPositionY,
         };
         setNodeProperties(updatedProps);
-        
+
         // 传递统一格式的数据给父组件
         onNodePropertyChange(selectedNode.id, {
           name: nextName,
@@ -159,13 +161,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               <Input value="JavaScript" disabled />
             </Form.Item>
             <Form.Item label="脚本内容" name={['properties', 'script']}>
-              <Input.TextArea
-                placeholder="请输入JavaScript脚本，例如：&#10;return 'Hello, World!';"
-                rows={12}
-                style={{
-                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-                  fontSize: '13px'
-                }}
+              <ScriptEditor
+                language="javascript"
               />
             </Form.Item>
           </>
@@ -178,13 +175,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               <Input value="Groovy" disabled />
             </Form.Item>
             <Form.Item label="脚本内容" name={['properties', 'script']}>
-              <Input.TextArea
-                placeholder="请输入Groovy脚本，例如：&#10;return 'Hello, World!'"
-                rows={12}
-                style={{
-                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-                  fontSize: '13px'
-                }}
+              <ScriptEditor
+                language="groovy"
               />
             </Form.Item>
           </>
@@ -264,21 +256,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
 
       default:
         return (
-          <Form.Item label="Properties (可编辑)">
-            <Input.TextArea
-              value={JSON.stringify(nodeProperties, null, 2)}
-              onChange={(e) => handlePropertiesChange(e.target.value)}
-              rows={8}
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '12px'
-              }}
-              placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
-            />
-            <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-              提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
-            </div>
-          </Form.Item>
+          <></>
         );
     }
   };
@@ -316,20 +294,20 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               <Input disabled />
             </Form.Item>
             <Form.Item label="源节点" name="sourceNode">
-              <Input 
-                disabled 
-                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.source)})</span>} 
+              <Input
+                disabled
+                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.source)})</span>}
               />
             </Form.Item>
             <Form.Item label="目标节点" name="targetNode">
-              <Input 
-                disabled 
-                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.target)})</span>} 
+              <Input
+                disabled
+                suffix={<span style={{ color: '#999', fontSize: '12px' }}>({getNodeName(selectedEdge.target)})</span>}
               />
             </Form.Item>
           </Form>
         </Card>
-        <Divider style={{margin: '16px 0'}} />
+        <Divider style={{ margin: '16px 0' }} />
         <Card title="连线条件" size="small">
           <Form
             form={form}
@@ -339,8 +317,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           >
             {isGateway && (
               <>
-                <Form.Item 
-                  label="条件表达式" 
+                <Form.Item
+                  label="条件表达式"
                   name="conditionsequenceflow"
                   tooltip="条件表达式，例如：${score > 60}，用于判断是否执行该路径"
                 >
@@ -353,8 +331,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
                     }}
                   />
                 </Form.Item>
-                <Form.Item 
-                  label="默认路径" 
+                <Form.Item
+                  label="默认路径"
                   name="defaultConditions"
                   tooltip="是否为默认路径，当所有条件都不满足时执行默认路径"
                 >
@@ -395,40 +373,12 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         case 'startEvent':
         case 'endEvent':
           return (
-            <Form.Item label="Properties (可编辑)">
-              <Input.TextArea
-                value={JSON.stringify(nodeProperties, null, 2)}
-                onChange={(e) => handlePropertiesChange(e.target.value)}
-                rows={8}
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '12px'
-                }}
-                placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
-              />
-              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
-              </div>
-            </Form.Item>
+            <></>
           );
 
         case 'userTask':
           return (
-            <Form.Item label="Properties (可编辑)">
-              <Input.TextArea
-                value={JSON.stringify(nodeProperties, null, 2)}
-                onChange={(e) => handlePropertiesChange(e.target.value)}
-                rows={8}
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '12px'
-                }}
-                placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
-              />
-              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
-              </div>
-            </Form.Item>
+            <></>
           );
 
         case 'serviceTask':
@@ -442,41 +392,12 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               <Form.Item label="刷新数据Key" name="hookInfoIds">
                 <Input placeholder="例如: [1,2]" />
               </Form.Item>
-              <Form.Item label="Properties (可编辑)">
-                <Input.TextArea
-                  value={JSON.stringify(nodeProperties, null, 2)}
-                  onChange={(e) => handlePropertiesChange(e.target.value)}
-                  rows={8}
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: '12px'
-                  }}
-                  placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
-                />
-                <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
-                </div>
-              </Form.Item>
             </>
           );
 
         default:
           return (
-            <Form.Item label="Properties (可编辑)">
-              <Input.TextArea
-                value={JSON.stringify(nodeProperties, null, 2)}
-                onChange={(e) => handlePropertiesChange(e.target.value)}
-                rows={8}
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '12px'
-                }}
-                placeholder="请输入有效的JSON格式，例如:&#10;{&#10;  &quot;name&quot;: &quot;节点名称&quot;&#10;}"
-              />
-              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                提示：修改JSON格式的properties对象，格式错误时会保留文本但不更新节点数据
-              </div>
-            </Form.Item>
+            <></>
           );
       }
     };
@@ -505,7 +426,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
             </Form.Item>
           </Form>
         </Card>
-        <Divider style={{margin: '16px 0'}} />
+        <Divider style={{ margin: '16px 0' }} />
         <Card title="节点属性" size="small">
           <Form
             form={form}
@@ -523,6 +444,25 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   return (
     <Drawer
       title={selectedEdge ? '连线属性' : form.getFieldValue('name')}
+      extra={
+        <Space align="center">
+          <Popover
+            content={
+              <div>
+                <Typography.Paragraph
+                  copyable
+                  style={{ whiteSpace: "pre-wrap", margin: "8px 0 0 0" }}
+                >
+                  {JSON.stringify(nodeProperties, null, 2)}
+                </Typography.Paragraph>
+              </div>
+            }
+            title="连线属性"
+          >
+            <Button icon={<CodeOutlined />} type="text" size="small" />
+          </Popover>
+        </Space>
+      }
       placement="right"
       width={400}
       open={visible}

@@ -474,11 +474,11 @@ const FlowDesign: React.FC = () => {
     const flowModel = {
       flowElementList: [
         ...nodes.map(node => {
-          // 确保坐标信息包含在properties中
+          // 始终使用当前节点的实际位置（node.position），这是最新的位置
           const properties = {
             ...(node.data?.properties || {}),
-            positionX: (node.data?.properties as any)?.positionX ?? Math.round(node.position.x),
-            positionY: (node.data?.properties as any)?.positionY ?? Math.round(node.position.y),
+            positionX: Math.round(node.position.x),
+            positionY: Math.round(node.position.y),
           };
 
           return {
@@ -535,8 +535,8 @@ const FlowDesign: React.FC = () => {
           outgoing: edges.filter(edge => edge.source === node.id).map(edge => edge.id),
           properties: {
             ...(node.data?.properties || {}),
-            positionX: (node.data?.properties as any)?.positionX ?? Math.round(node.position.x),
-            positionY: (node.data?.properties as any)?.positionY ?? Math.round(node.position.y),
+            positionX: Math.round(node.position.x),
+            positionY: Math.round(node.position.y),
           },
         })),
         ...edges.map(edge => ({
