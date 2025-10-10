@@ -107,48 +107,6 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     }
   };
 
-  // 处理properties文本变化
-  const handlePropertiesChange = (value: string) => {
-    if (selectedNode) {
-      try {
-        // 尝试解析JSON
-        const properties = value.trim() ? JSON.parse(value) : {};
-
-        // 将 properties 中的关键字段同步到表单
-        const nextName = properties.name !== undefined ? properties.name : form.getFieldValue('name');
-        const nextPositionX = properties.positionX !== undefined ? properties.positionX : form.getFieldValue('positionX');
-        const nextPositionY = properties.positionY !== undefined ? properties.positionY : form.getFieldValue('positionY');
-
-        form.setFieldsValue({
-          name: nextName,
-          positionX: nextPositionX,
-          positionY: nextPositionY,
-        });
-
-        // 同步到节点数据（顶层与 properties 中都写入），并更新本地属性状态
-        const updatedProps = {
-          ...(selectedNode.data?.properties as any || {}),
-          ...properties,
-          name: nextName,
-          positionX: nextPositionX,
-          positionY: nextPositionY,
-        };
-        setNodeProperties(updatedProps);
-
-        // 传递统一格式的数据给父组件
-        onNodePropertyChange(selectedNode.id, {
-          name: nextName,
-          positionX: nextPositionX,
-          positionY: nextPositionY,
-          properties: updatedProps
-        });
-      } catch (error) {
-        // JSON格式错误时，不更新properties，但保留文本内容
-        console.warn('Properties JSON格式错误:', error);
-      }
-    }
-  };
-
   // 渲染服务任务节点属性配置
   const renderServiceTaskProperties = () => {
     const subType = (selectedNode?.data?.properties as any)?.subType;

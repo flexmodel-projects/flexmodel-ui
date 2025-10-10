@@ -71,7 +71,7 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
     <Tabs
       activeKey={activeTab}
       onChange={onTabChange}
-      destroyInactiveTabPane={false}
+      destroyOnHidden={false}
       items={monitoringTabs.map((tab) => ({
         key: tab.key,
         label: (
@@ -106,7 +106,6 @@ const MonitoringTabs: React.FC<MonitoringTabsProps> = ({ activeTab, onTabChange,
         marginBottom: '16px',
         backgroundColor: token.colorBgContainer,
         borderRadius: '8px',
-        padding: '8px',
       }}
       tabBarGutter={8}
       centered={false}
