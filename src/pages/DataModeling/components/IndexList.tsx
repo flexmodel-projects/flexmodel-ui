@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, message, Modal, Popconfirm, Space, Table, Tag} from 'antd';
-import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, Input, message, Modal, Popconfirm, Space, Table, Tag} from 'antd';
+import {DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {createIndex, dropIndex, modifyIndex} from '@/services/model.ts';
 import IndexForm from "./IndexForm";
 import {Entity, Index} from "@/types/data-modeling";
@@ -14,6 +14,8 @@ interface IndexListProps {
 const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
   const {t} = useTranslation();
   const [indexList, setIndexList] = useState<Index[]>([]);
+  const [filteredIndexList, setFilteredIndexList] = useState<Index[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [changeDialogVisible, setChangeDialogVisible] = useState<boolean>(false);
   const [selectedIndexKey, setSelectedIndexKey] = useState<number>(-1);
   const [currentVal, setCurrentVal] = useState<Index>({name: '', fields: [], unique: false});
@@ -25,6 +27,22 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
     // const res = await getIndexes(datasource, model?.name);
     setIndexList(model?.indexes || []);
   }, [model?.indexes]);
+
+  // 搜索过滤逻辑
+  const filterIndexes = useCallback((indexes: Index[], keyword: string) => {
+    if (!keyword.trim()) {
+      return indexes;
+    }
+    return indexes.filter(index => 
+      index.name.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }, []);
+
+  // 当索引列表或搜索关键词变化时，更新过滤后的列表
+  useEffect(() => {
+    const filtered = filterIndexes(indexList, searchKeyword);
+    setFilteredIndexList(filtered);
+  }, [indexList, searchKeyword, filterIndexes]);
 
   useEffect(() => {
     fetchIndexes();
@@ -151,7 +169,16 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <Input
+          size="small"
+          placeholder={t("search_indexes")}
+          prefix={<SearchOutlined />}
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          style={{ width: 200 }}
+          allowClear
+        />
         <Button
           type="primary"
           icon={<PlusOutlined/>}
@@ -164,7 +191,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       <Table
         rowKey="name"
         scroll={{ y: 450 }}
-        dataSource={indexList}
+        dataSource={filteredIndexList}
         columns={columns}
         pagination={false}
       />

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {Button, message, Modal, Popconfirm, Space, Table, Tooltip,} from "antd";
+import {Button, Input, message, Modal, Popconfirm, Space, Table, Tooltip,} from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
@@ -12,6 +12,7 @@ import {
   LinkOutlined,
   NumberOutlined,
   PlusOutlined,
+  SearchOutlined,
   TagsOutlined
 } from "@ant-design/icons";
 import {createField, dropField, modifyField} from "@/services/model.ts";
@@ -27,6 +28,8 @@ interface FieldListProps {
 const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   const { t } = useTranslation();
   const [fieldList, setFieldList] = useState<Field[]>([]);
+  const [filteredFieldList, setFilteredFieldList] = useState<Field[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [changeDialogVisible, setChangeDialogVisible] =
     useState<boolean>(false);
   const [selectedFieldIndex, setSelectedFieldIndex] = useState<number>(-1);
@@ -41,6 +44,22 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
     // const res = await getFields(datasource, model?.name);
     setFieldList(model?.fields);
   }, [model?.fields]);
+
+  // 搜索过滤逻辑
+  const filterFields = useCallback((fields: Field[], keyword: string) => {
+    if (!keyword.trim()) {
+      return fields;
+    }
+    return fields.filter(field => 
+      field.name.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }, []);
+
+  // 当字段列表或搜索关键词变化时，更新过滤后的列表
+  useEffect(() => {
+    const filtered = filterFields(fieldList, searchKeyword);
+    setFilteredFieldList(filtered);
+  }, [fieldList, searchKeyword, filterFields]);
 
   useEffect(() => {
     fetchFields();
@@ -271,8 +290,17 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
   return (
     <>
       <div
-        style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}
       >
+        <Input
+          size="small"
+          placeholder={t("search_fields")}
+          prefix={<SearchOutlined />}
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          style={{ width: 200 }}
+          allowClear
+        />
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -285,7 +313,7 @@ const FieldList: React.FC<FieldListProps> = ({ datasource, model }) => {
       <Table
         rowKey={(record, index) => `${record.name}-${index}`}
         scroll={{ y: 450 }}
-        dataSource={fieldList}
+        dataSource={filteredFieldList}
         columns={columns}
         pagination={false}
       />
