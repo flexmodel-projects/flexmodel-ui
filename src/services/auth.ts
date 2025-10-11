@@ -15,7 +15,7 @@ export const login = (data: LoginRequest): Promise<LoginResponse> => {
  * @returns 用户信息
  */
 export const getCurrentUser = (): Promise<LoginResponse> => {
-  return api.get('/auth/me')
+  return api.get('/auth/whoami')
 }
 
 /**

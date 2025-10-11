@@ -649,5 +649,10 @@
   "exec_success": "执行成功",
   "exec_failure": "执行失败",
   "request_count": "请求数量",
-  "model_count": "模型数量"
+  "model_count": "模型数量",
+  "tenant": {
+    "select": "选择租户",
+    "current": "当前租户",
+    "switch": "切换租户"
+  }
 }

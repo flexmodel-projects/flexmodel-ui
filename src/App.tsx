@@ -4,7 +4,7 @@ import PageLayout from "./components/layouts/PageLayout";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import {useEffect} from "react";
-import {useConfig, useLocale, useTheme} from "./store/appStore.ts";
+import {useConfig, useLocale, useTenant, useTheme} from "./store/appStore.ts";
 import {useAuth} from "./store/authStore.ts";
 import {initializeDarkMode} from "./utils/darkMode.ts";
 
@@ -13,6 +13,7 @@ const App = () => {
   const { isDark } = useTheme();
   const { locale } = useLocale();
   const { isAuthenticated, getCurrentUser, refreshAuthToken } = useAuth();
+  const { fetchTenants } = useTenant();
 
   useEffect(() => {
     // 初始化主题设置
@@ -27,6 +28,8 @@ const App = () => {
         try {
           // 获取当前用户信息
           await getCurrentUser();
+          // 获取租户列表
+          await fetchTenants();
         } catch (error) {
           console.error('Failed to get current user:', error);
         }
@@ -34,7 +37,7 @@ const App = () => {
     };
 
     initializeAuth();
-  }, [isAuthenticated, getCurrentUser]);
+  }, [isAuthenticated, getCurrentUser, fetchTenants]);
 
   // 设置自动刷新token
   useEffect(() => {

@@ -648,5 +648,10 @@
   "exec_success": "Exec Success",
   "exec_failure": "Exec Failure",
   "request_count": "Request",
-  "model_count": "Model"
+  "model_count": "Model",
+  "tenant": {
+    "select": "Select Tenant",
+    "current": "Current Tenant",
+    "switch": "Switch Tenant"
+  }
 }

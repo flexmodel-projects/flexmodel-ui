@@ -163,6 +163,7 @@ const IndexList: React.FC<IndexListProps> = ({datasource, model}) => {
       </div>
       <Table
         rowKey="name"
+        scroll={{ y: 450 }}
         dataSource={indexList}
         columns={columns}
         pagination={false}

@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {devtools, persist} from 'zustand/middleware';
 import {getGlobalProfile} from '../services/global';
 import {getDarkModeFromStorage, setDarkModeToStorage} from '../utils/darkMode';
+import {getTenants, Tenant} from '../services/tenant';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import dayjs from 'dayjs';
@@ -11,6 +12,12 @@ export interface ConfigState {
   config: Record<string, any>;
   isLoading: boolean;
   error: string | null;
+}
+
+export interface TenantState {
+  currentTenant: Tenant | null;
+  tenants: Tenant[];
+  isLoadingTenants: boolean;
 }
 
 export interface ThemeState {
@@ -26,7 +33,7 @@ export interface SidebarState {
   isSidebarCollapsed: boolean;
 }
 
-export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState {
+export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarState, TenantState {
   // 配置相关
   setConfig: (config: Record<string, any>) => void;
   fetchConfig: () => Promise<void>;
@@ -44,6 +51,11 @@ export interface AppState extends ConfigState, ThemeState, LocaleState, SidebarS
   // 侧边栏相关
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
+
+  // 租户相关
+  setCurrentTenant: (tenant: Tenant | null) => void;
+  setTenants: (tenants: Tenant[]) => void;
+  fetchTenants: () => Promise<void>;
 }
 
 // 创建store
@@ -59,6 +71,9 @@ export const useAppStore = create<AppState>()(
         locale: localStorage.getItem('i18nextLng') === 'zh' ? zhCN : enUS,
         currentLang: (localStorage.getItem('i18nextLng') as 'zh' | 'en') || 'zh',
         isSidebarCollapsed: false, // 初始化侧边栏折叠状态
+        currentTenant: null,
+        tenants: [],
+        isLoadingTenants: false,
 
         // 配置相关actions
         setConfig: (config) => set({config}),
@@ -115,6 +130,50 @@ export const useAppStore = create<AppState>()(
           const newCollapsed = !isSidebarCollapsed;
           set({isSidebarCollapsed: newCollapsed});
         },
+
+        // 租户相关actions
+        setCurrentTenant: (tenant) => {
+          set({currentTenant: tenant});
+          // 持久化到localStorage
+          if (tenant) {
+            localStorage.setItem('tenantId', tenant.id);
+          } else {
+            localStorage.removeItem('tenantId');
+          }
+        },
+        setTenants: (tenants) => {
+          set({tenants});
+        },
+        fetchTenants: async () => {
+          set({isLoadingTenants: true});
+          try {
+            const tenants = await getTenants();
+            set({tenants, isLoadingTenants: false});
+            
+            // 设置默认租户
+            const storedTenantId = localStorage.getItem('tenantId');
+            const {currentTenant} = get();
+            
+            if (tenants.length > 0) {
+              // 如果有存储的租户ID，尝试从列表中找到它
+              if (storedTenantId) {
+                const storedTenant = tenants.find(t => t.id === storedTenantId);
+                if (storedTenant && storedTenant.id !== currentTenant?.id) {
+                  set({currentTenant: storedTenant});
+                }
+              }
+              // 如果没有当前租户，使用第一个
+              if (!get().currentTenant) {
+                const firstTenant = tenants[0];
+                set({currentTenant: firstTenant});
+                localStorage.setItem('tenantId', firstTenant.id);
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch tenants:', error);
+            set({isLoadingTenants: false});
+          }
+        },
       }),
       {
         name: 'app-storage',
@@ -157,4 +216,12 @@ export const useSidebar = () => useAppStore((state) => ({
   isSidebarCollapsed: state.isSidebarCollapsed,
   setSidebarCollapsed: state.setSidebarCollapsed,
   toggleSidebar: state.toggleSidebar,
+}));
+
+export const useTenant = () => useAppStore((state) => ({
+  currentTenant: state.currentTenant,
+  tenants: state.tenants,
+  isLoadingTenants: state.isLoadingTenants,
+  setCurrentTenant: state.setCurrentTenant,
+  fetchTenants: state.fetchTenants,
 }));

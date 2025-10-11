@@ -3,10 +3,11 @@ import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme} f
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
-import {useLocale, useSidebar, useTheme} from "@/store/appStore.ts";
+import {useLocale, useSidebar, useTenant, useTheme} from "@/store/appStore.ts";
 import {useTranslation} from "react-i18next";
 import {Locale} from "antd/es/locale";
 import {
+  ApartmentOutlined,
   CodeOutlined,
   FileSearchOutlined,
   GlobalOutlined,
@@ -20,6 +21,7 @@ import {
 import {applyDarkMode, setDarkModeToStorage} from "@/utils/darkMode.ts";
 import {Link, useLocation} from "react-router-dom";
 import {getFullRoutePath} from "@/routes";
+import {Tenant} from "@/services/tenant";
 
 type HeaderProps = {
   onToggleAIChat?: () => void;
@@ -32,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
   const { isDark, toggleDarkMode: toggleDarkModeStore } = useTheme();
   const { setLocale: setLocaleStore, currentLang } = useLocale();
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
+  const { currentTenant, tenants, setCurrentTenant } = useTenant();
   const { i18n } = useTranslation();
   const location = useLocation();
   const { token } = theme.useToken();
@@ -108,6 +111,28 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
     [currentLang]
   );
 
+  // 租户切换回调
+  const handleTenantChange = useCallback((tenant: Tenant) => {
+    setCurrentTenant(tenant);
+    // 刷新页面以重新加载所有数据
+    window.location.reload();
+  }, [setCurrentTenant]);
+
+  // 使用 useMemo 缓存租户菜单
+  const tenantMenu = useMemo(() => (
+    <Menu>
+      {tenants.map(tenant => (
+        <Menu.Item
+          key={tenant.id}
+          onClick={() => handleTenantChange(tenant)}
+          disabled={currentTenant?.id === tenant.id}
+        >
+          {tenant.id}
+        </Menu.Item>
+      ))}
+    </Menu>
+  ), [tenants, currentTenant, handleTenantChange]);
+
   return (
     <Layout.Header
       className="bg-white dark:bg-[#18181c] border-b border-[#f5f5f5] dark:border-[#23232a] shadow-sm dark:shadow-lg"
@@ -154,6 +179,18 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
             icon={<CodeOutlined />}
             onClick={onToggleConsole}
           />
+          {tenants.length > 0 && (
+            <Dropdown
+              overlay={tenantMenu}
+              placement="bottomRight"
+              trigger={["click"]}
+              disabled={tenants.length === 0}
+            >
+              <Button size="small" icon={<ApartmentOutlined />}>
+                {currentTenant?.id || t('tenant.select')}
+              </Button>
+            </Dropdown>
+          )}
           <Switch
             checked={isDark}
             onChange={toggleDarkMode}
