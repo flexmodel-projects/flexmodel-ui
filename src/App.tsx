@@ -26,12 +26,13 @@ const App = () => {
     const initializeAuth = async () => {
       if (isAuthenticated) {
         try {
-          // 获取当前用户信息
-          await getCurrentUser();
-          // 获取租户列表
-          await fetchTenants();
+          // 并行获取当前用户信息和租户列表，提升性能
+          await Promise.all([
+            getCurrentUser(),
+            fetchTenants()
+          ]);
         } catch (error) {
-          console.error('Failed to get current user:', error);
+          console.error('Failed to initialize auth:', error);
         }
       }
     };
