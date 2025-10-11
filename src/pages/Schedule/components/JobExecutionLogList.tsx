@@ -7,12 +7,10 @@ import {
   Input,
   message,
   Modal,
-  Pagination,
   Select,
   Space,
   Table,
   Tag,
-  theme,
   Typography
 } from 'antd';
 import {EyeOutlined, ReloadOutlined, SearchOutlined} from '@ant-design/icons';
@@ -26,7 +24,6 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 const JobExecutionLogList: React.FC = () => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
@@ -273,31 +270,25 @@ const JobExecutionLogList: React.FC = () => {
             dataSource={logs}
             loading={loading}
             rowKey="id"
-            pagination={false}
             size="small"
             scroll={{ y: tableScrollY || undefined}}
-          />
-        </div>
-
-        <div style={{
-          padding: '16px 0',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={total}
-            showSizeChanger
-            showQuickJumper
-            showTotal={(total, range) =>
-              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`
-            }
-            onChange={handlePageChange}
-            onShowSizeChange={(_current, size) => {
-              setCurrentPage(1);
-              setPageSize(size);
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: total,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) =>
+                t("pagination_total_text", {
+                  start: range[0],
+                  end: range[1],
+                  total: total,
+                }),
+              onChange: handlePageChange,
+              onShowSizeChange: (_current, size) => {
+                setCurrentPage(1);
+                setPageSize(size);
+              }
             }}
           />
         </div>

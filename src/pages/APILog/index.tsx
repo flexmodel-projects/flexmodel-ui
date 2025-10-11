@@ -1,20 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {
-  Button,
-  Col,
-  DatePicker,
-  Descriptions,
-  Drawer,
-  Form,
-  Input,
-  Pagination,
-  Row,
-  Select,
-  Space,
-  Table,
-  Tag,
-  theme,
-} from "antd";
+import {Button, Col, DatePicker, Descriptions, Drawer, Form, Input, Row, Select, Space, Table, Tag, theme,} from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import {getApiLogs, getApiLogStat} from "@/services/api-log.ts";
@@ -72,11 +57,11 @@ const LogViewer: React.FC = () => {
   useEffect(() => {
     getApiLogsHandler();
     getApiLogStatHandler();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     getApiLogsHandler();
-  }, [query]);
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const showDetail = (record: any) => {
     setLog(record);
@@ -255,7 +240,7 @@ const LogViewer: React.FC = () => {
             <Table
               bordered={false}
               virtual
-              scroll={{ y: expand ? 230 : 290 }}
+              scroll={{ y: expand ? 130 : 190 }}
               columns={columns}
               dataSource={tableData?.list}
               rowKey="id"
@@ -263,34 +248,21 @@ const LogViewer: React.FC = () => {
               onRow={(record) => ({
                 onClick: () => showDetail(record),
               })}
-              pagination={false}
+              pagination={{
+                current: query.page,
+                pageSize: query.size,
+                total: tableData.total,
+                showTotal: (total, range) =>
+                  t("pagination_total_text", {
+                    start: range[0],
+                    end: range[1],
+                    total: total,
+                  }),
+                onChange: (page, size) =>
+                  setQuery({ ...query, page, size })
+              }}
             />
           </div>
-        </div>
-
-        {/* 分页区域 - 固定在底部 */}
-        <div style={{
-          padding: '15px 0',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexShrink: 0
-        }}>
-          <Pagination
-            current={query.page}
-            pageSize={query.size}
-            total={tableData.total}
-            showTotal={(total, range) =>
-              t("pagination_total_text", {
-                start: range[0],
-                end: range[1],
-                total: total,
-              })
-            }
-            onChange={(page, size) =>
-              setQuery({ ...query, page, size })
-            }
-          />
         </div>
       </div>
 

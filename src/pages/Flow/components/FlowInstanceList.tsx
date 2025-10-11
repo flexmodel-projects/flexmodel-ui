@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, Input, message, Pagination, Popconfirm, Select, Space, Table, Tag, theme, Tooltip} from 'antd';
+import {Button, Input, message, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
 import {EyeOutlined, HistoryOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
 import UserTasksDrawer from './UserTasksDrawer.tsx';
@@ -16,7 +16,6 @@ import dayjs from 'dayjs';
 import {t} from 'i18next';
 
 const FlowInstanceList: React.FC = () => {
-  const {token} = theme.useToken();
   const navigate = useNavigate();
   // 状态管理
   const [loading, setLoading] = useState(false);
@@ -60,7 +59,7 @@ const FlowInstanceList: React.FC = () => {
     if (!container) return;
 
     const updateHeight = () => {
-      setTableScrollY(container.clientHeight);
+      setTableScrollY(container.clientHeight-80);
     };
 
     updateHeight();
@@ -294,33 +293,23 @@ const FlowInstanceList: React.FC = () => {
             rowKey="flowInstanceId"
             loading={loading}
             scroll={{y: tableScrollY || undefined}}
-            pagination={false}
-          />
-        </div>
-        {/* 分页区域 - 固定在底部 */}
-        <div style={{
-          padding: '16px 0',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
-          <Pagination
-            current={searchParams.page}
-            pageSize={searchParams.size}
-            total={total}
-            showTotal={(total: number, range: any) =>
-              t("pagination_total_text", {
-                start: range[0],
-                end: range[1],
-                total: total,
-              })
-            }
-            onChange={(page: number, size: number) => {
-              setSearchParams({
-                ...searchParams,
-                page,
-                size
-              });
+            pagination={{
+              current: searchParams.page,
+              pageSize: searchParams.size,
+              total: total,
+              showTotal: (total: number, range: any) =>
+                t("pagination_total_text", {
+                  start: range[0],
+                  end: range[1],
+                  total: total,
+                }),
+              onChange: (page: number, size: number) => {
+                setSearchParams({
+                  ...searchParams,
+                  page,
+                  size
+                });
+              }
             }}
           />
         </div>

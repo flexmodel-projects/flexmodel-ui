@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, message, Modal, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
+import {Button, Form, message, Modal, Popconfirm, Space, Table, Tag, Tooltip} from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -25,7 +25,6 @@ interface TriggerListProps {
 
 const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly = false }) => {
   const {t} = useTranslation();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
   const [triggers, setTriggers] = useState<TriggerDTO[]>([]);
   const [loading, setLoading] = useState(false);
@@ -284,35 +283,26 @@ const TriggerList: React.FC<TriggerListProps> = ({ datasource, model, eventOnly 
             loading={loading}
             rowKey="id"
             scroll={{ y: '60vh' }}
-            pagination={false}
-          />
-        </div>
-        <div style={{
-          padding: '16px 0',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={total}
-            showSizeChanger={true}
-            showQuickJumper={true}
-            showTotal={(total, range) =>
-              t('pagination_total_text', {
-                start: range[0],
-                end: range[1],
-                total: total
-              })
-            }
-            onChange={(page, size) => {
-              setCurrentPage(page);
-              setPageSize(size || 10);
-            }}
-            onShowSizeChange={(_current: number, size: number) => {
-              setCurrentPage(1);
-              setPageSize(size);
+            pagination={{
+              current: currentPage,
+              pageSize: pageSize,
+              total: total,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) =>
+                t('pagination_total_text', {
+                  start: range[0],
+                  end: range[1],
+                  total: total
+                }),
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size || 10);
+              },
+              onShowSizeChange: (_current: number, size: number) => {
+                setCurrentPage(1);
+                setPageSize(size);
+              }
             }}
           />
         </div>

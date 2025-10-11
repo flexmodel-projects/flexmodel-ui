@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Empty, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, theme, Tooltip} from 'antd';
-import {ColumnsType} from 'antd/es/table';
+import {Button, Empty, Form, Input, message, Modal, Popconfirm, Space, Table, Tooltip} from 'antd';
+import {ColumnsType, TablePaginationConfig} from 'antd/es/table';
 import {DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined, SearchOutlined, UpOutlined} from "@ant-design/icons";
 import {createRecord, deleteRecord, getRecordList, updateRecord} from "@/services/record.ts";
 import {useTranslation} from "react-i18next";
@@ -12,7 +12,6 @@ const { TextArea } = Input;
 
 const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
   const { t } = useTranslation();
-  const {token} = theme.useToken();
 
   const [dialogFormVisible, setDialogFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -167,12 +166,6 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
     ),
   });
 
-  const paginationStyle = {
-    padding: '16px 0',
-    borderTop: `1px solid ${token.colorBorderSecondary}`,
-    display: 'flex',
-    justifyContent: 'flex-end'
-  };
 
   // 事件处理函数
   const handleNewRecord = () => {
@@ -181,11 +174,8 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
     setDialogFormVisible(true);
   };
 
-  const handlePaginationChange = (page: number, pageSize: number) => {
-    setQuery({ ...query, page, size: pageSize });
-  };
 
-  const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
+  const handleTableChange = (pagination: TablePaginationConfig, _filters: any, sorter: any) => {
     let newSort: Array<{ field: string; order: 'ASC' | 'DESC' }> = [];
 
     if (sorter && sorter.field) {
@@ -193,7 +183,12 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
       newSort = [{ field: sorter.field, order }];
     }
 
-    setQuery({ ...query, page: 1, sort: newSort });
+    setQuery({
+      ...query,
+      page: pagination.current || 1,
+      size: pagination.pageSize || 10,
+      sort: newSort
+    });
   };
 
   const handleSearch = () => {
@@ -255,54 +250,30 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
           </Space>
         </div>
 
-        {/* 表格区域 */}
-        <div style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: 0,
-          overflow: 'hidden',
-          marginBottom: '10px'
-        }}>
-          <div style={{
-            flex: 1,
-            minHeight: 'calc(100vh - 380px)',
-            overflow: 'hidden',
-            marginBottom: '60px',
-          }}>
-            <Table
-              sticky
-              loading={loading}
-              scroll={{
-                y: 'calc(100vh - 400px)',
-                x: 'max-content'
-              }}
-              columns={columns}
-              dataSource={records.list}
-              pagination={false}
-              rowKey={idField?.name}
-              onChange={handleTableChange}
-            />
-          </div>
-        </div>
-
-        {/* 分页区域 */}
-        <div style={paginationStyle}>
-          <Pagination
-            current={query.page}
-            pageSize={query.size}
-            total={records.total}
-            showTotal={(total, range) =>
-              t("pagination_total_text", {
-                start: range[0],
-                end: range[1],
-                total: total,
-              })
-            }
-            onChange={handlePaginationChange}
-            size="small"
+        <Table
+            sticky
+            loading={loading}
+            scroll={{
+              y: 'calc(100vh - 260px)',
+              x: 'max-content'
+            }}
+            columns={columns}
+            dataSource={records.list}
+            rowKey={idField?.name}
+            onChange={handleTableChange}
+            pagination={{
+              current: query.page,
+              pageSize: query.size,
+              total: records.total,
+              showTotal: (total, range) =>
+                t("pagination_total_text", {
+                  start: range[0],
+                  end: range[1],
+                  total: total,
+                }),
+              size: "small"
+            }}
           />
-        </div>
       </>
     );
   };

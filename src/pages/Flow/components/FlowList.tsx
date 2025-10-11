@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Form, Input, message, Modal, Pagination, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
+import {Button, Form, Input, message, Modal, Popconfirm, Space, Table, Tag, theme, Tooltip} from 'antd';
 import {DeleteOutlined, EditOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/common/PageContainer';
@@ -283,34 +283,23 @@ const FlowList: React.FC = () => {
             dataSource={flowList}
             rowKey="flowModuleId"
             loading={loading}
-            pagination={false}
-          />
-        </div>
-
-        {/* 分页区域 - 固定在底部 */}
-        <div style={{
-          padding: '16px 0',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
-          <Pagination
-            current={searchParams.page}
-            pageSize={searchParams.size}
-            total={total}
-            showTotal={(total: number, range: any) =>
-              t("pagination_total_text", {
-                start: range[0],
-                end: range[1],
-                total: total,
-              })
-            }
-            onChange={(page: number, size: number) => {
-              setSearchParams({
-                ...searchParams,
-                page,
-                size
-              });
+            pagination={{
+              current: searchParams.page,
+              pageSize: searchParams.size,
+              total: total,
+              showTotal: (total: number, range: any) =>
+                t("pagination_total_text", {
+                  start: range[0],
+                  end: range[1],
+                  total: total,
+                }),
+              onChange: (page: number, size: number) => {
+                setSearchParams({
+                  ...searchParams,
+                  page,
+                  size
+                });
+              }
             }}
           />
         </div>
