@@ -119,7 +119,7 @@ const RecordList: React.FC<RecordListProps> = ({ datasource, model }) => {
           return '-';
         }
 
-        const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text);
+        const fmtText = (typeof text === 'object' ? JSON.stringify(text) : text.toString());
 
         // 根据字段类型设置最大长度
         let maxLength = 50; // 默认最大长度
