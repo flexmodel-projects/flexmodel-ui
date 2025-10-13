@@ -1,8 +1,30 @@
 import React from 'react';
-import {Button, Card, Divider, Drawer, Form, Input, InputNumber, Popover, Radio, Space, Typography} from 'antd';
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  Drawer,
+  Form,
+  Input,
+  InputNumber,
+  Popover,
+  Radio,
+  Row,
+  Select,
+  Space,
+  Typography
+} from 'antd';
 import {Edge, Node} from '@xyflow/react';
 import ScriptEditor from '../../../components/common/ScriptEditor';
+import FieldMappingComponent from '../../../components/common/FieldMappingComponent';
 import {CodeOutlined} from '@ant-design/icons';
+import {getDatasourceList} from '@/services/datasource';
+import {getModelList} from '@/services/model';
+import {DatasourceSchema} from '@/types/data-source';
+import {EntitySchema, EnumSchema, NativeQuerySchema} from '@/types/data-modeling';
+
+const { Option } = Select;
 
 interface CustomEdge extends Edge {
   type: 'arrow';
@@ -37,6 +59,10 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [nodeProperties, setNodeProperties] = React.useState<Record<string, any>>({});
+  const [datasources, setDatasources] = React.useState<DatasourceSchema[]>([]);
+  const [models, setModels] = React.useState<(EntitySchema | EnumSchema | NativeQuerySchema)[]>([]);
+  const [selectedDatasource, setSelectedDatasource] = React.useState<string>('');
+  const [selectedModel, setSelectedModel] = React.useState<EntitySchema | null>(null);
 
   // 当选中节点变化时，更新表单
   React.useEffect(() => {
@@ -49,6 +75,13 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         positionY: Math.round(selectedNode.position.y),
         ...baseProperties,
       } as any;
+
+      // 处理dataMapping字段的特殊转换
+      const processedProperties = { ...baseProperties };
+      if (processedProperties.dataMapping && Array.isArray(processedProperties.dataMapping)) {
+        processedProperties.dataMapping = convertArrayToFieldMapping(processedProperties.dataMapping);
+      }
+
       form.setFieldsValue({
         ...selectedNode.data,
         id: selectedNode.id,
@@ -59,7 +92,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         height: selectedNode.style?.height || 60,
         enabled: selectedNode.data?.enabled !== false, // 默认为true
         // 设置嵌套的 properties 字段
-        properties: baseProperties,
+        properties: processedProperties,
       });
       // 更新本地属性状态
       setNodeProperties(properties);
@@ -78,13 +111,99 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     }
   }, [selectedNode, selectedEdge, form]);
 
+  // 获取数据源列表
+  React.useEffect(() => {
+    const fetchDatasources = async () => {
+      try {
+        const dsList = await getDatasourceList();
+        setDatasources(dsList);
+      } catch (error) {
+        console.error('获取数据源列表失败:', error);
+      }
+    };
+    fetchDatasources();
+  }, []);
+
+  // 获取模型列表
+  React.useEffect(() => {
+    if (!selectedDatasource) {
+      setModels([]);
+      return;
+    }
+
+    const fetchModels = async () => {
+      try {
+        const modelList = await getModelList(selectedDatasource);
+        // 过滤出type='entity'的模型
+        const entityModels = modelList.filter(model => model.type === 'entity');
+        setModels(entityModels);
+      } catch (error) {
+        console.error('获取模型列表失败:', error);
+        setModels([]);
+      }
+    };
+    fetchModels();
+  }, [selectedDatasource]);
+
+  // 当选中节点变化时，更新选中的数据源和模型
+  React.useEffect(() => {
+    if (selectedNode && selectedNode.type === 'serviceTask') {
+      const datasourceName = (selectedNode.data?.properties as any)?.datasourceName;
+      const modelName = (selectedNode.data?.properties as any)?.modelName;
+
+      if (datasourceName) {
+        setSelectedDatasource(datasourceName);
+      }
+
+      if (modelName && models.length > 0) {
+        const model = models.find(m => m.name === modelName) as EntitySchema;
+        setSelectedModel(model || null);
+      }
+    }
+  }, [selectedNode, models]);
+
+  // 处理数据源变化
+  const handleDatasourceChange = (value: string) => {
+    setSelectedDatasource(value);
+    setSelectedModel(null);
+    // 清空模型选择
+    form.setFieldValue(['properties', 'modelName'], undefined);
+  };
+
+  // 处理模型变化
+  const handleModelChange = (modelName: string) => {
+    const model = models.find(m => m.name === modelName) as EntitySchema;
+    setSelectedModel(model || null);
+  };
+
+  // 将字段映射数组转换为数组格式
+  const convertFieldMappingToArray = (fieldMappings: any[]) => {
+    if (!fieldMappings || fieldMappings.length === 0) return [];
+    return fieldMappings.filter(mapping => mapping.field && mapping.value !== undefined);
+  };
+
+  // 将数组格式转换为字段映射数组
+  const convertArrayToFieldMapping = (arrayData: any[]) => {
+    if (!arrayData || !Array.isArray(arrayData)) return [];
+    return arrayData.map(item => ({
+      field: item.field || '',
+      value: String(item.value || '')
+    }));
+  };
+
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
     if (selectedNode) {
+      // 处理dataMapping字段的特殊转换
+      const processedProperties = { ...(allValues.properties || {}) };
+      if (processedProperties.dataMapping && Array.isArray(processedProperties.dataMapping)) {
+        processedProperties.dataMapping = convertFieldMappingToArray(processedProperties.dataMapping);
+      }
+
       // 合并所有属性，包括嵌套的 properties 字段
       const nextProps = {
         ...(selectedNode.data?.properties as any || {}),
-        ...(allValues.properties || {}), // 合并嵌套的 properties 字段
+        ...processedProperties, // 合并嵌套的 properties 字段
         name: allValues.name,
         positionX: allValues.positionX,
         positionY: allValues.positionY,
@@ -140,74 +259,321 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           </>
         );
 
-      case 'add-record':
+      case 'insert_record':
         return (
           <>
-            <Form.Item label="数据源" name={['properties', 'dataSource']}>
-              <Input placeholder="请选择数据源" />
+            <Form.Item
+              label="输入数据路径"
+              name={['properties', 'inputPath']}
+            >
+              <Input placeholder="例如: data.record" />
             </Form.Item>
-            <Form.Item label="表名" name={['properties', 'tableName']}>
-              <Input placeholder="请输入表名" />
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="数据源"
+                  name={['properties', 'datasourceName']}
+                  rules={[{ required: true, message: '请选择数据源' }]}
+                >
+                  <Select
+                    placeholder="请选择数据源"
+                    onChange={handleDatasourceChange}
+                  >
+                    {datasources.map(ds => (
+                      <Option key={ds.name} value={ds.name}>
+                        {ds.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="模型"
+                  name={['properties', 'modelName']}
+                  rules={[{ required: true, message: '请选择模型' }]}
+                >
+                  <Select
+                    placeholder="请选择模型"
+                    disabled={!selectedDatasource}
+                    onChange={handleModelChange}
+                  >
+                    {models.map(model => (
+                      <Option key={model.name} value={model.name}>
+                        {model.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label="数据映射"
+              name={['properties', 'dataMapping']}
+              rules={[{ required: true, message: '请输入记录数据' }]}
+            >
+              <FieldMappingComponent
+                placeholder={{
+                  field: '字段名',
+                  value: '字段值，支持变量如 ${user.name}'
+                }}
+                fieldOptions={selectedModel?.fields || []}
+              />
             </Form.Item>
-            <Form.Item label="字段映射" name={['properties', 'fieldMapping']}>
-              <Input.TextArea placeholder="请输入字段映射配置" rows={4} />
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: data.affectedRows" />
             </Form.Item>
           </>
         );
 
-      case 'update-record':
+      case 'update_record':
         return (
           <>
-            <Form.Item label="数据源" name={['properties', 'dataSource']}>
-              <Input placeholder="请选择数据源" />
+            <Form.Item
+              label="输入数据路径"
+              name={['properties', 'inputPath']}
+            >
+              <Input placeholder="例如: data.record" />
             </Form.Item>
-            <Form.Item label="表名" name={['properties', 'tableName']}>
-              <Input placeholder="请输入表名" />
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="数据源"
+                  name={['properties', 'datasourceName']}
+                  rules={[{ required: true, message: '请选择数据源' }]}
+                >
+                  <Select
+                    placeholder="请选择数据源"
+                    onChange={handleDatasourceChange}
+                  >
+                    {datasources.map(ds => (
+                      <Option key={ds.name} value={ds.name}>
+                        {ds.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="模型"
+                  name={['properties', 'modelName']}
+                  rules={[{ required: true, message: '请选择模型' }]}
+                >
+                  <Select
+                    placeholder="请选择模型"
+                    disabled={!selectedDatasource}
+                    onChange={handleModelChange}
+                  >
+                    {models.map(model => (
+                      <Option key={model.name} value={model.name}>
+                        {model.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              label="数据映射"
+              name={['properties', 'dataMapping']}
+              rules={[{ required: true, message: '请输入更新数据' }]}
+            >
+              <FieldMappingComponent
+                placeholder={{
+                  field: '字段名',
+                  value: '新值，支持变量如 ${newValue}'
+                }}
+                fieldOptions={selectedModel?.fields || []}
+              />
             </Form.Item>
-            <Form.Item label="更新条件" name={['properties', 'updateCondition']}>
-              <Input placeholder="请输入更新条件" />
+            <Form.Item
+              label="过滤条件"
+              name={['properties', 'filter']}
+            >
+              <Input.TextArea
+                placeholder='{"field": {"_eq": "value"}}'
+                rows={4}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
             </Form.Item>
-            <Form.Item label="更新字段" name={['properties', 'updateFields']}>
-              <Input.TextArea placeholder="请输入更新字段配置" rows={4} />
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: data.affectedRows" />
             </Form.Item>
           </>
         );
 
-      case 'query-record':
+      case 'delete_record':
         return (
           <>
-            <Form.Item label="数据源" name={['properties', 'dataSource']}>
-              <Input placeholder="请选择数据源" />
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="数据源"
+                  name={['properties', 'datasourceName']}
+                  rules={[{ required: true, message: '请选择数据源' }]}
+                >
+                  <Select
+                    placeholder="请选择数据源"
+                    onChange={handleDatasourceChange}
+                  >
+                    {datasources.map(ds => (
+                      <Option key={ds.name} value={ds.name}>
+                        {ds.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="模型"
+                  name={['properties', 'modelName']}
+                  rules={[{ required: true, message: '请选择模型' }]}
+                >
+                  <Select
+                    placeholder="请选择模型"
+                    disabled={!selectedDatasource}
+                  >
+                    {models.map(model => (
+                      <Option key={model.name} value={model.name}>
+                        {model.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              label="过滤条件"
+              name={['properties', 'filter']}
+            >
+              <Input.TextArea
+                placeholder='{"field": {"_eq": "value"}}'
+                rows={4}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
             </Form.Item>
-            <Form.Item label="表名" name={['properties', 'tableName']}>
-              <Input placeholder="请输入表名" />
-            </Form.Item>
-            <Form.Item label="查询条件" name={['properties', 'queryCondition']}>
-              <Input placeholder="请输入查询条件" />
-            </Form.Item>
-            <Form.Item label="返回字段" name={['properties', 'returnFields']}>
-              <Input placeholder="请输入返回字段，用逗号分隔" />
-            </Form.Item>
-            <Form.Item label="排序字段" name={['properties', 'orderBy']}>
-              <Input placeholder="请输入排序字段" />
-            </Form.Item>
-            <Form.Item label="限制条数" name={['properties', 'limit']}>
-              <InputNumber placeholder="请输入限制条数" min={1} />
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: data.affectedRows" />
             </Form.Item>
           </>
         );
 
-      case 'delete-record':
+      case 'query_record':
         return (
           <>
-            <Form.Item label="数据源" name={['properties', 'dataSource']}>
-              <Input placeholder="请选择数据源" />
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="数据源"
+                  name={['properties', 'datasourceName']}
+                  rules={[{ required: true, message: '请选择数据源' }]}
+                >
+                  <Select
+                    placeholder="请选择数据源"
+                    onChange={handleDatasourceChange}
+                  >
+                    {datasources.map(ds => (
+                      <Option key={ds.name} value={ds.name}>
+                        {ds.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="模型"
+                  name={['properties', 'modelName']}
+                  rules={[{ required: true, message: '请选择模型' }]}
+                >
+                  <Select
+                    placeholder="请选择模型"
+                    disabled={!selectedDatasource}
+                  >
+                    {models.map(model => (
+                      <Option key={model.name} value={model.name}>
+                        {model.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              label="过滤条件"
+              name={['properties', 'filter']}
+            >
+              <Input.TextArea
+                placeholder='{"field": {"_eq": "value"}}'
+                rows={4}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
             </Form.Item>
-            <Form.Item label="表名" name={['properties', 'tableName']}>
-              <Input placeholder="请输入表名" />
+            <Form.Item
+              label="排序配置"
+              name={['properties', 'sort']}
+            >
+              <Input.TextArea
+                placeholder='[{"field": "createdAt", "order": "desc"}]'
+                rows={3}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
             </Form.Item>
-            <Form.Item label="删除条件" name={['properties', 'deleteCondition']}>
-              <Input placeholder="请输入删除条件" />
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="页码"
+                  name={['properties', 'page']}
+                >
+                  <InputNumber
+                    placeholder="第几页"
+                    min={1}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="每页大小"
+                  name={['properties', 'size']}
+                >
+                  <InputNumber
+                    placeholder="每页条数"
+                    min={1}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: data.records" />
             </Form.Item>
           </>
         );

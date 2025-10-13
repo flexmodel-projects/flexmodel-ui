@@ -17,10 +17,10 @@ export const nodeCatalog: NodeCatalogItem[] = [
   { type: 'userTask', label: '提交节点', icon: 'user-task', category: 'activities' },
 
   // 自动节点
-  { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks', subType: 'add-record' },
-  { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks', subType: 'update-record' },
-  { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks', subType: 'query-record' },
-  { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks', subType: 'delete-record' },
+  { type: 'serviceTask', label: '新增记录', icon: 'add-record', category: 'serviceTasks', subType: 'insert_record' },
+  { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks', subType: 'update_record' },
+  { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks', subType: 'query_record' },
+  { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks', subType: 'delete_record' },
   { type: 'serviceTask', label: 'JS脚本', icon: 'js-script', category: 'serviceTasks', subType: 'js' },
   { type: 'serviceTask', label: 'Groovy脚本', icon: 'groovy-script', category: 'serviceTasks', subType: 'groovy' },
 

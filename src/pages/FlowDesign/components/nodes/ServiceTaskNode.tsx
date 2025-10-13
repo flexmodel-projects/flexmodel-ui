@@ -19,13 +19,13 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
   const getSubTypeIcon = (subType?: string) => {
     const iconProps = {fontSize: '16px'};
     switch (subType) {
-      case 'add-record':
+      case 'insert_record':
         return <PlusOutlined {...iconProps} style={{color: token.colorSuccess}}/>;
-      case 'update-record':
+      case 'update_record':
         return <EditOutlined {...iconProps} style={{color: token.colorWarning}}/>;
-      case 'query-record':
+      case 'query_record':
         return <SearchOutlined {...iconProps} style={{color: token.colorInfo}}/>;
-      case 'delete-record':
+      case 'delete_record':
         return <MinusOutlined {...iconProps} style={{color: token.colorError}}/>;
       case 'js':
         return <CodeOutlined {...iconProps} style={{color: '#f7df1e'}}/>;
@@ -42,16 +42,16 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
 
     let baseName: string = '自动任务';
     switch (subType) {
-      case 'add-record':
+      case 'insert_record':
         baseName = `新增记录`;
         break;
-      case 'update-record':
+      case 'update_record':
         baseName = `更新记录`;
         break;
-      case 'query-record':
+      case 'query_record':
         baseName = `查询记录`;
         break;
-      case 'delete-record':
+      case 'delete_record':
         baseName = `删除记录`;
         break;
       case 'delay':
