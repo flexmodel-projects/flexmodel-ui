@@ -266,7 +266,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="输入数据路径"
               name={['properties', 'inputPath']}
             >
-              <Input placeholder="例如: data.record" />
+              <Input placeholder="非必填，更新多条记录时可使用，例如: $.arrayData" />
             </Form.Item>
             <Row gutter={16}>
               <Col span={12}>
@@ -337,7 +337,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="输入数据路径"
               name={['properties', 'inputPath']}
             >
-              <Input placeholder="例如: data.record" />
+              <Input placeholder="非必填，更新多条记录时可使用，例如: $.arrayData" />
             </Form.Item>
             <Row gutter={16}>
               <Col span={12}>
