@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {
   Button,
   Card,
@@ -122,9 +122,14 @@ interface PropertyPanelProps {
   onNodePropertyChange: (nodeId: string, properties: Record<string, any>) => void;
   onEdgePropertyChange: (edgeId: string, data: Record<string, any>) => void;
   nodes: Node[];
+  onValidationChange: (nodeId: string, isValid: boolean) => void;
 }
 
-const PropertyPanel: React.FC<PropertyPanelProps> = ({
+export interface PropertyPanelRef {
+  validateCurrentNode: () => Promise<boolean>;
+}
+
+const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
   selectedNode,
   selectedEdge,
   visible,
@@ -132,7 +137,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   onNodePropertyChange,
   onEdgePropertyChange,
   nodes,
-}) => {
+  onValidationChange,
+}, ref) => {
   const [form] = Form.useForm();
   const [nodeProperties, setNodeProperties] = React.useState<Record<string, any>>({});
   const [datasources, setDatasources] = React.useState<DatasourceSchema[]>([]);
@@ -140,6 +146,28 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   const [selectedDatasource, setSelectedDatasource] = React.useState<string>('');
   const [selectedModel, setSelectedModel] = React.useState<EntitySchema | null>(null);
   const [apiList, setApiList] = React.useState<any[]>([]);
+
+  // 暴露校验方法给父组件
+  useImperativeHandle(ref, () => ({
+    validateCurrentNode: async () => {
+      if (!selectedNode) {
+        return true;
+      }
+
+      try {
+        // 只校验当前表单中有rules的字段
+        await form.validateFields();
+        // 校验通过
+        onValidationChange(selectedNode.id, true);
+        return true;
+      } catch (error) {
+        // 校验失败
+        console.log('节点校验失败:', selectedNode.id, error);
+        onValidationChange(selectedNode.id, false);
+        return false;
+      }
+    }
+  }), [selectedNode, form, onValidationChange]);
 
   // 当选中节点变化时，更新表单
   React.useEffect(() => {
@@ -360,7 +388,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
             <Form.Item label="脚本类型">
               <Input value="JavaScript" disabled />
             </Form.Item>
-            <Form.Item label="脚本内容" name={['properties', 'script']}>
+            <Form.Item label="脚本内容" name={['properties', 'script']} rules={[{ required: true, message: '请输入脚本内容' }]}>
               <ScriptEditor
                 language="javascript"
               />
@@ -374,7 +402,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
             <Form.Item label="脚本类型">
               <Input value="Groovy" disabled />
             </Form.Item>
-            <Form.Item label="脚本内容" name={['properties', 'script']}>
+            <Form.Item label="脚本内容" name={['properties', 'script']} rules={[{ required: true, message: '请输入脚本内容' }]}>
               <ScriptEditor
                 language="groovy"
               />
@@ -1031,6 +1059,6 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       </div>
     </Drawer>
   );
-};
+});
 
 export default PropertyPanel;

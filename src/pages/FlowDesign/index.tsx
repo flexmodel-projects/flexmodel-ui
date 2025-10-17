@@ -36,7 +36,7 @@ import {generateId} from '@/pages/FlowDesign/utils/flow';
 import {PageContainer} from '@/components/common';
 import {deployFlow, getFlowModule, updateFlow, UpdateFlowRequest} from '@/services/flow';
 
-const { Sider, Content } = Layout;
+const {Sider, Content} = Layout;
 
 // 自定义节点类型
 const nodeTypes: NodeTypes = {
@@ -71,8 +71,8 @@ interface CustomEdge extends Edge {
 
 const FlowDesign: React.FC = () => {
   const navigate = useNavigate();
-  const { flowModuleId: routeFlowModuleId } = useParams<{ flowModuleId: string }>();
-  const { token } = theme.useToken();
+  const {flowModuleId: routeFlowModuleId} = useParams<{ flowModuleId: string }>();
+  const {token} = theme.useToken();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<CustomEdge>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
@@ -82,6 +82,8 @@ const FlowDesign: React.FC = () => {
   const [propertyPanelVisible, setPropertyPanelVisible] = useState(false);
   const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<Node, CustomEdge> | null>(null);
+  const [invalidNodeIds, setInvalidNodeIds] = useState<Set<string>>(new Set()); // 校验失败的节点ID集合
+  const propertyPanelRef = useRef<{ validateCurrentNode: () => Promise<boolean> }>(null);
 
   // 流程设置相关状态
   const [flowKey, setFlowKey] = useState('');
@@ -120,6 +122,12 @@ const FlowDesign: React.FC = () => {
       const filteredEdges = eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
       return filteredEdges;
     });
+    // 从校验失败列表中移除该节点
+    setInvalidNodeIds((prev) => {
+      const next = new Set(prev);
+      next.delete(nodeId);
+      return next;
+    });
   }, [setNodes, setEdges]);
 
   // 处理边删除
@@ -149,11 +157,11 @@ const FlowDesign: React.FC = () => {
       const newNode: Node = {
         id: generateId(nodeType),
         type: nodeType as any,
-        position: { x: midX, y: midY },
-        data: { 
-          name: '', 
+        position: {x: midX, y: midY},
+        data: {
+          name: '',
           properties: {}, // 始终创建 properties 对象
-          onDelete: handleNodeDelete 
+          onDelete: handleNodeDelete
         },
       };
 
@@ -198,7 +206,7 @@ const FlowDesign: React.FC = () => {
   const parseFlowModel = useCallback((flowModelStr: string) => {
     try {
       const flowModel = JSON.parse(flowModelStr);
-      const { flowElementList } = flowModel;
+      const {flowElementList} = flowModel;
 
       if (!flowElementList || !Array.isArray(flowElementList)) {
         return;
@@ -223,10 +231,8 @@ const FlowDesign: React.FC = () => {
             data: {
               conditionsequenceflow: element.properties?.conditionsequenceflow || '',
               defaultConditions: element.properties?.defaultConditions || 'false',
-              onDelete: () => {
-              }, // 临时空函数，避免类型错误
-              onInsert: () => {
-              }, // 临时空函数，避免类型错误
+              onDelete: handleEdgeDelete,
+              onInsert: (edgeId: string, nodeType: string) => handleInsertNode(edgeId, nodeType),
             },
           });
         } else {
@@ -240,7 +246,7 @@ const FlowDesign: React.FC = () => {
           parsedNodes.push({
             id: element.key,
             type: nodeType,
-            position: { x: nodePositionX, y: nodePositionY },
+            position: {x: nodePositionX, y: nodePositionY},
             data: {
               name: element.properties?.name || '',
               properties: element.properties || {}, // 保持 properties 作为嵌套对象
@@ -266,7 +272,7 @@ const FlowDesign: React.FC = () => {
       console.error('解析flowModel失败:', error);
       message.error('解析流程模型失败');
     }
-  }, [setNodes, setEdges]); // 移除回调函数依赖
+  }, [setNodes, setEdges, handleEdgeDelete, handleInsertNode]);
 
   // 加载流程详情
   const loadFlowDetail = useCallback(async (id: string) => {
@@ -313,21 +319,21 @@ const FlowDesign: React.FC = () => {
         {
           id: startId,
           type: 'startEvent',
-          position: { x: 100, y: 100 },
-          data: { 
-            name: '开始', 
+          position: {x: 100, y: 100},
+          data: {
+            name: '开始',
             properties: {}, // 始终创建 properties 对象
-            onDelete: handleNodeDelete 
+            onDelete: handleNodeDelete
           },
         },
         {
           id: endId,
           type: 'endEvent',
-          position: { x: 400, y: 100 },
-          data: { 
-            name: '结束', 
+          position: {x: 400, y: 100},
+          data: {
+            name: '结束',
             properties: {}, // 始终创建 properties 对象
-            onDelete: handleNodeDelete 
+            onDelete: handleNodeDelete
           },
         },
       ];
@@ -402,11 +408,17 @@ const FlowDesign: React.FC = () => {
   );
 
   // 处理节点选择
-  const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback(async (_event: React.MouseEvent, node: Node) => {
+    // 如果当前有选中的节点，先校验当前节点
+    if (selectedNode && selectedNode.id !== node.id && propertyPanelRef.current) {
+      await propertyPanelRef.current.validateCurrentNode();
+      // 无论校验是否通过，都允许切换（只是标记状态）
+    }
+
     setSelectedNode(node);
     setSelectedEdge(null);
     setPropertyPanelVisible(true);
-  }, []);
+  }, [selectedNode]);
 
   // 处理边选择
   const onEdgeClick = useCallback((_event: React.MouseEvent, edge: CustomEdge) => {
@@ -416,11 +428,16 @@ const FlowDesign: React.FC = () => {
   }, []);
 
   // 处理画布点击
-  const onPaneClick = useCallback(() => {
+  const onPaneClick = useCallback(async () => {
+    // 如果当前有选中的节点，先校验
+    if (selectedNode && propertyPanelRef.current) {
+      await propertyPanelRef.current.validateCurrentNode();
+    }
+
     setSelectedNode(null);
     setSelectedEdge(null);
     setPropertyPanelVisible(false);
-  }, []);
+  }, [selectedNode]);
 
   // 处理画布拖拽放置
   const onDrop = useCallback(
@@ -444,8 +461,8 @@ const FlowDesign: React.FC = () => {
       }
 
       const point = reactFlowInstance
-        ? reactFlowInstance.screenToFlowPosition({ x: event.clientX, y: event.clientY })
-        : { x: event.clientX - 280, y: event.clientY - 64 };
+        ? reactFlowInstance.screenToFlowPosition({x: event.clientX, y: event.clientY})
+        : {x: event.clientX - 280, y: event.clientY - 64};
 
       const newNode: Node = {
         id: generateId(nodeType),
@@ -453,7 +470,7 @@ const FlowDesign: React.FC = () => {
         position: point,
         data: {
           name: '',
-          properties: subType ? { subType } : {}, // 始终创建 properties 对象
+          properties: subType ? {subType} : {}, // 始终创建 properties 对象
           onDelete: handleNodeDelete,
         },
       };
@@ -471,6 +488,68 @@ const FlowDesign: React.FC = () => {
 
   // 保存流程
   const handleSave = useCallback(async () => {
+    // 清理无效的节点ID（那些已经不存在的节点）
+    const validNodeIds = new Set(nodes.map(n => n.id));
+    const cleanedInvalidNodeIds = new Set(Array.from(invalidNodeIds).filter(id => validNodeIds.has(id)));
+    
+    // 如果清理后的无效节点ID集合与原来的不同，更新状态
+    if (cleanedInvalidNodeIds.size !== invalidNodeIds.size) {
+      setInvalidNodeIds(cleanedInvalidNodeIds);
+    }
+    
+    // 检查是否有校验失败的节点
+    if (cleanedInvalidNodeIds.size > 0) {
+      message.error(`有${cleanedInvalidNodeIds.size}个节点配置不完整`);
+      return;
+    }
+
+    // 如果当前有选中的节点，先校验
+    if (selectedNode && propertyPanelRef.current) {
+      const isValid = await propertyPanelRef.current.validateCurrentNode();
+      if (!isValid) {
+        message.error('当前节点校验失败，请修正后再保存');
+        return;
+      }
+    }
+    
+    // 重新校验所有节点，确保状态同步
+    const currentInvalidNodes = new Set<string>();
+    for (const node of nodes) {
+      // 这里可以添加更详细的校验逻辑
+      // 目前只检查是否有必填字段缺失
+      if (node.type === 'serviceTask') {
+        const subType = (node.data?.properties as any)?.subType;
+        if (subType === 'sql') {
+          const datasourceName = (node.data?.properties as any)?.datasourceName;
+          const script = (node.data?.properties as any)?.script;
+          if (!datasourceName || !script) {
+            currentInvalidNodes.add(node.id);
+          }
+        } else if (subType === 'insert_record' || subType === 'update_record' || subType === 'delete_record' || subType === 'query_record') {
+          const datasourceName = (node.data?.properties as any)?.datasourceName;
+          const modelName = (node.data?.properties as any)?.modelName;
+          if (!datasourceName || !modelName) {
+            currentInvalidNodes.add(node.id);
+          }
+        } else if (subType === 'api') {
+          const method = (node.data?.properties as any)?.method;
+          const url = (node.data?.properties as any)?.url;
+          if (!method || !url) {
+            currentInvalidNodes.add(node.id);
+          }
+        }
+      }
+    }
+    
+    // 更新校验状态
+    setInvalidNodeIds(currentInvalidNodes);
+    
+    // 如果还有校验失败的节点，阻止保存
+    if (currentInvalidNodes.size > 0) {
+      message.error(`有${currentInvalidNodes.size}个节点配置不完整，请修正后再保存`);
+      return;
+    }
+
     const flowModel = {
       flowElementList: [
         ...nodes.map(node => {
@@ -517,12 +596,76 @@ const FlowDesign: React.FC = () => {
     } else {
       message.error('流程ID不存在，无法保存');
     }
-  }, [nodes, edges, flowModuleId, flowName, flowKey, flowRemark]);
+  }, [nodes, edges, flowModuleId, flowName, flowKey, flowRemark, invalidNodeIds, selectedNode]);
 
   // 发布流程
   const handleDeploy = useCallback(async () => {
     if (!flowModuleId) {
       message.error('流程ID不存在，无法发布');
+      return;
+    }
+
+    // 清理无效的节点ID（那些已经不存在的节点）
+    const validNodeIds = new Set(nodes.map(n => n.id));
+    const cleanedInvalidNodeIds = new Set(Array.from(invalidNodeIds).filter(id => validNodeIds.has(id)));
+    
+    // 如果清理后的无效节点ID集合与原来的不同，更新状态
+    if (cleanedInvalidNodeIds.size !== invalidNodeIds.size) {
+      setInvalidNodeIds(cleanedInvalidNodeIds);
+    }
+    
+    // 检查是否有校验失败的节点
+    if (cleanedInvalidNodeIds.size > 0) {
+      console.log('校验失败的节点ID:', Array.from(cleanedInvalidNodeIds));
+      console.log('当前所有节点ID:', nodes.map(n => n.id));
+      message.error(`有${cleanedInvalidNodeIds.size}个节点配置不完整，请修正后再发布`);
+      return;
+    }
+
+    // 如果当前有选中的节点，先校验
+    if (selectedNode && propertyPanelRef.current) {
+      const isValid = await propertyPanelRef.current.validateCurrentNode();
+      if (!isValid) {
+        message.error('当前节点校验失败，请修正后再发布');
+        return;
+      }
+    }
+    
+    // 重新校验所有节点，确保状态同步
+    const currentInvalidNodes = new Set<string>();
+    for (const node of nodes) {
+      // 这里可以添加更详细的校验逻辑
+      // 目前只检查是否有必填字段缺失
+      if (node.type === 'serviceTask') {
+        const subType = (node.data?.properties as any)?.subType;
+        if (subType === 'sql') {
+          const datasourceName = (node.data?.properties as any)?.datasourceName;
+          const script = (node.data?.properties as any)?.script;
+          if (!datasourceName || !script) {
+            currentInvalidNodes.add(node.id);
+          }
+        } else if (subType === 'insert_record' || subType === 'update_record' || subType === 'delete_record' || subType === 'query_record') {
+          const datasourceName = (node.data?.properties as any)?.datasourceName;
+          const modelName = (node.data?.properties as any)?.modelName;
+          if (!datasourceName || !modelName) {
+            currentInvalidNodes.add(node.id);
+          }
+        } else if (subType === 'api') {
+          const method = (node.data?.properties as any)?.method;
+          const url = (node.data?.properties as any)?.url;
+          if (!method || !url) {
+            currentInvalidNodes.add(node.id);
+          }
+        }
+      }
+    }
+    
+    // 更新校验状态
+    setInvalidNodeIds(currentInvalidNodes);
+    
+    // 如果还有校验失败的节点，阻止发布
+    if (currentInvalidNodes.size > 0) {
+      message.error(`有${currentInvalidNodes.size}个节点配置不完整，请修正后再发布`);
       return;
     }
 
@@ -557,7 +700,7 @@ const FlowDesign: React.FC = () => {
         flowModel: JSON.stringify(flowModel),
       };
       await updateFlow(flowModuleId, updateData);
-      const res = await deployFlow(flowModuleId, { flowModuleId });
+      const res = await deployFlow(flowModuleId, {flowModuleId});
       if (res?.flowDeployId) {
         message.success('发布成功');
       } else {
@@ -567,24 +710,24 @@ const FlowDesign: React.FC = () => {
       console.error('发布流程失败:', e);
       message.error('发布失败');
     }
-  }, [edges, flowKey, flowModuleId, flowName, flowRemark, nodes]);
+  }, [edges, flowKey, flowModuleId, flowName, flowRemark, nodes, invalidNodeIds, selectedNode]);
 
   // moved above
 
   return (
-    <PageContainer 
+    <PageContainer
       loading={loading}
-      bodyStyle={{ padding: 0 }}
+      bodyStyle={{padding: 0}}
       title={<Space>
         <Button
-          icon={<ArrowLeftOutlined />}
+          icon={<ArrowLeftOutlined/>}
           onClick={() => navigate(-1)}
           title="返回上一页"
         />
         {flowName}
         <Button
           type="text"
-          icon={<SettingOutlined />}
+          icon={<SettingOutlined/>}
           onClick={() => setSettingsPanelVisible(true)}
           title="流程设置"
         /></Space>
@@ -599,7 +742,7 @@ const FlowDesign: React.FC = () => {
       }
     >
       <ReactFlowProvider>
-        <Layout style={{ height: '100%' }}>
+        <Layout style={{height: '100%'}}>
           {/* 左侧节点面板 */}
           <Sider
             width={280}
@@ -610,16 +753,16 @@ const FlowDesign: React.FC = () => {
               borderRight: '1px solid var(--ant-color-border)'
             }}
           >
-            <NodePanel onHide={() => setLeftPanelCollapsed(true)} />
+            <NodePanel onHide={() => setLeftPanelCollapsed(true)}/>
           </Sider>
 
           {/* 中间画布区域 */}
-          <Content style={{ position: 'relative' }}>
+          <Content style={{position: 'relative'}}>
             {/* 左侧面板隐藏时的提示按钮 */}
             {leftPanelCollapsed && (
               <Button
                 type="primary"
-                icon={<MenuUnfoldOutlined />}
+                icon={<MenuUnfoldOutlined/>}
                 onClick={() => setLeftPanelCollapsed(false)}
                 style={{
                   position: 'absolute',
@@ -635,7 +778,13 @@ const FlowDesign: React.FC = () => {
             )}
 
             <ReactFlow
-              nodes={nodes}
+              nodes={nodes.map(node => ({
+                ...node,
+                data: {
+                  ...node.data,
+                  hasError: invalidNodeIds.has(node.id) // 传递校验失败状态
+                }
+              }))}
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
@@ -645,25 +794,25 @@ const FlowDesign: React.FC = () => {
               onPaneClick={onPaneClick}
               onDrop={onDrop}
               onDragOver={onDragOver}
-              onInit={(instance) => setReactFlowInstance(instance)}
+              onInit={(instance) => setReactFlowInstance(instance as any)}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               fitView
               snapToGrid
               snapGrid={[16, 16]}
-              proOptions={{ hideAttribution: true }}
+              proOptions={{hideAttribution: true}}
             >
-              <Background />
+              <Background/>
               <MiniMap style={{
                 background: token.colorBgContainer,
                 border: `1px solid ${token.colorBorderSecondary}`,
                 boxShadow: token.boxShadowSecondary as string
               }}
-                zoomable
-                pannable
-                nodeColor={() => token.colorTextTertiary}
-                nodeStrokeColor={() => token.colorTextSecondary}
-                maskColor={token.colorFillSecondary as string} />
+                       zoomable
+                       pannable
+                       nodeColor={() => token.colorTextTertiary}
+                       nodeStrokeColor={() => token.colorTextSecondary}
+                       maskColor={token.colorFillSecondary as string}/>
             </ReactFlow>
           </Content>
 
@@ -671,10 +820,28 @@ const FlowDesign: React.FC = () => {
 
         {/* 属性配置面板 - Drawer */}
         <PropertyPanel
+          ref={propertyPanelRef}
           selectedNode={selectedNode}
           selectedEdge={selectedEdge}
           visible={propertyPanelVisible}
-          onClose={() => setPropertyPanelVisible(false)}
+          onClose={async () => {
+            // 关闭前先校验当前节点
+            if (selectedNode && propertyPanelRef.current) {
+              await propertyPanelRef.current.validateCurrentNode();
+            }
+            setPropertyPanelVisible(false);
+          }}
+          onValidationChange={(nodeId, isValid) => {
+            setInvalidNodeIds(prev => {
+              const next = new Set(prev);
+              if (isValid) {
+                next.delete(nodeId);
+              } else {
+                next.add(nodeId);
+              }
+              return next;
+            });
+          }}
           onNodePropertyChange={(nodeId, properties) => {
             setNodes((nds) =>
               nds.map((node) => {

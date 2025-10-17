@@ -12,10 +12,12 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import {Button, theme} from 'antd';
+import {getNodeBorderColor, getNodeBoxShadow} from '../../utils/nodeStyles';
 
 const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
   const [isHovered, setIsHovered] = useState(false);
   const {token} = theme.useToken();
+  const hasError = (data as any)?.hasError || false;
 
   // 根据 subType 获取图标和颜色
   const getSubTypeIcon = (subType?: string) => {
@@ -87,14 +89,14 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
         minWidth: 140,
         minHeight: 64,
         background: selected ? token.colorPrimaryBg : token.colorBgContainer,
-        border: `2px solid ${selected ? token.colorPrimary : token.colorBorder}`,
+        border: `2px solid ${getNodeBorderColor(hasError, selected, token.colorError, token.colorPrimary, token.colorBorder)}`,
         borderRadius: 10,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '10px 14px',
         position: 'relative',
-        boxShadow: selected ? '0 4px 12px rgba(24, 144, 255, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
+        boxShadow: getNodeBoxShadow(hasError, selected, '0 2px 8px rgba(0, 0, 0, 0.08)'),
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

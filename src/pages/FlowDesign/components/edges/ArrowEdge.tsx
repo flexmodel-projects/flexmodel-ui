@@ -31,7 +31,8 @@ const ArrowEdge: React.FC<EdgeProps> = ({
   const conditionLabel = data?.conditionsequenceflow as string | undefined;
   const isDefault = data?.defaultConditions === 'true';
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止事件冒泡
     if (data?.onDelete && typeof data.onDelete === 'function') {
       data.onDelete(id);
     }
@@ -108,9 +109,12 @@ const ArrowEdge: React.FC<EdgeProps> = ({
               danger
               icon={<DeleteOutlined />}
               onClick={handleDelete}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
               style={{
                 background: token.colorBgContainer,
                 border: `1px solid ${token.colorBorder}`,
+                pointerEvents: 'all',
               }}
             />
           )}

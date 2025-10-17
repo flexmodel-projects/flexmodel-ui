@@ -2,24 +2,27 @@ import React from 'react';
 import {Handle, NodeProps, Position} from '@xyflow/react';
 import {DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import {Button, theme} from 'antd';
+import {getNodeBorderColor, getNodeBoxShadow} from '../../utils/nodeStyles';
 
 const ParallelGatewayNode: React.FC<NodeProps> = ({ id, data, selected }) => {
   const { token } = theme.useToken();
   const [isHovered, setIsHovered] = React.useState(false);
+  const hasError = (data as any)?.hasError || false;
+  
   return (
     <div
       style={{
         width: 60,
         height: 60,
         background: selected ? token.colorPrimaryBg : token.colorBgContainer,
-        border: `2px solid ${selected ? token.colorPrimary : token.colorBorder}`,
+        border: `2px solid ${getNodeBorderColor(hasError, selected, token.colorError, token.colorPrimary, token.colorBorder)}`,
         transform: 'rotate(45deg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
         borderRadius: 8,
-        boxShadow: selected ? '0 4px 12px rgba(24, 144, 255, 0.25)' : '0 2px 8px rgba(0, 0, 0, 0.08)',
+        boxShadow: getNodeBoxShadow(hasError, selected),
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
