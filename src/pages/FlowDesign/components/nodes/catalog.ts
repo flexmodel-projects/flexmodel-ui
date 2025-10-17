@@ -23,6 +23,8 @@ export const nodeCatalog: NodeCatalogItem[] = [
   { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks', subType: 'delete_record' },
   { type: 'serviceTask', label: 'JS脚本', icon: 'js-script', category: 'serviceTasks', subType: 'js' },
   { type: 'serviceTask', label: 'Groovy脚本', icon: 'groovy-script', category: 'serviceTasks', subType: 'groovy' },
+  { type: 'serviceTask', label: 'SQL脚本', icon: 'sql-script', category: 'serviceTasks', subType: 'sql' },
+  { type: 'serviceTask', label: '调用API', icon: 'call-api', category: 'serviceTasks', subType: 'api' },
 
   // 网关节点
   { type: 'exclusiveGateway', label: '排他网关', icon: 'gateway-exclusive', category: 'gateways' },

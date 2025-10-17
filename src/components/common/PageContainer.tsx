@@ -9,7 +9,7 @@ interface PageContainerProps {
   style?: React.CSSProperties;
   className?: string;
   loading?: boolean;
-  contentPadding?: number | string;
+  bodyStyle?: React.CSSProperties;
 }
 
 const PageContainer: React.FC<PageContainerProps> = ({
@@ -19,7 +19,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
   style,
   className,
   loading = false,
-  contentPadding,
+  bodyStyle,
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
@@ -60,9 +60,10 @@ const PageContainer: React.FC<PageContainerProps> = ({
       <div
         style={{
           flex: 1,
-          padding: contentPadding !== undefined ? contentPadding : token.padding,
+          padding: token.padding,
           overflow: 'auto',
           position: 'relative',
+          ...bodyStyle,
         }}
       >
         {loading ? (

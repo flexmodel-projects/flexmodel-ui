@@ -15,16 +15,92 @@ import {
   Space,
   Typography
 } from 'antd';
+import {CloseOutlined, CodeOutlined, PlusOutlined} from '@ant-design/icons';
 import {Edge, Node} from '@xyflow/react';
 import ScriptEditor from '../../../components/common/ScriptEditor';
 import FieldMappingComponent from '../../../components/common/FieldMappingComponent';
-import {CodeOutlined} from '@ant-design/icons';
 import {getDatasourceList} from '@/services/datasource';
 import {getModelList} from '@/services/model';
+import {getApis} from '@/services/api-info';
 import {DatasourceSchema} from '@/types/data-source';
 import {EntitySchema, EnumSchema, NativeQuerySchema} from '@/types/data-modeling';
 
 const { Option } = Select;
+
+// 请求头配置组件
+interface HeaderItem {
+  key: string;
+  value: string;
+}
+
+interface HeadersComponentProps {
+  value?: HeaderItem[];
+  onChange?: (value: HeaderItem[]) => void;
+}
+
+const HeadersComponent: React.FC<HeadersComponentProps> = ({
+  value = [],
+  onChange,
+}) => {
+  const handleAdd = () => {
+    const newHeader: HeaderItem = { key: '', value: '' };
+    onChange?.([...value, newHeader]);
+  };
+
+  const handleRemove = (index: number) => {
+    const newValue = value.filter((_, i) => i !== index);
+    onChange?.(newValue);
+  };
+
+  const handleKeyChange = (index: number, key: string) => {
+    const newValue = [...value];
+    newValue[index] = { ...newValue[index], key };
+    onChange?.(newValue);
+  };
+
+  const handleValueChange = (index: number, newValue: string) => {
+    const updatedValue = [...value];
+    updatedValue[index] = { ...updatedValue[index], value: newValue };
+    onChange?.(updatedValue);
+  };
+
+  return (
+    <div>
+      {value.map((header, index) => (
+        <div key={index} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Input
+            placeholder="请求头名称"
+            value={header.key}
+            onChange={(e) => handleKeyChange(index, e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <span style={{ color: '#666' }}>=</span>
+          <Input
+            placeholder="请求头值，支持变量如 ${token}"
+            value={header.value}
+            onChange={(e) => handleValueChange(index, e.target.value)}
+            style={{ flex: 2 }}
+          />
+          <Button
+            type="text"
+            icon={<CloseOutlined />}
+            onClick={() => handleRemove(index)}
+            size="small"
+            style={{ color: '#ff4d4f' }}
+          />
+        </div>
+      ))}
+      <Button
+        type="dashed"
+        icon={<PlusOutlined />}
+        onClick={handleAdd}
+        style={{ width: '100%', marginTop: 8 }}
+      >
+        新增请求头
+      </Button>
+    </div>
+  );
+};
 
 interface CustomEdge extends Edge {
   type: 'arrow';
@@ -63,6 +139,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   const [models, setModels] = React.useState<(EntitySchema | EnumSchema | NativeQuerySchema)[]>([]);
   const [selectedDatasource, setSelectedDatasource] = React.useState<string>('');
   const [selectedModel, setSelectedModel] = React.useState<EntitySchema | null>(null);
+  const [apiList, setApiList] = React.useState<any[]>([]);
 
   // 当选中节点变化时，更新表单
   React.useEffect(() => {
@@ -124,6 +201,19 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
     fetchDatasources();
   }, []);
 
+  // 获取API列表
+  React.useEffect(() => {
+    const fetchApis = async () => {
+      try {
+        const apis = await getApis();
+        setApiList(apis);
+      } catch (error) {
+        console.error('获取API列表失败:', error);
+      }
+    };
+    fetchApis();
+  }, []);
+
   // 获取模型列表
   React.useEffect(() => {
     if (!selectedDatasource) {
@@ -174,6 +264,39 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   const handleModelChange = (modelName: string) => {
     const model = models.find(m => m.name === modelName) as EntitySchema;
     setSelectedModel(model || null);
+  };
+
+  // 递归获取所有API节点
+  const getAllApis = (apis: any[]): any[] => {
+    const result: any[] = [];
+    const traverse = (items: any[]) => {
+      items.forEach(item => {
+        if (item.type === 'API') {
+          result.push(item);
+        }
+        if (item.children && item.children.length > 0) {
+          traverse(item.children);
+        }
+      });
+    };
+    traverse(apis);
+    return result;
+  };
+
+  // 处理API选择变化
+  const handleApiChange = (apiId: string) => {
+    const allApis = getAllApis(apiList);
+    const selectedApi = allApis.find(api => api.id === apiId);
+    if (selectedApi) {
+      // 自动填充method和url
+      form.setFieldsValue({
+        properties: {
+          ...form.getFieldValue('properties'),
+          method: selectedApi.method,
+          url: selectedApi.path
+        }
+      });
+    }
   };
 
   // 将字段映射数组转换为数组格式
@@ -259,6 +382,38 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           </>
         );
 
+      case 'sql':
+        return (
+          <>
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item
+                  label="数据源"
+                  name={['properties', 'datasourceName']}
+                  rules={[{ required: true, message: '请选择数据源' }]}
+                >
+                  <Select placeholder="请选择数据源">
+                    {datasources.map(ds => (
+                      <Option key={ds.name} value={ds.name}>
+                        {ds.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item label="SQL脚本" name={['properties', 'script']} rules={[{ required: true, message: '请输入SQL脚本' }]}>
+              <ScriptEditor language="sql" />
+            </Form.Item>
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: queryResult" />
+            </Form.Item>
+          </>
+        );
+
       case 'insert_record':
         return (
           <>
@@ -266,7 +421,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="输入数据路径"
               name={['properties', 'inputPath']}
             >
-              <Input placeholder="非必填，更新多条记录时可使用，例如: $.arrayData" />
+              <Input placeholder="非必填，更新多条记录时可使用，例如: arrayData" />
             </Form.Item>
             <Row gutter={16}>
               <Col span={12}>
@@ -325,7 +480,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="结果存放路径"
               name={['properties', 'resultPath']}
             >
-              <Input placeholder="例如: data.affectedRows" />
+              <Input placeholder="例如: affectedRows" />
             </Form.Item>
           </>
         );
@@ -337,7 +492,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="输入数据路径"
               name={['properties', 'inputPath']}
             >
-              <Input placeholder="非必填，更新多条记录时可使用，例如: $.arrayData" />
+              <Input placeholder="非必填，更新多条记录时可使用，例如: arrayData" />
             </Form.Item>
             <Row gutter={16}>
               <Col span={12}>
@@ -408,7 +563,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="结果存放路径"
               name={['properties', 'resultPath']}
             >
-              <Input placeholder="例如: data.affectedRows" />
+              <Input placeholder="例如: affectedRows" />
             </Form.Item>
           </>
         );
@@ -471,7 +626,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="结果存放路径"
               name={['properties', 'resultPath']}
             >
-              <Input placeholder="例如: data.affectedRows" />
+              <Input placeholder="例如: affectedRows" />
             </Form.Item>
           </>
         );
@@ -573,10 +728,85 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
               label="结果存放路径"
               name={['properties', 'resultPath']}
             >
-              <Input placeholder="例如: data.records" />
+              <Input placeholder="例如: records" />
             </Form.Item>
           </>
         );
+
+      case 'api': {
+        const allApis = getAllApis(apiList);
+        return (
+          <>
+            <Form.Item
+              label="选择API"
+              name={['properties', 'apiId']}
+            >
+              <Select
+                placeholder="请选择内置API（可选）"
+                allowClear
+                onChange={handleApiChange}
+              >
+                {allApis.map(api => (
+                  <Option key={api.id} value={api.id}>
+                    {api.method} {api.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Row gutter={16}>
+              <Col span={6}>
+                <Form.Item
+                  label="HTTP方法"
+                  name={['properties', 'method']}
+                  rules={[{ required: true, message: '请选择HTTP方法' }]}
+                >
+                  <Select placeholder="请选择HTTP方法">
+                    <Option value="GET">GET</Option>
+                    <Option value="POST">POST</Option>
+                    <Option value="PUT">PUT</Option>
+                    <Option value="PATCH">PATCH</Option>
+                    <Option value="DELETE">DELETE</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={18}>
+                <Form.Item
+                  label="URL路径"
+                  name={['properties', 'url']}
+                  rules={[{ required: true, message: '请输入URL路径' }]}
+                >
+                  <Input placeholder="例如: /api/users" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item
+              label="请求头"
+              name={['properties', 'headers']}
+            >
+              <HeadersComponent />
+            </Form.Item>
+            <Form.Item
+              label="请求体"
+              name={['properties', 'body']}
+            >
+              <Input.TextArea
+                placeholder='{"name": "${userName}", "age": 25}'
+                rows={4}
+                style={{
+                  fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                  fontSize: '13px'
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="结果存放路径"
+              name={['properties', 'resultPath']}
+            >
+              <Input placeholder="例如: apiResponse" />
+            </Form.Item>
+          </>
+        );
+      }
 
       default:
         return (

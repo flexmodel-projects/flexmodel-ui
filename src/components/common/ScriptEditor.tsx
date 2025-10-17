@@ -5,7 +5,7 @@ import {theme} from 'antd';
 interface ScriptEditorProps {
   value?: string;
   onChange?: (value: string | undefined) => void;
-  language?: 'javascript' | 'groovy';
+  language?: 'javascript' | 'groovy' | 'sql';
   height?: string | number;
   readOnly?: boolean;
 }

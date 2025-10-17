@@ -574,7 +574,7 @@ const FlowDesign: React.FC = () => {
   return (
     <PageContainer 
       loading={loading}
-      contentPadding={0}
+      bodyStyle={{ padding: 0 }}
       title={<Space>
         <Button
           icon={<ArrowLeftOutlined />}

@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {Button, Card, Col, Collapse, Row, Space, Typography} from 'antd';
 import {
+  ApiOutlined,
   CloseCircleOutlined,
   CodeOutlined,
+  DatabaseOutlined,
   EditOutlined,
   FileAddOutlined,
   LinkOutlined,
@@ -48,6 +50,8 @@ const NodePanel: React.FC<NodePanelProps> = ({onHide}) => {
       'delete-record': <MinusOutlined style={{color: '#1890ff'}}/>,
       'js-script': <CodeOutlined style={{color: '#f7df1e'}}/>,
       'groovy-script': <CodeOutlined style={{color: '#4298b8'}}/>,
+      'sql-script': <DatabaseOutlined style={{color: '#1890ff'}}/>,
+      'call-api': <ApiOutlined style={{color: '#1890ff'}}/>,
       'call-service': <LinkOutlined style={{color: '#722ed1'}}/>,
     };
     return iconMap[iconType] || <UserOutlined/>;
@@ -83,7 +87,7 @@ const NodePanel: React.FC<NodePanelProps> = ({onHide}) => {
     <Card
       title="节点选择面板"
       style={{height: '100%', display: 'flex', flexDirection: 'column'}}
-      bodyStyle={{flex: 1, overflowY: 'auto', padding: '12px'}}
+      styles={{body: {flex: 1, overflowY: 'auto', padding: '12px'}}}
       extra={
         <Button
           type="text"
