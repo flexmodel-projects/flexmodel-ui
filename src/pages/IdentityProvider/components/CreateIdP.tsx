@@ -3,7 +3,7 @@ import {Button, Col, Drawer, Form, Input, message, Radio, Row, Steps} from 'antd
 import {createIdentityProvider} from "@/services/identity-provider.ts";
 import {useTranslation} from "react-i18next";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
-import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
+import JsIdPForm from "@/pages/IdentityProvider/components/JsIdPForm.tsx";
 
 interface CreateIdPProps {
   open: boolean;
@@ -16,7 +16,7 @@ const CreateIdP: React.FC<CreateIdPProps> = ({ open, onClose, onConfirm }) => {
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
-  const SCRIPT_TEMPLATE = `/**
+  const JAVASCRIPT_TEMPLATE = `/**
  * Identity Provider Script Template
  * Implement authenticate(request) to return an object:
  *   { success: boolean, user?: { id: string; name?: string; roles?: string[] }, message?: string }
@@ -110,9 +110,9 @@ export async function authenticate(request) {
         onValuesChange={(changedValues) => {
           setFormData((prev: any) => {
             const next = { ...prev, ...changedValues };
-            if (changedValues.type === 'script' && !next.script) {
-              next.script = SCRIPT_TEMPLATE;
-              form.setFieldsValue({ script: SCRIPT_TEMPLATE });
+            if (changedValues.type === 'js' && !next.script) {
+              next.script = JAVASCRIPT_TEMPLATE;
+              form.setFieldsValue({ script: JAVASCRIPT_TEMPLATE });
             }
             return next;
           });
@@ -127,7 +127,7 @@ export async function authenticate(request) {
             <Radio.Group name="type">
               <div className={segmentTitle}>{t('idp_user_defined')}</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
-              <Radio value="script">{t('idp_script')} (script)</Radio>
+              <Radio value="js">{t('idp_javascript')} (js)</Radio>
               <div className={segmentTitle}>{t('idp_social')}</div>
               <Radio value="github" disabled>
                 Github (github)
@@ -142,8 +142,8 @@ export async function authenticate(request) {
         {currentStep === 1 && formData.type === 'oidc' && (
           <OIDCIdPForm />
         )}
-        {currentStep === 1 && formData.type === 'script' && (
-          <ScriptIdPForm />
+        {currentStep === 1 && formData.type === 'js' && (
+          <JsIdPForm />
         )}
 
         {currentStep === 2 && (
@@ -160,8 +160,8 @@ export async function authenticate(request) {
                 {formData.type === 'oidc' && (
                   <OIDCIdPForm readOnly />
                 )}
-                {formData.type === 'script' && (
-                  <ScriptIdPForm readOnly />
+                {formData.type === 'js' && (
+                  <JsIdPForm readOnly />
                 )}
               </Form>
               <Button type="primary" style={{ marginTop: 12 }} onClick={() => {

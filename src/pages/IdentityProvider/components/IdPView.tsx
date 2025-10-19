@@ -3,7 +3,7 @@ import {useTranslation} from "react-i18next";
 import type {IdentityProvider} from "@/types/identity-provider";
 import {normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
-import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
+import JsIdPForm from "@/pages/IdentityProvider/components/JsIdPForm.tsx";
 import {Form} from 'antd';
 
 interface IdpViewProps { data: IdentityProvider }
@@ -16,14 +16,14 @@ const IdpView: React.FC<IdpViewProps> = ({ data }) => {
 
   return (
     <>
-      {flat.type === 'script' ? (
+      {flat.type === 'js' ? (
         <Form
           layout="vertical"
           variant="borderless"
           initialValues={flat}
           key={`${flat.name}-script`}
         >
-          <ScriptIdPForm readOnly />
+          <JsIdPForm readOnly />
         </Form>
       ) : (
         <Form

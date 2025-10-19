@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import type {IdentityProvider} from "@/types/identity-provider";
 import {normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
-import ScriptIdPForm from "@/pages/IdentityProvider/components/ScriptIdPForm";
+import JsIdPForm from "@/pages/IdentityProvider/components/JsIdPForm.tsx";
 
 interface EditIdPProps {
   visible: boolean;
@@ -41,8 +41,8 @@ const EditIdP: React.FC<EditIdPProps> = ({visible, data, onCancel, onConfirm}) =
       destroyOnClose
     >
       <Form form={form} layout="vertical">
-        { (watchedType ?? normalizeIdentityProvider(data || null).type) === 'script' ? (
-          <ScriptIdPForm />
+        { (watchedType ?? normalizeIdentityProvider(data || null).type) === 'js' ? (
+          <JsIdPForm />
         ) : (
           <OIDCIdPForm />
         )}
