@@ -47,7 +47,7 @@ const JobExecutionLogList: React.FC = () => {
 
     const updateHeight = () => {
       // 直接使用容器可用高度，作为 Table 的滚动高度
-      setTableScrollY(container.clientHeight);
+      setTableScrollY(container.clientHeight-80);
     };
 
     updateHeight();
