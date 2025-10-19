@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Editor from '@monaco-editor/react';
 import {theme} from 'antd';
+import {registerGroovyLanguage} from '@/utils/monaco-groovy';
 
 interface ScriptEditorProps {
   value?: string;
@@ -18,12 +19,21 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
   readOnly = false,
 }) => {
   const { token } = theme.useToken();
+  const editorRef = useRef<any>(null);
 
   // 根据当前主题决定编辑器主题
   const editorTheme = token.colorBgContainer === '#ffffff' ? 'light' : 'vs-dark';
 
   const handleEditorChange = (value: string | undefined) => {
     onChange?.(value);
+  };
+
+  const handleEditorDidMount = (editor: any, monaco: any) => {
+    editorRef.current = editor;
+    // 如果是Groovy语言，注册Groovy语言支持
+    if (language === 'groovy') {
+      registerGroovyLanguage(monaco);
+    }
   };
 
   return (
@@ -39,6 +49,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
         language={language}
         value={value || ''}
         onChange={handleEditorChange}
+        onMount={handleEditorDidMount}
         theme={editorTheme}
         options={{
           readOnly,

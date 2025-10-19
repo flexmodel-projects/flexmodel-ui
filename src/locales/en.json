@@ -215,6 +215,8 @@
   "idp_client_secret": "Client Secret",
   "idp_javascript": "JavaScript",
   "idp_javascript_tooltip": "Write JavaScript for authentication, export authenticate(request)",
+  "idp_groovy": "Groovy",
+  "idp_groovy_tooltip": "Write Groovy script for authentication, export authenticate(request)",
   "idp_step_select_provider": "Select provider",
   "idp_step_create_provider": "Create provider",
   "idp_step_success": "Success",
