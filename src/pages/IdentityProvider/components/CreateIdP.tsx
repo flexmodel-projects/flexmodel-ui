@@ -50,7 +50,7 @@ def authenticate(request) {
     if (!auth || !auth.startsWith('Bearer ')) {
         return [success: false, message: 'Missing bearer token']
     }
-    def token = auth.substring('Bearer '.length)
+    def token = auth.replace('Bearer ','')
     // TODO: verify token, fetch user, etc.
     if (token == 'demo-token') {
         return [success: true, user: [id: 'demo', name: 'Demo User', roles: ['user']]]
