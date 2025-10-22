@@ -23,7 +23,7 @@ const CreateIdP: React.FC<CreateIdPProps> = ({ open, onClose, onConfirm }) => {
  *   { success: boolean, user?: { id: string; name?: string; roles?: string[] }, message?: string }
  * You can read headers via request.headers and query via request.query
  */
-export async function authenticate(request) {
+function authenticate(request) {
   // Example: simple token check from header
   const auth = request.headers['authorization'] || request.headers['Authorization'];
   if (!auth || !auth.startsWith('Bearer ')) {
