@@ -10,6 +10,7 @@ import {GraphiQL} from "graphiql";
 import {GraphQLData} from "@/types/api-management";
 import {useGraphiQL} from "@graphiql/react";
 import {theme} from "antd";
+import {useTheme} from "@/store/appStore.ts";
 
 interface GraphQLProps {
   data: GraphQLData | undefined;
@@ -79,6 +80,7 @@ const GraphiQLInitializer: React.FC<{
 
 const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
   const { token } = theme.useToken();
+  const { isDark } = useTheme();
   // 使用useMemo缓存explorer插件，避免重复创建
   const explorer = useMemo(() => explorerPlugin(), []);
 
@@ -89,7 +91,6 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     variables: data?.variables || null,
     headers: data?.headers || null,
   }), [data?.operationName, data?.query, data?.variables, data?.headers]);
-
   // 动态注入样式
   useEffect(() => {
     const styleId = 'graphiql-execute-button-custom';
@@ -159,7 +160,7 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
 
   return (
     <GraphiQL
-      // forcedTheme={isDark ? "dark" : "light"}
+      forcedTheme={isDark ? "dark" : "light"}
       fetcher={executeQuery as any}
       plugins={[explorer, HISTORY_PLUGIN]}
     >
