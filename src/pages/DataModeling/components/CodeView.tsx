@@ -39,7 +39,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
   const handleExplore = (val: string) => {
     setIsLoading(true);
     setTemplateName(val);
-    getFileAsBlob(`/codegen/${datasource}_${val}.zip?variables=${encodeURIComponent(variables)}`).then(b => {
+    getFileAsBlob(`/codegen/${val}.zip?variables=${encodeURIComponent(variables)}&datasource=${datasource}`).then(b => {
       setBlob(b);
       setIsLoading(false);
     });
@@ -63,7 +63,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
   useEffect(() => {
     if (templateName) {
       getFileAsBlob(
-        `/codegen/${datasource}_${templateName}.zip?variables=${encodeURIComponent(variables)}`
+        `/codegen/${templateName}.zip?variables=${encodeURIComponent(variables)}&datasource=${datasource}`
       ).then(b => {
         setBlob(b);
         setIsLoading(false);
