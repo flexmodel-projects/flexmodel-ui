@@ -27,6 +27,7 @@ const GraphiQLInitializer: React.FC<{
   const headerEditor = useGraphiQL(state => state.headerEditor);
   const initializedRef = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const ignoreChangeRef = useRef(false);
 
   // 初始化编辑器内容（只执行一次）
   useEffect(() => {
@@ -45,6 +46,13 @@ const GraphiQLInitializer: React.FC<{
     }
 
     const handleChange = () => {
+      if (ignoreChangeRef.current) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        return;
+      }
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -64,16 +72,51 @@ const GraphiQLInitializer: React.FC<{
     };
 
     // 只添加一次事件监听器
-    queryEditor.onDidChangeModelContent(handleChange);
-    variableEditor.onDidChangeModelContent(handleChange);
-    headerEditor.onDidChangeModelContent(handleChange);
+    const queryDisposable = queryEditor.onDidChangeModelContent(handleChange);
+    const variableDisposable = variableEditor.onDidChangeModelContent(handleChange);
+    const headerDisposable = headerEditor.onDidChangeModelContent(handleChange);
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      queryDisposable?.dispose?.();
+      variableDisposable?.dispose?.();
+      headerDisposable?.dispose?.();
     };
   }, [queryEditor, variableEditor, headerEditor, onChange, data.operationName]);
+
+  // 监听外部传入数据的变化，并同步到 GraphiQL 编辑器中
+  useEffect(() => {
+    if (!initializedRef.current || !queryEditor || !variableEditor || !headerEditor) {
+      return;
+    }
+
+    const targetQuery = data.query || "";
+    const targetVariables = data.variables ? JSON.stringify(data.variables, null, 2) : "{}";
+    const targetHeaders = data.headers ? JSON.stringify(data.headers, null, 2) : "{}";
+
+    const currentQuery = queryEditor.getValue();
+    const currentVariables = variableEditor.getValue();
+    const currentHeaders = headerEditor.getValue();
+
+    if (
+      currentQuery === targetQuery &&
+      currentVariables === targetVariables &&
+      currentHeaders === targetHeaders
+    ) {
+      return;
+    }
+
+    ignoreChangeRef.current = true;
+    queryEditor.setValue(targetQuery);
+    variableEditor.setValue(targetVariables);
+    headerEditor.setValue(targetHeaders);
+
+    requestAnimationFrame(() => {
+      ignoreChangeRef.current = false;
+    });
+  }, [data.query, data.variables, data.headers, queryEditor, variableEditor, headerEditor]);
 
   return null;
 };
@@ -156,16 +199,18 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
         document.head.removeChild(element);
       }
     };
-  }, [token.colorPrimary, token.colorPrimaryHover, token.colorPrimaryActive, token.fontSizeSM]);
+  }, [token.colorPrimary, token.colorPrimaryHover, token.colorPrimaryActive, token.fontSizeSM, token.fontSize]);
 
   return (
-    <GraphiQL
-      forcedTheme={isDark ? "dark" : "light"}
-      fetcher={executeQuery as any}
-      plugins={[explorer, HISTORY_PLUGIN]}
-    >
-      <GraphiQLInitializer data={graphqlData} onChange={onChange} />
-    </GraphiQL>
+    <>
+      <GraphiQL
+        forcedTheme={isDark ? "dark" : "light"}
+        fetcher={executeQuery as any}
+        plugins={[explorer, HISTORY_PLUGIN]}
+      >
+        <GraphiQLInitializer data={graphqlData} onChange={onChange} />
+      </GraphiQL>
+    </>
   );
 };
 

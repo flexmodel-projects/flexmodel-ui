@@ -38,10 +38,17 @@ import {
 } from "@/components/explore/icons/Icons.jsx";
 import ExecuteConfig from "./components/ExecuteConfig";
 
+const methodOptions = [
+  { value: "GET", label: "GET" },
+  { value: "POST", label: "POST" },
+  { value: "PUT", label: "PUT" },
+  { value: "PATCH", label: "PATCH" },
+  { value: "DELETE", label: "DELETE" },
+];
+
 const UserDefineAPI: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useConfig();
-
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
@@ -63,16 +70,6 @@ const UserDefineAPI: React.FC = () => {
   const [createApiMethod, setCreateApiMethod] = useState("GET");
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState("");
-
-  const methodOptions = [
-    { value: "GET", label: "GET" },
-    { value: "POST", label: "POST" },
-    { value: "PUT", label: "PUT" },
-    { value: "PATCH", label: "PATCH" },
-    { value: "DELETE", label: "DELETE" },
-  ];
-
-
 
   useEffect(() => {
     if (selectedNode?.data) {
@@ -311,7 +308,11 @@ const UserDefineAPI: React.FC = () => {
     return parent ? parent.name : t("unknown_directory");
   };
 
+  let gData: any = {};
+
   const handleSaveApi = async () => {
+
+
     if (editForm) {
       // 构造保存数据，确保包含parentId
       const saveData = {
@@ -321,7 +322,7 @@ const UserDefineAPI: React.FC = () => {
         parentId: editForm.parentId,
         enabled: editForm.enabled,
         type: editForm.type,
-        meta: editForm.meta,
+        meta: { ...editForm.meta, execution: gData },
         graphql: editForm.graphql,
       };
 
@@ -334,6 +335,7 @@ const UserDefineAPI: React.FC = () => {
   const onChange = (key: string) => {
     console.log(key);
   };
+
 
   const items: TabsProps["items"] = [
     {
@@ -353,7 +355,7 @@ const UserDefineAPI: React.FC = () => {
         <ExecuteConfig
           data={editForm?.meta || {}}
           onChange={(data) => {
-            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
+            gData = data.execution;
           }}
         />
       ),

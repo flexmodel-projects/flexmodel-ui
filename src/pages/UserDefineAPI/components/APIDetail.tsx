@@ -61,8 +61,40 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
     return colors[method as keyof typeof colors] || 'default';
   };
 
-  const renderVariables = (variables: Record<string, any>) => {
-    if (!variables || Object.keys(variables).length === 0) {
+  const renderVariables = (variables: Record<string, any> | string | null | undefined) => {
+    if (variables === null || variables === undefined) {
+      return <Text type="secondary">{t("api_detail.none")}</Text>;
+    }
+
+    if (typeof variables === "string") {
+      const trimmed = variables.trim();
+      if (!trimmed) {
+        return <Text type="secondary">{t("api_detail.none")}</Text>;
+      }
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.keys(parsed).length === 0) {
+          return <Text type="secondary">{t("api_detail.none")}</Text>;
+        }
+        return (
+          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
+            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              {JSON.stringify(parsed, null, 2)}
+            </pre>
+          </div>
+        );
+      } catch {
+        return (
+          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
+            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              {trimmed}
+            </pre>
+          </div>
+        );
+      }
+    }
+
+    if (Object.keys(variables).length === 0) {
       return <Text type="secondary">{t("api_detail.none")}</Text>;
     }
 

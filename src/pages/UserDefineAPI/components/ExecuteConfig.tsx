@@ -1,7 +1,6 @@
-import React, {useCallback, useRef, useState} from "react";
-import {Card, Form} from "antd";
-import {useTranslation} from "react-i18next";
+import React from "react";
 import {ApiMeta} from "@/types/api-management";
+import GraphQL from "@/pages/GraphQLAPI/components/GraphQL";
 
 interface ExecuteConfigProps {
   data: ApiMeta;
@@ -9,63 +8,21 @@ interface ExecuteConfigProps {
 }
 
 const ExecuteConfig: React.FC<ExecuteConfigProps> = ({ data, onChange }: ExecuteConfigProps) => {
-  const [formData, setFormData] = useState<ApiMeta>(data);
-  const [form] = Form.useForm();
-  const prevDataRef = useRef<ApiMeta>(data);
-
-  const { t } = useTranslation();
-
-
-  // 数据变化时通知父组件 - 使用useCallback避免无限循环
-  const handleDataChange = useCallback(
-    (newData: ApiMeta) => {
-      const processedData = {
-        auth: newData?.auth,
-        identityProvider: newData?.auth ? newData.identityProvider : undefined,
-        rateLimitingEnabled: newData?.rateLimitingEnabled,
-        intervalInSeconds: newData?.rateLimitingEnabled
-          ? newData.intervalInSeconds
-          : undefined,
-        maxRequestCount: newData?.rateLimitingEnabled
-          ? newData.maxRequestCount
-          : undefined,
-        execution: newData?.execution,
-      };
-
-      // 避免重复调用onChange
-      if (
-        JSON.stringify(processedData) !== JSON.stringify(prevDataRef.current)
-      ) {
-        onChange(processedData);
-      }
-    },
-    [onChange]
-  );
-
-  // 表单值变化处理
-  const handleFormValuesChange = useCallback(
-    (changedValues: Partial<ApiMeta>) => {
-      const newFormData = { ...formData, ...changedValues };
-      setFormData(newFormData);
-      handleDataChange(newFormData);
-    },
-    [formData, handleDataChange]
-  );
 
   return (
-    <Card className="h-full">
-      <Form
-        form={form}
-        initialValues={data}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
-        layout="horizontal"
-        onValuesChange={handleFormValuesChange}
-      >
-        {JSON.stringify(data)}
-      </Form>
-
-    </Card>
+    <div style={{ height: '500px', overflow: 'scroll' }}>
+      <GraphQL
+        data={{
+          query: data.execution?.query || "",
+          variables: data.execution?.variables || null,
+          headers: data.execution?.headers || null,
+        }}
+        onChange={(r) => {
+          const newData = { ...data, execution: r };
+          onChange(newData as ApiMeta);
+        }}
+      />
+    </div>
   );
 };
 
