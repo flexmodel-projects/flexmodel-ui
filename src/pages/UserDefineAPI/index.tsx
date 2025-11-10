@@ -24,7 +24,6 @@ import Authorization from "./components/Authorization";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate";
-import CreateApiDrawer from "./components/CreateApiDrawer";
 import {useConfig} from "@/store/appStore.ts";
 import Tree from "@/components/explore/explore/Tree.jsx";
 import {
@@ -37,6 +36,7 @@ import {
   IconFile,
   IconFolder,
 } from "@/components/explore/icons/Icons.jsx";
+import ExecuteConfig from "./components/ExecuteConfig";
 
 const UserDefineAPI: React.FC = () => {
   const { t } = useTranslation();
@@ -53,21 +53,16 @@ const UserDefineAPI: React.FC = () => {
   const [renameValue, setRenameValue] = useState("");
   const [renameTarget, setRenameTarget] = useState<any>(null);
 
+  const [createParentId, setCreateParentId] = useState<string | null>(null);
   // 新建接口弹窗逻辑
-  const [createApiDrawerVisible, setCreateApiDrawerVisible] = useState(false);
-  const [createApiParentId, setCreateApiParentId] = useState<string | null>(
-    null
-  );
-
+  const [createApiDialogVisible, setCreateApiDialogVisible] = useState(false);
   // 新建文件夹弹窗逻辑
-  const [createFolderDialogVisible, setCreateFolderDialogVisible] =
-    useState(false);
-  const [createFolderName, setCreateFolderName] = useState("");
-  const [createFolderParentId, setCreateFolderParentId] = useState<
-    string | null
-  >(null);
-  const [createFolderLoading, setCreateFolderLoading] = useState(false);
-  const [createFolderError, setCreateFolderError] = useState("");
+  const [createFolderDialogVisible, setCreateFolderDialogVisible] = useState(false);
+  const [createName, setCreateName] = useState("");
+  const [createApiPath, setCreateApiPath] = useState("/");
+  const [createApiMethod, setCreateApiMethod] = useState("GET");
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState("");
 
   const methodOptions = [
     { value: "GET", label: "GET" },
@@ -194,43 +189,92 @@ const UserDefineAPI: React.FC = () => {
   };
 
   const showCreateApiDialog = (parentId?: string | null) => {
-    setCreateApiParentId(parentId || null);
-    setCreateApiDrawerVisible(true);
+    setCreateParentId(parentId || null);
+    setCreateName("");
+    setCreateApiPath("/");
+    setCreateApiMethod("GET");
+    setCreateError("");
+    setCreateApiDialogVisible(true);
   };
 
   const addFolder = async (parentId?: string | null) => {
-    if (!createFolderName.trim()) {
-      setCreateFolderError(t("folder_name_required"));
+    if (!createName.trim()) {
+      setCreateError(t("folder_name_required"));
       return;
     }
-    setCreateFolderLoading(true);
-    setCreateFolderError("");
+    setCreateLoading(true);
+    setCreateError("");
     try {
       await createApi({
-        name: createFolderName,
+        name: createName,
         parentId: parentId,
         type: "FOLDER",
       });
       message.success(t("create_success"));
       setCreateFolderDialogVisible(false);
-      setCreateFolderName("");
+      setCreateName("");
+      setCreateApiPath("/");
+      setCreateApiMethod("GET");
       reqApiList();
     } catch (error: any) {
-      setCreateFolderError(error.message || t("create_failed"));
+      setCreateError(error.message || t("create_failed"));
     } finally {
-      setCreateFolderLoading(false);
+      setCreateLoading(false);
+    }
+  };
+
+  const addApi = async (parentId?: string | null) => {
+    if (!createName.trim()) {
+      setCreateError(t("api_name_required"));
+      return;
+    }
+    if (!createApiPath.trim()) {
+      setCreateError(t("api_path_required"));
+      return;
+    }
+    setCreateLoading(true);
+    setCreateError("");
+    try {
+      const normalizedPath = createApiPath.trim().startsWith("/")
+        ? createApiPath.trim()
+        : `/${createApiPath.trim()}`;
+      await createApi({
+        name: createName.trim(),
+        parentId: parentId,
+        type: "API",
+        method: createApiMethod,
+        path: normalizedPath,
+        enabled: false,
+        meta: {},
+      });
+      message.success(t("create_success"));
+      setCreateApiDialogVisible(false);
+      setCreateName("");
+      setCreateApiPath("/");
+      setCreateApiMethod("GET");
+      reqApiList();
+    } catch (error: any) {
+      setCreateError(error.message || t("create_failed"));
+    } finally {
+      setCreateLoading(false);
     }
   };
 
   const showCreateFolderDialog = (parentId?: string | null) => {
-    setCreateFolderParentId(parentId || null);
+    setCreateParentId(parentId || null);
     setCreateFolderDialogVisible(true);
-    setCreateFolderName("");
-    setCreateFolderError("");
+    setCreateName("");
+    setCreateApiPath("/");
+    setCreateApiMethod("GET");
+    setCreateError("");
   };
 
   const handleCreateFolder = async () => {
-    await addFolder(createFolderParentId);
+    await addFolder(createParentId);
+  };
+
+  const handleCreateApi = async () => {
+    await addApi(createParentId);
   };
 
   function convertApiListToTreeData(list: any[]): any[] {
@@ -298,6 +342,19 @@ const UserDefineAPI: React.FC = () => {
       className: "h-full",
       children: (
         <APIDetail data={editForm || undefined}
+        />
+      ),
+    },
+    {
+      key: "execute_config",
+      label: t("apis.execute_config"),
+      className: "h-full",
+      children: (
+        <ExecuteConfig
+          data={editForm?.meta || {}}
+          onChange={(data) => {
+            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
+          }}
         />
       ),
     },
@@ -585,28 +642,61 @@ const UserDefineAPI: React.FC = () => {
         />
       </Modal>
       {/* 新建接口弹窗 */}
-      <CreateApiDrawer
-        visible={createApiDrawerVisible}
-        onClose={() => setCreateApiDrawerVisible(false)}
-        onSuccess={() => {
-          message.success(t("create_success"));
-          reqApiList();
-        }}
-        parentId={createApiParentId}
-        parentFolderName={getParentFolderName(createApiParentId)}
-      />
+      <Modal
+        title={t("new_api")}
+        open={createApiDialogVisible}
+        onCancel={() => setCreateApiDialogVisible(false)}
+        onOk={handleCreateApi}
+        confirmLoading={createLoading}
+      >
+        <Form layout="vertical">
+          <Form.Item label={t("apis.parent_folder")}>
+            <Input
+              value={getParentFolderName(createParentId)}
+              disabled
+              style={{ backgroundColor: "#f5f5f5" }}
+            />
+          </Form.Item>
+          <Form.Item label={t("apis.name")}>
+            <Input
+              placeholder={t("apis.name")}
+              value={createName}
+              onChange={(e) => setCreateName(e.target.value)}
+              maxLength={32}
+            />
+          </Form.Item>
+          <Form.Item label={t("apis.method")}>
+            <Select
+              value={createApiMethod}
+              options={methodOptions}
+              onChange={(value) => setCreateApiMethod(value)}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+          <Form.Item label={t("apis.api_path")}>
+            <Input
+              placeholder={t("apis.api_path")}
+              value={createApiPath}
+              onChange={(e) => setCreateApiPath(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+        {createError && (
+          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
+        )}
+      </Modal>
       {/* 新建文件夹弹窗 */}
       <Modal
         title={t("new_folder")}
         open={createFolderDialogVisible}
         onCancel={() => setCreateFolderDialogVisible(false)}
         onOk={handleCreateFolder}
-        confirmLoading={createFolderLoading}
+        confirmLoading={createLoading}
       >
         <Form layout="vertical">
-          <Form.Item label={t("parent_folder")}>
+          <Form.Item label={t("apis.parent_folder")}>
             <Input
-              value={getParentFolderName(createFolderParentId)}
+              value={getParentFolderName(createParentId)}
               disabled
               style={{ backgroundColor: "#f5f5f5" }}
             />
@@ -614,14 +704,14 @@ const UserDefineAPI: React.FC = () => {
           <Form.Item label={t("folder_name")}>
             <Input
               placeholder={t("folder_name")}
-              value={createFolderName}
-              onChange={(e) => setCreateFolderName(e.target.value)}
+              value={createName}
+              onChange={(e) => setCreateName(e.target.value)}
               maxLength={32}
             />
           </Form.Item>
         </Form>
-        {createFolderError && (
-          <div style={{ color: "red", marginTop: 8 }}>{createFolderError}</div>
+        {createError && (
+          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
         )}
       </Modal>
       <BatchCreate

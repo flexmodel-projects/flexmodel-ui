@@ -1,9 +1,16 @@
 {
   "api": "接口",
+  "apis": {
+    "name": "接口名称",
+    "execute_config": "执行配置",
+    "parent_folder": "上级目录",
+    "api_path": "接口路径",
+    "method": "请求方法"
+  },
   "api_management": "接口管理",
   "open_api": "Open API",
   "api_log": "接口日志",
-  "user_define_api": "自定义接口",
+  "user_define_api": "定制接口",
   "graphql_api": "GraphQL",
   "graphql_endpoint": "端点",
   "graphql_settings": "设置",
@@ -28,6 +35,9 @@
   "enabled": "启用",
   "close": "关闭",
   "closed": "关闭",
+  "api_name_required": "请输入接口名称",
+  "api_path_required": "请输入接口路径",
+  "folder_name_required": "请输入文件夹名称",
   "config": "配置",
   "conform": "确定",
   "cancel": "取消",
@@ -422,7 +432,7 @@
   "flow_mgr": "流程管理",
   "flow_design": "流程设计",
   "flow_instance": "流程实例监控",
-  "flow_instance_detail":"流程实例详情",
+  "flow_instance_detail": "流程实例详情",
   "schedule": "任务调度",
   "trigger": {
     "title": "触发器",
@@ -632,7 +642,6 @@
     "connecting": "正在连接...",
     "ping_sent": "已发送ping测试",
     "ws_not_connected": "WebSocket未连接",
-
     "perf_good": "性能良好",
     "perf_warning": "性能警告",
     "perf_poor": "性能较差",
@@ -649,7 +658,7 @@
   },
   "flow_count": "流程数量",
   "trigger_count": "触发器数量",
-  "exec_count":"执行次数",
+  "exec_count": "执行次数",
   "exec_success": "执行成功",
   "exec_failure": "执行失败",
   "request_count": "请求数量",
