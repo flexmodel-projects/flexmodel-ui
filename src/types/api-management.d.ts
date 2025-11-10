@@ -39,6 +39,10 @@ export interface ApiDefinition {
   meta: ApiMeta;
   enabled: boolean;
   graphql?: GraphQLData;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface TreeNode {

@@ -353,7 +353,11 @@
     "none": "None",
     "children": "Children",
     "enable": "Enable",
-    "disable": "Disable"
+    "disable": "Disable",
+    "created_by": "Created By",
+    "updated_by": "Updated By",
+    "created_at": "Created At",
+    "updated_at": "Updated At"
   },
   "code_view": {
     "config_template_variables": "Configure Template Variables",

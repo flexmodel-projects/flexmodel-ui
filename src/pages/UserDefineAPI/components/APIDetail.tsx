@@ -152,6 +152,18 @@ const APIDetail: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
               <Descriptions.Item label={t("api_detail.parent_id")}>
                 <Text code>{data.parentId}</Text>
               </Descriptions.Item>
+              <Descriptions.Item label={t("api_detail.created_by")}>
+                <Text>{data.createdBy || "-"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t("api_detail.updated_by")}>
+                <Text>{data.updatedBy || "-"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t("api_detail.created_at")}>
+                <Text>{data.createdAt || "-"}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t("api_detail.updated_at")}>
+                <Text>{data.updatedAt || "-"}</Text>
+              </Descriptions.Item>
             </Descriptions>
           </div>
 

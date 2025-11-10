@@ -106,6 +106,10 @@ const UserDefineAPI: React.FC = () => {
         data: selectedNode.data.data || {},
         meta: selectedNode.data.meta || {},
         enabled: selectedNode.data.enabled ?? true,
+        createdBy: selectedNode.data.createdBy || "",
+        updatedBy: selectedNode.data.updatedBy || "",
+        createdAt: selectedNode.data.createdAt || "",
+        updatedAt: selectedNode.data.updatedAt || "",
         graphql: graphqlData,
       };
       setEditForm(data);
@@ -324,6 +328,10 @@ const UserDefineAPI: React.FC = () => {
         type: editForm.type,
         meta: { ...editForm.meta, execution: gData },
         graphql: editForm.graphql,
+        createdBy: editForm.createdBy,
+        updatedBy: editForm.updatedBy,
+        createdAt: editForm.createdAt,
+        updatedAt: editForm.updatedAt,
       };
 
       await updateApi(editForm.id, saveData);
