@@ -369,6 +369,32 @@ const UserDefineAPI: React.FC = () => {
       ),
     },
     {
+      key: "pre_request",
+      label: "前置操作",
+      className: "h-full",
+      children: (
+        <Authorization
+          data={editForm?.meta || {}}
+          onChange={(data) => {
+            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
+          }}
+        />
+      ),
+    },
+    {
+      key: "post_response",
+      label: "后置操作",
+      className: "h-full",
+      children: (
+        <Authorization
+          data={editForm?.meta || {}}
+          onChange={(data) => {
+            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
+          }}
+        />
+      ),
+    },
+    {
       key: "authorization",
       label: t("authorization"),
       className: "h-full",

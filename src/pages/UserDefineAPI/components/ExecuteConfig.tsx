@@ -10,7 +10,7 @@ interface ExecuteConfigProps {
 const ExecuteConfig: React.FC<ExecuteConfigProps> = ({ data, onChange }: ExecuteConfigProps) => {
 
   return (
-    <div style={{ height: '500px', overflow: 'scroll' }}>
+    <div style={{ height: 'calc(100vh - 180px)', overflow: 'scroll' }}>
       <GraphQL
         data={{
           query: data.execution?.query || "",
