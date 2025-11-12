@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Button,
   Dropdown,
@@ -9,18 +9,15 @@ import {
   message,
   Modal,
   Select,
-  Space,
   Splitter,
-  Switch,
   Tabs,
   TabsProps,
   Typography,
 } from "antd";
 import PageContainer from "@/components/common/PageContainer";
-import {MoreOutlined, PlusOutlined, SaveOutlined, SearchOutlined,} from "@ant-design/icons";
+import {MoreOutlined, PlusOutlined, SearchOutlined,} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
-import APIDetail from "./components/APIDetail";
-import Authorization from "./components/Authorization";
+import DetailPanel from "./components/DetailPanel.tsx";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate";
@@ -36,19 +33,20 @@ import {
   IconFile,
   IconFolder,
 } from "@/components/explore/icons/Icons.jsx";
-import ExecuteConfig from "./components/ExecuteConfig";
+import DebugPanel from "./components/DebugPanel";
+import EditPanel from "./components/EditPanel";
 
 const methodOptions = [
-  { value: "GET", label: "GET" },
-  { value: "POST", label: "POST" },
-  { value: "PUT", label: "PUT" },
-  { value: "PATCH", label: "PATCH" },
-  { value: "DELETE", label: "DELETE" },
+  {value: "GET", label: "GET"},
+  {value: "POST", label: "POST"},
+  {value: "PUT", label: "PUT"},
+  {value: "PATCH", label: "PATCH"},
+  {value: "DELETE", label: "DELETE"},
 ];
 
 const CustomAPI: React.FC = () => {
-  const { t } = useTranslation();
-  const { config } = useConfig();
+  const {t} = useTranslation();
+  const {config} = useConfig();
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
@@ -56,6 +54,14 @@ const CustomAPI: React.FC = () => {
 
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [editForm, setEditForm] = useState<ApiDefinition | null>(null);
+  const [activeHeaderTab, setActiveHeaderTab] = useState<string>("detail");
+  const [debugMethod, setDebugMethod] = useState<string>("GET");
+  const [debugPath, setDebugPath] = useState<string>("");
+  const [debugHeaders, setDebugHeaders] = useState<string>("{}");
+  const [debugBody, setDebugBody] = useState<string>("");
+  const [debugResponse, setDebugResponse] = useState<string>("");
+  const [debugResponseStatus, setDebugResponseStatus] = useState<string>("");
+  const [debugLoading, setDebugLoading] = useState<boolean>(false);
   const [renameDialogVisible, setRenameDialogVisible] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [renameTarget, setRenameTarget] = useState<any>(null);
@@ -113,6 +119,12 @@ const CustomAPI: React.FC = () => {
         graphql: graphqlData,
       };
       setEditForm(data);
+      setDebugMethod(data.method || "GET");
+      setDebugPath(data.path || "");
+      setDebugBody("");
+      setDebugHeaders("{}");
+      setDebugResponse("");
+      setDebugResponseStatus("");
     }
   }, [selectedNode]);
 
@@ -155,7 +167,7 @@ const CustomAPI: React.FC = () => {
   };
 
   const showDeleteConfirm = (id: string, name: string) => {
-    setDeleteTarget({ id, name });
+    setDeleteTarget({id, name});
     setDeleteConfirmVisible(true);
   };
 
@@ -312,7 +324,7 @@ const CustomAPI: React.FC = () => {
     return parent ? parent.name : t("unknown_directory");
   };
 
-  let gData: any = {};
+  const executionDataRef = useRef<any>({});
 
   const handleSaveApi = async () => {
 
@@ -326,7 +338,7 @@ const CustomAPI: React.FC = () => {
         parentId: editForm.parentId,
         enabled: editForm.enabled,
         type: editForm.type,
-        meta: { ...editForm.meta, execution: gData },
+        meta: {...editForm.meta, execution: executionDataRef.current},
         graphql: editForm.graphql,
         createdBy: editForm.createdBy,
         updatedBy: editForm.updatedBy,
@@ -340,48 +352,129 @@ const CustomAPI: React.FC = () => {
     }
   };
 
-  const onChange = (key: string) => {
-    console.log(key);
-  };
-
-
-  const items: TabsProps["items"] = [
+  const headerTabItems: TabsProps["items"] = [
     {
       key: "detail",
-      label: t("api_detail.title"),
-      className: "h-full",
-      children: (
-        <APIDetail data={editForm || undefined}
-        />
-      ),
+      label: "详情",
     },
     {
-      key: "execute_config",
-      label: t("apis.execute_config"),
-      className: "h-full",
-      children: (
-        <ExecuteConfig
-          data={editForm?.meta || {}}
-          onChange={(data) => {
-            gData = data.execution;
-          }}
-        />
-      ),
+      key: "edit",
+      label: "编辑",
     },
     {
-      key: "authorization",
-      label: t("authorization"),
-      className: "h-full",
-      children: (
-        <Authorization
-          data={editForm?.meta || {}}
-          onChange={(data) => {
-            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
-          }}
-        />
-      ),
+      key: "debug",
+      label: "调试",
     },
   ];
+
+  const renderMainContent = () => {
+    if (activeHeaderTab === "detail") {
+      return (
+        <div className="flex-1 overflow-auto">
+          <DetailPanel data={editForm || undefined}/>
+        </div>
+      );
+    }
+
+    if (activeHeaderTab === "edit") {
+      return (
+        <EditPanel
+          editForm={editForm}
+          methodOptions={methodOptions}
+          apiRootPath={config?.apiRootPath}
+          saveLabel={t("save")}
+          executeConfigLabel={t("apis.execute_config")}
+          authorizationLabel={t("authorization")}
+          onSave={handleSaveApi}
+          onMethodChange={(value) =>
+            setEditForm((prev) => (prev ? {...prev, method: value} : prev))
+          }
+          onPathChange={(value) =>
+            setEditForm((prev) => (prev ? {...prev, path: value} : prev))
+          }
+          onToggleEnabled={(val) => {
+            if (editForm) {
+              setEditForm({...editForm, enabled: val});
+              updateApiStatus(editForm.id, val).then(() => {
+                message.success(val ? t("enabled") : t("closed"));
+                reqApiList();
+              });
+            }
+          }}
+          onExecuteConfigChange={(data) => {
+            executionDataRef.current = data.execution;
+          }}
+          onAuthorizationChange={(data) => {
+            setEditForm((prev) => (prev ? {...prev, meta: data} : prev));
+          }}
+        />
+      );
+    }
+
+    return (
+      <DebugPanel
+        method={debugMethod}
+        path={debugPath}
+        headers={debugHeaders}
+        body={debugBody}
+        response={debugResponse}
+        responseStatus={debugResponseStatus}
+        loading={debugLoading}
+        methodOptions={methodOptions}
+        apiRootPath={config?.apiRootPath}
+        onMethodChange={setDebugMethod}
+        onPathChange={setDebugPath}
+        onHeadersChange={setDebugHeaders}
+        onBodyChange={setDebugBody}
+        onSend={handleSendDebugRequest}
+      />
+    );
+  };
+
+  const handleSendDebugRequest = async () => {
+    if (!editForm) return;
+
+    let parsedHeaders: Record<string, string> = {};
+    if (debugHeaders.trim()) {
+      try {
+        parsedHeaders = JSON.parse(debugHeaders);
+      } catch {
+        message.error("请求头格式错误，请输入合法的 JSON");
+        return;
+      }
+    }
+
+    const normalizedPath = debugPath.startsWith("/")
+      ? debugPath
+      : `/${debugPath}`;
+    const url = `${config?.apiRootPath || ""}${normalizedPath}`;
+
+    setDebugLoading(true);
+    setDebugResponse("");
+    setDebugResponseStatus("");
+    try {
+      const response = await fetch(url, {
+        method: debugMethod,
+        headers: {
+          "Content-Type": "application/json",
+          ...parsedHeaders,
+        },
+        body:
+          ["GET", "HEAD"].includes(debugMethod.toUpperCase()) ||
+          !debugBody.trim()
+            ? undefined
+            : debugBody,
+      });
+      const text = await response.text();
+      setDebugResponse(text);
+      setDebugResponseStatus(`${response.status} ${response.statusText}`);
+    } catch (error: any) {
+      setDebugResponseStatus("请求失败");
+      setDebugResponse(error?.message || String(error));
+    } finally {
+      setDebugLoading(false);
+    }
+  };
 
   const [searchText, setSearchText] = useState("");
   const [filteredApiList, setFilteredApiList] = useState<ApiDefinition[]>([]);
@@ -404,7 +497,7 @@ const CustomAPI: React.FC = () => {
         if (api.children) {
           const filteredChildren = filterApiList(api.children, searchText);
           if (filteredChildren.length > 0) {
-            return { ...api, children: filteredChildren };
+            return {...api, children: filteredChildren};
           }
         }
         return null;
@@ -436,7 +529,7 @@ const CustomAPI: React.FC = () => {
                 value={searchText}
                 onChange={handleSearchChange}
                 allowClear
-                prefix={<SearchOutlined />}
+                prefix={<SearchOutlined/>}
                 className="flex-1"
               />
               <Dropdown
@@ -456,14 +549,14 @@ const CustomAPI: React.FC = () => {
                   </Menu>
                 }
               >
-                <Button icon={<PlusOutlined />} />
+                <Button icon={<PlusOutlined/>}/>
               </Dropdown>
             </Flex>
             <div className="flex-1 overflow-auto">
               <Tree
-                tree={{ children: convertApiListToTreeData(filteredApiList) }}
+                tree={{children: convertApiListToTreeData(filteredApiList)}}
                 selected={
-                  selectedNode ? { path: selectedNode.data.id } : { path: "" }
+                  selectedNode ? {path: selectedNode.data.id} : {path: ""}
                 }
                 onClickItem={(item: any) => {
                   setSelectedNode({
@@ -496,14 +589,14 @@ const CustomAPI: React.FC = () => {
                               >
                                 {t("new_folder")}
                               </Menu.Item>
-                              <Menu.Divider />
+                              <Menu.Divider/>
                             </>
                           )}
                           <Menu.Item onClick={() => showEditInput(item.data)}>
                             {t("rename")}
                           </Menu.Item>
                           <Menu.Item
-                            style={{ color: "red" }}
+                            style={{color: "red"}}
                             onClick={(e) => {
                               e.domEvent.stopPropagation();
                               showDeleteConfirm(item.data.id, item.data.name);
@@ -515,7 +608,7 @@ const CustomAPI: React.FC = () => {
                       }
                       trigger={["hover"]}
                     >
-                      <MoreOutlined onClick={(e) => e.stopPropagation()} />
+                      <MoreOutlined onClick={(e) => e.stopPropagation()}/>
                     </Dropdown>
                   );
                 }}
@@ -523,20 +616,20 @@ const CustomAPI: React.FC = () => {
                   if (nodeType === "file") {
                     const method = item.data?.method;
                     if (method === "GET")
-                      return <ApiMethodGet key={`get${item.path}`} />;
+                      return <ApiMethodGet key={`get${item.path}`}/>;
                     if (method === "POST")
-                      return <ApiMethodPost key={`post${item.path}`} />;
+                      return <ApiMethodPost key={`post${item.path}`}/>;
                     if (method === "PUT")
-                      return <ApiMethodPut key={`put${item.path}`} />;
+                      return <ApiMethodPut key={`put${item.path}`}/>;
                     if (method === "DELETE")
-                      return <ApiMethodDelete key={`delete${item.path}`} />;
+                      return <ApiMethodDelete key={`delete${item.path}`}/>;
                     if (method === "PATCH")
-                      return <ApiMethodPatch key={`patch${item.path}`} />;
-                    return <IconFile key={`file${item.path}`} />;
+                      return <ApiMethodPatch key={`patch${item.path}`}/>;
+                    return <IconFile key={`file${item.path}`}/>;
                   }
                   if (item.data && item.data.type === "FOLDER")
-                    return <ApiFolder key={`apifolder${item.path}`} />;
-                  return <IconFolder key={`folder${item.path}`} />;
+                    return <ApiFolder key={`apifolder${item.path}`}/>;
+                  return <IconFolder key={`folder${item.path}`}/>;
                 }}
               />
             </div>
@@ -545,51 +638,12 @@ const CustomAPI: React.FC = () => {
         <Splitter.Panel>
           {editForm?.type == "API" ? (
             <div className="flex flex-col h-full pl-2">
-              <Space direction="vertical" size="small" className="mb-2">
-                <Flex gap="small" justify="flex-start" align="center" wrap>
-                  <Input
-                    addonBefore={
-                      <Select
-                        value={editForm?.method}
-                        onChange={(value) =>
-                          setEditForm({ ...editForm, method: value })
-                        }
-                        options={methodOptions}
-                        style={{ minWidth: 80 }}
-                      />
-                    }
-                    prefix={
-                      <span>
-                        {config?.apiRootPath}
-                      </span>
-                    }
-                    className="flex-1"
-                    value={editForm?.path}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, path: e?.target?.value })
-                    }
-                  />
-                  <Button
-                    type="primary"
-                    onClick={handleSaveApi}
-                    icon={<SaveOutlined />}
-                  >
-                    {t("save")}
-                  </Button>
-                  <Switch
-                    value={editForm?.enabled}
-                    onChange={(val) => {
-                      if (editForm) {
-                        setEditForm({ ...editForm, enabled: val });
-                        updateApiStatus(editForm.id, val).then(() => {
-                          message.success(val ? t("enabled") : t("closed"));
-                          reqApiList();
-                        });
-                      }
-                    }}
-                  />
-                </Flex>
-              </Space>
+              <Tabs
+                activeKey={activeHeaderTab}
+                items={headerTabItems}
+                onChange={setActiveHeaderTab}
+                className="mb-2"
+              />
               <div
                 style={{
                   flex: 1,
@@ -599,17 +653,7 @@ const CustomAPI: React.FC = () => {
                   overflow: "hidden",
                 }}
               >
-                <Tabs
-                  defaultActiveKey="detail"
-                  items={items}
-                  onChange={onChange}
-                  style={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    minHeight: 0,
-                  }}
-                />
+                {renderMainContent()}
               </div>
             </div>
           ) : (
@@ -629,11 +673,11 @@ const CustomAPI: React.FC = () => {
         onCancel={() => setDeleteConfirmVisible(false)}
         confirmLoading={deleteLoading}
         okText={t("delete")}
-        okButtonProps={{ danger: true }}
+        okButtonProps={{danger: true}}
         cancelText={t("cancel")}
       >
         <span>
-          {t("delete_dialog_text", { name: deleteTarget?.name || "" })}
+          {t("delete_dialog_text", {name: deleteTarget?.name || ""})}
         </span>
       </Modal>
       {/* 新增重命名弹窗 */}
@@ -664,7 +708,7 @@ const CustomAPI: React.FC = () => {
             <Input
               value={getParentFolderName(createParentId)}
               disabled
-              style={{ backgroundColor: "#f5f5f5" }}
+              style={{backgroundColor: "#f5f5f5"}}
             />
           </Form.Item>
           <Form.Item label={t("apis.name")}>
@@ -680,7 +724,7 @@ const CustomAPI: React.FC = () => {
               value={createApiMethod}
               options={methodOptions}
               onChange={(value) => setCreateApiMethod(value)}
-              style={{ width: "100%" }}
+              style={{width: "100%"}}
             />
           </Form.Item>
           <Form.Item label={t("apis.api_path")}>
@@ -692,7 +736,7 @@ const CustomAPI: React.FC = () => {
           </Form.Item>
         </Form>
         {createError && (
-          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
+          <div style={{color: "red", marginTop: 8}}>{createError}</div>
         )}
       </Modal>
       {/* 新建文件夹弹窗 */}
@@ -708,7 +752,7 @@ const CustomAPI: React.FC = () => {
             <Input
               value={getParentFolderName(createParentId)}
               disabled
-              style={{ backgroundColor: "#f5f5f5" }}
+              style={{backgroundColor: "#f5f5f5"}}
             />
           </Form.Item>
           <Form.Item label={t("folder_name")}>
@@ -721,7 +765,7 @@ const CustomAPI: React.FC = () => {
           </Form.Item>
         </Form>
         {createError && (
-          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
+          <div style={{color: "red", marginTop: 8}}>{createError}</div>
         )}
       </Modal>
       <BatchCreate
