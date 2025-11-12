@@ -10,7 +10,7 @@
   "api_management": "API Management",
   "open_api": "Open API",
   "api_log": "API Log",
-  "user_define_api": "User Define API",
+  "custom_api": "Custom API",
   "graphql_api": "GraphQL",
   "graphql_endpoint": "Endpoint",
   "graphql_settings": "Settings",

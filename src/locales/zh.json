@@ -10,7 +10,7 @@
   "api_management": "接口管理",
   "open_api": "Open API",
   "api_log": "接口日志",
-  "user_define_api": "定制接口",
+  "custom_api": "定制接口",
   "graphql_api": "GraphQL",
   "graphql_endpoint": "端点",
   "graphql_settings": "设置",

@@ -25,7 +25,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import GraphQLAPI from "@/pages/GraphQLAPI";
-import UserDefineAPI from "@/pages/UserDefineAPI";
+import CustomAPI from "@/pages/CustomAPI";
 import OpenAPI from "@/pages/OpenAPI";
 import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
@@ -61,10 +61,10 @@ export const routes: RouteConfig[] = [
     translationKey: "api",
     children: [
       {
-        path: "/api/user-define",
-        element: <UserDefineAPI />,
+        path: "/api/custom-api",
+        element: <CustomAPI />,
         icon: DeploymentUnitOutlined,
-        translationKey: "user_define_api",
+        translationKey: "custom_api",
       },
       {
         path: "/api/graphql",

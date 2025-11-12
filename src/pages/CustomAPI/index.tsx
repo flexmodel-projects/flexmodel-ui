@@ -46,7 +46,7 @@ const methodOptions = [
   { value: "DELETE", label: "DELETE" },
 ];
 
-const UserDefineAPI: React.FC = () => {
+const CustomAPI: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useConfig();
   // 状态定义
@@ -364,32 +364,6 @@ const UserDefineAPI: React.FC = () => {
           data={editForm?.meta || {}}
           onChange={(data) => {
             gData = data.execution;
-          }}
-        />
-      ),
-    },
-    {
-      key: "pre_request",
-      label: "前置操作",
-      className: "h-full",
-      children: (
-        <Authorization
-          data={editForm?.meta || {}}
-          onChange={(data) => {
-            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
-          }}
-        />
-      ),
-    },
-    {
-      key: "post_response",
-      label: "后置操作",
-      className: "h-full",
-      children: (
-        <Authorization
-          data={editForm?.meta || {}}
-          onChange={(data) => {
-            setEditForm((prev) => (prev ? { ...prev, meta: data } : null));
           }}
         />
       ),
@@ -763,4 +737,4 @@ const UserDefineAPI: React.FC = () => {
   );
 };
 
-export default UserDefineAPI;
+export default CustomAPI;

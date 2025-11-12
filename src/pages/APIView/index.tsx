@@ -5,7 +5,7 @@ import APILog from "@/pages/APILog";
 import TabPageContainer from "@/components/common/TabPageContainer";
 import {TabMenuItem} from "@/components/common/TabMenu";
 import GraphQLAPI from "@/pages/GraphQLAPI";
-import UserDefineAPI from "@/pages/UserDefineAPI";
+import CustomAPI from "@/pages/CustomAPI";
 import OpenAPI from "@/pages/OpenAPI";
 
 const ApiView: React.FC = () => {
@@ -14,11 +14,11 @@ const ApiView: React.FC = () => {
   // 标签页配置
   const tabItems: TabMenuItem[] = [
     {
-      key: "user_define_api",
-      label: t("user_define_api"),
-      element: UserDefineAPI,
+      key: "custom_api",
+      label: t("custom_api"),
+      element: CustomAPI,
       icon: <DeploymentUnitOutlined/>,
-      path: "/api/user-define",
+      path: "/api/custom-api",
     },
     {
       key: "graphql_api",
@@ -46,7 +46,7 @@ const ApiView: React.FC = () => {
   return (
     <TabPageContainer
       items={tabItems}
-      defaultActiveKey="user_define_api"
+      defaultActiveKey="custom_api"
     />
   );
 };
