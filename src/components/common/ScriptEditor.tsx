@@ -6,7 +6,7 @@ import {registerGroovyLanguage} from '@/utils/monaco-groovy';
 interface ScriptEditorProps {
   value?: string;
   onChange?: (value: string | undefined) => void;
-  language?: 'javascript' | 'groovy' | 'sql';
+  language?: 'javascript' | 'groovy' | 'sql' | 'json';
   height?: string | number;
   readOnly?: boolean;
 }

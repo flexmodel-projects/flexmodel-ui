@@ -12,6 +12,16 @@ export interface GraphQLData {
   headers?: Record<string, any> | null;
 }
 
+export interface DataMappingIOConfig {
+  schema?: Record<string, any>;
+  script?: string;
+}
+
+export interface DataMappingConfig {
+  input?: DataMappingIOConfig;
+  output?: DataMappingIOConfig;
+}
+
 export interface ApiMeta {
   // 接口鉴权
   auth?: boolean;
@@ -24,6 +34,7 @@ export interface ApiMeta {
   // 间隔时间
   intervalInSeconds?: number;
   execution?: Execution;
+  dataMapping?: DataMappingConfig;
 }
 
 export interface ApiDefinition {
@@ -103,10 +114,9 @@ export interface GraphQLResponse<T = any> {
   dataPresent: boolean;
 }
 
-export interface GraphQLIntrospectionResponse extends GraphQLResponse<{
+export type GraphQLIntrospectionResponse = GraphQLResponse<{
   __schema: any;
-}> {
-}
+}>;
 
 // GraphQL 查询参数类型
 export interface GraphQLQueryParams {

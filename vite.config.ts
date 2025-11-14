@@ -13,7 +13,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  plugins: [react(), svgr({ svgrOptions: { icon: true } })],
+  plugins: [
+    react({
+      babel: {
+        parserOpts: {
+          plugins: ["classProperties", "classPrivateProperties", "classPrivateMethods"],
+        },
+      },
+    }),
+    svgr({ svgrOptions: { icon: true } }),
+  ],
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],

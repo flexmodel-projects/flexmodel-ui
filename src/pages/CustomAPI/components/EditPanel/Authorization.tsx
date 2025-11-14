@@ -30,6 +30,22 @@ const Authorization: React.FC<AuthProps> = ({ data, onChange }: AuthProps) => {
     );
   }, []);
 
+  const sanitizeMeta = useCallback((meta: ApiMeta): ApiMeta => {
+    const result: ApiMeta = {
+      ...meta,
+    };
+
+    if (!result?.auth) {
+      delete result.identityProvider;
+    }
+    if (!result?.rateLimitingEnabled) {
+      delete result.intervalInSeconds;
+      delete result.maxRequestCount;
+    }
+
+    return result;
+  }, []);
+
   // 表单数据回填 - 只在data真正变化时执行
   useEffect(() => {
     // 深度比较，避免不必要的更新
@@ -37,46 +53,40 @@ const Authorization: React.FC<AuthProps> = ({ data, onChange }: AuthProps) => {
       JSON.stringify(data) !== JSON.stringify(prevDataRef.current);
 
     if (isDataChanged && data && Object.keys(data).length > 0) {
-      form.setFieldsValue(data);
-      setFormData(data);
-      prevDataRef.current = data;
+      const sanitized = sanitizeMeta(data);
+      form.setFieldsValue(sanitized);
+      setFormData(sanitized);
+      prevDataRef.current = sanitized;
     }
-  }, [data, form]);
+  }, [data, form, sanitizeMeta]);
 
   // 数据变化时通知父组件 - 使用useCallback避免无限循环
   const handleDataChange = useCallback(
     (newData: ApiMeta) => {
-      const processedData = {
-        auth: newData?.auth,
-        identityProvider: newData?.auth ? newData.identityProvider : undefined,
-        rateLimitingEnabled: newData?.rateLimitingEnabled,
-        intervalInSeconds: newData?.rateLimitingEnabled
-          ? newData.intervalInSeconds
-          : undefined,
-        maxRequestCount: newData?.rateLimitingEnabled
-          ? newData.maxRequestCount
-          : undefined,
-        execution: newData?.execution,
-      };
+      const mergedData = sanitizeMeta({
+        ...prevDataRef.current,
+        ...newData,
+      });
 
       // 避免重复调用onChange
       if (
-        JSON.stringify(processedData) !== JSON.stringify(prevDataRef.current)
+        JSON.stringify(mergedData) !== JSON.stringify(prevDataRef.current)
       ) {
-        onChange(processedData);
+        prevDataRef.current = mergedData;
+        onChange(mergedData);
       }
     },
-    [onChange]
+    [onChange, sanitizeMeta]
   );
 
   // 表单值变化处理
   const handleFormValuesChange = useCallback(
     (changedValues: Partial<ApiMeta>) => {
-      const newFormData = { ...formData, ...changedValues };
+      const newFormData = sanitizeMeta({ ...formData, ...changedValues });
       setFormData(newFormData);
       handleDataChange(newFormData);
     },
-    [formData, handleDataChange]
+    [formData, handleDataChange, sanitizeMeta]
   );
 
   return (

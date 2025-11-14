@@ -4,6 +4,7 @@ import {Button, Flex, Input, Select, Space, Switch, Tabs, TabsProps} from "antd"
 import {SaveOutlined} from "@ant-design/icons";
 import ExecuteConfig from "./ExecuteConfig";
 import Authorization from "./Authorization";
+import DataMapping from "./DataMapping";
 
 interface MethodOption {
   value: string;
@@ -17,12 +18,14 @@ interface EditPanelProps {
   saveLabel: string;
   executeConfigLabel: string;
   authorizationLabel: string;
+  dataMappingLabel: string;
   onSave: () => void;
   onMethodChange: (value: string) => void;
   onPathChange: (value: string) => void;
   onToggleEnabled: (value: boolean) => void;
   onExecuteConfigChange: (data: any) => void;
   onAuthorizationChange: (data: any) => void;
+  onDataMappingChange: (data: any) => void;
 }
 
 const EditPanel: React.FC<EditPanelProps> = ({
@@ -32,12 +35,14 @@ const EditPanel: React.FC<EditPanelProps> = ({
   saveLabel,
   executeConfigLabel,
   authorizationLabel,
+  dataMappingLabel,
   onSave,
   onMethodChange,
   onPathChange,
   onToggleEnabled,
   onExecuteConfigChange,
   onAuthorizationChange,
+  onDataMappingChange,
 }) => {
   const editTabItems: TabsProps["items"] = useMemo(
     () => [
@@ -63,12 +68,25 @@ const EditPanel: React.FC<EditPanelProps> = ({
           />
         ),
       },
+      {
+        key: "data_mapping",
+        label: dataMappingLabel,
+        className: "h-full",
+        children: (
+          <DataMapping
+            data={editForm?.meta || {}}
+            onChange={onDataMappingChange}
+          />
+        ),
+      },
     ],
     [
       authorizationLabel,
+      dataMappingLabel,
       editForm?.meta,
       executeConfigLabel,
       onAuthorizationChange,
+      onDataMappingChange,
       onExecuteConfigChange,
     ]
   );

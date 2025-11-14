@@ -1,40 +1,15 @@
 import React, {useEffect, useRef, useState} from "react";
-import {
-  Button,
-  Dropdown,
-  Flex,
-  Form,
-  Input,
-  Menu,
-  message,
-  Modal,
-  Select,
-  Splitter,
-  Tabs,
-  TabsProps,
-  Typography,
-} from "antd";
+import {Form, Input, message, Modal, Select, Splitter, Tabs, TabsProps, Typography,} from "antd";
 import PageContainer from "@/components/common/PageContainer";
-import {MoreOutlined, PlusOutlined, SearchOutlined,} from "@ant-design/icons";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
 import DetailPanel from "./components/DetailPanel.tsx";
 import {useTranslation} from "react-i18next";
-import {ApiDefinition, GraphQLData, TreeNode} from "@/types/api-management";
+import {ApiDefinition, ApiMeta, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreate from "./components/BatchCreate";
 import {useConfig} from "@/store/appStore.ts";
-import Tree from "@/components/explore/explore/Tree.jsx";
-import {
-  ApiFolder,
-  ApiMethodDelete,
-  ApiMethodGet,
-  ApiMethodPatch,
-  ApiMethodPost,
-  ApiMethodPut,
-  IconFile,
-  IconFolder,
-} from "@/components/explore/icons/Icons.jsx";
 import DebugPanel from "./components/DebugPanel";
-import EditPanel from "./components/EditPanel";
+import EditPanel from "./components/EditPanel/index.tsx";
+import APIExplorer from "./components/APIExplorer";
 
 const methodOptions = [
   {value: "GET", label: "GET"},
@@ -119,6 +94,7 @@ const CustomAPI: React.FC = () => {
         graphql: graphqlData,
       };
       setEditForm(data);
+      executionDataRef.current = data.meta?.execution || undefined;
       setDebugMethod(data.method || "GET");
       setDebugPath(data.path || "");
       setDebugBody("");
@@ -290,16 +266,6 @@ const CustomAPI: React.FC = () => {
     await addApi(createParentId);
   };
 
-  function convertApiListToTreeData(list: any[]): any[] {
-    return list.map((item) => ({
-      path: item.id,
-      filename: item.name,
-      type: item.type === "FOLDER" ? "folder" : "file",
-      data: item,
-      children: item.children ? convertApiListToTreeData(item.children) : [],
-    }));
-  }
-
   // 根据ID获取上级目录名称
   const getParentFolderName = (parentId: string | null): string => {
     if (!parentId) return t("root_directory");
@@ -327,10 +293,11 @@ const CustomAPI: React.FC = () => {
   const executionDataRef = useRef<any>({});
 
   const handleSaveApi = async () => {
-
-
     if (editForm) {
       // 构造保存数据，确保包含parentId
+      const executionData =
+        executionDataRef.current ?? editForm.meta?.execution;
+
       const saveData = {
         name: editForm.name,
         method: editForm.method,
@@ -338,7 +305,7 @@ const CustomAPI: React.FC = () => {
         parentId: editForm.parentId,
         enabled: editForm.enabled,
         type: editForm.type,
-        meta: {...editForm.meta, execution: executionDataRef.current},
+        meta: {...editForm.meta, execution: executionData},
         graphql: editForm.graphql,
         createdBy: editForm.createdBy,
         updatedBy: editForm.updatedBy,
@@ -385,6 +352,7 @@ const CustomAPI: React.FC = () => {
           saveLabel={t("save")}
           executeConfigLabel={t("apis.execute_config")}
           authorizationLabel={t("authorization")}
+          dataMappingLabel={t("apis.data_mapping", {defaultValue: "数据映射"})}
           onSave={handleSaveApi}
           onMethodChange={(value) =>
             setEditForm((prev) => (prev ? {...prev, method: value} : prev))
@@ -403,9 +371,44 @@ const CustomAPI: React.FC = () => {
           }}
           onExecuteConfigChange={(data) => {
             executionDataRef.current = data.execution;
+            setEditForm((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    meta: {
+                      ...prev.meta,
+                      ...data,
+                      execution: data.execution,
+                    } as ApiMeta,
+                  }
+                : prev
+            );
           }}
           onAuthorizationChange={(data) => {
-            setEditForm((prev) => (prev ? {...prev, meta: data} : prev));
+            if (data?.execution !== undefined) {
+              executionDataRef.current = data.execution;
+            }
+            setEditForm((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    meta: data as ApiMeta,
+                  }
+                : prev
+            );
+          }}
+          onDataMappingChange={(data) => {
+            if (data?.execution !== undefined) {
+              executionDataRef.current = data.execution;
+            }
+            setEditForm((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    meta: data as ApiMeta,
+                  }
+                : prev
+            );
           }}
         />
       );
@@ -476,164 +479,33 @@ const CustomAPI: React.FC = () => {
     }
   };
 
-  const [searchText, setSearchText] = useState("");
-  const [filteredApiList, setFilteredApiList] = useState<ApiDefinition[]>([]);
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-
-  // 过滤 API 列表数据
-  const filterApiList = (
-    apis: ApiDefinition[],
-    searchText: string
-  ): ApiDefinition[] => {
-    if (!searchText) return apis;
-
-    return apis
-      .map((api) => {
-        if (api.name.toLowerCase().includes(searchText.toLowerCase())) {
-          return api;
-        }
-        if (api.children) {
-          const filteredChildren = filterApiList(api.children, searchText);
-          if (filteredChildren.length > 0) {
-            return {...api, children: filteredChildren};
-          }
-        }
-        return null;
-      })
-      .filter(Boolean) as ApiDefinition[];
-  };
-
-  // 监听搜索输入框变化
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchText(value);
-    const filteredData = filterApiList(apiList, value);
-    setFilteredApiList(filteredData);
-  };
-
-  // 初始化过滤后的数据
-  useEffect(() => {
-    setFilteredApiList(apiList);
-  }, [apiList]);
 
   return (
     <PageContainer>
       <Splitter>
         <Splitter.Panel defaultSize="20%" max="40%" collapsible>
-          <div className="pr-2">
-            <Flex gap="small" align="center">
-              <Input
-                placeholder={t("search_apis")}
-                value={searchText}
-                onChange={handleSearchChange}
-                allowClear
-                prefix={<SearchOutlined/>}
-                className="flex-1"
-              />
-              <Dropdown
-                overlay={
-                  <Menu>
-                    <Menu.Item onClick={() => showCreateApiDialog()}>
-                      {t("new_api")}
-                    </Menu.Item>
-                    <Menu.Item onClick={() => showCreateFolderDialog()}>
-                      {t("new_folder")}
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => setBatchCreateDrawerVisible(true)}
-                    >
-                      {t("batch_new_api")}
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button icon={<PlusOutlined/>}/>
-              </Dropdown>
-            </Flex>
-            <div className="flex-1 overflow-auto">
-              <Tree
-                tree={{children: convertApiListToTreeData(filteredApiList)}}
-                selected={
-                  selectedNode ? {path: selectedNode.data.id} : {path: ""}
-                }
-                onClickItem={(item: any) => {
-                  setSelectedNode({
-                    children: [],
-                    data: item.data,
-                    isLeaf: item.type === "file",
-                    key: item.path,
-                    settingVisible: false,
-                    title: item.filename,
-                  });
-                }}
-                renderMore={(item: any) => {
-                  return (
-                    <Dropdown
-                      overlay={
-                        <Menu>
-                          {item.type === "folder" && (
-                            <>
-                              <Menu.Item
-                                onClick={() =>
-                                  showCreateApiDialog(item.data.id)
-                                }
-                              >
-                                {t("new_api")}
-                              </Menu.Item>
-                              <Menu.Item
-                                onClick={() =>
-                                  showCreateFolderDialog(item.data.id)
-                                }
-                              >
-                                {t("new_folder")}
-                              </Menu.Item>
-                              <Menu.Divider/>
-                            </>
-                          )}
-                          <Menu.Item onClick={() => showEditInput(item.data)}>
-                            {t("rename")}
-                          </Menu.Item>
-                          <Menu.Item
-                            style={{color: "red"}}
-                            onClick={(e) => {
-                              e.domEvent.stopPropagation();
-                              showDeleteConfirm(item.data.id, item.data.name);
-                            }}
-                          >
-                            {t("delete")}
-                          </Menu.Item>
-                        </Menu>
-                      }
-                      trigger={["hover"]}
-                    >
-                      <MoreOutlined onClick={(e) => e.stopPropagation()}/>
-                    </Dropdown>
-                  );
-                }}
-                renderIcon={(item: any, nodeType: any) => {
-                  if (nodeType === "file") {
-                    const method = item.data?.method;
-                    if (method === "GET")
-                      return <ApiMethodGet key={`get${item.path}`}/>;
-                    if (method === "POST")
-                      return <ApiMethodPost key={`post${item.path}`}/>;
-                    if (method === "PUT")
-                      return <ApiMethodPut key={`put${item.path}`}/>;
-                    if (method === "DELETE")
-                      return <ApiMethodDelete key={`delete${item.path}`}/>;
-                    if (method === "PATCH")
-                      return <ApiMethodPatch key={`patch${item.path}`}/>;
-                    return <IconFile key={`file${item.path}`}/>;
-                  }
-                  if (item.data && item.data.type === "FOLDER")
-                    return <ApiFolder key={`apifolder${item.path}`}/>;
-                  return <IconFolder key={`folder${item.path}`}/>;
-                }}
-              />
-            </div>
-          </div>
+          <APIExplorer
+            apiList={apiList}
+            selectedApiId={selectedNode?.data.id}
+            onSelectItem={(item: any) => {
+              setSelectedNode({
+                children: [],
+                data: item.data,
+                isLeaf: item.type === "file",
+                key: item.path,
+                settingVisible: false,
+                title: item.filename,
+              });
+            }}
+            onShowCreateApiDialog={showCreateApiDialog}
+            onShowCreateFolderDialog={showCreateFolderDialog}
+            onShowBatchCreate={() => setBatchCreateDrawerVisible(true)}
+            onRename={showEditInput}
+            onDelete={showDeleteConfirm}
+          />
         </Splitter.Panel>
         <Splitter.Panel>
           {editForm?.type == "API" ? (
@@ -692,7 +564,9 @@ const CustomAPI: React.FC = () => {
       >
         <Input
           value={renameValue}
-          onChange={(e) => setRenameValue(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setRenameValue(e.target.value)
+          }
         />
       </Modal>
       {/* 新建接口弹窗 */}
@@ -715,7 +589,9 @@ const CustomAPI: React.FC = () => {
             <Input
               placeholder={t("apis.name")}
               value={createName}
-              onChange={(e) => setCreateName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCreateName(e.target.value)
+              }
               maxLength={32}
             />
           </Form.Item>
@@ -723,7 +599,7 @@ const CustomAPI: React.FC = () => {
             <Select
               value={createApiMethod}
               options={methodOptions}
-              onChange={(value) => setCreateApiMethod(value)}
+              onChange={(value: string) => setCreateApiMethod(value)}
               style={{width: "100%"}}
             />
           </Form.Item>
@@ -731,7 +607,9 @@ const CustomAPI: React.FC = () => {
             <Input
               placeholder={t("apis.api_path")}
               value={createApiPath}
-              onChange={(e) => setCreateApiPath(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCreateApiPath(e.target.value)
+              }
             />
           </Form.Item>
         </Form>

@@ -153,7 +153,7 @@ def authenticate(request) {
               <div className={segmentTitle}>{t('idp_user_defined')}</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
               <Radio value="js">{t('idp_javascript')} (js)</Radio>
-              <Radio value="groovy">{t('idp_groovy')} (groovy)</Radio>
+              {/*<Radio value="groovy">{t('idp_groovy')} (groovy)</Radio>*/}
               <div className={segmentTitle}>{t('idp_social')}</div>
               <Radio value="github" disabled>
                 Github (github)
