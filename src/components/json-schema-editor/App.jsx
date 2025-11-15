@@ -28,6 +28,22 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
 
+const DEFAULT_SCHEMA_TEXT = `{
+        "type": "object",
+        "title": "title",
+        "properties":{}
+      }`;
+
+const parseSchemaData = (data) => {
+  const text = data && data.trim() ? data : DEFAULT_SCHEMA_TEXT;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('JsonSchemaEditor 解析数据失败，已回退默认值', error);
+    return JSON.parse(DEFAULT_SCHEMA_TEXT);
+  }
+};
+
 class jsonSchema extends React.Component {
   constructor(props) {
     super(props);
@@ -77,15 +93,8 @@ class jsonSchema extends React.Component {
   };
 
   componentDidMount() {
-    let data = this.props.data;
-    if (!data) {
-      data = `{
-        "type": "object",
-        "title": "title",
-        "properties":{}
-      }`;
-    }
-    this.Model.changeEditorSchemaAction({ value: JSON.parse(data) });
+    const schemaData = parseSchemaData(this.props.data);
+    this.Model.changeEditorSchemaAction({ value: schemaData });
   }
 
   componentDidUpdate(prevProps) {
@@ -94,8 +103,9 @@ class jsonSchema extends React.Component {
       let newData = JSON.stringify(this.props.schema || '');
       if (oldData !== newData) return this.props.onChange(newData);
     }
-    if (this.props.data && this.props.data !== prevProps.data) {
-      this.Model.changeEditorSchemaAction({ value: JSON.parse(this.props.data) });
+    if (this.props.data !== prevProps.data) {
+      const schemaData = parseSchemaData(this.props.data);
+      this.Model.changeEditorSchemaAction({ value: schemaData });
     }
   }
 

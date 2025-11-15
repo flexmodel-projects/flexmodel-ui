@@ -3,16 +3,8 @@ import {Card, Divider, Space, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
-import jeditor from '@/components/json-schema-editor';
+import JsonSchemaEditor from '@/components/json-schema-editor';
 import ScriptField from "./components/ScriptField";
-
-const JEditor = jeditor({
-  lang: 'zh_CN' // 或 'en_US'
-});
-
-const JEditor2 = jeditor({
-    lang: 'zh_CN' // 或 'en_US'
-  });
 
 type IOType = "input" | "output";
 
@@ -177,7 +169,8 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                     {t("apis.data_mapping.input", { defaultValue: "入参设置" })}
                 </Title>
                 <Space direction="vertical" size="middle" className="w-full">
-                    <JEditor
+                    <JsonSchemaEditor
+                        lang="zh_CN"
                         data={inputSchemaText}
                         showEditor={false}
                         isMock={false}
@@ -200,7 +193,8 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                     {t("apis.data_mapping.output", { defaultValue: "出参设置" })}
                 </Title>
                 <Space direction="vertical" size="middle" className="w-full">
-                    <JEditor2
+                    <JsonSchemaEditor
+                        lang="zh_CN"
                         data={outputSchemaText}
                         showEditor={false}
                         isMock={false}

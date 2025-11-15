@@ -13,8 +13,8 @@ export interface GraphQLData {
 }
 
 export interface DataMappingIOConfig {
-  schema?: Record<string, any>;
-  script?: string;
+  schema?: Record<string, any>; // json schema格式的数据
+  script?: string; // 执行脚本
 }
 
 export interface DataMappingConfig {
