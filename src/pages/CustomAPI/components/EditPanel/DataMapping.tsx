@@ -4,6 +4,7 @@ import {useTranslation} from "react-i18next";
 import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
 import jeditor from '@/components/json-schema-editor';
+import ScriptField from "./components/ScriptField";
 
 const JEditor = jeditor({
   lang: 'zh_CN' // 或 'en_US'
@@ -78,7 +79,7 @@ const buildNextMeta = (
 
 const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
     const { t } = useTranslation();
-    const { Title, Text } = Typography;
+    const { Title } = Typography;
     const [inputSchemaText, setInputSchemaText] = useState<string>("");
     const [outputSchemaText, setOutputSchemaText] = useState<string>("");
     const [inputScript, setInputScript] = useState<string>("");
@@ -165,7 +166,6 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
         onChange(buildNextMeta(data, io, nextIO));
     };
 
-
     return (
         <Card
             className="h-full"
@@ -183,19 +183,13 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                         isMock={false}
                         onChange={(value: string) => handleSchemaChange(value, "input")}
                     />
-                    {/* <div>
-                        <Text strong>
-                            {t("apis.data_mapping.input_script", {
-                                defaultValue: "脚本（JavaScript）",
-                            })}
-                        </Text>
-                        <ScriptEditor
-                            value={inputScript}
-                            onChange={(val) => handleScriptChange(val, "input")}
-                            language="javascript"
-                            height={220}
-                        />
-                    </div> */}
+                    <ScriptField
+                        label={t("apis.data_mapping.input_script", {
+                            defaultValue: "执行脚本",
+                        })}
+                        value={inputScript}
+                        onChange={(val) => handleScriptChange(val, "input")}
+                    />
                 </Space>
             </div>
 
@@ -212,19 +206,13 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                         isMock={false}
                         onChange={(value: string) => handleSchemaChange(value, "output")}
                     />
-                    {/* <div>
-                        <Text strong>
-                            {t("apis.data_mapping.output_script", {
-                                defaultValue: "脚本（JavaScript）",
-                            })}
-                        </Text>
-                        <ScriptEditor
-                            value={outputScript}
-                            onChange={(val) => handleScriptChange(val, "output")}
-                            language="javascript"
-                            height={220}
-                        />
-                    </div> */}
+                    <ScriptField
+                        label={t("apis.data_mapping.output_script", {
+                            defaultValue: "执行脚本",
+                        })}
+                        value={outputScript}
+                        onChange={(val) => handleScriptChange(val, "output")}
+                    />
                 </Space>
             </div>
         </Card>
