@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Collapse, List, Modal, Typography} from "antd";
-import Editor from "@monaco-editor/react";
+import {DiffEditor} from "@monaco-editor/react";
 import {useTheme} from "@/store/appStore";
 
 export interface HistoryRecord {
@@ -17,6 +17,8 @@ interface HistoryModalProps {
   onClose: () => void;
   records: HistoryRecord[];
   onRestore: (record: HistoryRecord) => void;
+  currentPayload?: Record<string, any>;
+  ignoreFields?: string[];
 }
 
 const HistoryModal: React.FC<HistoryModalProps> = ({
@@ -24,15 +26,59 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                                                      onClose,
                                                      records,
                                                      onRestore,
+                                                     currentPayload,
+                                                     ignoreFields,
                                                    }) => {
   const {isDark} = useTheme();
+  const defaultIgnore = React.useMemo(
+    () => ["updatedAt", "updatedBy", "createdAt", "createdBy"],
+    []
+  );
+  const effectiveIgnore = ignoreFields && ignoreFields.length > 0 ? ignoreFields : defaultIgnore;
+
+  const omitPaths = React.useCallback((input: any, paths: string[]): any => {
+    if (!input || typeof input !== "object") return input;
+    const cloned = JSON.parse(JSON.stringify(input));
+
+    const deleteByPath = (obj: any, path: string) => {
+      if (!obj || typeof obj !== "object") return;
+      const segments = path
+        .split(".")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (!segments.length) return;
+      let cursor = obj;
+      for (let i = 0; i < segments.length - 1; i++) {
+        const key = segments[i];
+        const idx = Number.isInteger(Number(key)) ? Number(key) : key;
+        if (cursor == null) return;
+        cursor = cursor[idx as any];
+        if (cursor == null) return;
+      }
+      const last = segments[segments.length - 1];
+      const lastKey = Number.isInteger(Number(last)) ? Number(last) : last;
+      if (cursor && typeof cursor === "object") {
+        if (Array.isArray(cursor) && typeof lastKey === "number") {
+          if (lastKey >= 0 && lastKey < cursor.length) {
+            cursor.splice(lastKey, 1);
+          }
+        } else {
+          delete cursor[lastKey as any];
+        }
+      }
+    };
+
+    paths.forEach((p) => deleteByPath(cloned, p));
+    return cloned;
+  }, []);
+
   return (
     <Modal
       title="历史记录"
       open={open}
       onCancel={onClose}
       footer={null}
-      width={640}
+      width={800}
       destroyOnClose
     >
       <div style={{
@@ -65,22 +111,30 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
                     label: "变更内容",
                     children: (
                       <div style={{overflow: "hidden", borderRadius: 6}}>
-                        <Editor
+                        <DiffEditor
                           height={240}
-                          defaultLanguage="json"
                           language="json"
                           theme={isDark ? "vs-dark" : "vs"}
-                          value={JSON.stringify(item.payload ?? {}, null, 2)}
+                          original={JSON.stringify(
+                            omitPaths(item?.payload ?? {}, effectiveIgnore),
+                            null,
+                            2
+                          )}
+                          modified={JSON.stringify(
+                            omitPaths(currentPayload ?? {}, effectiveIgnore),
+                            null,
+                            2
+                          )}
                           options={{
                             readOnly: true,
                             fontSize: 12,
-                            minimap: {enabled: false},
+                            minimap: { enabled: false },
                             lineNumbers: "on",
                             glyphMargin: false,
                             lineDecorationsWidth: 0,
                             scrollBeyondLastLine: false,
                             wordWrap: "on",
-                            folding: true,
+                            renderSideBySide: true,
                             renderWhitespace: "none",
                             automaticLayout: true,
                           }}

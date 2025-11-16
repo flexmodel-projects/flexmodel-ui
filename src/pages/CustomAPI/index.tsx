@@ -23,16 +23,16 @@ import {HistoryOutlined} from "@ant-design/icons";
 import HistoryModal, {HistoryRecord} from "./components/HistoryModal";
 
 const methodOptions = [
-  {value: "GET", label: "GET"},
-  {value: "POST", label: "POST"},
-  {value: "PUT", label: "PUT"},
-  {value: "PATCH", label: "PATCH"},
-  {value: "DELETE", label: "DELETE"},
+  { value: "GET", label: "GET" },
+  { value: "POST", label: "POST" },
+  { value: "PUT", label: "PUT" },
+  { value: "PATCH", label: "PATCH" },
+  { value: "DELETE", label: "DELETE" },
 ];
 
 const CustomAPI: React.FC = () => {
-  const {t} = useTranslation();
-  const {config} = useConfig();
+  const { t } = useTranslation();
+  const { config } = useConfig();
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
@@ -154,7 +154,7 @@ const CustomAPI: React.FC = () => {
   };
 
   const showDeleteConfirm = (id: string, name: string) => {
-    setDeleteTarget({id, name});
+    setDeleteTarget({ id, name });
     setDeleteConfirmVisible(true);
   };
 
@@ -316,7 +316,7 @@ const CustomAPI: React.FC = () => {
         parentId: editForm.parentId,
         enabled: editForm.enabled,
         type: editForm.type,
-        meta: {...editForm.meta, execution: executionData},
+        meta: { ...editForm.meta, execution: executionData },
         graphql: editForm.graphql,
         createdBy: editForm.createdBy,
         updatedBy: editForm.updatedBy,
@@ -381,7 +381,7 @@ const CustomAPI: React.FC = () => {
     if (activeHeaderTab === "detail") {
       return (
         <div className="flex-1 overflow-auto">
-          <DetailPanel data={editForm || undefined}/>
+          <DetailPanel data={editForm || undefined} />
         </div>
       );
     }
@@ -395,17 +395,17 @@ const CustomAPI: React.FC = () => {
           saveLabel={t("save")}
           executeConfigLabel={t("apis.execute_config")}
           authorizationLabel={t("authorization")}
-          dataMappingLabel={t("apis.data_mapping", {defaultValue: "数据映射"})}
+          dataMappingLabel={t("apis.data_mapping", { defaultValue: "数据映射" })}
           onSave={handleSaveApi}
           onMethodChange={(value) =>
-            setEditForm((prev) => (prev ? {...prev, method: value} : prev))
+            setEditForm((prev) => (prev ? { ...prev, method: value } : prev))
           }
           onPathChange={(value) =>
-            setEditForm((prev) => (prev ? {...prev, path: value} : prev))
+            setEditForm((prev) => (prev ? { ...prev, path: value } : prev))
           }
           onToggleEnabled={(val) => {
             if (editForm) {
-              setEditForm({...editForm, enabled: val});
+              setEditForm({ ...editForm, enabled: val });
               updateApiStatus(editForm.id, val).then(() => {
                 message.success(val ? t("enabled") : t("closed"));
                 reqApiList();
@@ -507,7 +507,7 @@ const CustomAPI: React.FC = () => {
         },
         body:
           ["GET", "HEAD"].includes(debugMethod.toUpperCase()) ||
-          !debugBody.trim()
+            !debugBody.trim()
             ? undefined
             : debugBody,
       });
@@ -608,7 +608,7 @@ const CustomAPI: React.FC = () => {
                   <Button
                     type="text"
                     shape="circle"
-                    icon={<HistoryOutlined/>}
+                    icon={<HistoryOutlined />}
                     onClick={handleHistoryClick}
                     aria-label="history"
                   />
@@ -643,11 +643,11 @@ const CustomAPI: React.FC = () => {
         onCancel={() => setDeleteConfirmVisible(false)}
         confirmLoading={deleteLoading}
         okText={t("delete")}
-        okButtonProps={{danger: true}}
+        okButtonProps={{ danger: true }}
         cancelText={t("cancel")}
       >
         <span>
-          {t("delete_dialog_text", {name: deleteTarget?.name || ""})}
+          {t("delete_dialog_text", { name: deleteTarget?.name || "" })}
         </span>
       </Modal>
       <HistoryModal
@@ -655,6 +655,18 @@ const CustomAPI: React.FC = () => {
         onClose={() => setHistoryVisible(false)}
         records={historyRecords}
         onRestore={handleRestoreHistory}
+        currentPayload={{ ...editForm as any, apiDefinitionId: editForm?.id }}
+        ignoreFields={[
+          "graphql",
+          "children",
+          "data",
+          "updatedAt",
+          "updatedAt",
+          "updatedBy",
+          "createdAt",
+          "createdBy",
+          "tenantId"
+        ]}
       />
       {/* 新增重命名弹窗 */}
       <Modal
@@ -686,7 +698,7 @@ const CustomAPI: React.FC = () => {
             <Input
               value={getParentFolderName(createParentId)}
               disabled
-              style={{backgroundColor: "#f5f5f5"}}
+              style={{ backgroundColor: "#f5f5f5" }}
             />
           </Form.Item>
           <Form.Item label={t("apis.name")}>
@@ -704,7 +716,7 @@ const CustomAPI: React.FC = () => {
               value={createApiMethod}
               options={methodOptions}
               onChange={(value: string) => setCreateApiMethod(value)}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
             />
           </Form.Item>
           <Form.Item label={t("apis.api_path")}>
@@ -718,7 +730,7 @@ const CustomAPI: React.FC = () => {
           </Form.Item>
         </Form>
         {createError && (
-          <div style={{color: "red", marginTop: 8}}>{createError}</div>
+          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
         )}
       </Modal>
       {/* 新建文件夹弹窗 */}
@@ -734,7 +746,7 @@ const CustomAPI: React.FC = () => {
             <Input
               value={getParentFolderName(createParentId)}
               disabled
-              style={{backgroundColor: "#f5f5f5"}}
+              style={{ backgroundColor: "#f5f5f5" }}
             />
           </Form.Item>
           <Form.Item label={t("folder_name")}>
@@ -747,7 +759,7 @@ const CustomAPI: React.FC = () => {
           </Form.Item>
         </Form>
         {createError && (
-          <div style={{color: "red", marginTop: 8}}>{createError}</div>
+          <div style={{ color: "red", marginTop: 8 }}>{createError}</div>
         )}
       </Modal>
       <BatchCreateDrawer
