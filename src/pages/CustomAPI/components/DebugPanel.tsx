@@ -1,7 +1,6 @@
 import React from "react";
 import {Button, Flex, Input, Select, Space, Typography} from "antd";
-
-const {TextArea} = Input;
+import Editor from "@monaco-editor/react";
 
 interface MethodOption {
   value: string;
@@ -45,6 +44,40 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
     method.toUpperCase()
   );
 
+  const formatJSON = (text: string): string => {
+    try {
+      const parsed = JSON.parse(text);
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return text;
+    }
+  };
+
+  const handleFormatHeaders = () => {
+    const formatted = formatJSON(headers);
+    onHeadersChange(formatted);
+  };
+
+  const handleFormatBody = () => {
+    const formatted = formatJSON(body);
+    onBodyChange(formatted);
+  };
+
+  const responseDisplay = React.useMemo(() => {
+    try {
+      const parsed = JSON.parse(response);
+      return {
+        content: JSON.stringify(parsed, null, 2),
+        language: "json" as const,
+      };
+    } catch {
+      return {
+        content: response,
+        language: "plaintext" as const,
+      };
+    }
+  }, [response]);
+
   return (
     <Space
       direction="vertical"
@@ -53,6 +86,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         width: "100%",
         flex: 1,
         display: "flex",
+        flexDirection: "column",
         minHeight: 0,
       }}
     >
@@ -76,41 +110,96 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       </Flex>
 
       <Space direction="vertical" size="small" style={{width: "100%"}}>
-        <Typography.Text strong>请求头（JSON）</Typography.Text>
-        <TextArea
-          rows={4}
-          value={headers}
-          onChange={(e) => onHeadersChange(e.target.value)}
-          placeholder='{"Authorization": "Bearer xxx"}'
-        />
+        <Flex justify="space-between" align="center">
+          <Typography.Text strong>请求头（JSON）</Typography.Text>
+          <Button size="small" onClick={handleFormatHeaders}>
+            格式化
+          </Button>
+        </Flex>
+        <div style={{border: "1px solid #d9d9d9", borderRadius: "6px", overflow: "hidden"}}>
+          <Editor
+            height="150px"
+            defaultLanguage="json"
+            value={headers}
+            onChange={(value) => onHeadersChange(value || "")}
+            options={{
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              fontSize: 12,
+              lineNumbers: "on",
+              formatOnPaste: true,
+              formatOnType: true,
+              automaticLayout: true,
+            }}
+          />
+        </div>
       </Space>
 
       {shouldShowRequestBody && (
         <Space direction="vertical" size="small" style={{width: "100%"}}>
-          <Typography.Text strong>请求体</Typography.Text>
-          <TextArea
-            rows={6}
-            value={body}
-            onChange={(e) => onBodyChange(e.target.value)}
-            placeholder='{"key": "value"}'
-          />
+          <Flex justify="space-between" align="center">
+            <Typography.Text strong>请求体</Typography.Text>
+            <Button size="small" onClick={handleFormatBody}>
+              格式化
+            </Button>
+          </Flex>
+          <div style={{border: "1px solid #d9d9d9", borderRadius: "6px", overflow: "hidden"}}>
+            <Editor
+              height="200px"
+              defaultLanguage="json"
+              value={body}
+              onChange={(value) => onBodyChange(value || "")}
+              options={{
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                fontSize: 12,
+                lineNumbers: "on",
+                formatOnPaste: true,
+                formatOnType: true,
+                automaticLayout: true,
+              }}
+            />
+          </div>
         </Space>
       )}
 
       <Space
         direction="vertical"
         size="small"
-        style={{width: "100%", flex: 1, display: "flex", minHeight: 0}}
+        style={{
+          width: "100%",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        }}
       >
         <Typography.Text strong>
           响应{responseStatus ? `（${responseStatus}）` : ""}
         </Typography.Text>
-        <TextArea
-          value={response}
-          readOnly
-          autoSize={{minRows: 10}}
-          placeholder="响应内容将展示在此处"
-        />
+        <div style={{
+          border: "1px solid #d9d9d9", 
+          borderRadius: "6px", 
+          overflow: "hidden",
+          flex: 1,
+          minHeight: 240,
+          display: "flex",
+          flexDirection: "column",
+        }}>
+          <Editor
+            height="300px"
+            language={responseDisplay.language}
+            value={responseDisplay.content}
+            options={{
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              fontSize: 12,
+              lineNumbers: "on",
+              readOnly: true,
+              automaticLayout: true,
+            }}
+          />
+        </div>
       </Space>
     </Space>
   );

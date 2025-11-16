@@ -1,15 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Form, Input, message, Modal, Select, Splitter, Tabs, TabsProps, Typography,} from "antd";
+import {Button, Form, Input, message, Modal, Select, Splitter, Tabs, TabsProps, Typography,} from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
 import DetailPanel from "./components/DetailPanel.tsx";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, ApiMeta, GraphQLData, TreeNode} from "@/types/api-management";
-import BatchCreate from "./components/BatchCreate";
+import BatchCreateDrawer from "./components/BatchCreateDrawer.tsx";
 import {useConfig} from "@/store/appStore.ts";
 import DebugPanel from "./components/DebugPanel";
 import EditPanel from "./components/EditPanel/index.tsx";
 import APIExplorer from "./components/APIExplorer";
+import {HistoryOutlined} from "@ant-design/icons";
+import HistoryModal, {HistoryRecord} from "./components/HistoryModal";
 
 const methodOptions = [
   {value: "GET", label: "GET"},
@@ -334,6 +336,10 @@ const CustomAPI: React.FC = () => {
     },
   ];
 
+  const handleHistoryClick = () => {
+    setHistoryVisible(true);
+  };
+
   const renderMainContent = () => {
     if (activeHeaderTab === "detail") {
       return (
@@ -482,6 +488,62 @@ const CustomAPI: React.FC = () => {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [historyVisible, setHistoryVisible] = useState(false);
+
+  const mockHistoryRecords: HistoryRecord[] = [
+    {
+      id: "1",
+      title: "更新接口路径",
+      operator: "张三",
+      time: "2025-11-15 10:32",
+      detail: "路径 /users/list → /users/query",
+      payload: {
+        before: {
+          path: "/users/list",
+          method: "GET",
+        },
+        after: {
+          path: "/users/query",
+          method: "GET",
+        },
+      },
+    },
+    {
+      id: "2",
+      title: "修改请求方法",
+      operator: "李四",
+      time: "2025-11-14 19:05",
+      detail: "方法 POST → GET",
+      payload: {
+        before: {
+          method: "POST",
+          body: "{...}",
+        },
+        after: {
+          method: "GET",
+        },
+      },
+    },
+    {
+      id: "3",
+      title: "调整映射规则",
+      operator: "王五",
+      time: "2025-11-13 08:47",
+      detail: "映射字段 userId 新增默认值 0",
+      payload: {
+        mapping: {
+          userId: {
+            type: "number",
+            default: 0,
+          },
+        },
+      },
+    },
+  ];
+
+  const handleRestoreHistory = (record: HistoryRecord) => {
+    message.success(`已触发还原：${record.title}`);
+  };
 
   return (
     <PageContainer>
@@ -515,6 +577,15 @@ const CustomAPI: React.FC = () => {
                 items={headerTabItems}
                 onChange={setActiveHeaderTab}
                 className="mb-2"
+                tabBarExtraContent={
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<HistoryOutlined/>}
+                    onClick={handleHistoryClick}
+                    aria-label="history"
+                  />
+                }
               />
               <div
                 style={{
@@ -552,6 +623,12 @@ const CustomAPI: React.FC = () => {
           {t("delete_dialog_text", {name: deleteTarget?.name || ""})}
         </span>
       </Modal>
+      <HistoryModal
+        open={historyVisible}
+        onClose={() => setHistoryVisible(false)}
+        records={mockHistoryRecords}
+        onRestore={handleRestoreHistory}
+      />
       {/* 新增重命名弹窗 */}
       <Modal
         title={t("rename")}
@@ -646,7 +723,7 @@ const CustomAPI: React.FC = () => {
           <div style={{color: "red", marginTop: 8}}>{createError}</div>
         )}
       </Modal>
-      <BatchCreate
+      <BatchCreateDrawer
         onConfirm={(data: any) => {
           console.log(data);
           reqApiList();

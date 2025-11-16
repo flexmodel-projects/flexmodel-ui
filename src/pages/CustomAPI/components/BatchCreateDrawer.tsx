@@ -11,7 +11,7 @@ interface Props {
   visible: boolean;
 }
 
-const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
+const BatchCreateDrawer: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
 
   const {t} = useTranslation();
   const [form] = Form.useForm();
@@ -111,4 +111,4 @@ const BatchCreate: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
     </Drawer>
   )
 }
-export default BatchCreate;
+export default BatchCreateDrawer;

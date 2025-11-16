@@ -1,13 +1,142 @@
 import React from "react";
-import {Badge, Card, Descriptions, Divider, Space, Tag, Typography} from "antd";
+import {Badge, Card, Descriptions, Divider, Space, Table, Tag, Typography} from "antd";
 import {ApiDefinition} from "@/types/api-management";
 import {useTranslation} from "react-i18next";
 
 const {Title, Text} = Typography;
 
+interface SchemaTableRow {
+  key: string;
+  name: string;
+  type: string;
+  title: string;
+  description: string;
+  children?: SchemaTableRow[];
+}
+
 interface APIDetailProps {
   data: ApiDefinition | undefined;
 }
+
+// 解析JSON Schema为表格数据
+const parseSchemaToTableData = (
+  schema: Record<string, any>,
+  parentKey: string = '',
+  level: number = 0
+): SchemaTableRow[] => {
+  const rows: SchemaTableRow[] = [];
+
+  if (!schema) return rows;
+
+  const schemaType = schema.type || 'any';
+  const schemaTitle = schema.title || '';
+  const schemaDescription = schema.description || '';
+
+  // 处理根对象
+  if (level === 0 && schemaType === 'object' && schema.properties) {
+    // 对于根级object，直接解析其properties
+    Object.entries(schema.properties).forEach(([propName, propSchema]: [string, any]) => {
+      rows.push(...parsePropertySchema(propName, propSchema, parentKey, level));
+    });
+  } else if (level === 0 && schemaType === 'array' && schema.items) {
+    // 对于根级array，展示array信息及其items
+    const key = parentKey || 'root';
+    const row: SchemaTableRow = {
+      key,
+      name: parentKey || '[数组]',
+      type: 'array',
+      title: schemaTitle,
+      description: schemaDescription,
+    };
+
+    // 解析items
+    const itemsSchema = schema.items;
+    const itemType = itemsSchema.type || 'any';
+    
+    if (itemType === 'object' && itemsSchema.properties) {
+      row.children = [];
+      Object.entries(itemsSchema.properties).forEach(([propName, propSchema]: [string, any]) => {
+        row.children!.push(...parsePropertySchema(propName, propSchema, `${key}.items`, level + 1));
+      });
+    } else {
+      row.children = [{
+        key: `${key}.items`,
+        name: '[元素]',
+        type: itemType,
+        title: itemsSchema.title || '',
+        description: itemsSchema.description || '',
+      }];
+    }
+    
+    rows.push(row);
+  } else {
+    // 其他情况，创建单个行
+    const key = parentKey || 'root';
+    rows.push({
+      key,
+      name: parentKey || '[根]',
+      type: schemaType,
+      title: schemaTitle,
+      description: schemaDescription,
+    });
+  }
+
+  return rows;
+};
+
+// 解析单个属性的schema
+const parsePropertySchema = (
+  propName: string,
+  propSchema: any,
+  parentKey: string,
+  level: number
+): SchemaTableRow[] => {
+  const key = parentKey ? `${parentKey}.${propName}` : propName;
+  const propType = propSchema.type || 'any';
+  const propTitle = propSchema.title || '';
+  const propDescription = propSchema.description || '';
+
+  const row: SchemaTableRow = {
+    key,
+    name: propName,
+    type: propType,
+    title: propTitle,
+    description: propDescription,
+  };
+
+  // 处理object类型的嵌套属性
+  if (propType === 'object' && propSchema.properties) {
+    row.children = [];
+    Object.entries(propSchema.properties).forEach(([childName, childSchema]: [string, any]) => {
+      row.children!.push(...parsePropertySchema(childName, childSchema, key, level + 1));
+    });
+  }
+
+  // 处理array类型的items
+  if (propType === 'array' && propSchema.items) {
+    row.children = [];
+    const itemsSchema = propSchema.items;
+    const itemType = itemsSchema.type || 'any';
+
+    if (itemType === 'object' && itemsSchema.properties) {
+      // array的元素是object，展示其properties
+      Object.entries(itemsSchema.properties).forEach(([childName, childSchema]: [string, any]) => {
+        row.children!.push(...parsePropertySchema(childName, childSchema, `${key}[*]`, level + 1));
+      });
+    } else {
+      // array的元素是基本类型或其他类型
+      row.children.push({
+        key: `${key}[*]`,
+        name: '[元素]',
+        type: itemType,
+        title: itemsSchema.title || '',
+        description: itemsSchema.description || '',
+      });
+    }
+  }
+
+  return [row];
+};
 
 const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
   const {t} = useTranslation();
@@ -31,6 +160,63 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
       PATCH: 'purple'
     };
     return colors[method as keyof typeof colors] || 'default';
+  };
+
+  // 渲染Schema表格
+  const renderSchemaTable = (schema: Record<string, any>) => {
+    const tableData = parseSchemaToTableData(schema);
+    
+    const columns = [
+      {
+        title: t("api_detail.schema_field_name", {defaultValue: "属性名称"}),
+        dataIndex: 'name',
+        key: 'name',
+        width: '25%',
+        render: (text: string) => <Text code>{text}</Text>,
+      },
+      {
+        title: t("api_detail.schema_field_type", {defaultValue: "类型"}),
+        dataIndex: 'type',
+        key: 'type',
+        width: '15%',
+        render: (text: string) => {
+          const typeColors: Record<string, string> = {
+            string: 'green',
+            number: 'blue',
+            integer: 'blue',
+            boolean: 'orange',
+            object: 'purple',
+            array: 'cyan',
+          };
+          return <Tag color={typeColors[text] || 'default'}>{text}</Tag>;
+        },
+      },
+      {
+        title: t("api_detail.schema_field_title", {defaultValue: "标题"}),
+        dataIndex: 'title',
+        key: 'title',
+        width: '20%',
+        render: (text: string) => text || <Text type="secondary">-</Text>,
+      },
+      {
+        title: t("api_detail.schema_field_description", {defaultValue: "备注"}),
+        dataIndex: 'description',
+        key: 'description',
+        width: '40%',
+        render: (text: string) => text || <Text type="secondary">-</Text>,
+      },
+    ];
+
+    return (
+      <Table
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+        size="small"
+        bordered
+        defaultExpandAllRows
+      />
+    );
   };
 
   const renderVariables = (variables: Record<string, any> | string | null | undefined) => {
@@ -126,6 +312,117 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
 
         <Divider/>
 
+        {/* 数据映射配置 */}
+        {data.meta.dataMapping && (
+          <>
+            <Divider/>
+            <div>
+              <Title level={4}
+                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.data_mapping", {defaultValue: "数据映射"})}</Title>
+
+              <div className="space-y-6">
+                {/* 入参映射 */}
+                {data.meta.dataMapping.input && (
+                  <div>
+                    <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
+                      {t("api_detail.data_mapping_input", {defaultValue: "入参映射"})}
+                    </Title>
+                    <div className="space-y-3 pl-4">
+                      {data.meta.dataMapping.input.schema && (
+                        <div>
+                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
+                            {t("api_detail.data_mapping_schema", {defaultValue: "Schema (JSON Schema)"})}:
+                          </Text>
+                          <div>
+                            {renderSchemaTable(data.meta.dataMapping.input.schema)}
+                          </div>
+                        </div>
+                      )}
+                      {data.meta.dataMapping.input.script && (
+                        <div>
+                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
+                            {t("api_detail.data_mapping_script", {defaultValue: "执行脚本"})}:
+                          </Text>
+                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                              {data.meta.dataMapping.input.script}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 出参映射 */}
+                {data.meta.dataMapping.output && (
+                  <div>
+                    <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
+                      {t("api_detail.data_mapping_output", {defaultValue: "出参映射"})}
+                    </Title>
+                    <div className="space-y-3 pl-4">
+                      {data.meta.dataMapping.output.schema && (
+                        <div>
+                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
+                            {t("api_detail.data_mapping_schema", {defaultValue: "Schema (JSON Schema)"})}:
+                          </Text>
+                          <div>
+                            {renderSchemaTable(data.meta.dataMapping.output.schema)}
+                          </div>
+                        </div>
+                      )}
+                      {data.meta.dataMapping.output.script && (
+                        <div>
+                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
+                            {t("api_detail.data_mapping_script", {defaultValue: "执行脚本"})}:
+                          </Text>
+                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                              {data.meta.dataMapping.output.script}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* 子项信息 */}
+        {data.children && data.children.length > 0 && (
+          <>
+            <Divider/>
+            <div>
+              <Title level={4}
+                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
+              <Space direction="vertical" className="w-full">
+                {data.children.map((child) => (
+                  <Card key={child.id} size="small" className="bg-gray-50 dark:bg-gray-800">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Text strong className="text-gray-800 dark:text-gray-200">{child.name}</Text>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          <Tag color={getMethodColor(child.method || '')}>
+                            {child.method}
+                          </Tag>
+                          <Text code className="ml-2">{child.path}</Text>
+                        </div>
+                      </div>
+                      <Badge
+                        status={child.enabled ? "success" : "error"}
+                        text={child.enabled ? t("api_detail.enable") : t("api_detail.disable")}
+                      />
+                    </div>
+                  </Card>
+                ))}
+              </Space>
+            </div>
+          </>
+        )}
+
         {/* 认证与权限 */}
         <div>
           <Title level={4}
@@ -204,38 +501,6 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                   </div>
                 )}
               </div>
-            </div>
-          </>
-        )}
-
-        {/* 子项信息 */}
-        {data.children && data.children.length > 0 && (
-          <>
-            <Divider/>
-            <div>
-              <Title level={4}
-                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
-              <Space direction="vertical" className="w-full">
-                {data.children.map((child) => (
-                  <Card key={child.id} size="small" className="bg-gray-50 dark:bg-gray-800">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Text strong className="text-gray-800 dark:text-gray-200">{child.name}</Text>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          <Tag color={getMethodColor(child.method || '')}>
-                            {child.method}
-                          </Tag>
-                          <Text code className="ml-2">{child.path}</Text>
-                        </div>
-                      </div>
-                      <Badge
-                        status={child.enabled ? "success" : "error"}
-                        text={child.enabled ? t("api_detail.enable") : t("api_detail.disable")}
-                      />
-                    </div>
-                  </Card>
-                ))}
-              </Space>
             </div>
           </>
         )}
