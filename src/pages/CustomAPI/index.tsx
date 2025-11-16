@@ -1,10 +1,19 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Form, Input, message, Modal, Select, Splitter, Tabs, TabsProps, Typography,} from "antd";
 import PageContainer from "@/components/common/PageContainer";
-import {createApi, deleteApi, getApis, updateApi, updateApiName, updateApiStatus,} from "@/services/api-info.ts";
+import {
+  createApi,
+  deleteApi,
+  getApiHistories,
+  getApis,
+  restoreApiHistory,
+  updateApi,
+  updateApiName,
+  updateApiStatus,
+} from "@/services/api-info.ts";
 import DetailPanel from "./components/DetailPanel.tsx";
 import {useTranslation} from "react-i18next";
-import {ApiDefinition, ApiMeta, GraphQLData, TreeNode} from "@/types/api-management";
+import {ApiDefinition, ApiDefinitionHistory, ApiMeta, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreateDrawer from "./components/BatchCreateDrawer.tsx";
 import {useConfig} from "@/store/appStore.ts";
 import DebugPanel from "./components/DebugPanel";
@@ -336,8 +345,36 @@ const CustomAPI: React.FC = () => {
     },
   ];
 
-  const handleHistoryClick = () => {
+  const [historyVisible, setHistoryVisible] = useState(false);
+  const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
+
+  const mapToHistoryRecord = (h: ApiDefinitionHistory): HistoryRecord => {
+    return {
+      id: h.id,
+      title: `版本：${h.updatedAt || h.createdAt}`,
+      operator: h.updatedBy || h.createdBy || "-",
+      time: h.updatedAt || h.createdAt,
+      detail: `${h.method || ""} ${h.path || ""}`.trim(),
+      payload: h as any,
+    };
+  };
+
+  const handleHistoryClick = async () => {
+    if (!editForm?.id) {
+      message.warning("请选择一个接口");
+      return;
+    }
     setHistoryVisible(true);
+    try {
+      const list = await getApiHistories(editForm.id);
+      const mapped = (list || [])
+        .map(mapToHistoryRecord)
+        .sort((a, b) => (b.time || "").localeCompare(a.time || ""));
+      setHistoryRecords(mapped);
+    } catch {
+      message.error("获取历史记录失败");
+      setHistoryRecords([]);
+    }
   };
 
   const renderMainContent = () => {
@@ -380,13 +417,13 @@ const CustomAPI: React.FC = () => {
             setEditForm((prev) =>
               prev
                 ? {
-                    ...prev,
-                    meta: {
-                      ...prev.meta,
-                      ...data,
-                      execution: data.execution,
-                    } as ApiMeta,
-                  }
+                  ...prev,
+                  meta: {
+                    ...prev.meta,
+                    ...data,
+                    execution: data.execution,
+                  } as ApiMeta,
+                }
                 : prev
             );
           }}
@@ -397,9 +434,9 @@ const CustomAPI: React.FC = () => {
             setEditForm((prev) =>
               prev
                 ? {
-                    ...prev,
-                    meta: data as ApiMeta,
-                  }
+                  ...prev,
+                  meta: data as ApiMeta,
+                }
                 : prev
             );
           }}
@@ -410,9 +447,9 @@ const CustomAPI: React.FC = () => {
             setEditForm((prev) =>
               prev
                 ? {
-                    ...prev,
-                    meta: data as ApiMeta,
-                  }
+                  ...prev,
+                  meta: data as ApiMeta,
+                }
                 : prev
             );
           }}
@@ -488,61 +525,51 @@ const CustomAPI: React.FC = () => {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [historyVisible, setHistoryVisible] = useState(false);
-
-  const mockHistoryRecords: HistoryRecord[] = [
-    {
-      id: "1",
-      title: "更新接口路径",
-      operator: "张三",
-      time: "2025-11-15 10:32",
-      detail: "路径 /users/list → /users/query",
-      payload: {
-        before: {
-          path: "/users/list",
-          method: "GET",
-        },
-        after: {
-          path: "/users/query",
-          method: "GET",
-        },
-      },
-    },
-    {
-      id: "2",
-      title: "修改请求方法",
-      operator: "李四",
-      time: "2025-11-14 19:05",
-      detail: "方法 POST → GET",
-      payload: {
-        before: {
-          method: "POST",
-          body: "{...}",
-        },
-        after: {
-          method: "GET",
-        },
-      },
-    },
-    {
-      id: "3",
-      title: "调整映射规则",
-      operator: "王五",
-      time: "2025-11-13 08:47",
-      detail: "映射字段 userId 新增默认值 0",
-      payload: {
-        mapping: {
-          userId: {
-            type: "number",
-            default: 0,
-          },
-        },
-      },
-    },
-  ];
-
-  const handleRestoreHistory = (record: HistoryRecord) => {
-    message.success(`已触发还原：${record.title}`);
+  // 还原历史版本
+  const handleRestoreHistory = async (record: HistoryRecord) => {
+    if (!editForm?.id) {
+      message.warning("请选择一个接口");
+      return;
+    }
+    try {
+      await restoreApiHistory(editForm.id, record.id);
+      message.success(`已还原：${record.title}`);
+      // 刷新API列表并保持当前选中项不变
+      const apis = await reqApiList();
+      const findApiById = (list: ApiDefinition[], id: string): ApiDefinition | null => {
+        for (const item of list) {
+          if (item.id === id) return item;
+          if (item.children?.length) {
+            const found = findApiById(item.children, id);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      const updated = findApiById(apis, editForm.id);
+      if (updated) {
+        setSelectedNode({
+          children: [],
+          data: updated,
+          isLeaf: true,
+          key: updated.id,
+          settingVisible: false,
+          title: updated.name,
+        });
+      }
+      // 重新加载历史记录列表
+      try {
+        const list = await getApiHistories(editForm.id);
+        const mapped = (list || [])
+          .map(mapToHistoryRecord)
+          .sort((a, b) => (b.time || "").localeCompare(a.time || ""));
+        setHistoryRecords(mapped);
+      } catch {
+        // 忽略内部刷新失败
+      }
+    } catch (e: any) {
+      message.error(e?.message || "还原失败");
+    }
   };
 
   return (
@@ -626,7 +653,7 @@ const CustomAPI: React.FC = () => {
       <HistoryModal
         open={historyVisible}
         onClose={() => setHistoryVisible(false)}
-        records={mockHistoryRecords}
+        records={historyRecords}
         onRestore={handleRestoreHistory}
       />
       {/* 新增重命名弹窗 */}

@@ -56,6 +56,22 @@ export interface ApiDefinition {
   updatedAt: string;
 }
 
+export interface ApiDefinitionHistory {
+  id: string;
+  name: string;
+  parentId?: string | null;
+  type?: string;
+  method?: string;
+  path?: string;
+  data: any;
+  meta: ApiMeta;
+  enabled: boolean;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface TreeNode {
   title: string;
   key: string;
