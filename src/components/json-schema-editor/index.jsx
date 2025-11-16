@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {Provider} from 'react-redux';
 import PropTypes from 'prop-types';
-import moox from 'moox';
+import moox from './mooxCompat';
 
 import App from './App.jsx';
 import utils from './utils';

@@ -72,15 +72,14 @@ const buildNextMeta = (
 const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
     const { t } = useTranslation();
     const { Title } = Typography;
-    const [inputSchemaText, setInputSchemaText] = useState<string>("");
-    const [outputSchemaText, setOutputSchemaText] = useState<string>("");
-    const [inputScript, setInputScript] = useState<string>("");
-    const [outputScript, setOutputScript] = useState<string>("");
-
     const dataMapping = useMemo<DataMappingConfig>(
         () => data?.dataMapping || {},
         [data?.dataMapping]
     );
+    const [inputSchemaText, setInputSchemaText] = useState<string>(() => getSchemaText(dataMapping.input?.schema));
+    const [outputSchemaText, setOutputSchemaText] = useState<string>(() => getSchemaText(dataMapping.output?.schema));
+    const [inputScript, setInputScript] = useState<string>(() => dataMapping.input?.script || "");
+    const [outputScript, setOutputScript] = useState<string>(() => dataMapping.output?.script || "");
 
     useEffect(() => {
         const nextInputSchema = getSchemaText(dataMapping.input?.schema);
@@ -170,6 +169,7 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                 </Title>
                 <Space direction="vertical" size="middle" className="w-full">
                     <JsonSchemaEditor
+                        key="json-schema-editor-input"
                         lang="zh_CN"
                         data={inputSchemaText}
                         showEditor={false}
@@ -194,6 +194,7 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                 </Title>
                 <Space direction="vertical" size="middle" className="w-full">
                     <JsonSchemaEditor
+                        key="json-schema-editor-output"
                         lang="zh_CN"
                         data={outputSchemaText}
                         showEditor={false}
