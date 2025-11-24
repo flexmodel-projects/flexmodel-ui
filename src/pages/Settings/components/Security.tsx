@@ -16,6 +16,7 @@ interface SecurityData {
   maxRequestCount: number;
   graphqlEndpointPath?: string;
   graphqlEndpointIdentityProvider?: string | null;
+  systemIdentityProvider: string;
 }
 
 const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
@@ -29,7 +30,8 @@ const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
     intervalInSeconds: 60,
     maxRequestCount: 500,
     graphqlEndpointPath: '/graphql',
-    graphqlEndpointIdentityProvider: null
+    graphqlEndpointIdentityProvider: null,
+    systemIdentityProvider: 'default'
   });
   const [options, setOptions] = useState<SelectProps['options']>([]);
 
@@ -74,6 +76,9 @@ const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
         </Form.Item>
         <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
           <Select options={options} placeholder={t('select_a_provider')} allowClear/>
+        </Form.Item>
+        <Form.Item name="systemIdentityProvider" label={t('system_identity_provider')}>
+          <Select options={options} placeholder={t('select_a_provider')}/>
         </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={submit}>{t('save')}</Button>

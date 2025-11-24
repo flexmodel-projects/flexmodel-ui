@@ -50,7 +50,7 @@ const IdPExplorer: React.FC<IdPExplorerProps> = ({
 
       // 根据身份提供商类型显示不同图标
       switch (providerType?.toLowerCase()) {
-        case 'oauth2':
+        case 'script':
         case 'oidc':
           return <SafetyCertificateOutlined />;
         case 'saml':

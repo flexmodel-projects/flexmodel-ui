@@ -278,6 +278,7 @@
   "graphql_endpoint_enabled": "GraphQL endpoint to public",
   "graphql_endpoint_path": "GraphQL endpoint path",
   "graphql_identity_provider": "GraphQL identity provider",
+  "system_identity_provider": "System identity provider",
   "settings_add_route": "Add route",
   "settings_routes": "Routes config",
   "batch_new_api": "Batch create API",

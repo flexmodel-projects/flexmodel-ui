@@ -277,6 +277,7 @@
   "graphql_endpoint_enabled": "对外开放GraphQL端点",
   "graphql_endpoint_path": "GraphQL端点路径",
   "graphql_identity_provider": "GraphQL端点身份源",
+  "system_identity_provider": "系统身份源",
   "settings_add_route": "添加路由",
   "settings_routes": "路由配置",
   "batch_new_api": "批量新建接口",
