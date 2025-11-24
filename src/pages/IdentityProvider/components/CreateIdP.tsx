@@ -4,7 +4,6 @@ import {createIdentityProvider} from "@/services/identity-provider.ts";
 import {useTranslation} from "react-i18next";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import JsIdPForm from "@/pages/IdentityProvider/components/JsIdPForm.tsx";
-import GroovyIdPForm from "@/pages/IdentityProvider/components/GroovyIdPForm.tsx";
 
 interface CreateIdPProps {
   open: boolean;
@@ -38,26 +37,6 @@ function authenticate(request) {
 }
 `;
 
-  const GROOVY_TEMPLATE = `/**
- * Identity Provider Groovy Script Template
- * Implement authenticate(request) to return an object:
- *   [success: boolean, user: [id: string, name?: string, roles?: string[]], message?: string]
- * You can read headers via request.headers and query via request.query
- */
-def authenticate(request) {
-    // Example: simple token check from header
-    def auth = request.headers['authorization'] ?: request.headers['Authorization']
-    if (!auth || !auth.startsWith('Bearer ')) {
-        return [success: false, message: 'Missing bearer token']
-    }
-    def token = auth.replace('Bearer ','')
-    // TODO: verify token, fetch user, etc.
-    if (token == 'demo-token') {
-        return [success: true, user: [id: 'demo', name: 'Demo User', roles: ['user']]]
-    }
-    return [success: false, message: 'Invalid token']
-}
-`;
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<any>({
     name: '',
@@ -132,12 +111,9 @@ def authenticate(request) {
         onValuesChange={(changedValues) => {
           setFormData((prev: any) => {
             const next = { ...prev, ...changedValues };
-            if (changedValues.type === 'js' && !next.script) {
+            if (changedValues.type === 'script' && !next.script) {
               next.script = JAVASCRIPT_TEMPLATE;
               form.setFieldsValue({ script: JAVASCRIPT_TEMPLATE });
-            } else if (changedValues.type === 'groovy' && !next.script) {
-              next.script = GROOVY_TEMPLATE;
-              form.setFieldsValue({ script: GROOVY_TEMPLATE });
             }
             return next;
           });
@@ -152,8 +128,7 @@ def authenticate(request) {
             <Radio.Group name="type">
               <div className={segmentTitle}>{t('idp_user_defined')}</div>
               <Radio value="oidc">OpenID Connect (oidc)</Radio>
-              <Radio value="js">{t('idp_javascript')} (js)</Radio>
-              {/*<Radio value="groovy">{t('idp_groovy')} (groovy)</Radio>*/}
+              <Radio value="script">{t('idp_script')} (script)</Radio>
               <div className={segmentTitle}>{t('idp_social')}</div>
               <Radio value="github" disabled>
                 Github (github)
@@ -168,11 +143,8 @@ def authenticate(request) {
         {currentStep === 1 && formData.type === 'oidc' && (
           <OIDCIdPForm />
         )}
-        {currentStep === 1 && formData.type === 'js' && (
+        {currentStep === 1 && formData.type === 'script' && (
           <JsIdPForm />
-        )}
-        {currentStep === 1 && formData.type === 'groovy' && (
-          <GroovyIdPForm />
         )}
 
         {currentStep === 2 && (
@@ -189,11 +161,8 @@ def authenticate(request) {
                 {formData.type === 'oidc' && (
                   <OIDCIdPForm readOnly />
                 )}
-                {formData.type === 'js' && (
+                {formData.type === 'script' && (
                   <JsIdPForm readOnly />
-                )}
-                {formData.type === 'groovy' && (
-                  <GroovyIdPForm readOnly />
                 )}
               </Form>
               <Button type="primary" style={{ marginTop: 12 }} onClick={() => {

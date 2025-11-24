@@ -24,7 +24,7 @@ const JsIdPForm: React.FC<Props> = ({ readOnly = false }) => {
       <Form.Item name="name" label={t('idp_provider_name')} rules={[{ required: true }]}>
         <Input readOnly={readOnly} />
       </Form.Item>
-      <Form.Item name="script" label={t('idp_javascript')} tooltip={t('idp_javascript_tooltip') || undefined} rules={[{ required: true }]}>
+      <Form.Item name="script" label={t('idp_script')} tooltip={t('idp_script_tooltip') || undefined} rules={[{ required: true }]}>
         <Form.Item noStyle shouldUpdate>
           {({ getFieldValue, setFieldValue }) => (
             <div style={{ border: '1px solid var(--ant-color-border)', borderRadius: 6, overflow: 'hidden' }}>

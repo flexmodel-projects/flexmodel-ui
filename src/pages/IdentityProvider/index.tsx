@@ -12,7 +12,6 @@ import CreateIdP from "@/pages/IdentityProvider/components/CreateIdP";
 import {buildUpdatePayload, mergeIdentityProvider, normalizeIdentityProvider} from "@/pages/IdentityProvider/utils";
 import OIDCIdPForm from "@/pages/IdentityProvider/components/OIDCIdPForm";
 import JsIdPForm from "@/pages/IdentityProvider/components/JsIdPForm.tsx";
-import GroovyIdPForm from "@/pages/IdentityProvider/components/GroovyIdPForm.tsx";
 import IdpView from "@/pages/IdentityProvider/components/IdPView";
 import {PageContainer} from "@/components/common";
 
@@ -112,10 +111,8 @@ const IdPManagement: React.FC = () => {
                 <Col span={24}>
                   {isEditing ? (
                     <Form form={form} layout="vertical">
-                      {(form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'js' ? (
+                      {(form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'script' ? (
                         <JsIdPForm />
-                      ) : (form.getFieldValue('type') ?? activeIdP.type ?? activeIdP.provider?.type) === 'groovy' ? (
-                        <GroovyIdPForm />
                       ) : (
                         <OIDCIdPForm />
                       )}

@@ -41,7 +41,7 @@ const EditIdP: React.FC<EditIdPProps> = ({visible, data, onCancel, onConfirm}) =
       destroyOnClose
     >
       <Form form={form} layout="vertical">
-        { (watchedType ?? normalizeIdentityProvider(data || null).type) === 'js' ? (
+        { (watchedType ?? normalizeIdentityProvider(data || null).type) === 'script' ? (
           <JsIdPForm />
         ) : (
           <OIDCIdPForm />
