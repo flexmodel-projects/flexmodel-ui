@@ -46,7 +46,7 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
   const getDisplayText = (subType?: string) => {
     const displayName = (data.properties as any)?.name || data.name;
 
-    let baseName: string = '自动任务';
+    let baseName: string;
     switch (subType) {
       case 'insert_record':
         baseName = `新增记录`;

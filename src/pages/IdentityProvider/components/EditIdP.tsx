@@ -38,7 +38,7 @@ const EditIdP: React.FC<EditIdPProps> = ({visible, data, onCancel, onConfirm}) =
       open={visible}
       onOk={handleConfirm}
       onCancel={onCancel}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical">
         { (watchedType ?? normalizeIdentityProvider(data || null).type) === 'script' ? (
