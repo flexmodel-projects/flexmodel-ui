@@ -382,29 +382,12 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
     const subType = (selectedNode?.data?.properties as any)?.subType;
 
     switch (subType) {
-      case 'js':
+      case 'script':
         return (
           <>
-            <Form.Item label="脚本类型">
-              <Input value="JavaScript" disabled />
-            </Form.Item>
             <Form.Item label="脚本内容" name={['properties', 'script']} rules={[{ required: true, message: '请输入脚本内容' }]}>
               <ScriptEditor
                 language="javascript"
-              />
-            </Form.Item>
-          </>
-        );
-
-      case 'groovy':
-        return (
-          <>
-            <Form.Item label="脚本类型">
-              <Input value="Groovy" disabled />
-            </Form.Item>
-            <Form.Item label="脚本内容" name={['properties', 'script']} rules={[{ required: true, message: '请输入脚本内容' }]}>
-              <ScriptEditor
-                language="groovy"
               />
             </Form.Item>
           </>
@@ -430,7 +413,7 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item label="SQL脚本" name={['properties', 'script']} rules={[{ required: true, message: '请输入SQL脚本' }]}>
+            <Form.Item label="执行SQL" name={['properties', 'script']} rules={[{ required: true, message: '请输入SQL' }]}>
               <ScriptEditor language="sql" />
             </Form.Item>
             <Form.Item

@@ -21,9 +21,8 @@ export const nodeCatalog: NodeCatalogItem[] = [
   { type: 'serviceTask', label: '更新记录', icon: 'update-record', category: 'serviceTasks', subType: 'update_record' },
   { type: 'serviceTask', label: '查询记录', icon: 'query-record', category: 'serviceTasks', subType: 'query_record' },
   { type: 'serviceTask', label: '删除记录', icon: 'delete-record', category: 'serviceTasks', subType: 'delete_record' },
-  { type: 'serviceTask', label: 'JS脚本', icon: 'js-script', category: 'serviceTasks', subType: 'js' },
-  // { type: 'serviceTask', label: 'Groovy脚本', icon: 'groovy-script', category: 'serviceTasks', subType: 'groovy' },
-  { type: 'serviceTask', label: 'SQL脚本', icon: 'sql-script', category: 'serviceTasks', subType: 'sql' },
+  { type: 'serviceTask', label: '执行脚本', icon: 'js-script', category: 'serviceTasks', subType: 'script' },
+  { type: 'serviceTask', label: '执行SQL', icon: 'sql', category: 'serviceTasks', subType: 'sql' },
   { type: 'serviceTask', label: '调用API', icon: 'call-api', category: 'serviceTasks', subType: 'api' },
 
   // 网关节点

@@ -74,7 +74,7 @@ export interface ServiceTask extends FlowNode {
   type: FlowElementType.SERVICE_TASK;
   properties: {
     name?: string;
-    subType?: 'add-record' | 'update-record' | 'query-record' | 'delete-record' | 'js' | 'groovy' | 'sql' | 'api';
+    subType?: 'add-record' | 'update-record' | 'query-record' | 'delete-record' | 'script' | 'sql' | 'api';
     // 根据 subType 的不同，可以有不同的属性配置
     // API调用节点 (subType: 'api') 的字段：
     // - apiId?: string; // 可选，选择内置API时填充

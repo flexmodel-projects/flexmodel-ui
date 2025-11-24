@@ -31,10 +31,8 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
         return <SearchOutlined {...iconProps} style={{color: token.colorInfo}}/>;
       case 'delete_record':
         return <MinusOutlined {...iconProps} style={{color: token.colorError}}/>;
-      case 'js':
+      case 'script':
         return <CodeOutlined {...iconProps} style={{color: '#f7df1e'}}/>;
-      case 'groovy':
-        return <CodeOutlined {...iconProps} style={{color: '#4298b8'}}/>;
       case 'sql':
         return <DatabaseOutlined {...iconProps} style={{color: '#1890ff'}}/>;
       case 'api':
@@ -65,14 +63,11 @@ const ServiceTaskNode: React.FC<NodeProps> = ({data, selected, id}) => {
       case 'delay':
         baseName = `延时节点`;
         break;
-      case 'js':
-        baseName = 'JS脚本';
-        break;
-      case 'groovy':
-        baseName = 'Groovy脚本';
+      case 'script':
+        baseName = '执行脚本';
         break;
       case 'sql':
-        baseName = 'SQL脚本';
+        baseName = '执行SQL';
         break;
       case 'api':
         baseName = '调用API';

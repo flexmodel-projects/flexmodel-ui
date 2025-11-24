@@ -49,8 +49,7 @@ const NodePanel: React.FC<NodePanelProps> = ({onHide}) => {
       'query-record': <SearchOutlined style={{color: '#1890ff'}}/>,
       'delete-record': <MinusOutlined style={{color: '#1890ff'}}/>,
       'js-script': <CodeOutlined style={{color: '#f7df1e'}}/>,
-      'groovy-script': <CodeOutlined style={{color: '#4298b8'}}/>,
-      'sql-script': <DatabaseOutlined style={{color: '#1890ff'}}/>,
+      'sql': <DatabaseOutlined style={{color: '#1890ff'}}/>,
       'call-api': <ApiOutlined style={{color: '#1890ff'}}/>,
       'call-service': <LinkOutlined style={{color: '#722ed1'}}/>,
     };
