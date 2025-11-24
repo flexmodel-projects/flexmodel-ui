@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Card, Divider, Space, Typography} from "antd";
+import {Card, Divider, Space, Switch, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
@@ -80,6 +80,8 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
     const [outputSchemaText, setOutputSchemaText] = useState<string>(() => getSchemaText(dataMapping.output?.schema));
     const [inputScript, setInputScript] = useState<string>(() => dataMapping.input?.script || "");
     const [outputScript, setOutputScript] = useState<string>(() => dataMapping.output?.script || "");
+    const [inputScriptEnabled, setInputScriptEnabled] = useState<boolean>(() => dataMapping.input?.scriptEnabled ?? false);
+    const [outputScriptEnabled, setOutputScriptEnabled] = useState<boolean>(() => dataMapping.output?.scriptEnabled ?? false);
 
     useEffect(() => {
         const nextInputSchema = getSchemaText(dataMapping.input?.schema);
@@ -98,15 +100,27 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
         if (nextOutputScript !== outputScript) {
             setOutputScript(nextOutputScript);
         }
+        const nextInputScriptEnabled = dataMapping.input?.scriptEnabled ?? false;
+        if (nextInputScriptEnabled !== inputScriptEnabled) {
+            setInputScriptEnabled(nextInputScriptEnabled);
+        }
+        const nextOutputScriptEnabled = dataMapping.output?.scriptEnabled ?? false;
+        if (nextOutputScriptEnabled !== outputScriptEnabled) {
+            setOutputScriptEnabled(nextOutputScriptEnabled);
+        }
     }, [
         dataMapping.input?.schema,
         dataMapping.input?.script,
+        dataMapping.input?.scriptEnabled,
         dataMapping.output?.schema,
         dataMapping.output?.script,
+        dataMapping.output?.scriptEnabled,
         inputSchemaText,
         inputScript,
+        inputScriptEnabled,
         outputSchemaText,
         outputScript,
+        outputScriptEnabled,
     ]);
 
     const handleSchemaChange = (value: string | undefined, io: IOType) => {
@@ -122,6 +136,8 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
             const nextIO: DataMappingIOConfig = {
                 ...currentIO,
                 schema: undefined,
+                // ensure scriptEnabled is always boolean, not undefined
+                scriptEnabled: currentIO?.scriptEnabled ?? false,
             };
             onChange(buildNextMeta(data, io, normalizeIOConfig(nextIO)));
             return;
@@ -133,6 +149,8 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
             const nextIO: DataMappingIOConfig = {
                 ...currentIO,
                 schema: parsed,
+                // ensure scriptEnabled is always boolean, not undefined
+                scriptEnabled: currentIO?.scriptEnabled ?? false,
             };
             onChange(buildNextMeta(data, io, nextIO));
         } catch (error: any) {
@@ -153,6 +171,22 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
         const nextIO: DataMappingIOConfig = {
             ...currentIO,
             script: scriptValue.trim() ? scriptValue : undefined,
+            scriptEnabled: (io === "input" ? inputScriptEnabled : outputScriptEnabled),
+        };
+        onChange(buildNextMeta(data, io, nextIO));
+    };
+
+    const handleScriptToggle = (io: IOType, enabled: boolean) => {
+        if (io === "input") {
+            setInputScriptEnabled(enabled);
+        } else {
+            setOutputScriptEnabled(enabled);
+        }
+        const currentIO = io === "input" ? dataMapping.input : dataMapping.output;
+        const nextIO: DataMappingIOConfig = {
+            ...currentIO,
+            scriptEnabled: enabled,
+            script: enabled ? (io === "input" ? inputScript : outputScript) || currentIO?.script : undefined,
         };
         onChange(buildNextMeta(data, io, nextIO));
     };
@@ -175,14 +209,25 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                         showEditor={false}
                         isMock={false}
                         onChange={(value: string) => handleSchemaChange(value, "input")}
-                    />
-                    <ScriptField
-                        label={t("apis.data_mapping.input_script", {
-                            defaultValue: "执行脚本",
-                        })}
-                        value={inputScript}
-                        onChange={(val) => handleScriptChange(val, "input")}
-                    />
+                    />                    
+                    <Space direction="horizontal" align="center">
+                        <Typography.Text>
+                            {t("apis.data_mapping.script_switch", { defaultValue: "启用执行脚本" })}
+                        </Typography.Text>
+                        <Switch
+                            checked={inputScriptEnabled}
+                            onChange={(checked) => handleScriptToggle("input", checked)}
+                        />
+                    </Space>
+                    {inputScriptEnabled && (
+                        <ScriptField
+                            label={t("apis.data_mapping.input_script", {
+                                defaultValue: "执行脚本",
+                            })}
+                            value={inputScript}
+                            onChange={(val) => handleScriptChange(val, "input")}
+                        />
+                    )}
                 </Space>
             </div>
 
@@ -201,13 +246,24 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                         isMock={false}
                         onChange={(value: string) => handleSchemaChange(value, "output")}
                     />
-                    <ScriptField
-                        label={t("apis.data_mapping.output_script", {
-                            defaultValue: "执行脚本",
-                        })}
-                        value={outputScript}
-                        onChange={(val) => handleScriptChange(val, "output")}
-                    />
+                    <Space direction="horizontal" align="center">
+                        <Typography.Text>
+                            {t("apis.data_mapping.script_switch", { defaultValue: "启用执行脚本" })}
+                        </Typography.Text>
+                        <Switch
+                            checked={outputScriptEnabled}
+                            onChange={(checked) => handleScriptToggle("output", checked)}
+                        />
+                    </Space>
+                    {outputScriptEnabled && (
+                        <ScriptField
+                            label={t("apis.data_mapping.output_script", {
+                                defaultValue: "执行脚本",
+                            })}
+                            value={outputScript}
+                            onChange={(val) => handleScriptChange(val, "output")}
+                        />
+                    )}
                 </Space>
             </div>
         </Card>

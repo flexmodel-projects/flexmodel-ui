@@ -5,7 +5,15 @@
     "execute_config": "Execute Config",
     "parent_folder": "Parent Folder",
     "api_path": "API Path",
-    "method": "Request Method"
+    "method": "Request Method",
+    "data_mapping": {
+      "title": "Data Mapping",
+      "input": "Input Settings",
+      "output": "Output Settings",
+      "input_script": "Execution Script",
+      "output_script": "Execution Script",
+      "script_switch": "Enable execution script"
+    }
   },
   "api_management": "API Management",
   "open_api": "Open API",

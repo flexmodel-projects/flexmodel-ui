@@ -5,7 +5,15 @@
     "execute_config": "执行配置",
     "parent_folder": "上级目录",
     "api_path": "接口路径",
-    "method": "请求方法"
+    "method": "请求方法",
+    "data_mapping": {
+      "title": "数据映射",
+      "input": "入参设置",
+      "output": "出参设置",
+      "input_script": "执行脚本",
+      "output_script": "执行脚本",
+      "script_switch": "启用执行脚本"
+    }
   },
   "api_management": "接口管理",
   "open_api": "Open API",
