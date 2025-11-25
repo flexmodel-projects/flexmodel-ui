@@ -10,9 +10,10 @@
       "title": "Data Mapping",
       "input": "Input Settings",
       "output": "Output Settings",
-      "input_script": "Execution Script",
-      "output_script": "Execution Script",
-      "script_switch": "Enable execution script"
+      "input_script": "Execution input script",
+      "output_script": "Execution output script",
+      "input_script_switch": "Enable input script",
+      "output_script_switch": "Enable output script"
     }
   },
   "api_management": "API Management",

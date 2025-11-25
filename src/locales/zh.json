@@ -10,9 +10,11 @@
       "title": "数据映射",
       "input": "入参设置",
       "output": "出参设置",
-      "input_script": "执行脚本",
-      "output_script": "执行脚本",
-      "script_switch": "启用执行脚本"
+      "input_script": "输入脚本",
+      "output_script": "输出脚本",
+      "script_switch": "启用执行脚本",
+      "input_script_switch": "启用输入脚本",
+      "output_script_switch": "启用输出脚本"
     }
   },
   "api_management": "接口管理",

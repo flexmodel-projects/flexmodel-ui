@@ -209,10 +209,10 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                         showEditor={false}
                         isMock={false}
                         onChange={(value: string) => handleSchemaChange(value, "input")}
-                    />                    
+                    />
                     <Space direction="horizontal" align="center">
                         <Typography.Text>
-                            {t("apis.data_mapping.script_switch", { defaultValue: "启用执行脚本" })}
+                            {t("apis.data_mapping.input_script_switch")}
                         </Typography.Text>
                         <Switch
                             checked={inputScriptEnabled}
@@ -248,7 +248,7 @@ const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
                     />
                     <Space direction="horizontal" align="center">
                         <Typography.Text>
-                            {t("apis.data_mapping.script_switch", { defaultValue: "启用执行脚本" })}
+                            {t("apis.data_mapping.output_script_switch")}
                         </Typography.Text>
                         <Switch
                             checked={outputScriptEnabled}
