@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {Card, Divider, Space, Switch, Typography} from "antd";
+import React, {useEffect, useMemo} from "react";
+import {Card, Divider, Form, Space, Switch, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
@@ -9,265 +9,287 @@ import ScriptField from "./components/ScriptField";
 type IOType = "input" | "output";
 
 interface DataMappingProps {
-    data: ApiMeta;
-    onChange: (meta: ApiMeta) => void;
+  data: ApiMeta;
+  onChange: (meta: ApiMeta) => void;
 }
 
 const getSchemaText = (schema?: Record<string, any>) => {
-    if (!schema) return "";
-    try {
-        return JSON.stringify(schema, null, 2);
-    } catch {
-        return "";
-    }
+  if (!schema) return "";
+  try {
+    return JSON.stringify(schema, null, 2);
+  } catch {
+    return "";
+  }
 };
 
 const normalizeIOConfig = (
-    config?: DataMappingIOConfig
+  config?: DataMappingIOConfig
 ): DataMappingIOConfig | undefined => {
-    if (!config) return undefined;
-    const schema = config.schema;
-    const script = config.script?.trim();
+  if (!config) return undefined;
+  const schema = config.schema;
+  const script = config.script?.trim();
 
-    const normalized: DataMappingIOConfig = {
-        ...config,
-        schema,
-        script: script ?? undefined,
-    };
+  const normalized: DataMappingIOConfig = {
+    ...config,
+    schema,
+    script: script ?? undefined,
+  };
 
-    if (!normalized.schema) {
-        delete normalized.schema;
-    }
-    if (!normalized.script) {
-        delete normalized.script;
-    }
+  if (!normalized.schema) {
+    delete normalized.schema;
+  }
+  if (!normalized.script) {
+    delete normalized.script;
+  }
 
-    return Object.keys(normalized).length ? normalized : undefined;
+  return Object.keys(normalized).length ? normalized : undefined;
 };
 
 const buildNextMeta = (
-    data: ApiMeta,
-    io: IOType,
-    ioConfig: DataMappingIOConfig | undefined
+  data: ApiMeta,
+  io: IOType,
+  ioConfig: DataMappingIOConfig | undefined
 ): ApiMeta => {
-    const currentMapping: DataMappingConfig = data?.dataMapping || {};
-    const nextMapping: DataMappingConfig = {
-        ...currentMapping,
-        [io]: normalizeIOConfig(ioConfig),
-    };
+  const currentMapping: DataMappingConfig = data?.dataMapping || {};
+  const nextMapping: DataMappingConfig = {
+    ...currentMapping,
+    [io]: normalizeIOConfig(ioConfig),
+  };
 
-    if (!nextMapping.input && !nextMapping.output) {
-        return {
-            ...data,
-            dataMapping: undefined,
-        };
-    }
-
+  if (!nextMapping.input && !nextMapping.output) {
     return {
-        ...data,
-        dataMapping: nextMapping,
+      ...data,
+      dataMapping: undefined,
     };
+  }
+
+  return {
+    ...data,
+    dataMapping: nextMapping,
+  };
 };
 
-const DataMapping: React.FC<DataMappingProps> = ({ data, onChange }) => {
-    const { t } = useTranslation();
-    const { Title } = Typography;
-    const dataMapping = useMemo<DataMappingConfig>(
-        () => data?.dataMapping || {},
-        [data?.dataMapping]
-    );
-    const [inputSchemaText, setInputSchemaText] = useState<string>(() => getSchemaText(dataMapping.input?.schema));
-    const [outputSchemaText, setOutputSchemaText] = useState<string>(() => getSchemaText(dataMapping.output?.schema));
-    const [inputScript, setInputScript] = useState<string>(() => dataMapping.input?.script || "");
-    const [outputScript, setOutputScript] = useState<string>(() => dataMapping.output?.script || "");
-    const [inputScriptEnabled, setInputScriptEnabled] = useState<boolean>(() => dataMapping.input?.scriptEnabled ?? false);
-    const [outputScriptEnabled, setOutputScriptEnabled] = useState<boolean>(() => dataMapping.output?.scriptEnabled ?? false);
+const DataMapping: React.FC<DataMappingProps> = ({data, onChange}) => {
+  const {t} = useTranslation();
+  const {Title} = Typography;
+  const [form] = Form.useForm();
 
-    useEffect(() => {
-        const nextInputSchema = getSchemaText(dataMapping.input?.schema);
-        if (nextInputSchema !== inputSchemaText) {
-            setInputSchemaText(nextInputSchema);
-        }
-        const nextOutputSchema = getSchemaText(dataMapping.output?.schema);
-        if (nextOutputSchema !== outputSchemaText) {
-            setOutputSchemaText(nextOutputSchema);
-        }
-        const nextInputScript = dataMapping.input?.script || "";
-        if (nextInputScript !== inputScript) {
-            setInputScript(nextInputScript);
-        }
-        const nextOutputScript = dataMapping.output?.script || "";
-        if (nextOutputScript !== outputScript) {
-            setOutputScript(nextOutputScript);
-        }
-        const nextInputScriptEnabled = dataMapping.input?.scriptEnabled ?? false;
-        if (nextInputScriptEnabled !== inputScriptEnabled) {
-            setInputScriptEnabled(nextInputScriptEnabled);
-        }
-        const nextOutputScriptEnabled = dataMapping.output?.scriptEnabled ?? false;
-        if (nextOutputScriptEnabled !== outputScriptEnabled) {
-            setOutputScriptEnabled(nextOutputScriptEnabled);
-        }
-    }, [
-        dataMapping.input?.schema,
-        dataMapping.input?.script,
-        dataMapping.input?.scriptEnabled,
-        dataMapping.output?.schema,
-        dataMapping.output?.script,
-        dataMapping.output?.scriptEnabled,
-        inputSchemaText,
-        inputScript,
-        inputScriptEnabled,
-        outputSchemaText,
-        outputScript,
-        outputScriptEnabled,
-    ]);
+  const dataMapping = useMemo<DataMappingConfig>(
+    () => data?.dataMapping || {},
+    [data?.dataMapping]
+  );
 
-    const handleSchemaChange = (value: string | undefined, io: IOType) => {
-        const text = value ?? "";
-        if (io === "input") {
-            setInputSchemaText(text);
-        } else {
-            setOutputSchemaText(text);
-        }
+  // 计算表单初始值
+  const formValues = useMemo(() => ({
+    inputSchema: getSchemaText(dataMapping.input?.schema),
+    outputSchema: getSchemaText(dataMapping.output?.schema),
+    inputScript: dataMapping.input?.script || "",
+    outputScript: dataMapping.output?.script || "",
+    inputScriptEnabled: dataMapping.input?.scriptEnabled ?? false,
+    outputScriptEnabled: dataMapping.output?.scriptEnabled ?? false,
+  }), [dataMapping]);
 
-        if (!text.trim()) {
-            const currentIO = io === "input" ? dataMapping.input : dataMapping.output;
-            const nextIO: DataMappingIOConfig = {
-                ...currentIO,
-                schema: undefined,
-                // ensure scriptEnabled is always boolean, not undefined
-                scriptEnabled: currentIO?.scriptEnabled ?? false,
-            };
-            onChange(buildNextMeta(data, io, normalizeIOConfig(nextIO)));
-            return;
-        }
+  // 当dataMapping变化时更新表单值
+  useEffect(() => {
+    console.log('[DataMapping] useEffect 更新表单值:', formValues);
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
 
-        try {
-            const parsed = JSON.parse(text);
-            const currentIO = io === "input" ? dataMapping.input : dataMapping.output;
-            const nextIO: DataMappingIOConfig = {
-                ...currentIO,
-                schema: parsed,
-                // ensure scriptEnabled is always boolean, not undefined
-                scriptEnabled: currentIO?.scriptEnabled ?? false,
-            };
-            onChange(buildNextMeta(data, io, nextIO));
-        } catch (error: any) {
-            const message =
-                error?.message || t("json_parse_error", { defaultValue: "JSON 解析失败" });
-            console.error(message);
-        }
-    };
-
-    const handleScriptChange = (value: string | undefined, io: IOType) => {
-        const scriptValue = value ?? "";
-        if (io === "input") {
-            setInputScript(scriptValue);
-        } else {
-            setOutputScript(scriptValue);
-        }
-        const currentIO = io === "input" ? dataMapping.input : dataMapping.output;
+  // 监听表单值变化
+  const handleValuesChange = (changedValues: any, allValues: any) => {
+    // 处理输入 Schema 变化
+    if (changedValues.inputSchema !== undefined) {
+      const text = allValues.inputSchema ?? "";
+      const currentIO = dataMapping.input;
+      if (!text.trim()) {
         const nextIO: DataMappingIOConfig = {
-            ...currentIO,
-            script: scriptValue.trim() ? scriptValue : undefined,
-            scriptEnabled: (io === "input" ? inputScriptEnabled : outputScriptEnabled),
+          ...currentIO,
+          schema: undefined,
+          scriptEnabled: allValues.inputScriptEnabled ?? false,
         };
-        onChange(buildNextMeta(data, io, nextIO));
-    };
+        onChange(buildNextMeta(data, "input", normalizeIOConfig(nextIO)));
+        return;
+      }
 
-    const handleScriptToggle = (io: IOType, enabled: boolean) => {
-        if (io === "input") {
-            setInputScriptEnabled(enabled);
-        } else {
-            setOutputScriptEnabled(enabled);
-        }
-        const currentIO = io === "input" ? dataMapping.input : dataMapping.output;
+      try {
+        const parsed = JSON.parse(text);
         const nextIO: DataMappingIOConfig = {
-            ...currentIO,
-            scriptEnabled: enabled,
-            script: enabled ? (io === "input" ? inputScript : outputScript) || currentIO?.script : undefined,
+          ...currentIO,
+          schema: parsed,
+          scriptEnabled: allValues.inputScriptEnabled ?? false,
         };
-        onChange(buildNextMeta(data, io, nextIO));
-    };
+        onChange(buildNextMeta(data, "input", nextIO));
+      } catch (error: any) {
+        const message =
+          error?.message || t("json_parse_error", {defaultValue: "JSON 解析失败"});
+        console.error(message);
+      }
+    }
 
-    return (
-        <Card
-            className="h-full"
-            style={{ height: "calc(100vh - 225px)", overflow: "auto" }}
-        >
+    // 处理输出 Schema 变化
+    if (changedValues.outputSchema !== undefined) {
+      const text = allValues.outputSchema ?? "";
+      const currentIO = dataMapping.output;
+      if (!text.trim()) {
+        const nextIO: DataMappingIOConfig = {
+          ...currentIO,
+          schema: undefined,
+          scriptEnabled: allValues.outputScriptEnabled ?? false,
+        };
+        onChange(buildNextMeta(data, "output", normalizeIOConfig(nextIO)));
+        return;
+      }
 
-            <div>
-                <Title level={4}>
-                    {t("apis.data_mapping.input", { defaultValue: "入参设置" })}
-                </Title>
-                <Space direction="vertical" size="middle" className="w-full">
-                    <JsonSchemaEditor
-                        key="json-schema-editor-input"
-                        lang="zh_CN"
-                        data={inputSchemaText}
-                        showEditor={false}
-                        isMock={false}
-                        onChange={(value: string) => handleSchemaChange(value, "input")}
-                    />
-                    <Space direction="horizontal" align="center">
-                        <Typography.Text>
-                            {t("apis.data_mapping.input_script_switch")}
-                        </Typography.Text>
-                        <Switch
-                            checked={inputScriptEnabled}
-                            onChange={(checked) => handleScriptToggle("input", checked)}
-                        />
-                    </Space>
-                    {inputScriptEnabled && (
-                        <ScriptField
-                            label={t("apis.data_mapping.input_script", {
-                                defaultValue: "执行脚本",
-                            })}
-                            value={inputScript}
-                            onChange={(val) => handleScriptChange(val, "input")}
-                        />
-                    )}
-                </Space>
-            </div>
+      try {
+        const parsed = JSON.parse(text);
+        const nextIO: DataMappingIOConfig = {
+          ...currentIO,
+          schema: parsed,
+          scriptEnabled: allValues.outputScriptEnabled ?? false,
+        };
+        onChange(buildNextMeta(data, "output", nextIO));
+      } catch (error: any) {
+        const message =
+          error?.message || t("json_parse_error", {defaultValue: "JSON 解析失败"});
+        console.error(message);
+      }
+    }
 
-            <Divider />
+    // 处理输入脚本变化
+    if (changedValues.inputScript !== undefined) {
+      const scriptValue = allValues.inputScript ?? "";
+      const currentIO = dataMapping.input;
+      const nextIO: DataMappingIOConfig = {
+        ...currentIO,
+        schema: currentIO?.schema,
+        script: scriptValue.trim() ? scriptValue : undefined,
+        scriptEnabled: allValues.inputScriptEnabled ?? false,
+      };
+      onChange(buildNextMeta(data, "input", nextIO));
+    }
 
-            <div>
-                <Title level={4}>
-                    {t("apis.data_mapping.output", { defaultValue: "出参设置" })}
-                </Title>
-                <Space direction="vertical" size="middle" className="w-full">
-                    <JsonSchemaEditor
-                        key="json-schema-editor-output"
-                        lang="zh_CN"
-                        data={outputSchemaText}
-                        showEditor={false}
-                        isMock={false}
-                        onChange={(value: string) => handleSchemaChange(value, "output")}
-                    />
-                    <Space direction="horizontal" align="center">
-                        <Typography.Text>
-                            {t("apis.data_mapping.output_script_switch")}
-                        </Typography.Text>
-                        <Switch
-                            checked={outputScriptEnabled}
-                            onChange={(checked) => handleScriptToggle("output", checked)}
-                        />
-                    </Space>
-                    {outputScriptEnabled && (
-                        <ScriptField
-                            label={t("apis.data_mapping.output_script", {
-                                defaultValue: "执行脚本",
-                            })}
-                            value={outputScript}
-                            onChange={(val) => handleScriptChange(val, "output")}
-                        />
-                    )}
-                </Space>
-            </div>
-        </Card>
-    );
+    // 处理输出脚本变化
+    if (changedValues.outputScript !== undefined) {
+      const scriptValue = allValues.outputScript ?? "";
+      const currentIO = dataMapping.output;
+      const nextIO: DataMappingIOConfig = {
+        ...currentIO,
+        schema: currentIO?.schema,
+        script: scriptValue.trim() ? scriptValue : undefined,
+        scriptEnabled: allValues.outputScriptEnabled ?? false,
+      };
+      onChange(buildNextMeta(data, "output", nextIO));
+    }
+
+    // 处理输入脚本开关变化
+    if (changedValues.inputScriptEnabled !== undefined) {
+      const enabled = allValues.inputScriptEnabled ?? false;
+      const currentIO = dataMapping.input;
+      const nextIO: DataMappingIOConfig = {
+        ...currentIO,
+        schema: currentIO?.schema,
+        scriptEnabled: enabled,
+        script: enabled ? (allValues.inputScript || currentIO?.script) : undefined,
+      };
+      onChange(buildNextMeta(data, "input", nextIO));
+    }
+
+    // 处理输出脚本开关变化
+    if (changedValues.outputScriptEnabled !== undefined) {
+      const enabled = allValues.outputScriptEnabled ?? false;
+      const currentIO = dataMapping.output;
+      const nextIO: DataMappingIOConfig = {
+        ...currentIO,
+        schema: currentIO?.schema,
+        scriptEnabled: enabled,
+        script: enabled ? (allValues.outputScript || currentIO?.script) : undefined,
+      };
+      onChange(buildNextMeta(data, "output", nextIO));
+    }
+  };
+
+  const inputScriptEnabled = Form.useWatch('inputScriptEnabled', form);
+  const outputScriptEnabled = Form.useWatch('outputScriptEnabled', form);
+  const inputSchemaValue = Form.useWatch('inputSchema', form);
+  const outputSchemaValue = Form.useWatch('outputSchema', form);
+
+  return (
+    <Card className="h-full" style={{height: "calc(100vh - 225px)", overflow: "auto"}}>
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={formValues}
+        onValuesChange={handleValuesChange}
+      >
+        <div>
+          <Title level={4}>
+            {t("apis.data_mapping.input", {defaultValue: "入参设置"})}
+          </Title>
+          <Space direction="vertical" size="middle" className="w-full">
+            <Form.Item name="inputSchema" noStyle>
+              <JsonSchemaEditor
+                key="json-schema-editor-input"
+                data={inputSchemaValue || formValues.inputSchema}
+                onChange={(value) => {
+                  console.log('[DataMapping] input JsonSchemaEditor onChange:', value);
+                  form.setFieldValue('inputSchema', value);
+                }}
+                lang="zh_CN"
+                showEditor={false}
+                isMock={false}
+              />
+            </Form.Item>
+            <Form.Item name="inputScriptEnabled" label={t("apis.data_mapping.input_script_switch")}
+                       valuePropName="checked">
+              <Switch/>
+            </Form.Item>
+            {inputScriptEnabled && (
+              <Form.Item
+                name="inputScript"
+                label={t("apis.data_mapping.input_script")}
+              >
+                <ScriptField/>
+              </Form.Item>
+            )}
+          </Space>
+        </div>
+
+        <Divider/>
+
+        <div>
+          <Title level={4}>
+            {t("apis.data_mapping.output", {defaultValue: "出参设置"})}
+          </Title>
+          <Space direction="vertical" size="middle" className="w-full">
+            <Form.Item name="outputSchema" noStyle>
+              <JsonSchemaEditor
+                key="json-schema-editor-output"
+                data={outputSchemaValue || formValues.outputSchema}
+                onChange={(value) => {
+                  console.log('[DataMapping] output JsonSchemaEditor onChange:', value);
+                  form.setFieldValue('outputSchema', value);
+                }}
+                lang="zh_CN"
+                showEditor={false}
+                isMock={false}
+              />
+            </Form.Item>
+            <Form.Item name="outputScriptEnabled" label={t("apis.data_mapping.output_script_switch")}
+                       valuePropName="checked">
+              <Switch/>
+            </Form.Item>
+            {outputScriptEnabled && (
+              <Form.Item
+                name="outputScript"
+                label={t("apis.data_mapping.output_script")}>
+                <ScriptField/>
+              </Form.Item>
+            )}
+          </Space>
+        </div>
+      </Form>
+    </Card>
+  );
 };
 
 export default DataMapping;

@@ -7,7 +7,7 @@ import ScriptEditor from "@/components/common/ScriptEditor";
 type ScriptLanguage = "javascript" | "groovy" | "sql" | "json";
 
 interface ScriptFieldProps {
-    label: string;
+    label?: string;
     value?: string;
     language?: ScriptLanguage;
     onChange?: (value: string) => void;
@@ -64,7 +64,7 @@ const ScriptField: React.FC<ScriptFieldProps> = ({
 
     return (
         <div>
-            <Typography.Text strong>{label}</Typography.Text>
+            {label && <Typography.Text strong>{label}</Typography.Text>}
             <Input
                 readOnly
                 size="small"
