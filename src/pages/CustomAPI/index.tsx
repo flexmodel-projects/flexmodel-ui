@@ -412,20 +412,8 @@ const CustomAPI: React.FC = () => {
               });
             }
           }}
-          onExecuteConfigChange={(data) => {
+          onExecutionChange={(data) => {
             executionDataRef.current = data.execution;
-            setEditForm((prev) =>
-              prev
-                ? {
-                  ...prev,
-                  meta: {
-                    ...prev.meta,
-                    ...data,
-                    execution: data.execution,
-                  } as ApiMeta,
-                }
-                : prev
-            );
           }}
           onAuthorizationChange={(data) => {
             if (data?.execution !== undefined) {

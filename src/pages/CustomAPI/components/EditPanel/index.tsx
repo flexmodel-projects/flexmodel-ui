@@ -23,7 +23,7 @@ interface EditPanelProps {
   onMethodChange: (value: string) => void;
   onPathChange: (value: string) => void;
   onToggleEnabled: (value: boolean) => void;
-  onExecuteConfigChange: (data: any) => void;
+  onExecutionChange: (data: any) => void;
   onAuthorizationChange: (data: any) => void;
   onDataMappingChange: (data: any) => void;
 }
@@ -40,7 +40,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
                                                onMethodChange,
                                                onPathChange,
                                                onToggleEnabled,
-                                               onExecuteConfigChange,
+                                               onExecutionChange,
                                                onAuthorizationChange,
                                                onDataMappingChange,
                                              }) => {
@@ -53,7 +53,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
         children: (
           <ExecutionForm
             data={editForm?.meta || {}}
-            onChange={onExecuteConfigChange}
+            onChange={onExecutionChange}
           />
         ),
       },
@@ -87,7 +87,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
       executeConfigLabel,
       onAuthorizationChange,
       onDataMappingChange,
-      onExecuteConfigChange,
+      onExecutionChange,
     ]
   );
 
