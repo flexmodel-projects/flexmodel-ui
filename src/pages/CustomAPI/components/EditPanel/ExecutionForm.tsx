@@ -7,7 +7,7 @@ interface ExecuteConfigProps {
   onChange: (data: ApiMeta) => void;
 }
 
-const ExecuteConfig: React.FC<ExecuteConfigProps> = ({ data, onChange }: ExecuteConfigProps) => {
+const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: ExecuteConfigProps) => {
 
   return (
     <div style={{ height: 'calc(100vh - 225px)', overflow: 'scroll' }}>
@@ -26,4 +26,4 @@ const ExecuteConfig: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
   );
 };
 
-export default ExecuteConfig;
+export default ExecutionForm;

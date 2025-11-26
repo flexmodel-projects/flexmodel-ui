@@ -69,7 +69,7 @@ const buildNextMeta = (
   };
 };
 
-const DataMapping: React.FC<DataMappingProps> = ({data, onChange}) => {
+const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
   const {t} = useTranslation();
   const {Title} = Typography;
   const [form] = Form.useForm();
@@ -258,7 +258,7 @@ const DataMapping: React.FC<DataMappingProps> = ({data, onChange}) => {
 
         <div>
           <Title level={4}>
-            {t("apis.data_mapping.output", {defaultValue: "出参设置"})}
+            {t("apis.data_mapping.output")}
           </Title>
           <Space direction="vertical" size="middle" className="w-full">
             <Form.Item name="outputSchema" noStyle>
@@ -292,6 +292,6 @@ const DataMapping: React.FC<DataMappingProps> = ({data, onChange}) => {
   );
 };
 
-export default DataMapping;
+export default DataMappingForm;
 
 

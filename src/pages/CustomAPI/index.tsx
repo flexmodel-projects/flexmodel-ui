@@ -393,7 +393,7 @@ const CustomAPI: React.FC = () => {
           methodOptions={methodOptions}
           apiRootPath={config?.apiRootPath}
           saveLabel={t("save")}
-          executeConfigLabel={t("apis.execute_config")}
+          executeConfigLabel={t("apis.execution_config")}
           authorizationLabel={t("authorization")}
           dataMappingLabel={t("apis.data_mapping.title", { defaultValue: "数据映射" })}
           onSave={handleSaveApi}

@@ -2,7 +2,7 @@
   "api": "接口",
   "apis": {
     "name": "接口名称",
-    "execute_config": "执行配置",
+    "execution_config": "执行配置",
     "parent_folder": "上级目录",
     "api_path": "接口路径",
     "method": "请求方法",

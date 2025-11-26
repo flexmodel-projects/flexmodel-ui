@@ -2,7 +2,7 @@
   "api": "API",
   "apis": {
     "name": "API Name",
-    "execute_config": "Execute Config",
+    "execution_config": "Execute Config",
     "parent_folder": "Parent Folder",
     "api_path": "API Path",
     "method": "Request Method",

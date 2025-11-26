@@ -2,9 +2,9 @@ import React, {useMemo} from "react";
 import {ApiDefinition} from "@/types/api-management";
 import {Button, Flex, Input, Select, Space, Switch, Tabs, TabsProps} from "antd";
 import {SaveOutlined} from "@ant-design/icons";
-import ExecuteConfig from "./ExecuteConfig";
-import Authorization from "./Authorization";
-import DataMapping from "./DataMapping";
+import ExecutionForm from "./ExecutionForm.tsx";
+import AuthorizationForm from "./AuthorizationForm";
+import DataMappingForm from "./DataMappingForm.tsx";
 
 interface MethodOption {
   value: string;
@@ -29,29 +29,29 @@ interface EditPanelProps {
 }
 
 const EditPanel: React.FC<EditPanelProps> = ({
-  editForm,
-  methodOptions,
-  apiRootPath,
-  saveLabel,
-  executeConfigLabel,
-  authorizationLabel,
-  dataMappingLabel,
-  onSave,
-  onMethodChange,
-  onPathChange,
-  onToggleEnabled,
-  onExecuteConfigChange,
-  onAuthorizationChange,
-  onDataMappingChange,
-}) => {
+                                               editForm,
+                                               methodOptions,
+                                               apiRootPath,
+                                               saveLabel,
+                                               executeConfigLabel,
+                                               authorizationLabel,
+                                               dataMappingLabel,
+                                               onSave,
+                                               onMethodChange,
+                                               onPathChange,
+                                               onToggleEnabled,
+                                               onExecuteConfigChange,
+                                               onAuthorizationChange,
+                                               onDataMappingChange,
+                                             }) => {
   const editTabItems: TabsProps["items"] = useMemo(
     () => [
       {
-        key: "execute_config",
+        key: "execution_config",
         label: executeConfigLabel,
         className: "h-full",
         children: (
-          <ExecuteConfig
+          <ExecutionForm
             data={editForm?.meta || {}}
             onChange={onExecuteConfigChange}
           />
@@ -62,7 +62,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
         label: authorizationLabel,
         className: "h-full",
         children: (
-          <Authorization
+          <AuthorizationForm
             data={editForm?.meta || {}}
             onChange={onAuthorizationChange}
           />
@@ -73,7 +73,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
         label: dataMappingLabel,
         className: "h-full",
         children: (
-          <DataMapping
+          <DataMappingForm
             data={editForm?.meta || {}}
             onChange={onDataMappingChange}
           />
@@ -94,16 +94,14 @@ const EditPanel: React.FC<EditPanelProps> = ({
   return (
     <>
       <Space direction="vertical" size="small" className="mb-2">
-        <Flex gap="small" justify="flex-start" align="center" wrap>
+        <Flex gap="small" align="center" wrap>
+          <Select
+            value={editForm?.method}
+            onChange={onMethodChange}
+            options={methodOptions}
+            style={{minWidth: 80}}
+          />
           <Input
-            addonBefore={
-              <Select
-                value={editForm?.method}
-                onChange={onMethodChange}
-                options={methodOptions}
-                style={{minWidth: 80}}
-              />
-            }
             prefix={<span>{apiRootPath}</span>}
             className="flex-1"
             value={editForm?.path}
@@ -119,7 +117,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
         </Flex>
       </Space>
       <Tabs
-        defaultActiveKey="execute_config"
+        defaultActiveKey="execution_config"
         items={editTabItems}
         style={{
           height: "100%",
