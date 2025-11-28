@@ -15,7 +15,7 @@ import DetailPanel from "./components/DetailPanel.tsx";
 import {useTranslation} from "react-i18next";
 import {ApiDefinition, ApiDefinitionHistory, ApiMeta, GraphQLData, TreeNode} from "@/types/api-management";
 import BatchCreateDrawer from "./components/BatchCreateDrawer.tsx";
-import {useConfig} from "@/store/appStore.ts";
+import {useAppStore, useConfig} from "@/store/appStore.ts";
 import DebugPanel from "./components/DebugPanel";
 import EditPanel from "./components/EditPanel/index.tsx";
 import APIExplorer from "./components/APIExplorer";
@@ -33,6 +33,7 @@ const methodOptions = [
 const CustomAPI: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useConfig();
+  const {currentTenant} = useAppStore();
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
@@ -481,7 +482,9 @@ const CustomAPI: React.FC = () => {
     const normalizedPath = debugPath.startsWith("/")
       ? debugPath
       : `/${debugPath}`;
-    const url = `${config?.apiRootPath || ""}${normalizedPath}`;
+    const tenantId = currentTenant?.id;
+    const apiRootPathWithTenant = `${config?.apiRootPath || ''}/${tenantId}`;
+    const url = `${apiRootPathWithTenant}${normalizedPath}`;
 
     setDebugLoading(true);
     setDebugResponse("");

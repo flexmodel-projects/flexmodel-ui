@@ -72,7 +72,7 @@ const Security: React.FC<SecurityProps> = ({settings, onChange}) => {
           </Form.Item>
         </>}
         <Form.Item name="graphqlEndpointPath" label={t('graphql_endpoint_path')} required>
-          <Input addonBefore={config?.apiRootPath}/>
+          <Input addonBefore={config?.apiRootPath+"/{tenantId}"}/>
         </Form.Item>
         <Form.Item name="graphqlEndpointIdentityProvider" label={t('graphql_identity_provider')}>
           <Select options={options} placeholder={t('select_a_provider')} allowClear/>

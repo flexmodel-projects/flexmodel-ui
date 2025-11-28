@@ -5,6 +5,7 @@ import {SaveOutlined} from "@ant-design/icons";
 import ExecutionForm from "./ExecutionForm.tsx";
 import AuthorizationForm from "./AuthorizationForm";
 import DataMappingForm from "./DataMappingForm.tsx";
+import {useAppStore} from "@/store/appStore.ts";
 
 interface MethodOption {
   value: string;
@@ -44,6 +45,10 @@ const EditPanel: React.FC<EditPanelProps> = ({
                                                onAuthorizationChange,
                                                onDataMappingChange,
                                              }) => {
+  const {currentTenant} = useAppStore();
+  const tenantId = currentTenant?.id;
+  const fullApiRootPath = `${apiRootPath || ''}/${tenantId}`;
+
   const editTabItems: TabsProps["items"] = useMemo(
     () => [
       {
@@ -102,7 +107,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
             style={{minWidth: 80}}
           />
           <Input
-            prefix={<span>{apiRootPath}</span>}
+            prefix={<span>{fullApiRootPath}</span>}
             className="flex-1"
             value={editForm?.path}
             onChange={(e) => onPathChange(e?.target?.value)}

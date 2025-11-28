@@ -11,19 +11,28 @@
       return theme || 'dark'; // 默认使用 dark 主题
     }
 
-    // 页面加载完成后设置主题
+    // 获取 OpenAPI JSON 的 URL
+    function getOpenApiUrl() {
+      const tenantId = localStorage.getItem('tenantId');
+      if (tenantId) {
+        return `/api/f/docs/${tenantId}/openapi.json`;
+      }
+      return '/api/f/docs/openapi.json';
+    }
+
+    // 页面加载完成后设置主题和 spec-url
     document.addEventListener('DOMContentLoaded', function() {
       const theme = getThemeFromUrl();
       const rapiDoc = document.querySelector('rapi-doc');
       if (rapiDoc) {
         rapiDoc.setAttribute('theme', theme);
+        rapiDoc.setAttribute('spec-url', getOpenApiUrl());
       }
     });
   </script>
 </head>
 <body>
 <rapi-doc
-  spec-url = "/api/f/docs/openapi.json"
   show-header = 'false'
   show-info = 'false'
   allow-server-selection = 'false'

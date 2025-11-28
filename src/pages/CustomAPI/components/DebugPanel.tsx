@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Flex, Input, Select, Space, Typography} from "antd";
 import Editor from "@monaco-editor/react";
+import { useAppStore } from "@/store/appStore";
 
 interface MethodOption {
   value: string;
@@ -40,6 +41,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   onBodyChange,
   onSend,
 }) => {
+  const { currentTenant } = useAppStore();
+  const fullApiRootPath = `${apiRootPath || ''}/${currentTenant?.id}`;
+  
   const shouldShowRequestBody = !["GET", "HEAD"].includes(
     method.toUpperCase()
   );
@@ -101,7 +105,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
           value={path}
           onChange={(e) => onPathChange(e.target.value)}
           className="flex-1"
-          prefix={<span>{apiRootPath}</span>}
+          prefix={<span>{fullApiRootPath}</span>}
           placeholder="/example/path"
         />
         <Button type="primary" onClick={onSend} loading={loading}>

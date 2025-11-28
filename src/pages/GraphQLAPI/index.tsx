@@ -4,7 +4,7 @@ import {SettingOutlined} from "@ant-design/icons";
 import GraphQL from "./components/GraphQL";
 import {getSettings} from "@/services/settings";
 import {Settings} from "@/types/settings";
-import {useConfig} from "@/store/appStore";
+import {useAppStore, useConfig} from "@/store/appStore";
 import GraphQLSettingsModal from "./components/GraphQLSettingsModal";
 import PageContainer from "@/components/common/PageContainer";
 import {useTranslation} from "react-i18next";
@@ -14,7 +14,7 @@ const GraphQLAPI: React.FC = () => {
   const {t} = useTranslation();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-
+  const {currentTenant} = useAppStore();
 
   // 加载设置
   useEffect(() => {
@@ -40,7 +40,7 @@ const GraphQLAPI: React.FC = () => {
   return (
     <PageContainer
       title={settings?.security.graphqlEndpointPath ?
-        `${t('graphql_endpoint')}: ${config?.apiRootPath || ''}${settings.security.graphqlEndpointPath}` :
+        `${t('graphql_endpoint')}: ${config?.apiRootPath + "/" + currentTenant?.id || ''}${settings.security.graphqlEndpointPath}` :
         t('graphql_api_title')
       }
       extra={
