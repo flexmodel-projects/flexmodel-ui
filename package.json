@@ -14,7 +14,8 @@
     "@ant-design/x": "^2.0.0",
     "@ant-design/x-sdk": "^2.0.0",
     "@graphiql/plugin-explorer": "^5.1.1",
-    "@graphiql/react": "^0.37.1",
+    "@graphiql/plugin-history": "^0.4.1",
+    "@graphiql/react": "^0.37.2",
     "@graphiql/toolkit": "^0.11.3",
     "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^2.2.7",
@@ -31,13 +32,14 @@
     "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
     "generate-schema": "^2.6.0",
-    "graphiql": "^5.2.0",
+    "graphiql": "^5.2.1",
     "graphql": "16.9.0",
     "i18next": "^23.16.4",
     "jszip": "^3.2.2",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "markdown-it": "^14.1.0",
+    "monaco-editor": "0.55.1",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-copy-to-clipboard": "^5.1.0",
@@ -73,6 +75,11 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
+    "vite-plugin-monaco-editor": "^1.1.0",
+    "vite-plugin-monaco-editor-esm": "^2.0.2",
     "vite-plugin-svgr": "^4.2.0"
+  },
+  "overrides": {
+    "monaco-editor": "0.55.1"
   }
 }

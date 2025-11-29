@@ -183,8 +183,10 @@ const UserInfo: React.FC<UserInfoProps> = ({
         onOpenChange={setUserDropdownOpen}
         placement="top"
         trigger={['click']}
-        overlayStyle={{
-          minWidth: '150px',
+        styles={{
+          root: {
+            minWidth: '150px',
+          },
         }}
       >
         {renderUserContent()}
