@@ -188,14 +188,18 @@ const Login: React.FC = () => {
           borderRadius: token.borderRadiusLG,
           border: `1px solid ${token.colorBorderSecondary}`
         }}
-        bodyStyle={{
-          padding: token.paddingLG * 2
-        }}
+        styles={
+          {
+            body: {
+              padding: token.paddingLG * 2
+            }
+          }
+        }
       >
         {/* 错误提示 */}
         {error && (
           <Alert
-            message={t(error)}
+            title={t(error)}
             type="error"
             showIcon
             style={{marginBottom: token.marginLG}}

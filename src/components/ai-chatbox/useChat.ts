@@ -73,7 +73,7 @@ export const useChat = (
         const response = await sendChatMessage(requestData);
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          message.error(`HTTP error! status: ${response.status}`);
         }
 
         // 使用 XStream 处理流式响应
