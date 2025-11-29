@@ -98,11 +98,15 @@ function authenticate(request) {
         </>
       }
     >
-      <Steps current={currentStep} size="small">
-        <Steps.Step title={t('idp_step_select_provider')} />
-        <Steps.Step title={t('idp_step_create_provider')} />
-        <Steps.Step title={t('idp_step_success')} />
-      </Steps>
+      <Steps 
+        current={currentStep} 
+        size="small"
+        items={[
+          { title: t('idp_step_select_provider') },
+          { title: t('idp_step_create_provider') },
+          { title: t('idp_step_success') }
+        ]}
+      />
 
       <Form
         form={form}

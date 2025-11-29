@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {RobotOutlined, UserOutlined} from '@ant-design/icons';
-import type {BubbleProps, PromptProps, PromptsProps} from '@ant-design/x';
+import type {PromptsProps} from '@ant-design/x';
 import {Bubble, Prompts, Sender, Welcome, XProvider} from '@ant-design/x';
 import {theme, Typography} from 'antd';
 import {ChatContentProps} from './types';
@@ -50,7 +50,7 @@ const ChatContent: React.FC<ChatContentProps> = ({
 
   const md = markdownit({ html: true, breaks: true });
 
-  const renderMarkdown: BubbleProps['messageRender'] = (content) => {
+  const renderMarkdown = (content: string) => {
     return (
       <Typography>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
@@ -94,28 +94,41 @@ const ChatContent: React.FC<ChatContentProps> = ({
             title="🤔 你想做什么？"
             items={items}
             vertical
-            onItemClick={(info: { data: PromptProps }) => setChatInputValue(info?.data?.description as string)}
+            onItemClick={(info: { data: any }) => setChatInputValue(info?.data?.description as string)}
           />
           {messages.map((message, index) => (
             <Bubble
               key={message.id}
-              content={message.content}
-              messageRender={renderMarkdown}
+              content={renderMarkdown(message.content)}
               placement={message.role === 'user' ? 'end' : 'start'}
               avatar={
-                message.role === 'assistant' ?
-                  {
-                    icon: <RobotOutlined/>,
-                    style: {
-                      backgroundColor: token.colorPrimary
-                    }
-                  } :
-                  {
-                    icon: <UserOutlined/>,
-                    style: {
-                      backgroundColor: token.colorSuccess
-                    }
-                  }
+                message.role === 'assistant' ? (
+                  <div style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
+                    backgroundColor: token.colorPrimary,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff'
+                  }}>
+                    <RobotOutlined />
+                  </div>
+                ) : (
+                  <div style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
+                    backgroundColor: token.colorSuccess,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff'
+                  }}>
+                    <UserOutlined />
+                  </div>
+                )
               }
               styles={
                 index > 0 && messages[index - 1].role === message.role ?
@@ -129,12 +142,20 @@ const ChatContent: React.FC<ChatContentProps> = ({
             <Bubble
               content="🤔 AI正在思考中..."
               placement="start"
-              avatar={{
-                icon: <RobotOutlined/>,
-                style: {
-                  backgroundColor: token.colorPrimary
-                }
-              }}
+              avatar={
+                <div style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  backgroundColor: token.colorPrimary,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff'
+                }}>
+                  <RobotOutlined />
+                </div>
+              }
               loading={true}
             />
           )}

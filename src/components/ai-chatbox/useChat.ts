@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import {message} from "antd";
-import {XStream} from "@ant-design/x";
+import {XStream} from "@ant-design/x-sdk";
 import {sendChatMessage} from "@/services/chat";
 import {Message} from "./types";
 
@@ -128,7 +128,7 @@ export const useChat = (
         setIsLoading(false);
       }
     },
-    [initialMessages, isLoading, scrollToBottom, onMessages],
+    [conversationId, initialMessages, isLoading, scrollToBottom, onMessages],
   );
 
   return {

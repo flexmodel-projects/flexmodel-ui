@@ -1,5 +1,6 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu} from "antd";
+import {Button, Divider, Dropdown} from "antd";
+import type {MenuProps} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 // 导入Tree组件
 import Tree from "@/components/explore/explore/Tree.jsx";
@@ -78,23 +79,23 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
   // 更多按钮渲染函数
   const renderMore = (item: any) => {
     if (item.datasource && item.datasource.type !== "SYSTEM") {
+      const menuItems: MenuProps["items"] = [
+        {
+          key: "delete",
+          label: t("delete"),
+          icon: <DeleteOutlined/>,
+          danger: true,
+          onClick: (e) => {
+            e?.domEvent?.stopPropagation();
+            setActiveDs(item.datasource);
+            setDeleteVisible(true);
+          },
+        },
+      ];
+
       return (
         <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item
-                className="text-red"
-                icon={<DeleteOutlined/>}
-                onClick={(e) => {
-                  e.domEvent.stopPropagation();
-                  setActiveDs(item.datasource);
-                  setDeleteVisible(true);
-                }}
-              >
-                {t("delete")}
-              </Menu.Item>
-            </Menu>
-          }
+          menu={{items: menuItems}}
           trigger={["hover"]}
           placement="bottomRight"
         >

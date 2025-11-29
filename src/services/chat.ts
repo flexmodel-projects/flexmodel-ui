@@ -39,12 +39,20 @@ export interface Conversation {
  * 发送聊天消息（流式响应）
  */
 export const sendChatMessage = async (params: ChatRequest): Promise<Response> => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  };
+
+  // 添加X-Tenant-Id请求头
+  const tenantId = localStorage.getItem('tenantId');
+  if (tenantId) {
+    headers['X-Tenant-Id'] = tenantId;
+  }
+
   return fetch('/api/f/ai/chat/completions', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
+    headers,
     body: JSON.stringify(params)
   });
 };
@@ -88,12 +96,20 @@ export const getConversationMessages = async (id: string): Promise<ChatMessage[]
  * 向对话发送消息
  */
 export const sendMessage = async (conversationId: string, params: SendMessageRequest): Promise<Response> => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  };
+
+  // 添加X-Tenant-Id请求头
+  const tenantId = localStorage.getItem('tenantId');
+  if (tenantId) {
+    headers['X-Tenant-Id'] = tenantId;
+  }
+
   return fetch(`/api/ai/f/chat/conversations/${conversationId}/messages`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
+    headers,
     body: JSON.stringify(params)
   });
 };

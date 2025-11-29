@@ -276,7 +276,7 @@ const TriggerForm: React.FC<TriggerFormProps> = ({
           return null;
         }}
       </Form.Item>
-      <Divider orientation="left">{t('trigger.job')}</Divider>
+      <Divider titlePlacement="left">{t('trigger.job')}</Divider>
       <Row gutter={16}>
         <Col span={8}>
           <Form.Item
@@ -324,7 +324,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
     case 'interval':
       return (
         <>
-          <Divider orientation="left">{t('trigger.interval_trigger')}</Divider>
+          <Divider titlePlacement="left">{t('trigger.interval_trigger')}</Divider>
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item
@@ -379,7 +379,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
     case 'event':
       return (
         <>
-          <Divider orientation="left">{t('trigger.event_config')}</Divider>
+          <Divider titlePlacement="left">{t('trigger.event_config')}</Divider>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -445,7 +445,7 @@ const renderTriggerFormConfig = (formType: TriggerFormType, mode: string, t: any
     case 'cron':
       return (
         <>
-          <Divider orientation="left">{t('trigger.cron_trigger')}</Divider>
+          <Divider titlePlacement="left">{t('trigger.cron_trigger')}</Divider>
           <Form.Item
             name={['config', 'cronExpression']}
             label={t('trigger.cron_expression')}
@@ -481,7 +481,7 @@ const renderEventTriggerConfig = (
 ) => {
   return (
     <>
-      <Divider orientation="left">{t('trigger.event_config')}</Divider>
+      <Divider titlePlacement="left">{t('trigger.event_config')}</Divider>
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item

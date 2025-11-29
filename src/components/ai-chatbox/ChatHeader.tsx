@@ -8,7 +8,7 @@ import {
   PushpinOutlined,
   RobotOutlined
 } from '@ant-design/icons';
-import {Button, Divider, Dropdown, Input, Menu, message, Space, Spin, theme} from 'antd';
+import {Button, Divider, Dropdown, Input, message, Space, Spin, theme} from 'antd';
 import {ChatHeaderProps} from './types';
 import {Conversation, deleteConversation, getConversations} from '@/services/chat';
 
@@ -100,7 +100,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           <Dropdown
             open={dropdownOpen}
             onOpenChange={setDropdownOpen}
-            dropdownRender={() => (
+            popupRender={() => (
               <div style={{
                 backgroundColor: token.colorBgElevated,
                 borderRadius: token.borderRadius,
@@ -172,22 +172,20 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
                             </div>
                           </div>
                           <Dropdown
-                            overlay={
-                              <Menu
-                                items={[
-                                  {
-                                    label: '删除',
-                                    key: 'delete',
-                                    icon: <DeleteOutlined />,
-                                    danger: true,
-                                    onClick: (e) => {
-                                      e.domEvent.stopPropagation();
-                                      handleDeleteConversation(conv.id);
-                                    }
+                            menu={{
+                              items: [
+                                {
+                                  label: '删除',
+                                  key: 'delete',
+                                  icon: <DeleteOutlined />,
+                                  danger: true,
+                                  onClick: (e) => {
+                                    e?.domEvent?.stopPropagation();
+                                    handleDeleteConversation(conv.id);
                                   }
-                                ]}
-                              />
-                            }
+                                }
+                              ],
+                            }}
                             trigger={['click']}
                           >
                             <Button
@@ -222,7 +220,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               title="聊天历史"
             />
           </Dropdown>
-          <Divider type="vertical" />
+          <Divider orientation="vertical" />
           <Button
             type="text"
             icon={isFloating ? <PushpinFilled /> : <PushpinOutlined />}

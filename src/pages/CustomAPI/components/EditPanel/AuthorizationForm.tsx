@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Card, Form, InputNumber, Select, Switch} from "antd";
-import {SelectProps} from "rc-select/lib/Select";
+import type {SelectProps} from "antd/es/select";
 import {getIdentityProviders} from "@/services/identity-provider.ts";
 import {useTranslation} from "react-i18next";
 import {ApiMeta} from "@/types/api-management";

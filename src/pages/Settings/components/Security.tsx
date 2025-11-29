@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Input, InputNumber, Select, Switch} from 'antd';
 import {useTranslation} from "react-i18next";
-import {SelectProps} from "rc-select/lib/Select";
+import type {SelectProps} from "antd/es/select";
 import {getIdentityProviders} from "@/services/identity-provider.ts";
 import {useConfig} from "@/store/appStore.ts";
 

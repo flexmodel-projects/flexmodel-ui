@@ -1,5 +1,6 @@
 import React from "react";
-import {Button, Divider, Dropdown, Menu, Spin} from "antd";
+import {Button, Divider, Dropdown, Spin} from "antd";
+import type {MenuProps} from "antd";
 import {KeyOutlined, MoreOutlined, PlusOutlined, SafetyCertificateOutlined, UserOutlined} from "@ant-design/icons";
 // 导入Tree组件
 import Tree from "@/components/explore/explore/Tree.jsx";
@@ -67,22 +68,22 @@ const IdPExplorer: React.FC<IdPExplorerProps> = ({
   // 更多按钮渲染函数
   const renderMore = (item: any) => {
     if (item.identityProvider && item.identityProvider.type !== "system") {
+      const menuItems: MenuProps["items"] = [
+        {
+          key: "delete",
+          label: <span style={{ color: "red" }}>{t("delete")}</span>,
+          danger: true,
+          onClick: (e) => {
+            e?.domEvent?.stopPropagation();
+            setActiveIdP(item.identityProvider);
+            setDeleteVisible(true);
+          },
+        },
+      ];
+
       return (
         <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item
-                className="text-red"
-                onClick={(e) => {
-                  e.domEvent.stopPropagation();
-                  setActiveIdP(item.identityProvider);
-                  setDeleteVisible(true);
-                }}
-              >
-                <span style={{ color: "red" }}>{t("delete")}</span>
-              </Menu.Item>
-            </Menu>
-          }
+          menu={{items: menuItems}}
           trigger={["hover"]}
           placement="bottomRight"
         >

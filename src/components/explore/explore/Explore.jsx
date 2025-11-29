@@ -114,7 +114,7 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
                             >
                               {t('explore.download')}
                             </a>
-                            <Divider type="vertical" />
+                            <Divider orientation="vertical" />
                             <CopyToClipboard
                               onCopy={onCopy}
                               text={get(selected, 'content', '')}
@@ -131,7 +131,7 @@ const Explore = forwardRef(function Explore({onClose, projectName, blob}, ref) {
                             </CopyToClipboard>
                             {get(selected, 'language') === 'markdown' && (
                               <>
-                                <Divider type="vertical" />
+                                <Divider orientation="vertical" />
                                 <a
                                   href='/#'
                                   onClick={e => {

@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
-import {Alert, Button, Card, Dropdown, Form, Input, Menu, Switch, theme, Typography} from 'antd';
+import {Alert, Button, Card, Dropdown, Form, Input, Switch, theme, Typography} from 'antd';
+import type {MenuProps} from 'antd';
 import {GlobalOutlined, LockOutlined, MoonOutlined, SunOutlined, UserOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import {useAuth} from '@/store/authStore';
@@ -72,16 +73,18 @@ const Login: React.FC = () => {
   }, [setLocaleStore, i18n]);
 
   // 语言菜单
-  const localeMenu = useMemo(() => (
-    <Menu>
-      <Menu.Item key="zh" onClick={() => changeLocale(zhCN)}>
-        {t("chinese")}
-      </Menu.Item>
-      <Menu.Item key="en" onClick={() => changeLocale(enUS)}>
-        {t("english")}
-      </Menu.Item>
-    </Menu>
-  ), [changeLocale]);
+  const localeMenuItems: MenuProps["items"] = useMemo(() => [
+    {
+      key: "zh",
+      label: t("chinese"),
+      onClick: () => changeLocale(zhCN),
+    },
+    {
+      key: "en",
+      label: t("english"),
+      onClick: () => changeLocale(enUS),
+    },
+  ], [changeLocale, t]);
 
   // 当前语言显示文本
   const currentLocaleText = useMemo(() =>
@@ -137,7 +140,7 @@ const Login: React.FC = () => {
           unCheckedChildren={<MoonOutlined/>}
         />
         <Dropdown
-          overlay={localeMenu}
+          menu={{items: localeMenuItems}}
           placement="bottomRight"
           trigger={["click"]}
         >

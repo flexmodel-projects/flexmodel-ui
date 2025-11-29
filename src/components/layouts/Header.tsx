@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo} from "react";
-import {Breadcrumb, Button, Dropdown, Layout, Menu, Row, Space, Switch, theme} from "antd";
+import {Breadcrumb, Button, Dropdown, Layout, Row, Space, Switch, theme} from "antd";
+import type {MenuProps} from "antd";
 import enUS from "antd/locale/en_US";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
@@ -94,16 +95,18 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
   }, [location.pathname, t, token.marginXS]);
 
   // 使用 useMemo 缓存语言菜单
-  const localeMenu = useMemo(() => (
-    <Menu>
-      <Menu.Item key="zh" onClick={() => changeLocale(zhCN)}>
-        中文
-      </Menu.Item>
-      <Menu.Item key="en" onClick={() => changeLocale(enUS)}>
-        English
-      </Menu.Item>
-    </Menu>
-  ), [changeLocale]);
+  const localeMenuItems: MenuProps["items"] = useMemo(() => [
+    {
+      key: "zh",
+      label: "中文",
+      onClick: () => changeLocale(zhCN),
+    },
+    {
+      key: "en",
+      label: "English",
+      onClick: () => changeLocale(enUS),
+    },
+  ], [changeLocale]);
 
   // 使用 useMemo 缓存当前语言显示文本
   const currentLocaleText = useMemo(() =>
@@ -119,19 +122,15 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
   }, [setCurrentTenant]);
 
   // 使用 useMemo 缓存租户菜单
-  const tenantMenu = useMemo(() => (
-    <Menu>
-      {tenants.map(tenant => (
-        <Menu.Item
-          key={tenant.id}
-          onClick={() => handleTenantChange(tenant)}
-          disabled={currentTenant?.id === tenant.id}
-        >
-          {tenant.id}
-        </Menu.Item>
-      ))}
-    </Menu>
-  ), [tenants, currentTenant, handleTenantChange]);
+  const tenantMenuItems: MenuProps["items"] = useMemo(() => 
+    tenants.map(tenant => ({
+      key: tenant.id,
+      label: tenant.id,
+      onClick: () => handleTenantChange(tenant),
+      disabled: currentTenant?.id === tenant.id,
+    })),
+    [tenants, currentTenant, handleTenantChange]
+  );
 
   return (
     <Layout.Header
@@ -181,7 +180,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
           />
           {tenants.length > 0 && (
             <Dropdown
-              overlay={tenantMenu}
+              menu={{items: tenantMenuItems}}
               placement="bottomRight"
               trigger={["click"]}
               disabled={tenants.length === 0}
@@ -199,7 +198,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleAIChat, onToggleConsole }) => {
             style={{ marginRight: token.marginXS }}
           />
           <Dropdown
-            overlay={localeMenu}
+            menu={{items: localeMenuItems}}
             placement="bottomRight"
             trigger={["click"]}
           >

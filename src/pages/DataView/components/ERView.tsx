@@ -27,7 +27,7 @@ const ERView: React.FC = () => {
       } catch (error) {
         console.error(t("get_datasource_list_failed"), error);
         notification.error({
-          message: t("get_datasource_list_failed"),
+          title: t("get_datasource_list_failed"),
           description: t("get_datasource_list_failed_desc")
         });
       }
@@ -49,7 +49,7 @@ const ERView: React.FC = () => {
       } catch (error) {
         console.error(t("get_model_list_failed"), error);
         notification.error({
-          message: t("get_model_list_failed"),
+          title: t("get_model_list_failed"),
           description: t("get_model_list_failed_desc")
         });
         setModels([]);

@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Button, Drawer, Dropdown, Input, Menu, message, Modal, Select, Spin} from "antd";
+import {Button, Drawer, Dropdown, Input, message, Modal, Select, Spin} from "antd";
+import type {MenuProps} from "antd";
 import {EditOutlined, MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import {getDatasourceList, importModels} from "@/services/datasource.ts";
 import {createModel, dropModel, getModelList,} from "@/services/model.ts";
@@ -416,16 +417,20 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         />
         {editable && (
           <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item onClick={() => setCreateModelDrawerVisible(true)}>
-                  {t("create_model")}
-                </Menu.Item>
-                <Menu.Item onClick={() => setCreateIDLModelVisible(true)}>
-                  {t("create_model_by_idl")}
-                </Menu.Item>
-              </Menu>
-            }
+            menu={{
+              items: [
+                {
+                  key: "create_model",
+                  label: t("create_model"),
+                  onClick: () => setCreateModelDrawerVisible(true),
+                },
+                {
+                  key: "create_model_by_idl",
+                  label: t("create_model_by_idl"),
+                  onClick: () => setCreateIDLModelVisible(true),
+                },
+              ],
+            }}
           >
             <Button
               icon={<PlusOutlined />}
@@ -452,12 +457,19 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
               }}
               renderMore={(item: any) => {
                 if (item.type !== 'file') return null;
+                const menuItems: MenuProps["items"] = [
+                  {
+                    key: "delete",
+                    label: t("delete"),
+                    danger: true,
+                    onClick: () => setDeleteDialogVisible(true),
+                  },
+                ];
                 return (
-                  <Dropdown overlay={
-                    <Menu>
-                      <Menu.Item key="delete" onClick={() => setDeleteDialogVisible(true)}>删除</Menu.Item>
-                    </Menu>
-                  } trigger={["click"]}>
+                  <Dropdown
+                    menu={{items: menuItems}}
+                    trigger={["click"]}
+                  >
                     <MoreOutlined onClick={e => e.stopPropagation()}
                     />
                   </Dropdown>

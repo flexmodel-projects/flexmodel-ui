@@ -1,6 +1,7 @@
 import React, {useMemo, useState} from "react";
-import {Button, Dropdown, Flex, Input, Menu} from "antd";
+import {Button, Dropdown, Flex, Input} from "antd";
 import {MoreOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
+import type {MenuProps} from "antd";
 import Tree from "@/components/explore/explore/Tree.jsx";
 import {
   ApiFolder,
@@ -96,6 +97,24 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
     [filteredApiList]
   );
 
+  const createMenuItems: MenuProps["items"] = [
+    {
+      key: "new_api",
+      label: t("new_api"),
+      onClick: () => onShowCreateApiDialog(),
+    },
+    {
+      key: "new_folder",
+      label: t("new_folder"),
+      onClick: () => onShowCreateFolderDialog(),
+    },
+    {
+      key: "batch_new_api",
+      label: t("batch_new_api"),
+      onClick: onShowBatchCreate,
+    },
+  ];
+
   return (
     <div className="pr-2">
       <Flex gap="small" align="center">
@@ -107,21 +126,7 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           prefix={<SearchOutlined/>}
           className="flex-1"
         />
-        <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item onClick={() => onShowCreateApiDialog()}>
-                {t("new_api")}
-              </Menu.Item>
-              <Menu.Item onClick={() => onShowCreateFolderDialog()}>
-                {t("new_folder")}
-              </Menu.Item>
-              <Menu.Item onClick={onShowBatchCreate}>
-                {t("batch_new_api")}
-              </Menu.Item>
-            </Menu>
-          }
-        >
+        <Dropdown menu={{items: createMenuItems}}>
           <Button icon={<PlusOutlined/>}/>
         </Dropdown>
       </Flex>
@@ -130,44 +135,53 @@ const APIExplorer: React.FC<APIExplorerProps> = ({
           tree={treeData}
           selected={selectedApiId ? {path: selectedApiId} : {path: ""}}
           onClickItem={onSelectItem}
-          renderMore={(item: any) => (
-            <Dropdown
-              overlay={
-                <Menu>
-                  {item.type === "folder" && (
-                    <>
-                      <Menu.Item
-                        onClick={() => onShowCreateApiDialog(item.data.id)}
-                      >
-                        {t("new_api")}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => onShowCreateFolderDialog(item.data.id)}
-                      >
-                        {t("new_folder")}
-                      </Menu.Item>
-                      <Menu.Divider/>
-                    </>
-                  )}
-                  <Menu.Item onClick={() => onRename(item.data)}>
-                    {t("rename")}
-                  </Menu.Item>
-                  <Menu.Item
-                    style={{color: "red"}}
-                    onClick={(e) => {
-                      e.domEvent.stopPropagation();
-                      onDelete(item.data.id, item.data.name);
-                    }}
-                  >
-                    {t("delete")}
-                  </Menu.Item>
-                </Menu>
+          renderMore={(item: any) => {
+            const moreMenuItems: MenuProps["items"] = [];
+            
+            if (item.type === "folder") {
+              moreMenuItems.push(
+                {
+                  key: "new_api",
+                  label: t("new_api"),
+                  onClick: () => onShowCreateApiDialog(item.data.id),
+                },
+                {
+                  key: "new_folder",
+                  label: t("new_folder"),
+                  onClick: () => onShowCreateFolderDialog(item.data.id),
+                },
+                {
+                  type: "divider",
+                }
+              );
+            }
+            
+            moreMenuItems.push(
+              {
+                key: "rename",
+                label: t("rename"),
+                onClick: () => onRename(item.data),
+              },
+              {
+                key: "delete",
+                label: t("delete"),
+                danger: true,
+                onClick: (e) => {
+                  e?.domEvent?.stopPropagation();
+                  onDelete(item.data.id, item.data.name);
+                },
               }
-              trigger={["hover"]}
-            >
-              <MoreOutlined onClick={(e) => e.stopPropagation()}/>
-            </Dropdown>
-          )}
+            );
+
+            return (
+              <Dropdown
+                menu={{items: moreMenuItems}}
+                trigger={["hover"]}
+              >
+                <MoreOutlined onClick={(e) => e.stopPropagation()}/>
+              </Dropdown>
+            );
+          }}
           renderIcon={(item: any, nodeType: any) => {
             if (nodeType === "file") {
               const method = item.data?.method;

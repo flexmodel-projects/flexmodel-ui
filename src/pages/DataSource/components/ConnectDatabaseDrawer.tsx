@@ -6,8 +6,6 @@ import DataSourceView from "@/pages/DataSource/components/DataSourceView";
 import Title from "antd/lib/typography/Title";
 import {useTranslation} from "react-i18next";
 
-const { Step } = Steps;
-
 const ConnectDatabaseDrawer: React.FC<{
   visible: boolean;
   onChange: (data: any) => void;
@@ -136,12 +134,16 @@ const ConnectDatabaseDrawer: React.FC<{
       </Space>}
     >
       <div style={{ paddingBottom: 20 }} className="bg-white dark:bg-[#23232a] text-black dark:text-[#f5f5f5]">
-        <Steps current={active} size="small">
-          <Step title={t('connect_step_select_database')} />
-          <Step title={t('connect_step_connect_database')} />
-          <Step title={t('connect_step_select_models')} />
-          <Step title={t('connect_step_completed')} />
-        </Steps>
+        <Steps 
+          current={active} 
+          size="small"
+          items={[
+            { title: t('connect_step_select_database') },
+            { title: t('connect_step_connect_database') },
+            { title: t('connect_step_select_models') },
+            { title: t('connect_step_completed') }
+          ]}
+        />
       </div>
       <Form
         form={form}
