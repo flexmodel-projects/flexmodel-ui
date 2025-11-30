@@ -36,7 +36,7 @@ const BatchCreateDrawer: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
       placement="right"
       onClose={onCancel}
       open={visible}
-      width="80%"
+      size={1200}
       footer={
         <Space>
           <Button onClick={onCancel}>

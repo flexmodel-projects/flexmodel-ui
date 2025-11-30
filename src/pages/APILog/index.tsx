@@ -268,7 +268,7 @@ const LogViewer: React.FC = () => {
 
       <Drawer
         title={t("request_log")}
-        width={680}
+        size={680}
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
       >

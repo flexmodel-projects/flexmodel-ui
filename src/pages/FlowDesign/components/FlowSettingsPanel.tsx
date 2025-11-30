@@ -26,7 +26,7 @@ const FlowSettingsPanel: React.FC<FlowSettingsPanelProps> = ({
     <Drawer
       title="流程设置"
       placement="right"
-      width={400}
+      size={400}
       open={visible}
       onClose={onClose}
       destroyOnHidden={false}

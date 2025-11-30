@@ -320,7 +320,7 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
           )}
         </div>
       }
-      width={600}
+      size={600}
       open={visible}
       onClose={onClose}
       extra={

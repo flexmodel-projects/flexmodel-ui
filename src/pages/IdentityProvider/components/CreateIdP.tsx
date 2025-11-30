@@ -75,7 +75,7 @@ function authenticate(request) {
   return (
     <Drawer
       title={t('idp_new_provider')}
-      width="50%"
+      size={800}
       open={open}
       onClose={onClose}
       footer={

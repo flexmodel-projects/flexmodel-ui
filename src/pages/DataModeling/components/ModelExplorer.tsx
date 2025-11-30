@@ -506,7 +506,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         title={t('create_model')}
         open={createModelDrawerVisible}
         onClose={() => setCreateModelDrawerVisible(false)}
-        width={800}
+        size={800}
         footer={
           <div style={{ textAlign: 'left' }}>
             <Button onClick={handleModelModalCancel} style={{ marginRight: 8 }}>
@@ -530,7 +530,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         title={t('create_model_by_idl')}
         open={createIDLModelVisible}
         onClose={handleIDLModalCancel}
-        width={1000}
+        size={1000}
         footer={
           <div style={{ textAlign: 'left' }}>
             <Button onClick={handleIDLModalCancel} style={{ marginRight: 8 }}>

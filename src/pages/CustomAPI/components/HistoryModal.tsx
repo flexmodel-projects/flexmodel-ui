@@ -79,7 +79,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({
       onCancel={onClose}
       footer={null}
       width={800}
-      destroyOnClose
+      destroyOnHidden
     >
       <div style={{
         top: 20,

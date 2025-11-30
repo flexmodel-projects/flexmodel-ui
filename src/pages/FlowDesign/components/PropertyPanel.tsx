@@ -1029,7 +1029,7 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
         </Space>
       }
       placement="right"
-      width={400}
+      size={400}
       open={visible}
       onClose={onClose}
       destroyOnHidden={false}

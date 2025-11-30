@@ -108,7 +108,7 @@ const ConnectDatabaseDrawer: React.FC<{
   return (
     <Drawer
       title={t('connect_datasource')}
-      width="50%"
+      size={800}
       placement="right"
       onClose={onClose}
       open={visible}
