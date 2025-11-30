@@ -84,7 +84,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
   return (
     <Space
-      direction="vertical"
+      orientation="vertical"
       size="middle"
       style={{
         width: "100%",
@@ -113,7 +113,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         </Button>
       </Flex>
 
-      <Space direction="vertical" size="small" style={{width: "100%"}}>
+      <Space orientation="vertical" size="small" style={{width: "100%"}}>
         <Flex justify="space-between" align="center">
           <Typography.Text strong>请求头（JSON）</Typography.Text>
           <Button size="small" onClick={handleFormatHeaders}>
@@ -140,7 +140,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       </Space>
 
       {shouldShowRequestBody && (
-        <Space direction="vertical" size="small" style={{width: "100%"}}>
+        <Space orientation="vertical" size="small" style={{width: "100%"}}>
           <Flex justify="space-between" align="center">
             <Typography.Text strong>请求体</Typography.Text>
             <Button size="small" onClick={handleFormatBody}>
@@ -168,7 +168,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       )}
 
       <Space
-        direction="vertical"
+        orientation="vertical"
         size="small"
         style={{
           width: "100%",

@@ -335,7 +335,7 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
         </div>
       ) : (
         <Steps
-          direction="vertical"
+          orientation="vertical"
           size="small"
           items={[
             // 第一个步骤默认为"开始"

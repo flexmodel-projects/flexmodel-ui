@@ -26,7 +26,7 @@ const BatchCreateDrawer: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
       modelName: model?.name,
       apiFolder: model?.name,
       idFieldOfPath: model?.fields?.find((f: Field) => f.type === 'id')?.name,
-      generateAPIs: ['list', 'view', 'create', 'update', 'delete', 'pagination']
+      generateAPIs: ['list', 'pagination', 'view', 'create', 'update', 'delete']
     });
   }, [datasource, form, model]);
 
@@ -82,7 +82,7 @@ const BatchCreateDrawer: React.FC<Props> = ({visible, onConfirm, onCancel}) => {
               </Form.Item>
               <Form.Item label={t('generate_apis')} name="generateAPIs" required>
                 <Checkbox.Group>
-                  <Space direction="vertical" size="small">
+                  <Space orientation="vertical" size="small">
                     <Checkbox value="list" defaultChecked>
                       List
                     </Checkbox>

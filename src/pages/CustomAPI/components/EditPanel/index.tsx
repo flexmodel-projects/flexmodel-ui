@@ -98,7 +98,7 @@ const EditPanel: React.FC<EditPanelProps> = ({
 
   return (
     <>
-      <Space direction="vertical" size="small" className="mb-2">
+      <Space orientation="vertical" size="small" className="mb-2">
         <Flex gap="small" align="center" wrap>
           <Select
             value={editForm?.method}

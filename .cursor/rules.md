@@ -43,7 +43,7 @@ const MyPage: React.FC = () => {
   
   return (
     <PageContainer title={t('page_title')}>
-      <Space direction="vertical">
+      <Space orientation="vertical">
         <Typography.Title level={5} style={{ margin: 0 }}>
           内容标题
         </Typography.Title>

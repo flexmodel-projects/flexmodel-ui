@@ -398,7 +398,7 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
             <div>
               <Title level={4}
                      className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
-              <Space direction="vertical" className="w-full">
+              <Space orientation="vertical" className="w-full">
                 {data.children.map((child) => (
                   <Card key={child.id} size="small" className="bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center justify-between">

@@ -225,7 +225,7 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
           <Title level={4}>
             {t("apis.data_mapping.input", {defaultValue: "入参设置"})}
           </Title>
-          <Space direction="vertical" size="middle" className="w-full">
+          <Space orientation="vertical" size="middle" className="w-full">
             <Form.Item name="inputSchema" noStyle>
               <JsonSchemaEditor
                 key="json-schema-editor-input"
@@ -260,7 +260,7 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
           <Title level={4}>
             {t("apis.data_mapping.output")}
           </Title>
-          <Space direction="vertical" size="middle" className="w-full">
+          <Space orientation="vertical" size="middle" className="w-full">
             <Form.Item name="outputSchema" noStyle>
               <JsonSchemaEditor
                 key="json-schema-editor-output"

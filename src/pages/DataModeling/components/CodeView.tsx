@@ -89,7 +89,7 @@ const CodeView: React.FC<CodeViewProps> = ({datasource}) => {
 
   return (
     <>
-      <Space direction="vertical" style={{width: '100%'}} size="small">
+      <Space orientation="vertical" style={{width: '100%'}} size="small">
         {isExpand && (
           <Form.Item
             label={t('code_view.config_template_variables')}
