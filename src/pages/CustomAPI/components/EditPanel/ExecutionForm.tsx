@@ -47,7 +47,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
       style={{ height: 'calc(100vh - 200px)', overflow: 'scroll' }}
     >
         <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>前置脚本</Typography.Text>
+          <Typography.Text strong>{t("apis.execution.pre_script")}</Typography.Text>
           <div style={{ position: 'relative', marginTop: '8px' }}>
             <TextArea
               readOnly
@@ -57,7 +57,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
               onDoubleClick={handlePreScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
-            <Tooltip title="打开前置脚本编辑器">
+            <Tooltip title={t("apis.execution.open_pre_script_editor")}>
               <Button
                 type="text"
                 icon={<CodeOutlined />}
@@ -68,7 +68,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
           </div>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>GraphQL 查询</Typography.Text>
+          <Typography.Text strong>{t("apis.execution.graphql_query")}</Typography.Text>
           <div style={{ position: 'relative', marginTop: '8px' }}>
             <TextArea
               readOnly
@@ -104,8 +104,8 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             onChange(newData as ApiMeta);
           }}
           onClose={() => setPreScriptEditorVisible(false)}
-          title="前置脚本编辑器"
-          description="请输入前置脚本内容，该脚本将在GraphQL查询执行前运行。"
+          title={t("apis.execution.pre_script_editor")}
+          description={t("apis.execution.pre_script_description")}
         />
         <ScriptEditorModal
           visible={postScriptEditorVisible}
@@ -116,11 +116,11 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             onChange(newData as ApiMeta);
           }}
           onClose={() => setPostScriptEditorVisible(false)}
-          title="后置脚本编辑器"
-          description="请输入后置脚本内容，该脚本将在GraphQL查询执行后运行。"
+          title={t("apis.execution.post_script_editor")}
+          description={t("apis.execution.post_script_description")}
         />
         <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>后置脚本</Typography.Text>
+          <Typography.Text strong>{t("apis.execution.post_script")}</Typography.Text>
           <div style={{ position: 'relative', marginTop: '8px' }}>
             <TextArea
               readOnly
@@ -130,7 +130,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
               onDoubleClick={handlePostScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
-            <Tooltip title="打开后置脚本编辑器">
+            <Tooltip title={t("apis.execution.open_post_script_editor")}>
               <Button
                 type="text"
                 icon={<CodeOutlined />}
