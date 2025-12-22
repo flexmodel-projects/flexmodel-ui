@@ -44,7 +44,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
   return (
     <Card
       className="h-full"
-      style={{ height: 'calc(100vh - 180px)', overflow: 'scroll' }}
+      style={{ height: 'calc(100vh - 200px)', overflow: 'scroll' }}
     >
         <div style={{ marginBottom: '20px' }}>
           <Typography.Text strong>前置脚本</Typography.Text>
@@ -52,14 +52,14 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             <TextArea
               readOnly
               size="large"
-              rows={5}
+              rows={3}
               value={localData?.execution?.preScript || ""}
               onDoubleClick={handlePreScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
             <Tooltip title="打开前置脚本编辑器">
               <Button
-                type="primary"
+                type="text"
                 icon={<CodeOutlined />}
                 onClick={handlePreScriptOpen}
                 style={{ position: 'absolute', top: 8, right: 8, padding: '4px 12px', borderRadius: '4px' }}
@@ -73,7 +73,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             <TextArea
               readOnly
               size="large"
-              rows={8}
+              rows={3}
               value={localData?.execution?.query || ""}
               placeholder={t("apis.graphql.placeholder")}
               onDoubleClick={handleGqlOpen}
@@ -81,7 +81,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             />
             <Tooltip title={t("apis.graphql.open_editor")}>
               <Button
-                type="primary"
+                type="text"
                 icon={<CodeOutlined />}
                 onClick={handleGqlOpen}
                 style={{ position: 'absolute', top: 8, right: 8, padding: '4px 12px', borderRadius: '4px' }}
@@ -125,14 +125,14 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
             <TextArea
               readOnly
               size="large"
-              rows={5}
+              rows={3}
               value={localData?.execution?.postScript || ""}
               onDoubleClick={handlePostScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
             <Tooltip title="打开后置脚本编辑器">
               <Button
-                type="primary"
+                type="text"
                 icon={<CodeOutlined />}
                 onClick={handlePostScriptOpen}
                 style={{ position: 'absolute', top: 8, right: 8, padding: '4px 12px', borderRadius: '4px' }}
