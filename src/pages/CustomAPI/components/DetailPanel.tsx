@@ -338,18 +338,6 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                           </div>
                         </div>
                       )}
-                      {data.meta.dataMapping.input.script && (
-                        <div>
-                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_script", {defaultValue: "执行脚本"})}:
-                          </Text>
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
-                            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                              {data.meta.dataMapping.input.script}
-                            </pre>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
@@ -368,18 +356,6 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                           </Text>
                           <div>
                             {renderSchemaTable(data.meta.dataMapping.output.schema)}
-                          </div>
-                        </div>
-                      )}
-                      {data.meta.dataMapping.output.script && (
-                        <div>
-                          <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_script", {defaultValue: "执行脚本"})}:
-                          </Text>
-                          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
-                            <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                              {data.meta.dataMapping.output.script}
-                            </pre>
                           </div>
                         </div>
                       )}
@@ -475,6 +451,18 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                   </div>
                 )}
 
+                {data.meta.execution.preScript && (
+                  <div>
+                    <Text strong
+                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.pre_script", {defaultValue: "前置脚本"})}:</Text>
+                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                      <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                        {data.meta.execution.preScript}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+
                 {data.meta.execution.query && (
                   <div>
                     <Text strong
@@ -482,6 +470,18 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                     <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
                       <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                         {data.meta.execution.query}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+
+                {data.meta.execution.postScript && (
+                  <div>
+                    <Text strong
+                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.post_script", {defaultValue: "后置脚本"})}:</Text>
+                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
+                      <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                        {data.meta.execution.postScript}
                       </pre>
                     </div>
                   </div>
