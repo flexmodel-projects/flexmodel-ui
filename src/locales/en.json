@@ -6,9 +6,27 @@
     "parent_folder": "Parent Folder",
     "api_path": "API Path",
     "method": "Request Method",
+    "detail": "Detail",
+    "edit": "Edit",
+    "debug": "Debug",
+    "select_api": "Please select an API",
+    "get_history_failed": "Failed to get history records",
+    "header_format_error": "Invalid request header format, please enter valid JSON",
+    "request_failed": "Request failed",
+    "version": "Version: {{version}}",
+    "unknown_operator": "-",
+    "restore_success": "Restored: {{title}}",
+    "restore_failed": "Restore failed",
     "graphql": {
       "placeholder": "Click the button on the right to configure GraphQL",
       "open_editor": "Open GraphQL Editor"
+    },
+    "execution": {
+      "execution_type": "Execution Type",
+      "pre_script": "Pre Script",
+      "open_pre_script_editor": "Open Pre Script Editor",
+      "post_script": "Post Script",
+      "open_post_script_editor": "Open Post Script Editor"
     },
     "data_mapping": {
       "title": "Data Mapping",

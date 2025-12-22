@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from "react";
-import {Card, Divider, Form, Space, Typography} from "antd";
+import {Card, Divider, Form} from "antd";
 import {useTranslation} from "react-i18next";
 import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
@@ -65,7 +65,6 @@ const buildNextMeta = (
 
 const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
   const {t} = useTranslation();
-  const {Title} = Typography;
   const [form] = Form.useForm();
 
   const dataMapping = useMemo<DataMappingConfig>(
@@ -151,55 +150,41 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
     <Card className="h-full" style={{height: "calc(100vh - 225px)", overflow: "auto"}}>
       <Form
         form={form}
-        layout="vertical"
+        layout="horizontal"
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
         initialValues={formValues}
         onValuesChange={handleValuesChange}
       >
-        <div>
-          <Title level={4}>
-            {t("apis.data_mapping.input", {defaultValue: "入参设置"})}
-          </Title>
-          <Space orientation="vertical" size="middle" className="w-full">
-            <Form.Item name="inputSchema" noStyle>
-              <JsonSchemaEditor
-                key="json-schema-editor-input"
-                data={inputSchemaValue || formValues.inputSchema}
-                onChange={(value) => {
-                  console.log('[DataMapping] input JsonSchemaEditor onChange:', value);
-                  form.setFieldValue('inputSchema', value);
-                }}
-                lang="zh_CN"
-                showEditor={false}
-                isMock={false}
-              />
-            </Form.Item>
-
-          </Space>
-        </div>
+        <Form.Item name="inputSchema" label={t("apis.data_mapping.input", {defaultValue: "入参设置"})}>
+          <JsonSchemaEditor
+            key="json-schema-editor-input"
+            data={inputSchemaValue || formValues.inputSchema}
+            onChange={(value) => {
+              console.log('[DataMapping] input JsonSchemaEditor onChange:', value);
+              form.setFieldValue('inputSchema', value);
+            }}
+            lang="zh_CN"
+            showEditor={false}
+            isMock={false}
+          />
+        </Form.Item>
 
         <Divider/>
 
-        <div>
-          <Title level={4}>
-            {t("apis.data_mapping.output")}
-          </Title>
-          <Space orientation="vertical" size="middle" className="w-full">
-            <Form.Item name="outputSchema" noStyle>
-              <JsonSchemaEditor
-                key="json-schema-editor-output"
-                data={outputSchemaValue || formValues.outputSchema}
-                onChange={(value) => {
-                  console.log('[DataMapping] output JsonSchemaEditor onChange:', value);
-                  form.setFieldValue('outputSchema', value);
-                }}
-                lang="zh_CN"
-                showEditor={false}
-                isMock={false}
-              />
-            </Form.Item>
-
-          </Space>
-        </div>
+        <Form.Item name="outputSchema" label={t("apis.data_mapping.output")}>
+          <JsonSchemaEditor
+            key="json-schema-editor-output"
+            data={outputSchemaValue || formValues.outputSchema}
+            onChange={(value) => {
+              console.log('[DataMapping] output JsonSchemaEditor onChange:', value);
+              form.setFieldValue('outputSchema', value);
+            }}
+            lang="zh_CN"
+            showEditor={false}
+            isMock={false}
+          />
+        </Form.Item>
       </Form>
     </Card>
   );

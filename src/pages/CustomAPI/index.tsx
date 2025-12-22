@@ -334,15 +334,15 @@ const CustomAPI: React.FC = () => {
   const headerTabItems: TabsProps["items"] = [
     {
       key: "detail",
-      label: "详情",
+      label: t("apis.detail"),
     },
     {
       key: "edit",
-      label: "编辑",
+      label: t("apis.edit"),
     },
     {
       key: "debug",
-      label: "调试",
+      label: t("apis.debug"),
     },
   ];
 
@@ -352,8 +352,8 @@ const CustomAPI: React.FC = () => {
   const mapToHistoryRecord = (h: ApiDefinitionHistory): HistoryRecord => {
     return {
       id: h.id,
-      title: `版本：${h.updatedAt || h.createdAt}`,
-      operator: h.updatedBy || h.createdBy || "-",
+      title: t("apis.version", { version: h.updatedAt || h.createdAt }),
+      operator: h.updatedBy || h.createdBy || t("apis.unknown_operator"),
       time: h.updatedAt || h.createdAt,
       detail: `${h.method || ""} ${h.path || ""}`.trim(),
       payload: h as any,
@@ -362,7 +362,7 @@ const CustomAPI: React.FC = () => {
 
   const handleHistoryClick = async () => {
     if (!editForm?.id) {
-      message.warning("请选择一个接口");
+      message.warning(t("apis.select_api"));
       return;
     }
     setHistoryVisible(true);
@@ -373,7 +373,7 @@ const CustomAPI: React.FC = () => {
         .sort((a, b) => (b.time || "").localeCompare(a.time || ""));
       setHistoryRecords(mapped);
     } catch {
-      message.error("获取历史记录失败");
+      message.error(t("apis.get_history_failed"));
       setHistoryRecords([]);
     }
   };
@@ -474,7 +474,7 @@ const CustomAPI: React.FC = () => {
       try {
         parsedHeaders = JSON.parse(debugHeaders);
       } catch {
-        message.error("请求头格式错误，请输入合法的 JSON");
+        message.error(t("apis.header_format_error"));
         return;
       }
     }
@@ -506,7 +506,7 @@ const CustomAPI: React.FC = () => {
       setDebugResponse(text);
       setDebugResponseStatus(`${response.status} ${response.statusText}`);
     } catch (error: any) {
-      setDebugResponseStatus("请求失败");
+      setDebugResponseStatus(t("apis.request_failed"));
       setDebugResponse(error?.message || String(error));
     } finally {
       setDebugLoading(false);
@@ -519,12 +519,12 @@ const CustomAPI: React.FC = () => {
   // 还原历史版本
   const handleRestoreHistory = async (record: HistoryRecord) => {
     if (!editForm?.id) {
-      message.warning("请选择一个接口");
+      message.warning(t("apis.select_api"));
       return;
     }
     try {
       await restoreApiHistory(editForm.id, record.id);
-      message.success(`已还原：${record.title}`);
+      message.success(t("apis.restore_success", { title: record.title }));
       // 刷新API列表并保持当前选中项不变
       const apis = await reqApiList();
       const findApiById = (list: ApiDefinition[], id: string): ApiDefinition | null => {
@@ -559,7 +559,7 @@ const CustomAPI: React.FC = () => {
         // 忽略内部刷新失败
       }
     } catch (e: any) {
-      message.error(e?.message || "还原失败");
+      message.error(e?.message || t("apis.restore_failed"));
     }
   };
 

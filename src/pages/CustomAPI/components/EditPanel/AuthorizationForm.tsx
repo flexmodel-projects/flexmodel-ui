@@ -94,8 +94,8 @@ const AuthorizationForm: React.FC<AuthProps> = ({ data, onChange }: AuthProps) =
       <Form
         form={form}
         initialValues={data}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
         layout="horizontal"
         onValuesChange={handleFormValuesChange}
       >

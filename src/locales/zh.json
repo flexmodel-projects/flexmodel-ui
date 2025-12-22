@@ -6,9 +6,27 @@
     "parent_folder": "上级目录",
     "api_path": "接口路径",
     "method": "请求方法",
+    "detail": "详情",
+    "edit": "编辑",
+    "debug": "调试",
+    "select_api": "请选择一个接口",
+    "get_history_failed": "获取历史记录失败",
+    "header_format_error": "请求头格式错误，请输入合法的 JSON",
+    "request_failed": "请求失败",
+    "version": "版本：{{version}}",
+    "unknown_operator": "-",
+    "restore_success": "已还原：{{title}}",
+    "restore_failed": "还原失败",
     "graphql": {
       "placeholder": "点击右侧按钮配置GraphQL",
       "open_editor": "打开GraphQL编辑器"
+    },
+    "execution": {
+      "execution_type": "执行类型",
+      "pre_script": "前置脚本",
+      "open_pre_script_editor": "打开前置脚本编辑器",
+      "post_script": "后置脚本",
+      "open_post_script_editor": "打开后置脚本编辑器"
     },
     "data_mapping": {
       "title": "数据映射",

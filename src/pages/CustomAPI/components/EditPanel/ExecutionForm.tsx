@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ApiMeta } from "@/types/api-management";
 import { GraphQLEditorModal } from "@/components/common";
 import ScriptEditorModal from "@/components/common/ScriptEditorModal";
-import { Button, Card, Tooltip, Typography } from "antd";
+import { Button, Card, Form, Radio, Tooltip } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import TextArea from "antd/es/input/TextArea";
@@ -17,7 +17,9 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
   const [gqlEditorVisible, setGqlEditorVisible] = useState(false);
   const [preScriptEditorVisible, setPreScriptEditorVisible] = useState(false);
   const [postScriptEditorVisible, setPostScriptEditorVisible] = useState(false);
-  const [localData, setLocalData] = useState<ApiMeta>(data);
+  const [formData, setFormData] = useState<ApiMeta>(data);
+  const [form] = Form.useForm();
+  const prevDataRef = useRef<ApiMeta>(data);
 
   const handleGqlOpen = () => {
     setGqlEditorVisible(true);
@@ -35,10 +37,47 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
     setPostScriptEditorVisible(true);
   };
 
+  // 表单数据回填 - 只在data真正变化时执行
+  useEffect(() => {
+    // 深度比较，避免不必要的更新
+    const isDataChanged =
+      JSON.stringify(data) !== JSON.stringify(prevDataRef.current);
+
+    if (isDataChanged && data && Object.keys(data).length > 0) {
+      form.setFieldsValue(data);
+      setFormData(data);
+      prevDataRef.current = data;
+    }
+  }, [data, form]);
+
+  // 数据变化时通知父组件 - 使用useCallback避免无限循环
+  const handleDataChange = useCallback(
+    (newData: ApiMeta) => {
+      // 避免重复调用onChange
+      if (
+        JSON.stringify(newData) !== JSON.stringify(prevDataRef.current)
+      ) {
+        prevDataRef.current = newData;
+        onChange(newData);
+      }
+    },
+    [onChange]
+  );
+
+  // 表单值变化处理
+  const handleFormValuesChange = useCallback(
+    (changedValues: Partial<ApiMeta>) => {
+      const newFormData = { ...formData, ...changedValues };
+      setFormData(newFormData);
+      handleDataChange(newFormData);
+    },
+    [formData, handleDataChange]
+  );
+
   const handleEditorChange = (r: any) => {
-    const newData = { ...localData, execution: r };
-    setLocalData(newData);
-    onChange(newData as ApiMeta);
+    const newData = { ...formData, execution: { ...r, executionType: formData.execution?.executionType || 'graphql' } };
+    setFormData(newData);
+    handleDataChange(newData);
   };
 
   return (
@@ -46,14 +85,22 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
       className="h-full"
       style={{ height: 'calc(100vh - 200px)', overflow: 'scroll' }}
     >
-        <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>{t("apis.execution.pre_script")}</Typography.Text>
-          <div style={{ position: 'relative', marginTop: '8px' }}>
+      <Form
+        form={form}
+        initialValues={{ ...data, execution: { ...data.execution, executionType: data.execution?.executionType || 'graphql' } }}
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
+        layout="horizontal"
+        onValuesChange={handleFormValuesChange}
+      >
+        
+        <Form.Item name={['execution', 'preScript']} label={t("apis.execution.pre_script")}>
+          <div style={{ position: 'relative' }}>
             <TextArea
               readOnly
               size="large"
               rows={3}
-              value={localData?.execution?.preScript || ""}
+              value={formData?.execution?.preScript || ""}
               onDoubleClick={handlePreScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
@@ -66,15 +113,19 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
               />
             </Tooltip>
           </div>
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>{t("apis.execution.graphql_query")}</Typography.Text>
-          <div style={{ position: 'relative', marginTop: '8px' }}>
+        </Form.Item>
+        <Form.Item name={['execution', 'executionType']} label={t("apis.execution.execution_type")} initialValue="graphql">
+          <Radio.Group>
+            <Radio value="graphql">GraphQL</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item name={['execution', 'query']} label={t("apis.execution.graphql_query")}>
+          <div style={{ position: 'relative' }}>
             <TextArea
               readOnly
               size="large"
               rows={3}
-              value={localData?.execution?.query || ""}
+              value={formData?.execution?.query || ""}
               placeholder={t("apis.graphql.placeholder")}
               onDoubleClick={handleGqlOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
@@ -88,45 +139,14 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
               />
             </Tooltip>
           </div>
-        </div>
-        <GraphQLEditorModal
-          visible={gqlEditorVisible}
-          value={localData.execution || { query: "" }}
-          onChange={handleEditorChange}
-          onClose={handleGqlClose}
-        />
-        <ScriptEditorModal
-          visible={preScriptEditorVisible}
-          value={localData?.execution?.preScript || ""}
-          onChange={(value: string) => {
-            const newData = { ...localData, execution: { ...localData.execution, preScript: value, query: localData.execution?.query || "" } };
-            setLocalData(newData);
-            onChange(newData as ApiMeta);
-          }}
-          onClose={() => setPreScriptEditorVisible(false)}
-          title={t("apis.execution.pre_script_editor")}
-          description={t("apis.execution.pre_script_description")}
-        />
-        <ScriptEditorModal
-          visible={postScriptEditorVisible}
-          value={localData?.execution?.postScript || ""}
-          onChange={(value: string) => {
-            const newData = { ...localData, execution: { ...localData.execution, postScript: value, query: localData.execution?.query || "" } };
-            setLocalData(newData);
-            onChange(newData as ApiMeta);
-          }}
-          onClose={() => setPostScriptEditorVisible(false)}
-          title={t("apis.execution.post_script_editor")}
-          description={t("apis.execution.post_script_description")}
-        />
-        <div style={{ marginBottom: '20px' }}>
-          <Typography.Text strong>{t("apis.execution.post_script")}</Typography.Text>
-          <div style={{ position: 'relative', marginTop: '8px' }}>
+        </Form.Item>
+        <Form.Item name={['execution', 'postScript']} label={t("apis.execution.post_script")}>
+          <div style={{ position: 'relative' }}>
             <TextArea
               readOnly
               size="large"
               rows={3}
-              value={localData?.execution?.postScript || ""}
+              value={formData?.execution?.postScript || ""}
               onDoubleClick={handlePostScriptOpen}
               style={{ borderRadius: '6px', border: '1px solid #d9d9d9' }}
             />
@@ -139,7 +159,38 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({ data, onChange }: Execute
               />
             </Tooltip>
           </div>
-        </div>
+        </Form.Item>
+      </Form>
+        <GraphQLEditorModal
+          visible={gqlEditorVisible}
+          value={formData.execution || { query: "" }}
+          onChange={handleEditorChange}
+          onClose={handleGqlClose}
+        />
+        <ScriptEditorModal
+          visible={preScriptEditorVisible}
+          value={formData?.execution?.preScript || ""}
+          onChange={(value: string) => {
+            const newData = { ...formData, execution: { ...formData.execution, preScript: value, query: formData.execution?.query || "" } };
+            setFormData(newData);
+            handleDataChange(newData);
+          }}
+          onClose={() => setPreScriptEditorVisible(false)}
+          title={t("apis.execution.pre_script_editor")}
+          description={t("apis.execution.pre_script_description")}
+        />
+        <ScriptEditorModal
+          visible={postScriptEditorVisible}
+          value={formData?.execution?.postScript || ""}
+          onChange={(value: string) => {
+            const newData = { ...formData, execution: { ...formData.execution, postScript: value, query: formData.execution?.query || "" } };
+            setFormData(newData);
+            handleDataChange(newData);
+          }}
+          onClose={() => setPostScriptEditorVisible(false)}
+          title={t("apis.execution.post_script_editor")}
+          description={t("apis.execution.post_script_description")}
+        />
     </Card>
   );
 };
