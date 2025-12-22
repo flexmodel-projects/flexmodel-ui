@@ -6,6 +6,10 @@
     "parent_folder": "上级目录",
     "api_path": "接口路径",
     "method": "请求方法",
+    "graphql": {
+      "placeholder": "点击右侧按钮配置GraphQL",
+      "open_editor": "打开GraphQL编辑器"
+    },
     "data_mapping": {
       "title": "数据映射",
       "input": "入参设置",

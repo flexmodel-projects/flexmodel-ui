@@ -6,6 +6,10 @@
     "parent_folder": "Parent Folder",
     "api_path": "API Path",
     "method": "Request Method",
+    "graphql": {
+      "placeholder": "Click the button on the right to configure GraphQL",
+      "open_editor": "Open GraphQL Editor"
+    },
     "data_mapping": {
       "title": "Data Mapping",
       "input": "Input Settings",

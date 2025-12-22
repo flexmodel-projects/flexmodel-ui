@@ -17,24 +17,29 @@ const CreateIdP: React.FC<CreateIdPProps> = ({ open, onClose, onConfirm }) => {
 
   const [form] = Form.useForm();
   const JAVASCRIPT_TEMPLATE = `/**
- * Identity Provider Script Template
- * Implement authenticate(request) to return an object:
- *   { success: boolean, user?: { id: string; name?: string; roles?: string[] }, message?: string }
- * You can read headers via request.headers and query via request.query
+/**
+ * Execution context: encapsulates request, response, and environment utilities
+ * context = {
+ *   request: {
+ *     method,
+ *     url,
+ *     headers,
+ *     body,
+ *     query
+ *   },
+ *   response: {
+ *     status,
+ *     headers,
+ *     body
+ *   },
+ *   log(msg) {},
+ *   utils: {
+ *     md5(str) {},
+ *     jwtVerify(token) {}
+ *   }
+ * }
+ *
  */
-function authenticate(request) {
-  // Example: simple token check from header
-  const auth = request.headers['authorization'] || request.headers['Authorization'];
-  if (!auth || !auth.startsWith('Bearer ')) {
-    return { success: false, message: 'Missing bearer token' };
-  }
-  const token = auth.substring('Bearer '.length);
-  // TODO: verify token, fetch user, etc.
-  if (token === 'demo-token') {
-    return { success: true, user: { id: 'demo', name: 'Demo User', roles: ['user'] } };
-  }
-  return { success: false, message: 'Invalid token' };
-}
 `;
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -98,8 +103,8 @@ function authenticate(request) {
         </>
       }
     >
-      <Steps 
-        current={currentStep} 
+      <Steps
+        current={currentStep}
         size="small"
         items={[
           { title: t('idp_step_select_provider') },

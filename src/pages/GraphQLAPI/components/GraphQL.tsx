@@ -146,6 +146,9 @@ const GraphQL: React.FC<GraphQLProps> = ({ data, onChange }: GraphQLProps) => {
     }
 
     styleElement.textContent = `
+      .graphiql-dialog {
+         z-index: 99999999;
+      }
       .graphiql-container .graphiql-toolbar > button:first-child {
         background-color: ${token.colorPrimary} !important;
         color: white !important;
