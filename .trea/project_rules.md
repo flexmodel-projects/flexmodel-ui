@@ -1,3 +1,3 @@
-# Trea Rules - FlexModel UI React 项目
+# Trea Rules - FlexModel UI 项目
 
 相关规则请参考[.cursor](../.cursor)
