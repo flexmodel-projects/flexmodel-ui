@@ -8,6 +8,7 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
   messages,
   isLoading,
   onSendMessage,
+  onCancelRequest,
   onToggleFloating,
   onClose,
   onNewChat,
@@ -120,6 +121,7 @@ const FloatingChat: React.FC<FloatingChatProps> = ({
           messages={messages}
           isLoading={isLoading}
           onSendMessage={onSendMessage}
+          onCancelRequest={onCancelRequest}
         />
       </div>
     </div>

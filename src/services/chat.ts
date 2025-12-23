@@ -38,7 +38,7 @@ export interface Conversation {
 /**
  * 发送聊天消息（流式响应）
  */
-export const sendChatMessage = async (params: ChatRequest): Promise<Response> => {
+export const sendChatMessage = async (params: ChatRequest, signal?: AbortSignal): Promise<Response> => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -53,7 +53,8 @@ export const sendChatMessage = async (params: ChatRequest): Promise<Response> =>
   return fetch('/api/f/ai/chat/completions', {
     method: 'POST',
     headers,
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
+    signal
   });
 };
 

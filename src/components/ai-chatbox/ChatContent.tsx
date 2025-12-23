@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {RobotOutlined, UserOutlined} from '@ant-design/icons';
 import type {PromptsProps} from '@ant-design/x';
 import {Bubble, Prompts, Sender, Welcome, XProvider} from '@ant-design/x';
-import {theme, Typography} from 'antd';
+import {theme, Tooltip, Typography} from 'antd';
 import {ChatContentProps} from './types';
 import markdownit from 'markdown-it';
 
@@ -27,7 +27,8 @@ const items: PromptsProps['items'] = [
 const ChatContent: React.FC<ChatContentProps> = ({
                                                    messages,
                                                    isLoading,
-                                                   onSendMessage
+                                                   onSendMessage,
+                                                   onCancelRequest
                                                  }) => {
   const {token} = theme.useToken();
   const [chatInputValue, setChatInputValue] = useState<string>();
@@ -36,6 +37,12 @@ const ChatContent: React.FC<ChatContentProps> = ({
     if (value.trim()) {
       onSendMessage(value);
       setChatInputValue(''); // 清空输入框
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancelRequest) {
+      onCancelRequest();
     }
   };
 
@@ -173,7 +180,20 @@ const ChatContent: React.FC<ChatContentProps> = ({
             onChange={setChatInputValue}
             onSubmit={handleSubmit}
             disabled={isLoading}
+            onCancel={handleCancel}
             style={{width: '100%'}}
+            suffix={(_, info) => {
+          const { SendButton, LoadingButton } = info.components;
+          if (isLoading) {
+            return (
+              <Tooltip title="Click to cancel">
+                <LoadingButton onClick={handleCancel} disabled={!isLoading} />
+              </Tooltip>
+            );
+          }
+
+          return <SendButton disabled={isLoading}/>;
+        }}
           />
         </div>
       </div>

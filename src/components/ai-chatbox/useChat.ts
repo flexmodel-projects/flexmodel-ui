@@ -10,6 +10,7 @@ export const useChat = (
   onMessages?: (messages: Message[]) => void,
 ) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   const scrollToBottom = useCallback(() => {
     const chatContainer = document.querySelector(".chat-messages-container");
@@ -20,10 +21,21 @@ export const useChat = (
     }
   }, []);
 
+  const handleCancelRequest = useCallback(() => {
+    if (abortController) {
+      abortController.abort();
+      setIsLoading(false);
+    }
+  }, [abortController]);
+
   const handleSendMessage = useCallback(
     async (content: string) => {
       if (!content.trim() || isLoading || !initialMessages || !onMessages)
         return;
+
+      // 创建新的AbortController用于取消请求
+      const controller = new AbortController();
+      setAbortController(controller);
 
       const userMessage: Message = {
         id: Date.now().toString(),
@@ -69,8 +81,8 @@ export const useChat = (
           stream: true,
         };
 
-        // 使用chat服务发送流式请求
-        const response = await sendChatMessage(requestData);
+        // 使用chat服务发送流式请求，传递signal用于取消
+        const response = await sendChatMessage(requestData, controller.signal);
 
         if (!response.ok) {
           message.error(`HTTP error! status: ${response.status}`);
@@ -81,6 +93,11 @@ export const useChat = (
         for await (const line of XStream({
           readableStream: response.body as ReadableStream<Uint8Array>,
         })) {
+          // 检查是否被取消
+          if (controller.signal.aborted) {
+            break;
+          }
+          
           try {
             const { data } = line;
             if (data === "[DONE]") {
@@ -114,18 +131,29 @@ export const useChat = (
             console.error("解析流数据失败:", error);
           }
         }
-      } catch (error) {
-        console.error("API调用失败:", error);
-        message.error("发送消息失败，请稍后重试");
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          console.log('请求已被取消');
+          // 当请求被取消时，移除AI消息占位符
+          const currentMessages = [...updatedMessages, aiMessage];
+          const messagesWithoutAI = currentMessages.filter(
+            (msg) => msg.id !== aiMessageId,
+          );
+          onMessages(messagesWithoutAI);
+        } else {
+          console.error("API调用失败:", error);
+          message.error("发送消息失败，请稍后重试");
 
-        // 移除失败的AI消息
-        const currentMessages = [...updatedMessages, aiMessage];
-        const messagesWithoutFailedAI = currentMessages.filter(
-          (msg) => msg.id !== aiMessageId,
-        );
-        onMessages(messagesWithoutFailedAI);
+          // 移除失败的AI消息
+          const currentMessages = [...updatedMessages, aiMessage];
+          const messagesWithoutFailedAI = currentMessages.filter(
+            (msg) => msg.id !== aiMessageId,
+          );
+          onMessages(messagesWithoutFailedAI);
+        }
       } finally {
         setIsLoading(false);
+        setAbortController(null);
       }
     },
     [conversationId, initialMessages, isLoading, scrollToBottom, onMessages],
@@ -135,6 +163,7 @@ export const useChat = (
     messages: initialMessages || [],
     isLoading,
     handleSendMessage,
+    handleCancelRequest,
     scrollToBottom,
   };
 };

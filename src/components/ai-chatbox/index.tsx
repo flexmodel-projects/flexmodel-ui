@@ -23,7 +23,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
     onMessages(newMessages);
   }, []);
 
-  const { messages: chatMessages, isLoading, handleSendMessage } = useChat(conversationId, messages, handleMessagesChange);
+  const { messages: chatMessages, isLoading, handleSendMessage, handleCancelRequest } = useChat(conversationId, messages, handleMessagesChange);
 
   // 处理关闭事件，同时清空消息
   const handleClose = () => {
@@ -60,6 +60,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
         messages={chatMessages}
         isLoading={isLoading}
         onSendMessage={handleSendMessage}
+        onCancelRequest={handleCancelRequest}
         onToggleFloating={onToggleFloating || (() => { })}
         onClose={handleClose}
         onNewChat={handleNewChat}
@@ -74,6 +75,7 @@ const AIChatBox: React.FC<AIChatBoxProps> = ({
       messages={chatMessages}
       isLoading={isLoading}
       onSendMessage={handleSendMessage}
+      onCancelRequest={handleCancelRequest}
       onToggleFloating={onToggleFloating || (() => { })}
       onClose={onToggle ? handleClose : undefined}
       onNewChat={handleNewChat}

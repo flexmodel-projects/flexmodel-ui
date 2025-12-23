@@ -31,12 +31,14 @@ export interface ChatContentProps {
   messages: Message[];
   isLoading: boolean;
   onSendMessage: (content: string) => void;
+  onCancelRequest?: () => void;
 }
 
 export interface FloatingChatProps {
   messages: Message[];
   isLoading: boolean;
   onSendMessage: (content: string) => void;
+  onCancelRequest?: () => void;
   onToggleFloating: (floating: boolean) => void;
   onClose: () => void;
   onNewChat?: () => void;
@@ -47,6 +49,7 @@ export interface FixedChatProps {
   messages: Message[];
   isLoading: boolean;
   onSendMessage: (content: string) => void;
+  onCancelRequest?: () => void;
   onToggleFloating: (floating: boolean) => void;
   onClose?: () => void;
   onNewChat?: () => void;

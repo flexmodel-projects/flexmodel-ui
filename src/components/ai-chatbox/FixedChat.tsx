@@ -8,6 +8,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
   messages,
   isLoading,
   onSendMessage,
+  onCancelRequest,
   onToggleFloating,
   onClose,
   onNewChat,
@@ -47,6 +48,7 @@ const FixedChat: React.FC<FixedChatProps> = ({
         messages={messages}
         isLoading={isLoading}
         onSendMessage={onSendMessage}
+        onCancelRequest={onCancelRequest}
       />
     </div>
   );
