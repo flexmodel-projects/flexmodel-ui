@@ -7,7 +7,6 @@ import {ScriptImportForm, ScriptType} from "@/types/data-source";
 import DataSourceExplorer from "@/pages/DataSource/components/DataSourceExplorer";
 import {
   deleteDatasource,
-  getDatasourceList,
   importModels as reqImportModels,
   updateDatasource,
   validateDatasource,
@@ -19,12 +18,9 @@ import DataSourceForm from "@/pages/DataSource/components/DataSourceForm";
 import {getModelList} from "@/services/model.ts";
 import {EntitySchema, EnumSchema, NativeQuerySchema,} from "@/types/data-modeling";
 
-
 const DatasourceManagement: React.FC = () => {
   const {t} = useTranslation();
-  const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
   const [activeDs, setActiveDs] = useState<DatasourceSchema | null>(null);
-  const [dsLoading, setDsLoading] = useState<boolean>(false);
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -56,23 +52,9 @@ const DatasourceManagement: React.FC = () => {
     }
   }, [scriptForm, modelList, exportVisible]);
 
-  const getDatasourceListHandler = async () => {
-    try {
-      setDsLoading(true);
-      const list = await getDatasourceList();
-      setDsList(list);
-      setActiveDs(list[0] || null);
-    } catch (error) {
-      console.log(error);
-      message.error(t("failed_to_load_datasource_list"));
-    } finally {
-      setDsLoading(false);
-    }
+  const handleSelect = (ds: DatasourceSchema) => {
+    setActiveDs(ds);
   };
-
-  useEffect(() => {
-    getDatasourceListHandler();
-  }, []);
 
   const handleTestConnection = async () => {
     if (!activeDs) return;
@@ -101,7 +83,6 @@ const DatasourceManagement: React.FC = () => {
       const payload = buildUpdatePayload(formData);
       await updateDatasource(formData.name, payload as DatasourceSchema);
       setIsEditing(false);
-      await getDatasourceListHandler();
       if (activeDs) {
         const merged = mergeDatasource(activeDs, formData);
         setActiveDs(merged);
@@ -116,7 +97,6 @@ const DatasourceManagement: React.FC = () => {
     if (activeDs) {
       try {
         await deleteDatasource(activeDs.name);
-        getDatasourceListHandler();
         setDeleteVisible(false);
         message.success(t("delete_datasource_success"));
       } catch {
@@ -153,7 +133,6 @@ const DatasourceManagement: React.FC = () => {
   return (
     <>
       <PageContainer
-        loading={dsLoading}
         title={activeDs?.name || t('datasource_management')}
         extra={
           <>
@@ -193,17 +172,15 @@ const DatasourceManagement: React.FC = () => {
           <Sider width={320} style={{background: "transparent", borderRight: "1px solid var(--ant-color-border)"}}>
             <div style={{height: "100%", overflow: "auto"}}>
               <DataSourceExplorer
-                dsList={dsList}
-                activeDs={activeDs}
-                setActiveDs={setActiveDs}
+                onSelect={handleSelect}
                 setDeleteVisible={setDeleteVisible}
                 setDrawerVisible={setDrawerVisible}
-                t={t}
+                selectedDataSource={activeDs?.name}
               />
             </div>
           </Sider>
           <Content style={{padding: "12px 20px", overflow: "auto"}}>
-            {dsList.length > 0 && activeDs && (
+            {activeDs && (
               <Row>
                 <Col span={24}>
                   {isEditing ? (
@@ -223,7 +200,6 @@ const DatasourceManagement: React.FC = () => {
       <ConnectDatabaseDrawer
         visible={drawerVisible}
         onChange={(data) => {
-          getDatasourceListHandler();
           setActiveDs(data);
         }}
         onClose={() => {
@@ -274,7 +250,7 @@ const DatasourceManagement: React.FC = () => {
         >
           <Form.Item label={t("type_label")} name="type">
             <Radio.Group>
-              <Radio value="IDL">IDL</Radio>
+              <Radio value="IDL" defaultChecked>IDL</Radio>
               <Radio value="JSON">JSON</Radio>
             </Radio.Group>
           </Form.Item>
@@ -294,7 +270,7 @@ const DatasourceManagement: React.FC = () => {
         <Form form={scriptForm}>
           <Form.Item label={t("type_label")} name="type">
             <Radio.Group>
-              <Radio value="IDL">IDL</Radio>
+              <Radio value="IDL" defaultChecked>IDL</Radio>
               <Radio value="JSON">JSON</Radio>
             </Radio.Group>
           </Form.Item>

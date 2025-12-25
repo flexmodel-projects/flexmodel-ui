@@ -1,5 +1,5 @@
-import React from "react";
-import {Button, Divider, Dropdown} from "antd";
+import React, {useState, useEffect} from "react";
+import {Button, Divider, Dropdown, Spin} from "antd";
 import type {MenuProps} from "antd";
 import Icon, {BlockOutlined, DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 // 导入Tree组件
@@ -7,6 +7,7 @@ import Tree from "@/components/explore/explore/Tree.jsx";
 // 导入Tree样式
 import "@/components/explore/styles/explore.scss";
 import type {DatasourceSchema} from "@/types/data-source";
+import {getDatasourceList} from "@/services/datasource.ts";
 // 数据库图标映射
 import MySQL from "@/assets/icons/svg/mysql.svg?react";
 import MariaDB from "@/assets/icons/svg/mariadb.svg?react";
@@ -19,6 +20,7 @@ import GBase from "@/assets/icons/svg/gbase.svg?react";
 import DM8 from "@/assets/icons/svg/dm.svg?react";
 import TiDB from "@/assets/icons/svg/tidb.svg?react";
 import MongoDB from "@/assets/icons/svg/mongodb.svg?react";
+import {useTranslation} from "react-i18next";
 
 const DbsMap: Record<string, any> = {
   mysql: MySQL,
@@ -35,22 +37,65 @@ const DbsMap: Record<string, any> = {
 };
 
 interface DataSourceExplorerProps {
-  dsList: DatasourceSchema[];
-  activeDs: DatasourceSchema | null;
-  setActiveDs: (ds: DatasourceSchema) => void;
+  onSelect: (ds: DatasourceSchema) => void;
   setDeleteVisible: (visible: boolean) => void;
   setDrawerVisible: (visible: boolean) => void;
-  t: (key: string) => string;
+  selectedDataSource?: string; // 可选的选中数据源名称
 }
 
 const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
-                                                                 dsList,
-                                                                 activeDs,
-                                                                 setActiveDs,
+                                                                 onSelect,
                                                                  setDeleteVisible,
                                                                  setDrawerVisible,
-                                                                 t,
+                                                                 selectedDataSource,
                                                                }) => {
+  const {t} = useTranslation();
+  // 内部管理数据源列表和当前选中的数据源
+  const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
+  const [activeDs, setActiveDs] = useState<DatasourceSchema | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 获取数据源列表
+  const getDatasourceListHandler = async () => {
+    try {
+      setLoading(true);
+      const list = await getDatasourceList();
+      setDsList(list);
+
+      // 设置初始选中的数据源
+      let initialActiveDs = null;
+      if (selectedDataSource) {
+        initialActiveDs = list.find(ds => ds.name === selectedDataSource) || null;
+      } else {
+        initialActiveDs = list[0] || null;
+      }
+
+      setActiveDs(initialActiveDs);
+      if (initialActiveDs) {
+        onSelect(initialActiveDs);
+      }
+    } catch (error) {
+      console.error("Failed to load datasource list:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 组件挂载时获取数据源列表
+  useEffect(() => {
+    getDatasourceListHandler();
+  }, []);
+
+  // 当selectedDataSource变化时更新选中状态
+  useEffect(() => {
+    if (selectedDataSource && dsList.length > 0) {
+      const ds = dsList.find(ds => ds.name === selectedDataSource) || null;
+      setActiveDs(ds);
+      if (ds) {
+        onSelect(ds);
+      }
+    }
+  }, [selectedDataSource, dsList, onSelect]);
   // 将数据源列表转换为Tree组件需要的数据结构
   const treeData = {
     children: dsList.map((ds) => ({
@@ -110,25 +155,31 @@ const DataSourceExplorer: React.FC<DataSourceExplorerProps> = ({
   };
 
   return (
-    <div style={{minWidth: 200}}>
-      <Tree
-        tree={treeData}
-        selected={selectedItem}
-        onClickItem={(item) => setActiveDs(item.datasource)}
-        renderIcon={renderIcon}
-        renderMore={renderMore}
-      />
-      <Divider style={{margin: "8px 0"}}/>
-      <Button
-        type="primary"
-        icon={<BlockOutlined/>}
-        onClick={() => setDrawerVisible(true)}
-        style={{width: "100%"}}
-        ghost
-      >
-        {t("connect_datasource")}
-      </Button>
-    </div>
+    <Spin spinning={loading}>
+      <div style={{minWidth: 200}}>
+        <Tree
+          tree={treeData}
+          selected={selectedItem}
+          onClickItem={(item) => {
+            setActiveDs(item.datasource);
+            onSelect(item.datasource);
+          }}
+          renderIcon={renderIcon}
+          renderMore={renderMore}
+        />
+
+        <Divider style={{margin: "8px 0"}}/>
+        <Button
+          type="primary"
+          icon={<BlockOutlined/>}
+          onClick={() => setDrawerVisible(true)}
+          style={{width: "100%"}}
+          ghost
+        >
+          {t("connect_datasource")}
+        </Button>
+      </div>
+    </Spin>
   );
 };
 

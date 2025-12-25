@@ -35,9 +35,9 @@ const IconNativeQueryFolder = () => (
     width='18' height='18'
   >
     {/* 文件夹主体 - 黄色系 */}
-    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14' />
+    <rect x='2' y='7' width='20' height='11' rx='2.5' fill='#FAAD14'/>
     {/* 文件夹盖子 */}
-    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F' />
+    <rect x='2' y='5' width='10' height='4' rx='1.5' fill='#FFE58F'/>
     {/* 叠加一个Q字母 */}
     <text x='12' y='16' textAnchor='middle' fontSize='9' fill='#fff' fontFamily='Arial' fontWeight='bold'>NQ</text>
   </svg>
@@ -56,7 +56,7 @@ const IconNativeQueryModel = () => (
     width='18' height='18'
   >
     {/* 紫色圆形背景，与枚举风格一致 */}
-    <circle cx='12' cy='12' r='9' fill='#722ED1' />
+    <circle cx='12' cy='12' r='9' fill='#722ED1'/>
     {/* 白色字母Q */}
     <text x='12' y='16' textAnchor='middle' fontSize='10' fill='#fff' fontFamily='Arial' fontWeight='bold'>Q</text>
   </svg>
@@ -81,16 +81,18 @@ interface ModelBrowserProps {
   editable: boolean;
   onSelect: (ds: string, model: Model) => void;
   version?: number;
+  selectedModelName?: string; // 从URL参数传入的选中模型名称
 }
 
 const ModelExplorer: React.FC<ModelBrowserProps> = ({
-  datasource,
-  editable,
-  onSelect,
-  version,
-}) => {
-  const { t } = useTranslation();
-  const { locale } = useLocale();
+                                                      datasource,
+                                                      editable,
+                                                      onSelect,
+                                                      version,
+                                                      selectedModelName,
+                                                    }) => {
+  const {t} = useTranslation();
+  const {locale} = useLocale();
   const navigate = useNavigate();
   const [activeDs, setActiveDs] = useState<string>(datasource || "");
   const [dsList, setDsList] = useState<DatasourceSchema[]>([]);
@@ -184,7 +186,24 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
     setModelList(groupData);
     setFilteredModelList(groupData); // 初始化时未过滤
     setExpandedKeys(expandedKeys.length ? expandedKeys : [groupData[0]?.key]);
-    const m = activeModel || groupData[0]?.children[0] || null;
+
+    // 根据URL参数恢复选中的模型，如果没有URL参数则使用默认选择
+    let selectedModel = null;
+    if (selectedModelName) {
+      // 在所有分组中查找匹配的模型
+      for (const group of groupData) {
+        if (group.children) {
+          const foundModel = group.children.find((child: any) => child.name === selectedModelName);
+          if (foundModel) {
+            selectedModel = foundModel;
+            break;
+          }
+        }
+      }
+    }
+
+    // 如果没有找到匹配的模型或没有URL参数，使用默认选择
+    const m = selectedModel || activeModel || groupData[0]?.children[0] || null;
     setActiveModel(m);
     onSelect(activeDs, m);
   };
@@ -217,7 +236,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
           model.name.toLowerCase().includes(searchText.toLowerCase()) ||
           filteredChildren.length > 0
         ) {
-          return { ...model, children: filteredChildren };
+          return {...model, children: filteredChildren};
         }
         return null;
       })
@@ -267,7 +286,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
    */
   const groupByType = (data: any): any[] => {
     const groups = data.reduce((acc: any, item: any) => {
-      const { type, name, ...rest } = item;
+      const {type, name, ...rest} = item;
       if (!acc[type]) {
         switch (type) {
           case "entity":
@@ -300,7 +319,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
           default:
             break;
         }
-        acc[type].data = { ...acc[type] };
+        acc[type].data = {...acc[type]};
       }
       acc[type]?.children.push({
         name,
@@ -334,7 +353,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
     }));
   }
 
-  const treeData = useMemo(() => ({ children: convertToTreeData(filteredModelList) }), [filteredModelList]);
+  const treeData = useMemo(() => ({children: convertToTreeData(filteredModelList)}), [filteredModelList]);
 
 
   const selectRowStyle = {
@@ -392,7 +411,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
           <Select.Option value="manage" disabled>
             <Button
               type="link"
-              icon={<EditOutlined />}
+              icon={<EditOutlined/>}
               style={{
                 width: "100%",
                 padding: 0,
@@ -433,7 +452,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
             }}
           >
             <Button
-              icon={<PlusOutlined />}
+              icon={<PlusOutlined/>}
             />
           </Dropdown>
         )}
@@ -441,16 +460,18 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
 
       {/* 树形组件区域 */}
       <div style={treeContainerStyle}>
-        <div style={{ height: '100%', overflow: 'auto', maxHeight: '100%' }}>
+        <div style={{height: '100%', overflow: 'auto', maxHeight: '100%'}}>
           <Spin spinning={modelLoading} size="small">
             <Tree
               tree={treeData}
-              selected={activeModel ? { path: (() => {
-                // 查找当前选中项的分组
-                const group = filteredModelList.find(g => (g.children || []).some(c => c.name === activeModel.name));
-                if (group) return ((group as any).key || group.name) + '/' + activeModel.name;
-                return activeModel.name;
-              })() } : { path: '' }}
+              selected={activeModel ? {
+                path: (() => {
+                  // 查找当前选中项的分组
+                  const group = filteredModelList.find(g => (g.children || []).some(c => c.name === activeModel.name));
+                  if (group) return ((group as any).key || group.name) + '/' + activeModel.name;
+                  return activeModel.name;
+                })()
+              } : {path: ''}}
               onClickItem={(item: any) => {
                 setActiveModel(item.data || item);
                 if (item.data) onSelect(activeDs, item.data);
@@ -477,16 +498,17 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
               }}
               renderIcon={(item: any, nodeType: any) => {
                 if (nodeType === 'file') {
-                  if (item.modelType === 'entity') return <IconModel key={`model${item.path}`} />;
-                  if (item.modelType === 'enum') return <IconEnum key={`enum${item.path}`} />;
-                  if (item.modelType === 'native_query') return <IconNativeQueryModel key={`query${item.path}`} />;
-                  return <IconFile key={`file${item.path}`} />;
+                  if (item.modelType === 'entity') return <IconModel key={`model${item.path}`}/>;
+                  if (item.modelType === 'enum') return <IconEnum key={`enum${item.path}`}/>;
+                  if (item.modelType === 'native_query') return <IconNativeQueryModel key={`query${item.path}`}/>;
+                  return <IconFile key={`file${item.path}`}/>;
                 }
                 // 文件夹分组特殊icon
-                if (item.path === '__entity_group') return <IconEntityFolder key={`entityfolder${item.path}`} />;
-                if (item.path === '__enum_group') return <IconEnumFolder key={`enumfolder${item.path}`} />;
-                if (item.path === '__native_query_group') return <IconNativeQueryFolder key={`queryfolder${item.path}`} />;
-                return <IconFolder key={`folder${item.path}`} />;
+                if (item.path === '__entity_group') return <IconEntityFolder key={`entityfolder${item.path}`}/>;
+                if (item.path === '__enum_group') return <IconEnumFolder key={`enumfolder${item.path}`}/>;
+                if (item.path === '__native_query_group') return <IconNativeQueryFolder
+                  key={`queryfolder${item.path}`}/>;
+                return <IconFolder key={`folder${item.path}`}/>;
               }}
               compact={true}
             />
@@ -500,7 +522,7 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         onCancel={() => setDeleteDialogVisible(false)}
         onOk={handleDelete}
       >
-        {t("delete_dialog_text", { name: activeModel?.name })}
+        {t("delete_dialog_text", {name: activeModel?.name})}
       </Modal>
       <Drawer
         title={t('create_model')}
@@ -508,8 +530,8 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         onClose={() => setCreateModelDrawerVisible(false)}
         size={800}
         footer={
-          <div style={{ textAlign: 'left' }}>
-            <Button onClick={handleModelModalCancel} style={{ marginRight: 8 }}>
+          <div style={{textAlign: 'left'}}>
+            <Button onClick={handleModelModalCancel} style={{marginRight: 8}}>
               {t('cancel')}
             </Button>
             <Button onClick={handleModelModalOk} type="primary">
@@ -532,8 +554,8 @@ const ModelExplorer: React.FC<ModelBrowserProps> = ({
         onClose={handleIDLModalCancel}
         size={1000}
         footer={
-          <div style={{ textAlign: 'left' }}>
-            <Button onClick={handleIDLModalCancel} style={{ marginRight: 8 }}>
+          <div style={{textAlign: 'left'}}>
+            <Button onClick={handleIDLModalCancel} style={{marginRight: 8}}>
               {t('cancel')}
             </Button>
             <Button onClick={handleIDLModalOk} type="primary">

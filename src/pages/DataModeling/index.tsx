@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useCallback, useEffect} from "react";
 import {Button, message, Space, Splitter} from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
@@ -9,9 +9,11 @@ import {useTranslation} from "react-i18next";
 import EnumForm from "@/pages/DataModeling/components/EnumForm";
 import type {Enum} from "@/types/data-modeling.d.ts";
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
+import {useSearchParams} from "react-router-dom";
 
 const ModelingPage: React.FC = () => {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [activeDs, setActiveDs] = useState("");
   const [activeModel, setActiveModel] = useState<any>({});
@@ -21,47 +23,77 @@ const ModelingPage: React.FC = () => {
   const enumFormRef = useRef<any>(null);
   const nativeQueryFormRef = useRef<any>(null);
 
-  // 处理选择的模型变化
-  const handleItemChange = (ds: string, item: any) => {
+  // 处理选择的模型变化并同步到URL参数
+  const handleItemChange = useCallback((ds: string, item: any) => {
     setActiveDs(ds);
     setActiveModel(item);
     setIsEditing(false); // 切换模型时重置编辑状态
     setNativeQueryIsEditing(false); // 切换模型时重置原生查询编辑状态
-  };
+
+    // 同步状态到URL参数
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    if (ds) {
+      newSearchParams.set('datasource', ds);
+    } else {
+      newSearchParams.delete('datasource');
+    }
+
+    if (item?.name) {
+      newSearchParams.set('model', item.name);
+    } else {
+      newSearchParams.delete('model');
+    }
+
+    setSearchParams(newSearchParams);
+  }, [searchParams, setSearchParams]);
+
+  // 从URL参数初始化状态
+  useEffect(() => {
+    const datasourceFromUrl = searchParams.get('datasource');
+
+    if (datasourceFromUrl && datasourceFromUrl !== activeDs) {
+      setActiveDs(datasourceFromUrl);
+    }
+
+    // 模型选择将在ModelExplorer组件加载后通过回调处理
+  }, [searchParams, activeDs]);
+
+  // 获取URL参数中的模型名称
+  const selectedModelName = searchParams.get('model') || undefined;
 
   // 切换编辑状态
-  const handleToggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
+  const handleToggleEdit = useCallback(() => {
+    setIsEditing(prev => !prev);
+  }, []);
 
   // 取消编辑
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setIsEditing(false);
-  };
+  }, []);
 
   // 保存数据
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (enumFormRef.current) {
       enumFormRef.current.submit();
     }
-  };
+  }, []);
 
   // 切换原生查询编辑状态
-  const handleToggleNativeQueryEdit = () => {
-    setNativeQueryIsEditing(!nativeQueryIsEditing);
-  };
+  const handleToggleNativeQueryEdit = useCallback(() => {
+    setNativeQueryIsEditing(prev => !prev);
+  }, []);
 
   // 取消原生查询编辑
-  const handleCancelNativeQueryEdit = () => {
+  const handleCancelNativeQueryEdit = useCallback(() => {
     setNativeQueryIsEditing(false);
-  };
+  }, []);
 
   // 保存原生查询数据
-  const handleSaveNativeQuery = () => {
+  const handleSaveNativeQuery = useCallback(() => {
     if (nativeQueryFormRef.current) {
       nativeQueryFormRef.current.submit();
     }
-  };
+  }, []);
 
   // 渲染模型视图
   const renderModelView = () => {
@@ -130,6 +162,7 @@ const ModelingPage: React.FC = () => {
               editable
               onSelect={handleItemChange}
               version={selectModelVersion}
+              selectedModelName={selectedModelName}
             />
           </div>
         </Splitter.Panel>

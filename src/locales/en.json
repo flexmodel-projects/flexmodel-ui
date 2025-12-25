@@ -461,7 +461,7 @@
   "connection_name_required": "Please enter connection name",
   "connection_name_placeholder": "Please enter connection name",
   "delete_datasource_confirm": "Delete '{{name}}'?",
-  "delete_datasource_confirm_desc": "Are you sure you want to delete <strong>{{name}}</strong>?",
+  "delete_datasource_confirm_desc": "Are you sure you want to delete{{name}}?",
   "delete_datasource_success": "Deleted successfully",
   "delete_datasource_failed": "Failed to delete datasource",
   "export_models_title": "Export {{name}} models",
