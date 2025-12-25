@@ -34,7 +34,7 @@
       "script_description": "编写用于执行逻辑的 JavaScript 代码",
       "script": "脚本"
     },
-    "data_mapping": {
+    "document": {
       "title": "文档",
       "input": "入参设置",
       "output": "出参设置",

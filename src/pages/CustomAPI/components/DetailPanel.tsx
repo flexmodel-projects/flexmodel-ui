@@ -317,28 +317,28 @@ const DetailPanel: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
         <Divider />
 
         {/* 数据映射配置 */}
-        {data.meta.dataMapping && (
+        {data.meta.document && (
           <>
             <Divider />
             <div>
               <Title level={4}
-                className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.data_mapping", { defaultValue: "数据映射" })}</Title>
+                className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.document", { defaultValue: "数据映射" })}</Title>
 
               <div className="space-y-6">
                 {/* 入参映射 */}
-                {data.meta.dataMapping.input && (
+                {data.meta.document.input && (
                   <div>
                     <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
-                      {t("api_detail.data_mapping_input", { defaultValue: "入参映射" })}
+                      {t("api_detail.document_input", { defaultValue: "入参映射" })}
                     </Title>
                     <div className="space-y-3 pl-4">
-                      {data.meta.dataMapping.input.schema && (
+                      {data.meta.document.input.schema && (
                         <div>
                           <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_schema", { defaultValue: "Schema (JSON Schema)" })}:
+                            {t("api_detail.document_schema", { defaultValue: "Schema (JSON Schema)" })}:
                           </Text>
                           <div>
-                            {renderSchemaTable(data.meta.dataMapping.input.schema)}
+                            {renderSchemaTable(data.meta.document.input.schema)}
                           </div>
                         </div>
                       )}
@@ -347,19 +347,19 @@ const DetailPanel: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
                 )}
 
                 {/* 出参映射 */}
-                {data.meta.dataMapping.output && (
+                {data.meta.document.output && (
                   <div>
                     <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
-                      {t("api_detail.data_mapping_output", { defaultValue: "出参映射" })}
+                      {t("api_detail.document_output", { defaultValue: "出参映射" })}
                     </Title>
                     <div className="space-y-3 pl-4">
-                      {data.meta.dataMapping.output.schema && (
+                      {data.meta.document.output.schema && (
                         <div>
                           <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_schema", { defaultValue: "Schema (JSON Schema)" })}:
+                            {t("api_detail.document_schema", { defaultValue: "Schema (JSON Schema)" })}:
                           </Text>
                           <div>
-                            {renderSchemaTable(data.meta.dataMapping.output.schema)}
+                            {renderSchemaTable(data.meta.document.output.schema)}
                           </div>
                         </div>
                       )}

@@ -441,7 +441,7 @@ const CustomAPI: React.FC = () => {
           saveLabel={t("save")}
           executeConfigLabel={t("apis.execution_config")}
           authorizationLabel={t("authorization")}
-          dataMappingLabel={t("apis.data_mapping.title", { defaultValue: "数据映射" })}
+          documentLabel={t("apis.document.title", { defaultValue: "数据映射" })}
           onSave={handleSaveApi}
           onMethodChange={(value) =>
             setEditForm((prev) => (prev ? { ...prev, method: value } : prev))
@@ -474,7 +474,7 @@ const CustomAPI: React.FC = () => {
                 : prev
             );
           }}
-          onDataMappingChange={(data) => {
+          ondocumentChange={(data) => {
             if (data?.execution !== undefined) {
               executionDataRef.current = data.execution;
             }

@@ -1,13 +1,13 @@
 import React, {useEffect, useMemo} from "react";
 import {Card, Divider, Form} from "antd";
 import {useTranslation} from "react-i18next";
-import {ApiMeta, DataMappingConfig, DataMappingIOConfig,} from "@/types/api-management";
+import {ApiMeta, documentConfig, documentIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
 import JsonSchemaEditor from '@/components/json-schema-editor';
 
 type IOType = "input" | "output";
 
-interface DataMappingProps {
+interface documentProps {
   data: ApiMeta;
   onChange: (meta: ApiMeta) => void;
 }
@@ -22,12 +22,12 @@ const getSchemaText = (schema?: Record<string, any>) => {
 };
 
 const normalizeIOConfig = (
-  config?: DataMappingIOConfig
-): DataMappingIOConfig | undefined => {
+  config?: documentIOConfig
+): documentIOConfig | undefined => {
   if (!config) return undefined;
   const schema = config.schema;
 
-  const normalized: DataMappingIOConfig = {
+  const normalized: documentIOConfig = {
     ...config,
     schema,
   };
@@ -42,10 +42,10 @@ const normalizeIOConfig = (
 const buildNextMeta = (
   data: ApiMeta,
   io: IOType,
-  ioConfig: DataMappingIOConfig | undefined
+  ioConfig: documentIOConfig | undefined
 ): ApiMeta => {
-  const currentMapping: DataMappingConfig = data?.dataMapping || {};
-  const nextMapping: DataMappingConfig = {
+  const currentMapping: documentConfig = data?.document || {};
+  const nextMapping: documentConfig = {
     ...currentMapping,
     [io]: normalizeIOConfig(ioConfig),
   };
@@ -53,34 +53,34 @@ const buildNextMeta = (
   if (!nextMapping.input && !nextMapping.output) {
     return {
       ...data,
-      dataMapping: undefined,
+      document: undefined,
     };
   }
 
   return {
     ...data,
-    dataMapping: nextMapping,
+    document: nextMapping,
   };
 };
 
-const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
+const documentForm: React.FC<documentProps> = ({data, onChange}) => {
   const {t} = useTranslation();
   const [form] = Form.useForm();
 
-  const dataMapping = useMemo<DataMappingConfig>(
-    () => data?.dataMapping || {},
-    [data?.dataMapping]
+  const document = useMemo<documentConfig>(
+    () => data?.document || {},
+    [data?.document]
   );
 
   // 计算表单初始值
   const formValues = useMemo(() => ({
-    inputSchema: getSchemaText(dataMapping.input?.schema),
-    outputSchema: getSchemaText(dataMapping.output?.schema),
-  }), [dataMapping]);
+    inputSchema: getSchemaText(document.input?.schema),
+    outputSchema: getSchemaText(document.output?.schema),
+  }), [document]);
 
-  // 当dataMapping变化时更新表单值
+  // 当document变化时更新表单值
   useEffect(() => {
-    console.log('[DataMapping] useEffect 更新表单值:', formValues);
+    console.log('[document] useEffect 更新表单值:', formValues);
     form.setFieldsValue(formValues);
   }, [form, formValues]);
 
@@ -89,9 +89,9 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
       // 处理输入 Schema 变化
     if (changedValues.inputSchema !== undefined) {
       const text = allValues.inputSchema ?? "";
-      const currentIO = dataMapping.input;
+      const currentIO = document.input;
       if (!text.trim()) {
-        const nextIO: DataMappingIOConfig = {
+        const nextIO: documentIOConfig = {
           ...currentIO,
           schema: undefined,
         };
@@ -101,7 +101,7 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
 
       try {
         const parsed = JSON.parse(text);
-        const nextIO: DataMappingIOConfig = {
+        const nextIO: documentIOConfig = {
           ...currentIO,
           schema: parsed,
         };
@@ -116,9 +116,9 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
     // 处理输出 Schema 变化
     if (changedValues.outputSchema !== undefined) {
       const text = allValues.outputSchema ?? "";
-      const currentIO = dataMapping.output;
+      const currentIO = document.output;
       if (!text.trim()) {
-        const nextIO: DataMappingIOConfig = {
+        const nextIO: documentIOConfig = {
           ...currentIO,
           schema: undefined,
         };
@@ -128,7 +128,7 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
 
       try {
         const parsed = JSON.parse(text);
-        const nextIO: DataMappingIOConfig = {
+        const nextIO: documentIOConfig = {
           ...currentIO,
           schema: parsed,
         };
@@ -156,12 +156,12 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
         initialValues={formValues}
         onValuesChange={handleValuesChange}
       >
-        <Form.Item name="inputSchema" label={t("apis.data_mapping.input", {defaultValue: "入参设置"})}>
+        <Form.Item name="inputSchema" label={t("apis.document.input", {defaultValue: "入参设置"})}>
           <JsonSchemaEditor
             key="json-schema-editor-input"
             data={inputSchemaValue || formValues.inputSchema}
             onChange={(value) => {
-              console.log('[DataMapping] input JsonSchemaEditor onChange:', value);
+              console.log('[document] input JsonSchemaEditor onChange:', value);
               form.setFieldValue('inputSchema', value);
             }}
             lang="zh_CN"
@@ -172,12 +172,12 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
 
         <Divider/>
 
-        <Form.Item name="outputSchema" label={t("apis.data_mapping.output")}>
+        <Form.Item name="outputSchema" label={t("apis.document.output")}>
           <JsonSchemaEditor
             key="json-schema-editor-output"
             data={outputSchemaValue || formValues.outputSchema}
             onChange={(value) => {
-              console.log('[DataMapping] output JsonSchemaEditor onChange:', value);
+              console.log('[document] output JsonSchemaEditor onChange:', value);
               form.setFieldValue('outputSchema', value);
             }}
             lang="zh_CN"
@@ -190,6 +190,6 @@ const DataMappingForm: React.FC<DataMappingProps> = ({data, onChange}) => {
   );
 };
 
-export default DataMappingForm;
+export default documentForm;
 
 

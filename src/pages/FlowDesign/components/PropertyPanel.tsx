@@ -181,10 +181,10 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
         ...baseProperties,
       } as any;
 
-      // 处理dataMapping字段的特殊转换
+      // 处理document字段的特殊转换
       const processedProperties = { ...baseProperties };
-      if (processedProperties.dataMapping && Array.isArray(processedProperties.dataMapping)) {
-        processedProperties.dataMapping = convertArrayToFieldMapping(processedProperties.dataMapping);
+      if (processedProperties.document && Array.isArray(processedProperties.document)) {
+        processedProperties.document = convertArrayToFieldMapping(processedProperties.document);
       }
 
       form.setFieldsValue({
@@ -345,10 +345,10 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
   // 处理表单值变化
   const handleFormChange = (_changedValues: any, allValues: any) => {
     if (selectedNode) {
-      // 处理dataMapping字段的特殊转换
+      // 处理document字段的特殊转换
       const processedProperties = { ...(allValues.properties || {}) };
-      if (processedProperties.dataMapping && Array.isArray(processedProperties.dataMapping)) {
-        processedProperties.dataMapping = convertFieldMappingToArray(processedProperties.dataMapping);
+      if (processedProperties.document && Array.isArray(processedProperties.document)) {
+        processedProperties.document = convertFieldMappingToArray(processedProperties.document);
       }
 
       // 合并所有属性，包括嵌套的 properties 字段
@@ -476,7 +476,7 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
 
             <Form.Item
               label="数据映射"
-              name={['properties', 'dataMapping']}
+              name={['properties', 'document']}
               rules={[{ required: true, message: '请输入记录数据' }]}
             >
               <FieldMappingComponent
@@ -546,7 +546,7 @@ const PropertyPanel = forwardRef<PropertyPanelRef, PropertyPanelProps>(({
             </Row>
             <Form.Item
               label="数据映射"
-              name={['properties', 'dataMapping']}
+              name={['properties', 'document']}
               rules={[{ required: true, message: '请输入更新数据' }]}
             >
               <FieldMappingComponent

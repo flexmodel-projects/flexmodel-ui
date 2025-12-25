@@ -4,7 +4,7 @@ import {Button, Flex, Input, Select, Space, Switch, Tabs, TabsProps} from "antd"
 import {SaveOutlined} from "@ant-design/icons";
 import ExecutionForm from "./ExecutionForm.tsx";
 import AuthorizationForm from "./AuthorizationForm";
-import DataMappingForm from "./DataMappingForm.tsx";
+import DocumentForm from "./DocumentForm.tsx";
 import {useAppStore} from "@/store/appStore.ts";
 
 interface MethodOption {
@@ -19,14 +19,14 @@ interface EditPanelProps {
   saveLabel: string;
   executeConfigLabel: string;
   authorizationLabel: string;
-  dataMappingLabel: string;
+  documentLabel: string;
   onSave: () => void;
   onMethodChange: (value: string) => void;
   onPathChange: (value: string) => void;
   onToggleEnabled: (value: boolean) => void;
   onExecutionChange: (data: any) => void;
   onAuthorizationChange: (data: any) => void;
-  onDataMappingChange: (data: any) => void;
+  ondocumentChange: (data: any) => void;
 }
 
 const EditPanel: React.FC<EditPanelProps> = ({
@@ -36,22 +36,22 @@ const EditPanel: React.FC<EditPanelProps> = ({
                                                saveLabel,
                                                executeConfigLabel,
                                                authorizationLabel,
-                                               dataMappingLabel,
+                                               documentLabel,
                                                onSave,
                                                onMethodChange,
                                                onPathChange,
                                                onToggleEnabled,
                                                onExecutionChange,
                                                onAuthorizationChange,
-                                               onDataMappingChange,
+                                               ondocumentChange,
                                              }) => {
   const {currentTenant} = useAppStore();
   const tenantId = currentTenant?.id;
   const fullApiRootPath = `${apiRootPath || ''}/${tenantId}`;
-  
+
   // State for inner tabs
   const [activeInnerTab, setActiveInnerTab] = useState<string>('execution_config');
-  
+
   const handleInnerTabChange = useCallback((key: string) => {
     setActiveInnerTab(key);
   }, []);
@@ -81,24 +81,24 @@ const EditPanel: React.FC<EditPanelProps> = ({
         ),
       },
       {
-        key: "data_mapping",
-        label: dataMappingLabel,
+        key: "document",
+        label: documentLabel,
         className: "h-full",
         children: (
-          <DataMappingForm
+          <DocumentForm
             data={editForm?.meta || {}}
-            onChange={onDataMappingChange}
+            onChange={ondocumentChange}
           />
         ),
       },
     ],
     [
       authorizationLabel,
-      dataMappingLabel,
+      documentLabel,
       editForm?.meta,
       executeConfigLabel,
       onAuthorizationChange,
-      onDataMappingChange,
+      ondocumentChange,
       onExecutionChange,
     ]
   );

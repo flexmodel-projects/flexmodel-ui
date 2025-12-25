@@ -33,10 +33,10 @@ const ScriptEditorModal: React.FC<ScriptEditorModalProps> = ({
         }
     }, [value, visible]);
 
-    const modalTitle = title || t("apis.data_mapping.script_modal_title", {
+    const modalTitle = title || t("apis.document.script_modal_title", {
         defaultValue: "脚本编辑器",
     });
-    const modalDesc = description || t("apis.data_mapping.script_modal_desc", {
+    const modalDesc = description || t("apis.document.script_modal_desc", {
         defaultValue: "节点完成后可进行数据转换与处理，请输入脚本内容。",
     });
     const okText = t("common.confirm", { defaultValue: "确认" });

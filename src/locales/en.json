@@ -34,7 +34,7 @@
       "script_description": "Write JavaScript for execution logic",
       "script": "Script"
     },
-    "data_mapping": {
+    "document": {
       "title": "Doucment",
       "input": "Input Settings",
       "output": "Output Settings",
