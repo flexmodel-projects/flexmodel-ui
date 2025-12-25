@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from "react";
 import {Button, Form, Input, message, Modal, Select, Splitter, Tabs, TabsProps, Typography,} from "antd";
-import {useSearchParams} from "react-router-dom";
 import PageContainer from "@/components/common/PageContainer";
 import {
   createApi,
@@ -35,7 +34,6 @@ const CustomAPI: React.FC = () => {
   const { t } = useTranslation();
   const { config } = useConfig();
   const {currentTenant} = useAppStore();
-  const [searchParams, setSearchParams] = useSearchParams();
   // 状态定义
   const [apiList, setApiList] = useState<ApiDefinition[]>([]);
   const [batchCreateDialogDrawer, setBatchCreateDrawerVisible] =
@@ -78,43 +76,34 @@ const CustomAPI: React.FC = () => {
     return null;
   }, []);
   
-  // Custom setter for selectedNode that also updates URL
+  // Custom setter for selectedNode
   const setSelectedNodeWithUrl = useCallback((node: TreeNode | null) => {
     setSelectedNode(node);
-    const newSearchParams = new URLSearchParams(searchParams);
-    if (node?.data?.id) {
-      newSearchParams.set('selected', node.data.id);
-    } else {
-      newSearchParams.delete('selected');
-    }
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
+  }, []);
   
-  // Initialize selectedNode from URL parameter
+  // Initialize selectedNode
   useEffect(() => {
     if (apiList.length > 0 && !selectedNode) {
-      const selectedIdFromUrl = searchParams.get('selected');
-      if (selectedIdFromUrl) {
-        const foundNode = findNodeById(apiList, selectedIdFromUrl);
-        if (foundNode) {
-          setSelectedNodeWithUrl(foundNode);
-        }
+      const defaultApi = findFirstApiNode(apiList);
+      if (defaultApi) {
+        setSelectedNodeWithUrl({
+          children: [],
+          data: defaultApi,
+          isLeaf: true,
+          key: defaultApi.id,
+          settingVisible: false,
+          title: defaultApi.name,
+        });
       }
     }
-  }, [apiList, selectedNode, searchParams, findNodeById, setSelectedNodeWithUrl]);
+  }, [apiList, selectedNode, findFirstApiNode, setSelectedNodeWithUrl]);
   
   const [editForm, setEditForm] = useState<ApiDefinition | null>(null);
-  const [activeHeaderTab, setActiveHeaderTab] = useState<string>(() => {
-    const tabFromUrl = searchParams.get('tab');
-    return tabFromUrl && ['detail', 'edit', 'debug'].includes(tabFromUrl) ? tabFromUrl : 'detail';
-  });
+  const [activeHeaderTab, setActiveHeaderTab] = useState<string>('detail');
   
   const handleTabChange = useCallback((key: string) => {
     setActiveHeaderTab(key);
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('tab', key);
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
+  }, []);
   const [debugMethod, setDebugMethod] = useState<string>("GET");
   const [debugPath, setDebugPath] = useState<string>("");
   const [debugHeaders, setDebugHeaders] = useState<string>("{}");
@@ -194,23 +183,20 @@ const CustomAPI: React.FC = () => {
   // 请求 API 列表数据
   useEffect(() => {
     reqApiList().then((apis) => {
-      // Only set default selection if no URL parameter exists
-      const selectedIdFromUrl = searchParams.get('selected');
-      if (!selectedIdFromUrl) {
-        const defaultApi = findFirstApiNode(apis);
-        if (defaultApi) {
-          setSelectedNodeWithUrl({
-            children: [],
-            data: defaultApi,
-            isLeaf: true,
-            key: defaultApi.id,
-            settingVisible: false,
-            title: defaultApi.name,
-          });
-        }
+      // Set default selection
+      const defaultApi = findFirstApiNode(apis);
+      if (defaultApi) {
+        setSelectedNodeWithUrl({
+          children: [],
+          data: defaultApi,
+          isLeaf: true,
+          key: defaultApi.id,
+          settingVisible: false,
+          title: defaultApi.name,
+        });
       }
     });
-  }, [searchParams, setSelectedNodeWithUrl, findFirstApiNode]);
+  }, [setSelectedNodeWithUrl, findFirstApiNode]);
 
   const reqApiList = async () => {
     const apis = await getApis();

@@ -1,5 +1,4 @@
 import React, {useState, useMemo, useCallback} from "react";
-import {useSearchParams} from "react-router-dom";
 import {ApiDefinition} from "@/types/api-management";
 import {Button, Flex, Input, Select, Space, Switch, Tabs, TabsProps} from "antd";
 import {SaveOutlined} from "@ant-design/icons";
@@ -47,22 +46,15 @@ const EditPanel: React.FC<EditPanelProps> = ({
                                                onDataMappingChange,
                                              }) => {
   const {currentTenant} = useAppStore();
-  const [searchParams, setSearchParams] = useSearchParams();
   const tenantId = currentTenant?.id;
   const fullApiRootPath = `${apiRootPath || ''}/${tenantId}`;
   
-  // State for inner tabs with URL parameter support
-  const [activeInnerTab, setActiveInnerTab] = useState<string>(() => {
-    const tabFromUrl = searchParams.get('innerTab');
-    return tabFromUrl && ['execution_config', 'authorization', 'data_mapping'].includes(tabFromUrl) ? tabFromUrl : 'execution_config';
-  });
+  // State for inner tabs
+  const [activeInnerTab, setActiveInnerTab] = useState<string>('execution_config');
   
   const handleInnerTabChange = useCallback((key: string) => {
     setActiveInnerTab(key);
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('innerTab', key);
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
+  }, []);
 
   const editTabItems: TabsProps["items"] = useMemo(
     () => [
