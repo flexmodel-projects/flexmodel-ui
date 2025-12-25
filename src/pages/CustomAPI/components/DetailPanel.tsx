@@ -1,9 +1,9 @@
 import React from "react";
-import {Badge, Card, Descriptions, Divider, Space, Table, Tag, Typography} from "antd";
-import {ApiDefinition} from "@/types/api-management";
-import {useTranslation} from "react-i18next";
+import { Badge, Card, Descriptions, Divider, Space, Table, Tag, Typography } from "antd";
+import { ApiDefinition } from "@/types/api-management";
+import { useTranslation } from "react-i18next";
 
-const {Title, Text} = Typography;
+const { Title, Text } = Typography;
 
 interface SchemaTableRow {
   key: string;
@@ -52,7 +52,7 @@ const parseSchemaToTableData = (
     // 解析items
     const itemsSchema = schema.items;
     const itemType = itemsSchema.type || 'any';
-    
+
     if (itemType === 'object' && itemsSchema.properties) {
       row.children = [];
       Object.entries(itemsSchema.properties).forEach(([propName, propSchema]: [string, any]) => {
@@ -67,7 +67,7 @@ const parseSchemaToTableData = (
         description: itemsSchema.description || '',
       }];
     }
-    
+
     rows.push(row);
   } else {
     // 其他情况，创建单个行
@@ -138,8 +138,8 @@ const parsePropertySchema = (
   return [row];
 };
 
-const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
-  const {t} = useTranslation();
+const DetailPanel: React.FC<APIDetailProps> = ({ data }: APIDetailProps) => {
+  const { t } = useTranslation();
 
   if (!data) {
     return (
@@ -165,17 +165,17 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
   // 渲染Schema表格
   const renderSchemaTable = (schema: Record<string, any>) => {
     const tableData = parseSchemaToTableData(schema);
-    
+
     const columns = [
       {
-        title: t("api_detail.schema_field_name", {defaultValue: "属性名称"}),
+        title: t("api_detail.schema_field_name", { defaultValue: "属性名称" }),
         dataIndex: 'name',
         key: 'name',
         width: '25%',
         render: (text: string) => <Text code>{text}</Text>,
       },
       {
-        title: t("api_detail.schema_field_type", {defaultValue: "类型"}),
+        title: t("api_detail.schema_field_type", { defaultValue: "类型" }),
         dataIndex: 'type',
         key: 'type',
         width: '15%',
@@ -192,14 +192,14 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
         },
       },
       {
-        title: t("api_detail.schema_field_title", {defaultValue: "标题"}),
+        title: t("api_detail.schema_field_title", { defaultValue: "标题" }),
         dataIndex: 'title',
         key: 'title',
         width: '20%',
         render: (text: string) => text || <Text type="secondary">-</Text>,
       },
       {
-        title: t("api_detail.schema_field_description", {defaultValue: "备注"}),
+        title: t("api_detail.schema_field_description", { defaultValue: "备注" }),
         dataIndex: 'description',
         key: 'description',
         width: '40%',
@@ -218,6 +218,9 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
       />
     );
   };
+
+  const isGraphQL = data?.meta?.execution?.executionType === 'graphql' || data?.meta?.execution?.executionType == null;
+  const isScript = data?.meta?.execution?.executionType === 'script';
 
   const renderVariables = (variables: Record<string, any> | string | null | undefined) => {
     if (variables === null || variables === undefined) {
@@ -265,11 +268,12 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
     );
   };
 
+
   return (
 
     <Card
       className="h-full"
-      style={{height: 'calc(100vh - 180px)', overflow: 'scroll'}}
+      style={{ height: 'calc(100vh - 180px)', overflow: 'scroll' }}
     >
       <div className="space-y-6">
         {/* API 基本信息 */}
@@ -310,28 +314,28 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
           </Descriptions>
         </div>
 
-        <Divider/>
+        <Divider />
 
         {/* 数据映射配置 */}
         {data.meta.dataMapping && (
           <>
-            <Divider/>
+            <Divider />
             <div>
               <Title level={4}
-                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.data_mapping", {defaultValue: "数据映射"})}</Title>
+                className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.data_mapping", { defaultValue: "数据映射" })}</Title>
 
               <div className="space-y-6">
                 {/* 入参映射 */}
                 {data.meta.dataMapping.input && (
                   <div>
                     <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
-                      {t("api_detail.data_mapping_input", {defaultValue: "入参映射"})}
+                      {t("api_detail.data_mapping_input", { defaultValue: "入参映射" })}
                     </Title>
                     <div className="space-y-3 pl-4">
                       {data.meta.dataMapping.input.schema && (
                         <div>
                           <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_schema", {defaultValue: "Schema (JSON Schema)"})}:
+                            {t("api_detail.data_mapping_schema", { defaultValue: "Schema (JSON Schema)" })}:
                           </Text>
                           <div>
                             {renderSchemaTable(data.meta.dataMapping.input.schema)}
@@ -346,13 +350,13 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                 {data.meta.dataMapping.output && (
                   <div>
                     <Title level={5} className="mb-2 text-gray-700 dark:text-gray-300">
-                      {t("api_detail.data_mapping_output", {defaultValue: "出参映射"})}
+                      {t("api_detail.data_mapping_output", { defaultValue: "出参映射" })}
                     </Title>
                     <div className="space-y-3 pl-4">
                       {data.meta.dataMapping.output.schema && (
                         <div>
                           <Text strong className="block mb-2 text-gray-800 dark:text-gray-200">
-                            {t("api_detail.data_mapping_schema", {defaultValue: "Schema (JSON Schema)"})}:
+                            {t("api_detail.data_mapping_schema", { defaultValue: "Schema (JSON Schema)" })}:
                           </Text>
                           <div>
                             {renderSchemaTable(data.meta.dataMapping.output.schema)}
@@ -370,10 +374,10 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
         {/* 子项信息 */}
         {data.children && data.children.length > 0 && (
           <>
-            <Divider/>
+            <Divider />
             <div>
               <Title level={4}
-                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
+                className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.children")} ({data.children.length})</Title>
               <Space orientation="vertical" className="w-full">
                 {data.children.map((child) => (
                   <Card key={child.id} size="small" className="bg-gray-50 dark:bg-gray-800">
@@ -402,7 +406,7 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
         {/* 认证与权限 */}
         <div>
           <Title level={4}
-                 className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.auth_and_permissions")}</Title>
+            className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.auth_and_permissions")}</Title>
           <Descriptions bordered column={2} size="small">
             <Descriptions.Item label={t("api_detail.requires_auth")}>
               <Badge
@@ -437,24 +441,17 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
         {/* 执行配置 */}
         {data.meta.execution && (
           <>
-            <Divider/>
+            <Divider />
             <div>
               <Title level={4}
-                     className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.execution_config")}</Title>
+                className="mb-3 text-gray-800 dark:text-gray-200">{t("api_detail.execution_config")}</Title>
 
               <div className="space-y-4">
-                {data.meta.execution.operationName && (
-                  <div>
-                    <Text strong
-                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.operation_name")}:</Text>
-                    <Text code>{data.meta.execution.operationName}</Text>
-                  </div>
-                )}
 
                 {data.meta.execution.preScript && (
                   <div>
                     <Text strong
-                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.pre_script", {defaultValue: "前置脚本"})}:</Text>
+                      className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.pre_script", { defaultValue: "前置脚本" })}:</Text>
                     <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
                       <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                         {data.meta.execution.preScript}
@@ -463,41 +460,62 @@ const DetailPanel: React.FC<APIDetailProps> = ({data}: APIDetailProps) => {
                   </div>
                 )}
 
-                {data.meta.execution.query && (
+                {isGraphQL && (<div>
+                  {data.meta.execution.operationName && (
+                    <div>
+                      <Text strong
+                        className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.operation_name")}:</Text>
+                      <Text code>{data.meta.execution.operationName}</Text>
+                    </div>
+                  )}
+
                   <div>
                     <Text strong
-                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.query_statement")}:</Text>
+                      className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.variables")}:</Text>
+                    {renderVariables(data.meta.execution.variables || {})}
+                  </div>
+
+                  {data.meta.execution.headers && Object.keys(data.meta.execution.headers).length > 0 && (
+                    <div>
+                      <Text strong
+                        className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.headers")}:</Text>
+                      {renderVariables(data.meta.execution.headers)}
+                    </div>
+                  )}
+
+                  {data.meta.execution.query && (
+                    <div>
+                      <Text strong
+                        className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.query_statement")}:</Text>
+                      <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
+                        <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                          {data.meta.execution.query}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+                </div>)}
+
+                {isScript && (
+                  <div>
+                    <Text strong
+                      className="block mb-2 text-gray-800 dark:text-gray-200">{t("apis.execution.execution_script")}:</Text>
                     <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md">
                       <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                        {data.meta.execution.query}
+                        {data.meta.execution.executionScript}
                       </pre>
                     </div>
-                  </div>
-                )}
+                  </div>)}
 
                 {data.meta.execution.postScript && (
                   <div>
                     <Text strong
-                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.post_script", {defaultValue: "后置脚本"})}:</Text>
+                      className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.post_script", { defaultValue: "后置脚本" })}:</Text>
                     <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md border border-gray-200 dark:border-gray-700">
                       <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                         {data.meta.execution.postScript}
                       </pre>
                     </div>
-                  </div>
-                )}
-
-                <div>
-                  <Text strong
-                        className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.variables")}:</Text>
-                  {renderVariables(data.meta.execution.variables || {})}
-                </div>
-
-                {data.meta.execution.headers && Object.keys(data.meta.execution.headers).length > 0 && (
-                  <div>
-                    <Text strong
-                          className="block mb-2 text-gray-800 dark:text-gray-200">{t("api_detail.headers")}:</Text>
-                    {renderVariables(data.meta.execution.headers)}
                   </div>
                 )}
               </div>

@@ -41,8 +41,7 @@ const ExecutionForm: React.FC<ExecuteConfigProps> = ({data, onChange}: ExecuteCo
   // 表单数据回填 - 只在data真正变化时执行
   useEffect(() => {
     // 深度比较，避免不必要的更新
-    const isDataChanged =
-      JSON.stringify(data) !== JSON.stringify(prevDataRef.current);
+    const isDataChanged = JSON.stringify(data) !== JSON.stringify(prevDataRef.current);
 
     if (isDataChanged && data && Object.keys(data).length > 0) {
       form.setFieldsValue(data);
