@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo} from "react";
 import {Card, Divider, Form} from "antd";
 import {useTranslation} from "react-i18next";
-import {ApiMeta, documentConfig, documentIOConfig,} from "@/types/api-management";
+import {ApiMeta, DocumentConfig, DocumentIOConfig,} from "@/types/api-management";
 import '@/components/json-schema-editor/index.css';
 import JsonSchemaEditor from '@/components/json-schema-editor';
 
@@ -22,12 +22,12 @@ const getSchemaText = (schema?: Record<string, any>) => {
 };
 
 const normalizeIOConfig = (
-  config?: documentIOConfig
-): documentIOConfig | undefined => {
+  config?: DocumentIOConfig
+): DocumentIOConfig | undefined => {
   if (!config) return undefined;
   const schema = config.schema;
 
-  const normalized: documentIOConfig = {
+  const normalized: DocumentIOConfig = {
     ...config,
     schema,
   };
@@ -42,10 +42,10 @@ const normalizeIOConfig = (
 const buildNextMeta = (
   data: ApiMeta,
   io: IOType,
-  ioConfig: documentIOConfig | undefined
+  ioConfig: DocumentIOConfig | undefined
 ): ApiMeta => {
-  const currentMapping: documentConfig = data?.document || {};
-  const nextMapping: documentConfig = {
+  const currentMapping: DocumentConfig = data?.document || {};
+  const nextMapping: DocumentConfig = {
     ...currentMapping,
     [io]: normalizeIOConfig(ioConfig),
   };
@@ -67,7 +67,7 @@ const documentForm: React.FC<documentProps> = ({data, onChange}) => {
   const {t} = useTranslation();
   const [form] = Form.useForm();
 
-  const document = useMemo<documentConfig>(
+  const document = useMemo<DocumentConfig>(
     () => data?.document || {},
     [data?.document]
   );
@@ -91,7 +91,7 @@ const documentForm: React.FC<documentProps> = ({data, onChange}) => {
       const text = allValues.inputSchema ?? "";
       const currentIO = document.input;
       if (!text.trim()) {
-        const nextIO: documentIOConfig = {
+        const nextIO: DocumentIOConfig = {
           ...currentIO,
           schema: undefined,
         };
@@ -101,7 +101,7 @@ const documentForm: React.FC<documentProps> = ({data, onChange}) => {
 
       try {
         const parsed = JSON.parse(text);
-        const nextIO: documentIOConfig = {
+        const nextIO: DocumentIOConfig = {
           ...currentIO,
           schema: parsed,
         };
@@ -118,7 +118,7 @@ const documentForm: React.FC<documentProps> = ({data, onChange}) => {
       const text = allValues.outputSchema ?? "";
       const currentIO = document.output;
       if (!text.trim()) {
-        const nextIO: documentIOConfig = {
+        const nextIO: DocumentIOConfig = {
           ...currentIO,
           schema: undefined,
         };
@@ -128,7 +128,7 @@ const documentForm: React.FC<documentProps> = ({data, onChange}) => {
 
       try {
         const parsed = JSON.parse(text);
-        const nextIO: documentIOConfig = {
+        const nextIO: DocumentIOConfig = {
           ...currentIO,
           schema: parsed,
         };

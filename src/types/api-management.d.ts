@@ -16,13 +16,13 @@ export interface GraphQLData {
   headers?: Record<string, any> | null;
 }
 
-export interface documentIOConfig {
+export interface DocumentIOConfig {
   schema?: Record<string, any>; // json schema格式的数据
 }
 
-export interface documentConfig {
-  input?: documentIOConfig;
-  output?: documentIOConfig;
+export interface DocumentConfig {
+  input?: DocumentIOConfig;
+  output?: DocumentIOConfig;
 }
 
 export interface ApiMeta {
@@ -37,7 +37,7 @@ export interface ApiMeta {
   // 间隔时间
   intervalInSeconds?: number;
   execution?: Execution;
-  document?: documentConfig;
+  document?: DocumentConfig;
 }
 
 export interface ApiDefinition {
