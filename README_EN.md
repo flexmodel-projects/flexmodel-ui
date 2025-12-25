@@ -30,8 +30,8 @@ FlexModel UI React is an open-source, free unified data access layer solution de
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/flexmodel-ui-react.git
-cd flexmodel-ui-react
+git clone https://github.com/your-org/flexmodel-ui.git
+cd flexmodel-ui
 
 # Install dependencies
 npm install
@@ -99,9 +99,9 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 - **Website**: [https://flexmodel.io](https://flexmodel.io)
 - **Documentation**: [https://docs.flexmodel.io](https://docs.flexmodel.io)
-- **Issues**: [https://github.com/your-org/flexmodel-ui-react/issues](https://github.com/your-org/flexmodel-ui-react/issues)
-- **Discussions**: [https://github.com/your-org/flexmodel-ui-react/discussions](https://github.com/your-org/flexmodel-ui-react/discussions)
+- **Issues**: [https://github.com/your-org/flexmodel-ui/issues](https://github.com/your-org/flexmodel-ui/issues)
+- **Discussions**: [https://github.com/your-org/flexmodel-ui/discussions](https://github.com/your-org/flexmodel-ui/discussions)
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=your-org/flexmodel-ui-react&type=Date)](https://star-history.com/#your-org/flexmodel-ui-react&Date) 
+[![Star History Chart](https://api.star-history.com/svg?repos=your-org/flexmodel-ui&type=Date)](https://star-history.com/#your-org/flexmodel-ui&Date) 

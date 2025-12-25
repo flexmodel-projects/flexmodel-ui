@@ -30,8 +30,8 @@ FlexModel UI 是一个开源的、免费的统一数据访问层解决方案，�
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-org/flexmodel-ui-react.git
-cd flexmodel-ui-react
+git clone https://github.com/flexmodel-projects/flexmodel-ui.git
+cd flexmodel-ui
 
 # 安装依赖
 npm install
@@ -117,9 +117,9 @@ src/
 
 - **官方网站**: [https://flexmodel.io](https://flexmodel.io)
 - **文档中心**: [https://docs.flexmodel.io](https://docs.flexmodel.io)
-- **问题反馈**: [https://github.com/your-org/flexmodel-ui-react/issues](https://github.com/your-org/flexmodel-ui-react/issues)
-- **社区讨论**: [https://github.com/your-org/flexmodel-ui-react/discussions](https://github.com/your-org/flexmodel-ui-react/discussions)
+- **问题反馈**: [https://github.com/your-org/flexmodel-ui/issues](https://github.com/your-org/flexmodel-ui/issues)
+- **社区讨论**: [https://github.com/your-org/flexmodel-ui/discussions](https://github.com/your-org/flexmodel-ui/discussions)
 
 ## ⭐ Star 历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=your-org/flexmodel-ui-react&type=Date)](https://star-history.com/#your-org/flexmodel-ui-react&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=your-org/flexmodel-ui&type=Date)](https://star-history.com/#your-org/flexmodel-ui&Date)
