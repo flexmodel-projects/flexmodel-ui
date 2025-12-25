@@ -40,7 +40,7 @@ const CustomAPI: React.FC = () => {
     useState<boolean>(false);
 
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
-  
+
   // Helper function to find a node by ID in the API list
   const findNodeById = useCallback((list: ApiDefinition[], id: string): TreeNode | null => {
     for (const item of list) {
@@ -61,7 +61,7 @@ const CustomAPI: React.FC = () => {
     }
     return null;
   }, []);
-  
+
   // Helper function to find the first API node in the list
   const findFirstApiNode = useCallback((list: ApiDefinition[]): ApiDefinition | null => {
     for (const api of list) {
@@ -75,18 +75,13 @@ const CustomAPI: React.FC = () => {
     }
     return null;
   }, []);
-  
-  // Custom setter for selectedNode
-  const setSelectedNodeWithUrl = useCallback((node: TreeNode | null) => {
-    setSelectedNode(node);
-  }, []);
-  
+
   // Initialize selectedNode
   useEffect(() => {
     if (apiList.length > 0 && !selectedNode) {
       const defaultApi = findFirstApiNode(apiList);
       if (defaultApi) {
-        setSelectedNodeWithUrl({
+        setSelectedNode({
           children: [],
           data: defaultApi,
           isLeaf: true,
@@ -96,11 +91,11 @@ const CustomAPI: React.FC = () => {
         });
       }
     }
-  }, [apiList, selectedNode, findFirstApiNode, setSelectedNodeWithUrl]);
-  
+  }, [apiList, selectedNode, findFirstApiNode, setSelectedNode]);
+
   const [editForm, setEditForm] = useState<ApiDefinition | null>(null);
   const [activeHeaderTab, setActiveHeaderTab] = useState<string>('detail');
-  
+
   const handleTabChange = useCallback((key: string) => {
     setActiveHeaderTab(key);
   }, []);
@@ -186,7 +181,7 @@ const CustomAPI: React.FC = () => {
       // Set default selection
       const defaultApi = findFirstApiNode(apis);
       if (defaultApi) {
-        setSelectedNodeWithUrl({
+        setSelectedNode({
           children: [],
           data: defaultApi,
           isLeaf: true,
@@ -196,7 +191,7 @@ const CustomAPI: React.FC = () => {
         });
       }
     });
-  }, [setSelectedNodeWithUrl, findFirstApiNode]);
+  }, [setSelectedNode, findFirstApiNode]);
 
   const reqApiList = async () => {
     const apis = await getApis();
@@ -589,7 +584,7 @@ const CustomAPI: React.FC = () => {
       };
       const updated = findApiById(apis, editForm.id);
       if (updated) {
-        setSelectedNodeWithUrl({
+        setSelectedNode({
           children: [],
           data: updated,
           isLeaf: true,
@@ -621,7 +616,7 @@ const CustomAPI: React.FC = () => {
             apiList={apiList}
             selectedApiId={selectedNode?.data.id}
             onSelectItem={(item: any) => {
-              setSelectedNodeWithUrl({
+              setSelectedNode({
                 children: [],
                 data: item.data,
                 isLeaf: item.type === "file",
