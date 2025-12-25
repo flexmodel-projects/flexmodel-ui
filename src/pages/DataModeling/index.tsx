@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback, useEffect} from "react";
+import React, {useRef, useState, useCallback} from "react";
 import {Button, message, Space, Splitter} from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import ModelExplorer from "@/pages/DataModeling/components/ModelExplorer.tsx";
@@ -9,11 +9,9 @@ import {useTranslation} from "react-i18next";
 import EnumForm from "@/pages/DataModeling/components/EnumForm";
 import type {Enum} from "@/types/data-modeling.d.ts";
 import ERDiagram from "@/pages/DataModeling/components/ERDiagramView";
-import {useSearchParams} from "react-router-dom";
 
 const ModelingPage: React.FC = () => {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const [activeDs, setActiveDs] = useState("");
   const [activeModel, setActiveModel] = useState<any>({});
@@ -24,42 +22,12 @@ const ModelingPage: React.FC = () => {
   const nativeQueryFormRef = useRef<any>(null);
 
   // 处理选择的模型变化并同步到URL参数
-  const handleItemChange = useCallback((ds: string, item: any) => {
+  const handleItemChange = (ds: string, item: any) => {
     setActiveDs(ds);
     setActiveModel(item);
     setIsEditing(false); // 切换模型时重置编辑状态
     setNativeQueryIsEditing(false); // 切换模型时重置原生查询编辑状态
-
-    // 同步状态到URL参数
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    if (ds) {
-      newSearchParams.set('datasource', ds);
-    } else {
-      newSearchParams.delete('datasource');
-    }
-
-    if (item?.name) {
-      newSearchParams.set('model', item.name);
-    } else {
-      newSearchParams.delete('model');
-    }
-
-    setSearchParams(newSearchParams);
-  }, [searchParams, setSearchParams]);
-
-  // 从URL参数初始化状态
-  useEffect(() => {
-    const datasourceFromUrl = searchParams.get('datasource');
-
-    if (datasourceFromUrl && datasourceFromUrl !== activeDs) {
-      setActiveDs(datasourceFromUrl);
-    }
-
-    // 模型选择将在ModelExplorer组件加载后通过回调处理
-  }, [searchParams, activeDs]);
-
-  // 获取URL参数中的模型名称
-  const selectedModelName = searchParams.get('model') || undefined;
+  };
 
   // 切换编辑状态
   const handleToggleEdit = useCallback(() => {
@@ -162,7 +130,6 @@ const ModelingPage: React.FC = () => {
               editable
               onSelect={handleItemChange}
               version={selectModelVersion}
-              selectedModelName={selectedModelName}
             />
           </div>
         </Splitter.Panel>
