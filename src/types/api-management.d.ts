@@ -2,7 +2,8 @@ export interface Execution {
   preScript?: string;
   postScript?: string;
   executionType?: string;
-  query: string;
+  query?: string;
+  executionScript?: string;
   variables?: Record<string, any>;
   operationName?: string;
   headers?: Record<string, any>;

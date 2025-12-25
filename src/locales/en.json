@@ -26,7 +26,13 @@
       "pre_script": "Pre Script",
       "open_pre_script_editor": "Open Pre Script Editor",
       "post_script": "Post Script",
-      "open_post_script_editor": "Open Post Script Editor"
+      "open_post_script_editor": "Open Post Script Editor",
+      "execution_script": "Execution Script",
+      "script_placeholder": "Click the button on the right to configure execution script",
+      "open_script_editor": "Open Execution Script Editor",
+      "script_editor": "Execution Script Editor",
+      "script_description": "Write JavaScript for execution logic",
+      "script": "Script"
     },
     "data_mapping": {
       "title": "Doucment",
