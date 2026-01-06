@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 import {message} from "antd";
 import {XStream} from "@ant-design/x-sdk";
-import {sendChatMessage} from "@/services/chat";
+import {sendMessage} from "@/services/chat";
 import {Message} from "./types";
 
 export const useChat = (
@@ -66,23 +66,12 @@ export const useChat = (
       try {
         // 准备请求数据
         const requestData: any = {
-          conversationId: conversationId,
-          messages: [
-            ...initialMessages.map((msg) => ({
-              role: msg.role,
-              content: msg.content,
-            })),
-            {
-              role: "user",
-              content: content.trim(),
-            },
-          ],
-          model: "gpt-3.5-turbo",
-          stream: true,
+          conversationId: conversationId || "",
+          content: content.trim(),
         };
 
         // 使用chat服务发送流式请求，传递signal用于取消
-        const response = await sendChatMessage(requestData, controller.signal);
+        const response = await sendMessage(requestData, controller.signal);
 
         if (!response.ok) {
           message.error(`HTTP error! status: ${response.status}`);

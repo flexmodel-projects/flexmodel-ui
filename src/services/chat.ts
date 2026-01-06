@@ -22,8 +22,8 @@ export interface CreateConversationRequest {
 
 // 发送消息请求
 export interface SendMessageRequest {
+  conversationId?: string;
   content: string;
-  model?: string;
 }
 
 // 对话信息
@@ -96,7 +96,7 @@ export const getConversationMessages = async (id: string): Promise<ChatMessage[]
 /**
  * 向对话发送消息
  */
-export const sendMessage = async (conversationId: string, params: SendMessageRequest): Promise<Response> => {
+export const sendMessage = async (params: SendMessageRequest, signal?: AbortSignal): Promise<Response> => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -108,9 +108,10 @@ export const sendMessage = async (conversationId: string, params: SendMessageReq
     headers['X-Tenant-Id'] = tenantId;
   }
 
-  return fetch(`/api/ai/f/chat/conversations/${conversationId}/messages`, {
+  return fetch(`/api/f/ai/chat/completions`, {
     method: 'POST',
     headers,
-    body: JSON.stringify(params)
+    body: JSON.stringify(params),
+    signal
   });
 };
