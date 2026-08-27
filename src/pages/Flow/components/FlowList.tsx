@@ -61,7 +61,7 @@ const FlowList: React.FC = () => {
 
   const handleStartProcess = async (flowModuleId: string) => {
     let variablesText = '{}';
-    let callerText = '';
+    let initiatorText = '';
     const isDark = getDarkModeFromStorage();
     Modal.confirm({
       width: 500,
@@ -69,12 +69,12 @@ const FlowList: React.FC = () => {
       content: (
         <div>
           <div style={{marginBottom: 8}}>
-            <div style={{marginBottom: 4}}>发起人（caller）</div>
+            <div style={{marginBottom: 4}}>发起人（initiator）</div>
             <Input
               placeholder="留空则使用当前登录用户"
               allowClear
               onChange={(e) => {
-                callerText = e.target.value;
+                initiatorText = e.target.value;
               }}
             />
           </div>
@@ -114,8 +114,8 @@ const FlowList: React.FC = () => {
             throw e as Error;
           }
         }
-        const caller = (callerText || '').trim();
-        await startProcess(projectId, {flowModuleId, variables, ...(caller ? {caller} : {})});
+        const initiator = (initiatorText || '').trim();
+        await startProcess(projectId, {flowModuleId, variables, ...(initiator ? {initiator} : {})});
         message.success('流程已启动');
       },
     });

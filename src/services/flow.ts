@@ -8,8 +8,8 @@ export interface FlowModule {
   status: number; // 1-草稿，2-设计，3-测试，4-已发布
   remark?: string;
   tenant: string;
-  caller: string;
-  operator: string;
+  createdBy?: string;
+  updatedBy?: string;
   modifyTime: string;
 }
 
@@ -21,11 +21,11 @@ export interface FlowInstance {
   flowKey?: string;
   status: number; // 1-已完成，2-运行中，3-已终止，4-已完成
   parentFlowInstanceId?: string;
-  tenant: string;
-  caller: string;
-  operator: string;
-  createTime: string;
-  modifyTime: string;
+  initiator?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface FlowModuleDetail extends FlowModule {
@@ -38,8 +38,8 @@ export interface CreateFlowRequest {
   flowName: string;
   remark?: string;
   tenant?: string;
-  caller?: string;
-  operator?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface CreateFlowResponse {
@@ -51,8 +51,8 @@ export interface CreateFlowResponse {
 export interface DeployFlowRequest {
   flowModuleId: string;
   tenant?: string;
-  caller?: string;
-  operator?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface DeployFlowResponse {
@@ -68,8 +68,8 @@ export interface UpdateFlowRequest {
   remark?: string;
   flowModel?: string;
   tenant?: string;
-  caller?: string;
-  operator?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface UpdateFlowResponse {
@@ -80,7 +80,7 @@ export interface UpdateFlowResponse {
 export interface StartProcessRequest {
   flowModuleId?: string; // 流程模块ID，flowModuleId和flowDeployId必须有一个
   flowDeployId?: string; // 流程部署ID，flowModuleId和flowDeployId必须有一个
-  caller?: string; // 发起人（流程实例调用者），为空时使用当前登录用户
+  initiator?: string; // 发起人（流程实例发起人），为空时使用当前登录用户
   variables?: Record<string, any>; // 流程变量
 }
 
@@ -102,8 +102,6 @@ export interface CommitTaskRequest {
   nodeInstanceId?: string;
   variables?: Record<string, any>;
   tenant?: string;
-  caller?: string;
-  operator?: string;
   taskInstanceId?: string;
   extendProperties?: Record<string, any>;
   callActivityFlowModuleId?: string;
@@ -124,8 +122,6 @@ export interface RollbackTaskRequest {
   flowInstanceId: string;
   nodeInstanceId?: string;
   tenant?: string;
-  caller?: string;
-  operator?: string;
   taskInstanceId?: string;
   extendProperties?: Record<string, any>;
 }
@@ -157,7 +153,7 @@ export interface RuntimeContext {
   flowDeployId?: string;
   flowModuleId?: string;
   tenant?: string;
-  caller?: string;
+  initiator?: string;
   flowElementMap?: Record<string, FlowElement>;
   flowInstanceId?: string;
   flowInstanceStatus?: number;
@@ -258,7 +254,7 @@ export interface FlowListParams {
 }
 
 export interface FlowInstanceListParams {
-  caller?: string;
+  initiator?: string;
   flowDeployId?: string;
   flowInstanceId?: string;
   flowModuleId?: string;
