@@ -80,6 +80,7 @@ export interface UpdateFlowResponse {
 export interface StartProcessRequest {
   flowModuleId?: string; // 流程模块ID，flowModuleId和flowDeployId必须有一个
   flowDeployId?: string; // 流程部署ID，flowModuleId和flowDeployId必须有一个
+  caller?: string; // 发起人（流程实例调用者），为空时使用当前登录用户
   variables?: Record<string, any>; // 流程变量
 }
 

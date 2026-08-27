@@ -61,12 +61,23 @@ const FlowList: React.FC = () => {
 
   const handleStartProcess = async (flowModuleId: string) => {
     let variablesText = '{}';
+    let callerText = '';
     const isDark = getDarkModeFromStorage();
     Modal.confirm({
       width: 500,
       title: '启动流程实例',
       content: (
         <div>
+          <div style={{marginBottom: 8}}>
+            <div style={{marginBottom: 4}}>发起人（caller）</div>
+            <Input
+              placeholder="留空则使用当前登录用户"
+              allowClear
+              onChange={(e) => {
+                callerText = e.target.value;
+              }}
+            />
+          </div>
           <div style={{marginBottom: 8}}>请输入流程变量（JSON）</div>
           <div style={{border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 6}}>
             <Editor
@@ -103,7 +114,8 @@ const FlowList: React.FC = () => {
             throw e as Error;
           }
         }
-        await startProcess(projectId, {flowModuleId, variables});
+        const caller = (callerText || '').trim();
+        await startProcess(projectId, {flowModuleId, variables, ...(caller ? {caller} : {})});
         message.success('流程已启动');
       },
     });
