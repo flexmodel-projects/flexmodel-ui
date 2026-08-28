@@ -86,7 +86,7 @@ const FlowDetail: React.FC = () => {
   return (
     <PageContainer
       loading={loading}
-      style={{ padding: 0, border: 'none', borderRadius: 0 }}
+      style={{padding: 0, border: 'none', borderRadius: 0, height: '100vh'}}
       bodyStyle={{ padding: 0, overflow: 'hidden' }}
       headerStyle={{ borderBottom: `1px solid ${token.colorBorderSecondary}`, padding: '8px 16px' }}
       title={

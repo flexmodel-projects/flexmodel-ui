@@ -216,7 +216,7 @@ const FlowInstanceList: React.FC = () => {
               icon={<EyeOutlined/>}
               size="small"
               onClick={() => {
-                navigate(`/flow/instance/${record.flowInstanceId}`);
+                navigate(`/project/${projectId}/flow/instance/${record.flowInstanceId}`);
               }}
             />
           </Tooltip>
