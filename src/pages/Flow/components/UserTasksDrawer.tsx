@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Drawer, message, Modal, Select, Space, Steps, Tag, theme} from 'antd';
+import {Button, Drawer, message, Modal, Space, Steps, Tag, theme} from 'antd';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -57,7 +57,10 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
       [NodeInstanceStatus.FAILED]: {text: '失败', color: token.colorError},
       [NodeInstanceStatus.DISABLED]: {text: '撤销', color: token.colorTextTertiary},
     };
-    const statusInfo = taskStatusMap[status as keyof typeof taskStatusMap] || {text: '未知', color: token.colorTextSecondary};
+    const statusInfo = taskStatusMap[status as keyof typeof taskStatusMap] || {
+      text: '未知',
+      color: token.colorTextSecondary
+    };
     return <Tag color={statusInfo.color as any}>{statusInfo.text}</Tag>;
   };
 
@@ -218,51 +221,28 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
   };
 
   // 退回任务
-  const handleRollbackTask = async () => {
+  const handleRollbackTask = async (task: NodeInstance) => {
     if (!currentFlowInstance) {
       message.error('流程实例信息缺失');
       return;
     }
-
-    const completedTasks = (userTasks || []).filter(t => t.status === NodeInstanceStatus.COMPLETED);
-    if (completedTasks.length === 0) {
-      message.warning('没有可退回的已完成任务');
-      return;
-    }
-
-    let selectedTaskInstanceId: string | undefined = completedTasks[completedTasks.length - 1]?.nodeInstanceId;
 
     Modal.confirm({
       width: 380,
       title: '退回任务',
       content: (
         <div style={{marginTop: 8}}>
-          <div style={{marginBottom: 8}}>选择要退回到的历史任务</div>
-          <Select
-            style={{width: '100%'}}
-            defaultValue={selectedTaskInstanceId}
-            onChange={(value) => {
-              selectedTaskInstanceId = value as string;
-            }}
-            options={completedTasks.map(t => ({
-              label: `${t.name || t.key}`,
-              value: t.nodeInstanceId,
-            }))}
-          />
+          将从「{task.name || task.key}」开始退回，退回到上一个用户任务节点（若已是第一个用户任务则退回失败）
         </div>
       ),
       okText: '退回',
       cancelText: '取消',
       onOk: async () => {
-        if (!selectedTaskInstanceId) {
-          message.warning('请选择要退回到的任务');
-          throw new Error('no target selected');
-        }
         setRollbackLoading(true);
         try {
           const data: RollbackTaskRequest = {
             flowInstanceId: currentFlowInstance.flowInstanceId,
-            taskInstanceId: selectedTaskInstanceId,
+            taskInstanceId: task.nodeInstanceId,
           };
           const {errCode, errMsg} = await rollbackTask(projectId, currentFlowInstance.flowInstanceId, data);
           if (!isSuccess(errCode)) {
@@ -299,7 +279,7 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
             size="small"
             icon={<RollbackOutlined/>}
             loading={rollbackLoading}
-            onClick={() => handleRollbackTask()}
+            onClick={() => handleRollbackTask(task)}
           >
             退回
           </Button>
@@ -386,7 +366,7 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
                       </div>
                     )}
                     <div style={{marginBottom: 4}}>
-                      <strong>创建时间:</strong> {dayjs(task.createTime).format('YYYY-MM-DD HH:mm:ss')}
+                      <strong>创建时间:</strong> {dayjs(task.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                     </div>
                   </div>
                 ),

@@ -408,8 +408,8 @@ function flowInstances() {
       status: 2,
       operator: "admin",
       initiator: "test",
-      createTime: "2024-03-01 10:00:00",
-      modifyTime: "2024-03-01 10:30:00",
+      createdAt: "2024-03-01 10:00:00",
+      updatedAt: "2024-03-01 10:30:00",
     },
     {
       flowInstanceId: "inst-2",
@@ -420,8 +420,8 @@ function flowInstances() {
       status: 1,
       operator: "admin",
       initiator: "test",
-      createTime: "2024-03-02 10:00:00",
-      modifyTime: "2024-03-02 10:30:00",
+      createdAt: "2024-03-02 10:00:00",
+      updatedAt: "2024-03-02 10:30:00",
     },
   ];
 }

@@ -10,7 +10,7 @@ export interface FlowModule {
   tenant: string;
   createdBy?: string;
   updatedBy?: string;
-  modifyTime: string;
+  updatedAt: string;
 }
 
 export interface FlowInstance {
@@ -225,8 +225,8 @@ export interface NodeInstance extends ElementInstance {
   nodeInstanceId: string;
   flowElementType?: number;
   subNodeResultList?: RuntimeResult[];
-  createTime?: string;
-  modifyTime?: string;
+  createdAt?: string;
+  updatedAt?: string;
   properties?: Record<string, any>;
 }
 

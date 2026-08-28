@@ -211,8 +211,8 @@ const FlowList: React.FC = () => {
     },
     {
       title: '修改时间',
-      dataIndex: 'modifyTime',
-      key: 'modifyTime',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       width: 180,
       render: (time: string) => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
     },
