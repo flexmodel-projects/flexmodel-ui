@@ -7,6 +7,7 @@ import {useNavigate} from 'react-router-dom';
 import {
   FlowInstance,
   FlowInstanceListParams,
+  getFlowInstance,
   getFlowInstanceList,
   getFlowUserTasks,
   NodeInstance,
@@ -321,10 +322,13 @@ const FlowInstanceList: React.FC = () => {
         projectId={projectId}
         onClose={() => setHistoryDrawerVisible(false)}
         onCommitted={async () => {
-          // 刷新用户任务
           if (currentFlowInstance) {
             try {
               setHistoryLoading(true);
+              // 刷新流程实例状态，以判断流程是否已完成并展示结束节点
+              const instance = await getFlowInstance(projectId, currentFlowInstance.flowInstanceId);
+              setCurrentFlowInstance(instance);
+              // 刷新用户任务
               const tasks = await getFlowUserTasks(projectId, currentFlowInstance.flowInstanceId);
               setUserTasks(tasks);
             } catch {

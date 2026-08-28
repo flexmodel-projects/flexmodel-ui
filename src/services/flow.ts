@@ -241,6 +241,12 @@ export interface ElementInstance {
   instanceDataId?: string;
 }
 
+export interface InstanceDataResult {
+  errCode: number;
+  errMsg: string;
+  variables?: Record<string, any>;
+}
+
 export interface PagedResult<T> {
   list: T[];
   total: number;
@@ -490,4 +496,19 @@ export const getElementInstances= (
   flowInstanceId: string,
 ): Promise<NodeInstance[]> => {
   return api.get(`/projects/${projectId}/flows/instances/${flowInstanceId}/elements`);
+};
+
+/**
+ * 获取流程实例元素实例数据
+ * @param projectId 项目ID
+ * @param flowInstanceId 流程实例ID
+ * @param instanceDataId 实例数据ID
+ * @returns 元素实例数据
+ */
+export const getInstanceData = (
+  projectId: string,
+  flowInstanceId: string,
+  instanceDataId: string,
+): Promise<InstanceDataResult> => {
+  return api.get(`/projects/${projectId}/flows/instances/${flowInstanceId}/data/${instanceDataId}`);
 };

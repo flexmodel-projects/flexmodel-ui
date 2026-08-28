@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Button, Drawer, message, Modal, Space, Steps, Tag, theme} from 'antd';
+import {Button, Drawer, message, Modal, Space, Spin, Steps, Tag, theme} from 'antd';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   HistoryOutlined,
   MinusCircleOutlined,
+  EyeOutlined,
   PlayCircleOutlined,
   RollbackOutlined,
   SendOutlined
@@ -18,6 +19,7 @@ import {
   CommitTaskRequest,
   FlowInstance,
   FlowInstanceStatus,
+  getInstanceData,
   isSuccess,
   NodeInstance,
   NodeInstanceStatus,
@@ -47,6 +49,9 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
   const {token} = theme.useToken();
   const [commitLoading, setCommitLoading] = useState(false);
   const [rollbackLoading, setRollbackLoading] = useState(false);
+  const [instanceDataModalVisible, setInstanceDataModalVisible] = useState(false);
+  const [instanceDataLoading, setInstanceDataLoading] = useState(false);
+  const [instanceDataText, setInstanceDataText] = useState('{}');
 
   // 获取任务状态标签
   const getTaskStatusTag = (status: number) => {
@@ -137,6 +142,39 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
           currentFlowInstance.status === 3 ? <MinusCircleOutlined style={{color: token.colorWarning}}/> :
             <ClockCircleOutlined style={{color: token.colorWarning}}/>
     };
+  };
+
+  // 查看元素实例数据
+  const handleViewInstanceData = async (task: NodeInstance) => {
+    if (!currentFlowInstance) {
+      message.warning('流程实例信息缺失');
+      return;
+    }
+    if (!task.instanceDataId) {
+      message.warning('当前任务无实例数据ID');
+      return;
+    }
+    setInstanceDataModalVisible(true);
+    setInstanceDataLoading(true);
+    try {
+      const {errCode, errMsg, variables} = await getInstanceData(
+        projectId,
+        currentFlowInstance.flowInstanceId,
+        task.instanceDataId
+      );
+      if (!isSuccess(errCode)) {
+        message.warning(errMsg);
+        setInstanceDataText('{}');
+        return;
+      }
+      setInstanceDataText(JSON.stringify(variables ?? {}, null, 2));
+    } catch (e) {
+      console.error('获取元素实例数据失败:', e);
+      message.error('获取元素实例数据失败');
+      setInstanceDataText('{}');
+    } finally {
+      setInstanceDataLoading(false);
+    }
   };
 
   // 提交任务
@@ -263,9 +301,13 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
 
   // 渲染操作按钮
   const renderActionButtons = (task: NodeInstance) => {
-    if (currentFlowInstance?.status == FlowInstanceStatus.RUNNING && task.status === NodeInstanceStatus.ACTIVE) {
-      return (
-        <Space size={8}>
+    const canCommit = currentFlowInstance?.status == FlowInstanceStatus.RUNNING && task.status === NodeInstanceStatus.ACTIVE;
+    if (!canCommit && !task.instanceDataId) {
+      return null;
+    }
+    return (
+      <Space size={8}>
+        {canCommit && (
           <Button
             type="primary"
             size="small"
@@ -275,6 +317,8 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
           >
             提交
           </Button>
+        )}
+        {canCommit && (
           <Button
             size="small"
             icon={<RollbackOutlined/>}
@@ -283,13 +327,21 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
           >
             退回
           </Button>
-        </Space>
-      );
-    }
-    return null;
+        )}
+        <Button
+          size="small"
+          icon={<EyeOutlined/>}
+          disabled={!task.instanceDataId}
+          onClick={() => handleViewInstanceData(task)}
+        >
+          实例数据
+        </Button>
+      </Space>
+    );
   };
 
   return (
+    <>
     <Drawer
       title={
         <div>
@@ -320,25 +372,9 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
           orientation="vertical"
           size="small"
           items={[
-            // 第一个步骤默认为"开始"
-            {
-              title: (
-                <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                  <span>开始</span>
-                  <Tag color="success">已完成</Tag>
-                </div>
-              ),
-              description: (
-                <div style={{marginTop: 8}}>
-                  <div style={{marginBottom: 4}}>
-                    <strong>创建时间:</strong> {currentFlowInstance ? dayjs(currentFlowInstance.createdAt).format('YYYY-MM-DD HH:mm:ss') : ''}
-                  </div>
-                </div>
-              ),
-              status: 'finish' as const,
-              icon: <CheckCircleOutlined style={{color: token.colorSuccess}}/>
-            },
-            // 后续的任务步骤
+            // 结束节点（置顶，流程非运行中时展示）
+            ...(currentFlowInstance ? [getEndStep()!] : []),
+            // 用户任务步骤（后端返回倒序：最新在前）
             ...userTasks.map((task) => {
               const {status: stepStatus, icon} = getStepStatusAndIcon(task.status);
 
@@ -374,12 +410,57 @@ const UserTasksDrawer: React.FC<FlowInstanceHistoryDrawerProps> = ({
                 icon: icon
               };
             }),
-            // 添加流程实例状态步骤（始终显示）
-            ...(currentFlowInstance ? [getEndStep()!] : [])
+            // 开始节点（置底，最早的事件）
+            {
+              title: (
+                <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                  <span>开始</span>
+                  <Tag color="success">已完成</Tag>
+                </div>
+              ),
+              description: (
+                <div style={{marginTop: 8}}>
+                  <div style={{marginBottom: 4}}>
+                    <strong>创建时间:</strong> {currentFlowInstance ? dayjs(currentFlowInstance.createdAt).format('YYYY-MM-DD HH:mm:ss') : ''}
+                  </div>
+                </div>
+              ),
+              status: 'finish' as const,
+              icon: <CheckCircleOutlined style={{color: token.colorSuccess}}/>
+            },
           ].filter((item): item is NonNullable<typeof item> => item !== null)}
         />
       )}
     </Drawer>
+      <Modal
+        title="元素实例数据"
+        open={instanceDataModalVisible}
+        width={600}
+        onCancel={() => setInstanceDataModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setInstanceDataModalVisible(false)}>
+            关闭
+          </Button>
+        ]}
+      >
+        <Spin spinning={instanceDataLoading}>
+          <div style={{border: `1px solid ${token.colorBorderSecondary}`, borderRadius: 6}}>
+            <Editor
+              height="320px"
+              defaultLanguage="json"
+              value={instanceDataText}
+              theme={getDarkModeFromStorage() ? 'vs-dark' : 'light'}
+              options={{
+                readOnly: true,
+                minimap: {enabled: false},
+                wordWrap: 'on',
+                scrollBeyondLastLine: false,
+              }}
+            />
+          </div>
+        </Spin>
+      </Modal>
+    </>
   );
 };
 
