@@ -52,6 +52,7 @@
   "observability.api_logs": "API Logs",
   "observability.job_execution_log": "Job Execution Logs",
   "observability.node_instance_logs": "Node Instance Logs",
+  "observability.audit_logs": "Audit Logs",
   "observability.trace_detail": "Trace Detail",
   "trace_id": "Trace ID",
   "trace.rootName": "Root Operation",

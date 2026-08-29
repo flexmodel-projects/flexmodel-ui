@@ -50,6 +50,7 @@ export interface TraceDetail {
   functionLogs: FunctionLog[];
   jobExecutionLogs: JobExecutionLogRef[];
   nodeInstanceLogs: NodeInstanceLogRef[];
+  auditLogs: AuditLogRef[];
 }
 
 export interface ApiLogRef {
@@ -89,4 +90,38 @@ export interface NodeInstanceLogRef {
   archive?: number;
   traceId?: string;
   createdAt?: string;
+}
+
+/**
+ * 审计日志（配置变更）
+ */
+export interface AuditLog {
+  id: string;
+  action: string;
+  resourceType: string;
+  resourceId: string;
+  resourceName?: string;
+  userId?: string;
+  success: boolean;
+  errorMessage?: string;
+  oldData?: string;
+  newData?: string;
+  traceId?: string;
+  createdAt: string;
+}
+
+/**
+ * 审计日志（链路详情关联引用，精简字段）
+ */
+export interface AuditLogRef {
+  id: string;
+  action: string;
+  resourceType: string;
+  resourceId: string;
+  resourceName?: string;
+  userId?: string;
+  success: boolean;
+  errorMessage?: string;
+  traceId?: string;
+  createdAt: string;
 }

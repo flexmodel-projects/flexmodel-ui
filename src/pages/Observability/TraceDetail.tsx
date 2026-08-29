@@ -298,6 +298,36 @@ const TraceDetailPage: React.FC = () => {
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
+          {
+            key: 'auditLogs',
+            label: `${t('observability.audit_logs')} (${detail?.auditLogs?.length ?? 0})`,
+            children: detail?.auditLogs?.length ? (
+              <div style={{fontFamily: 'monospace', fontSize: 12}}>
+                {detail.auditLogs.map(l => {
+                  const color =
+                    l.action === 'INSERTED' ? 'green' :
+                      l.action === 'UPDATED' ? 'blue' :
+                        l.action === 'DELETED' ? 'red' : 'default';
+                  return (
+                    <div key={l.id}
+                         style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+                      <Space>
+                        <Tag color={color}>{l.action}</Tag>
+                        <span style={{fontWeight: 600}}>{l.resourceName || l.resourceId}</span>
+                        <span style={{color: token.colorTextSecondary}}>{l.resourceType}</span>
+                        {l.userId && (
+                          <span style={{color: token.colorTextSecondary}}>{l.userId}</span>
+                        )}
+                        {l.createdAt && (
+                          <span style={{color: token.colorTextTertiary}}>{l.createdAt}</span>
+                        )}
+                      </Space>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : <Typography.Text type="secondary">-</Typography.Text>,
+          },
         ]}
       />
     </PageContainer>
