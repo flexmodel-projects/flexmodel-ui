@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space, Table, Tag, theme,} from 'antd';
+import {Button, DatePicker, Drawer, Form, Input, Select, Space, Table, theme} from 'antd';
 import PageContainer from '@/components/common/PageContainer';
-import {SearchOutlined} from '@ant-design/icons';
+import {DownOutlined, SearchOutlined, UpOutlined} from '@ant-design/icons';
 import {getFunctionLogs} from '@/services/function-log';
 import {useTranslation} from 'react-i18next';
 import type {FunctionLog} from '@/types/observability';
@@ -22,6 +22,7 @@ const FunctionLogList: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [query, setQuery] = useState({page: 1, size: 50});
   const [form] = Form.useForm();
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const fetchData = async () => {
     if (!projectId) return;
@@ -102,47 +103,50 @@ const FunctionLogList: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
-      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <div style={{marginBottom: 16}}>
-          <Form form={form} layout="inline">
-            <Row gutter={[16, 8]} style={{width: '100%'}}>
-              <Col span={6}>
-                <Form.Item name="functionName" label={t('function.name', '函数名')}>
-                  <Input allowClear/>
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item name="level" label={t('function.logLevel', '级别')}>
-                  <Select allowClear>
-                    <Select.Option value="log">LOG</Select.Option>
-                    <Select.Option value="warn">WARN</Select.Option>
-                    <Select.Option value="error">ERROR</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item name="dateRange" label={t('date_range')}>
-                  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{width: '100%'}}/>
-                </Form.Item>
-              </Col>
-            </Row>
-            <div style={{display: 'flex', gap: '8px', marginTop: 4}}>
-              <Form.Item name="traceId" label="Trace ID" style={{flex: 1, marginBottom: 0}}>
-                <Input allowClear placeholder="traceId"/>
-              </Form.Item>
-              <Form.Item name="keyword" label={t('search_keywords')} style={{flex: 1, marginBottom: 0}}>
-                <Input allowClear placeholder={t('search_keywords')}/>
-              </Form.Item>
+    <PageContainer
+      title={t('function.logList', '函数日志列表')}
+      extra={
+        <Form form={form} layout="inline" style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+            <Form.Item name="functionName" label={t('function.name', '函数名')} style={{marginBottom: 0}}>
+              <Input allowClear style={{width: 160}}/>
+            </Form.Item>
+            <Form.Item name="level" label={t('function.logLevel', '级别')} style={{marginBottom: 0}}>
+              <Select allowClear style={{width: 120}}>
+                <Select.Option value="log">LOG</Select.Option>
+                <Select.Option value="warn">WARN</Select.Option>
+                <Select.Option value="error">ERROR</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="dateRange" label={t('date_range')} style={{marginBottom: 0}}>
+              <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+            </Form.Item>
+            <Form.Item style={{marginBottom: 0}}>
               <Space>
                 <Button type="primary" icon={<SearchOutlined/>} onClick={search}>
                   {t('search')}
                 </Button>
+                <Button type="link" onClick={() => setShowAdvanced(v => !v)}>
+                  {t('more_filters', '更多筛选')}
+                  {showAdvanced ? <UpOutlined/> : <DownOutlined/>}
+                </Button>
               </Space>
+            </Form.Item>
+          </div>
+          {showAdvanced && (
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
+              <Form.Item name="traceId" label="Trace ID" style={{marginBottom: 0}}>
+                <Input allowClear placeholder="traceId" style={{width: 180}}/>
+              </Form.Item>
+              <Form.Item name="keyword" label={t('search_keywords')} style={{marginBottom: 0}}>
+                <Input allowClear placeholder={t('search_keywords')} style={{width: 180}}/>
+              </Form.Item>
             </div>
-          </Form>
-        </div>
-
+          )}
+        </Form>
+      }
+    >
+      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         <div style={{flex: 1, overflow: 'hidden'}}>
           <Table
             bordered={false}

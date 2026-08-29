@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Button, Col, DatePicker, Descriptions, Drawer, Form, Input, Row, Select, Space, Table, Tag, theme,} from "antd";
+import {Button, DatePicker, Descriptions, Drawer, Form, Input, Select, Space, Table, Tag, theme,} from "antd";
 import PageContainer from "@/components/common/PageContainer";
 import {DownOutlined, SearchOutlined, SettingOutlined, UpOutlined,} from "@ant-design/icons";
 import {getApiLogs, getApiLogStat} from "@/services/api-log.ts";
@@ -183,79 +183,50 @@ const LogViewer: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer
+      title={t('observability.api_logs', 'API 日志')}
+      extra={
+        <Form form={form} layout="inline" style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+            <Form.Item name="keyword" label={t("search_keywords")} style={{marginBottom: 0}}>
+              <Input placeholder={t("search_keywords")} style={{width: 200}}/>
+            </Form.Item>
+            <Form.Item style={{marginBottom: 0}}>
+              <Space>
+                <Button type="primary" icon={<SearchOutlined/>} onClick={searchLog}>
+                  {t("search")}
+                </Button>
+                <Button onClick={resetLog}>{t("reset")}</Button>
+                <Button icon={<SettingOutlined/>} onClick={() => setSettingsDialogVisible(true)}/>
+                <Button type="link" onClick={() => setExpand(!expand)}>
+                  {t('more_filters', '更多筛选')}
+                  {expand ? <UpOutlined/> : <DownOutlined/>}
+                </Button>
+              </Space>
+            </Form.Item>
+          </div>
+          {expand && (
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
+              <Form.Item name="isSuccess" label={t("is_success")} style={{marginBottom: 0}}>
+                <Select allowClear style={{width: 120}}>
+                  <Select.Option value={true}>{t("success")}</Select.Option>
+                  <Select.Option value={false}>{t("fail")}</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="dateRange" label={t("date_range")} style={{marginBottom: 0}}>
+                <RangePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+              </Form.Item>
+            </div>
+          )}
+        </Form>
+      }
+    >
       <div style={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         padding: token.padding
       }}>
-        {/* 搜索表单区域 */}
-        <div style={{
-          marginBottom: '16px',
-          flexShrink: 0
-        }}>
-          <Form form={form}>
-            {expand && (
-              <Row gutter={16} style={{ marginBottom: '12px' }}>
-                <Col span={6}>
-                  <Form.Item name="isSuccess" label={t("is_success")}>
-                    <Select style={{ width: "100%" }} allowClear>
-                      <Select.Option value={true}>{t("success")}</Select.Option>
-                      <Select.Option value={false}>{t("fail")}</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={18}>
-                  <Form.Item name="dateRange" label={t("date_range")}>
-                    <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-              </Row>
-            )}
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
-                <Form.Item
-                  name="keyword"
-                  label={t("search_keywords")}
-                  style={{ marginBottom: 0 }}
-                >
-                  <Input placeholder={t("search_keywords")} />
-                </Form.Item>
-              </div>
-              <div>
-                <Space>
-                  <Button
-                    icon={<SearchOutlined />}
-                    type="primary"
-                    onClick={searchLog}
-                  >
-                    {t("search")}
-                  </Button>
-                  <Button type="default" onClick={resetLog}>
-                    {t("reset")}
-                  </Button>
-                  <Button
-                    icon={<SettingOutlined />}
-                    onClick={() => setSettingsDialogVisible(true)}
-                  />
-                  <a onClick={() => setExpand(!expand)}>
-                    {expand ? (
-                      <>
-                        {t("collapse")} <UpOutlined />
-                      </>
-                    ) : (
-                      <>
-                        {t("expand")} <DownOutlined />
-                      </>
-                    )}
-                  </a>
-                </Space>
-              </div>
-            </div>
-          </Form>
-        </div>
-
         {/* 图表区域 */}
         <div style={{
           height: '140px',

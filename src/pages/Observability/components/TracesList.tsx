@@ -144,24 +144,26 @@ const TracesList: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer title="链路追踪"
+                   extra={<div style={{display: 'flex', justifyContent: 'flex-end', flexShrink: 0}}>
+                     <Space>
+                       <Input
+                         placeholder={t('trace_id', 'Trace ID')}
+                         value={searchTraceId}
+                         onChange={(e) => setSearchTraceId(e.target.value)}
+                         onPressEnter={search}
+                         allowClear
+                         style={{width: 320}}
+                       />
+                       <Button type="primary" icon={<SearchOutlined/>} onClick={search}>
+                         {t('search', '搜索')}
+                       </Button>
+                     </Space>
+                   </div>}
+    >
       <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end', flexShrink: 0}}>
-          <Space>
-            <Input
-              placeholder={t('trace_id', 'Trace ID')}
-              value={searchTraceId}
-              onChange={(e) => setSearchTraceId(e.target.value)}
-              onPressEnter={search}
-              allowClear
-              style={{width: 320}}
-            />
-            <Button type="primary" icon={<SearchOutlined/>} onClick={search}>
-              {t('search', '搜索')}
-            </Button>
-          </Space>
-        </div>
-        <div
+
+      <div
           ref={tableContainerRef}
           style={{
             display: 'flex',

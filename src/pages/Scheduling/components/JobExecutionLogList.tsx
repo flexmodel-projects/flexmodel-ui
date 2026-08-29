@@ -13,7 +13,7 @@ import {
   Tag,
   Typography
 } from 'antd';
-import {EyeOutlined, ReloadOutlined, SearchOutlined} from '@ant-design/icons';
+import {DownOutlined, EyeOutlined, ReloadOutlined, SearchOutlined, UpOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
 import {getJobExecutionLogs, JobExecutionLog, JobExecutionLogParams} from '@/services/job';
@@ -38,6 +38,7 @@ const JobExecutionLogList: React.FC = () => {
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [selectedLog, setSelectedLog] = useState<JobExecutionLog | null>(null);
   const tableWrapperRef = useRef<HTMLDivElement | null>(null);
   const [tableScrollY, setTableScrollY] = useState<number>(300);
@@ -275,10 +276,58 @@ const JobExecutionLogList: React.FC = () => {
   return (
     <PageContainer
       title={t('job_execution_log')}
-      extra={[
-
-      ]}
       loading={loading}
+      extra={
+        <Form
+          form={form}
+          layout="inline"
+          onFinish={handleSearch}
+          style={{flexDirection: 'column', alignItems: 'flex-end'}}
+        >
+          <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+            <Form.Item name="timeRange" label="时间范围" style={{marginBottom: 0}}>
+              <RangePicker
+                showTime
+                format="YYYY-MM-DD HH:mm:ss"
+                placeholder={['开始时间', '结束时间']}
+              />
+            </Form.Item>
+            <Form.Item name="isSuccess" label="执行状态" style={{marginBottom: 0}}>
+              <Select placeholder="选择状态" allowClear style={{width: 120}}>
+                <Select.Option value={true}>成功</Select.Option>
+                <Select.Option value={false}>失败</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item style={{marginBottom: 0}}>
+              <Space>
+                <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
+                  搜索
+                </Button>
+                <Button onClick={handleReset}>
+                  重置
+                </Button>
+                <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>
+                  刷新
+                </Button>
+                <Button type="link" onClick={() => setShowAdvanced(v => !v)}>
+                  {t('more_filters', '更多筛选')}
+                  {showAdvanced ? <UpOutlined/> : <DownOutlined/>}
+                </Button>
+              </Space>
+            </Form.Item>
+          </div>
+          {showAdvanced && (
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
+              <Form.Item name="jobId" label="任务ID" style={{marginBottom: 0}}>
+                <Input placeholder="输入任务ID" style={{width: 150}}/>
+              </Form.Item>
+              <Form.Item name="triggerId" label="触发器ID" style={{marginBottom: 0}}>
+                <Input placeholder="输入触发器ID" style={{width: 150}}/>
+              </Form.Item>
+            </div>
+          )}
+        </Form>
+      }
     >
       <div
         ref={tableWrapperRef}
@@ -289,52 +338,6 @@ const JobExecutionLogList: React.FC = () => {
           overflow: 'hidden',
         }}
       >
-        <div className="job-log-search-form" style={{marginBottom: 16, flexShrink: 0}}>
-          <Form
-            form={form}
-            layout="inline"
-            onFinish={handleSearch}
-            style={{marginBottom: 16}}
-          >
-          <Form.Item name="timeRange" label="时间范围">
-            <RangePicker
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder={['开始时间', '结束时间']}
-            />
-          </Form.Item>
-
-          <Form.Item name="isSuccess" label="执行状态">
-            <Select placeholder="选择状态" allowClear style={{width: 120}}>
-              <Select.Option value={true}>成功</Select.Option>
-              <Select.Option value={false}>失败</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="jobId" label="任务ID">
-            <Input placeholder="输入任务ID" style={{width: 150}}/>
-          </Form.Item>
-
-          <Form.Item name="triggerId" label="触发器ID">
-            <Input placeholder="输入触发器ID" style={{width: 150}}/>
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
-                搜索
-              </Button>
-              <Button onClick={handleReset}>
-                重置
-              </Button>
-              <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>
-                刷新
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </div>
-
       <Table
         className="job-log-table"
         columns={columns}

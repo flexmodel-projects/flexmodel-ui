@@ -13,6 +13,7 @@ import {
   Typography,
 } from 'antd';
 import {EyeOutlined, ReloadOutlined, SearchOutlined} from '@ant-design/icons';
+import {DownOutlined, UpOutlined} from '@ant-design/icons';
 import {useTranslation} from 'react-i18next';
 import PageContainer from '@/components/common/PageContainer';
 import {getAuditLogs, AuditLogParams} from '@/services/audit-log';
@@ -61,6 +62,7 @@ const AuditLogList: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [detailVisible, setDetailVisible] = useState(false);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const loadLogs = async (params?: AuditLogParams) => {
     if (!projectId) return;
@@ -181,40 +183,50 @@ const AuditLogList: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
-      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <div style={{marginBottom: 16}}>
-          <Form form={form} layout="inline" onFinish={handleSearch}>
-            <Space wrap>
-              <Form.Item name="action" label="操作类型">
-                <Select placeholder="选择操作类型" allowClear style={{width: 140}}>
-                  <Select.Option value="INSERTED">INSERTED</Select.Option>
-                  <Select.Option value="UPDATED">UPDATED</Select.Option>
-                  <Select.Option value="DELETED">DELETED</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item name="resourceType" label="资源类型">
-                <Input placeholder="输入资源类型" allowClear style={{width: 180}}/>
-              </Form.Item>
-              <Form.Item name="userId" label="操作人">
+    <PageContainer
+      title={t('observability.audit_logs', '审计日志')}
+      extra={
+        <Form form={form} layout="inline" onFinish={handleSearch}
+              style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+            <Form.Item name="action" label="操作类型" style={{marginBottom: 0}}>
+              <Select placeholder="选择操作类型" allowClear style={{width: 140}}>
+                <Select.Option value="INSERTED">INSERTED</Select.Option>
+                <Select.Option value="UPDATED">UPDATED</Select.Option>
+                <Select.Option value="DELETED">DELETED</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="resourceType" label="资源类型" style={{marginBottom: 0}}>
+              <Input placeholder="输入资源类型" allowClear style={{width: 180}}/>
+            </Form.Item>
+            <Form.Item style={{marginBottom: 0}}>
+              <Space>
+                <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
+                  搜索
+                </Button>
+                <Button onClick={handleReset}>重置</Button>
+                <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>刷新</Button>
+                <Button type="link" onClick={() => setShowAdvanced(v => !v)}>
+                  {t('more_filters', '更多筛选')}
+                  {showAdvanced ? <UpOutlined/> : <DownOutlined/>}
+                </Button>
+              </Space>
+            </Form.Item>
+          </div>
+          {showAdvanced && (
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
+              <Form.Item name="userId" label="操作人" style={{marginBottom: 0}}>
                 <Input placeholder="输入操作人ID" allowClear style={{width: 160}}/>
               </Form.Item>
-              <Form.Item name="traceId" label={t('trace_id')}>
+              <Form.Item name="traceId" label={t('trace_id')} style={{marginBottom: 0}}>
                 <Input placeholder="输入 Trace ID" allowClear style={{width: 180}}/>
               </Form.Item>
-              <Form.Item>
-                <Space>
-                  <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
-                    搜索
-                  </Button>
-                  <Button onClick={handleReset}>重置</Button>
-                  <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>刷新</Button>
-                </Space>
-              </Form.Item>
-            </Space>
-          </Form>
-        </div>
-
+            </div>
+          )}
+        </Form>
+      }
+    >
+      <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         <Table
           columns={columns}
           dataSource={logs}
