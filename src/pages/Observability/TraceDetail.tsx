@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Descriptions, Space, Spin, Tabs, Tag, theme, Typography} from 'antd';
+import {Button, Card, Collapse, Descriptions, Space, Spin, Tabs, Tag, theme, Typography} from 'antd';
 import {ArrowLeftOutlined} from '@ant-design/icons';
 import ReactECharts from 'echarts-for-react';
 import echarts from '@/utils/echarts';
@@ -153,6 +153,12 @@ const TraceDetailPage: React.FC = () => {
     );
   }
 
+  const listScrollStyle: React.CSSProperties = {
+    maxHeight: 'calc(100vh - 280px)',
+    overflow: 'auto',
+    paddingRight: 4,
+  };
+
   return (
     <PageContainer>
       <div style={{marginBottom: 16}}>
@@ -194,12 +200,14 @@ const TraceDetailPage: React.FC = () => {
             key: 'spans',
             label: t('trace.spans', 'Span 列表'),
             children: detail?.spans?.length ? (
-              <div style={{fontFamily: 'monospace', fontSize: 12}}>
-                {detail.spans.map(s => (
-                  <div key={s.id} style={{
-                    padding: '4px 8px',
-                    borderBottom: `1px solid ${token.colorBorderSecondary}`,
-                  }}>
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.spans.map(s => ({
+                    key: s.id,
+                    label: (
                     <Space>
                       <Tag color={s.status === 'ERROR' ? 'red' : s.kind === 'SERVER' ? 'blue' : 'green'}>
                         {s.kind}
@@ -207,23 +215,51 @@ const TraceDetailPage: React.FC = () => {
                       <span style={{fontWeight: 600}}>{s.name}</span>
                       <span style={{color: token.colorTextSecondary}}>{fmtDuration(s.durationNs)}</span>
                     </Space>
-                  </div>
-                ))}
+                    ),
+                    children: (
+                      <Descriptions column={1} size="small" labelStyle={{width: 90}}>
+                        <Descriptions.Item label="Span ID">{s.spanId}</Descriptions.Item>
+                        <Descriptions.Item label={t('trace.parentId', '父 Span ID')}>
+                          {s.parentId || '-'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('trace.status', '状态')}>{s.status}</Descriptions.Item>
+                        <Descriptions.Item label={t('trace.attributes', '属性')}>
+                          {s.attributes || '-'}
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('trace.startTime', '开始时间')}>{s.createdAt}</Descriptions.Item>
+                      </Descriptions>
+                    ),
+                  }))}
+                />
               </div>
-            ) : null,
+            ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
           {
             key: 'apiLogs',
             label: `${t('api_log')} (${detail?.apiLogs?.length ?? 0})`,
             children: detail?.apiLogs?.length ? (
-              <div style={{fontFamily: 'monospace', fontSize: 12}}>
-                {detail.apiLogs.map(l => (
-                  <div key={l.id} style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
-                    <Tag color={l.isSuccess ? 'green' : 'red'}>{l.statusCode}</Tag>
-                    <span>{l.httpMethod} {l.path}</span>
-                    <span style={{color: token.colorTextSecondary, marginLeft: 8}}>{l.responseTime}ms</span>
-                  </div>
-                ))}
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.apiLogs.map(l => ({
+                    key: l.id,
+                    label: (
+                      <Space>
+                        <Tag color={l.isSuccess ? 'green' : 'red'}>{l.statusCode}</Tag>
+                        <span>{l.httpMethod} {l.path}</span>
+                        <span style={{color: token.colorTextSecondary}}>{l.responseTime}ms</span>
+                      </Space>
+                    ),
+                    children: (
+                      <Descriptions column={1} size="small" labelStyle={{width: 90}}>
+                        <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
+                        <Descriptions.Item label={t('trace.createdAt', '时间')}>{l.createdAt}</Descriptions.Item>
+                      </Descriptions>
+                    ),
+                  }))}
+                />
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
@@ -231,19 +267,35 @@ const TraceDetailPage: React.FC = () => {
             key: 'functionLogs',
             label: `${t('function.logTitle', '函数日志')} (${detail?.functionLogs?.length ?? 0})`,
             children: detail?.functionLogs?.length ? (
-              <div style={{
-                maxHeight: 400, overflow: 'auto', background: token.colorFillSecondary,
-                borderRadius: token.borderRadius, padding: 'var(--ant-padding-sm)',
-                fontFamily: 'monospace', fontSize: 12,
-              }}>
-                {detail.functionLogs.map((l, i) => (
-                  <div key={l.id || i} style={{
-                    padding: '2px 0',
-                    color: l.level === 'error' ? token.colorError : l.level === 'warn' ? token.colorWarning : token.colorText,
-                  }}>
-                    [{l.level.toUpperCase()}] [{l.functionName}] {l.message}
-                  </div>
-                ))}
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.functionLogs.map((l, i) => ({
+                    key: l.id || String(i),
+                    label: (
+                      <Space>
+                        <Tag
+                          color={l.level === 'error' ? 'red' : l.level === 'warn' ? 'orange' : 'blue'}>
+                          {l.level.toUpperCase()}
+                        </Tag>
+                        <span style={{fontWeight: 600}}>{l.functionName}</span>
+                        <span style={{color: token.colorTextTertiary}}>{l.createdAt}</span>
+                      </Space>
+                    ),
+                    children: (
+                      <pre style={{
+                        margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                        background: token.colorFillSecondary, borderRadius: token.borderRadius,
+                        padding: 'var(--ant-padding-sm)', fontFamily: 'monospace', fontSize: 12,
+                        color: l.level === 'error' ? token.colorError : l.level === 'warn' ? token.colorWarning : token.colorText,
+                      }}>
+                      {l.message}
+                    </pre>
+                    ),
+                  }))}
+                />
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
@@ -251,9 +303,14 @@ const TraceDetailPage: React.FC = () => {
             key: 'jobExecutionLogs',
             label: `${t('observability.job_execution_log')} (${detail?.jobExecutionLogs?.length ?? 0})`,
             children: detail?.jobExecutionLogs?.length ? (
-              <div style={{fontFamily: 'monospace', fontSize: 12}}>
-                {detail.jobExecutionLogs.map(l => (
-                  <div key={l.id} style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.jobExecutionLogs.map(l => ({
+                    key: l.id,
+                    label: (
                     <Space>
                       <Tag
                         color={l.executionStatus === 'SUCCESS' ? 'green' : l.executionStatus === 'FAILED' ? 'red' : 'blue'}>
@@ -266,11 +323,24 @@ const TraceDetailPage: React.FC = () => {
                       )}
                       <span style={{color: token.colorTextTertiary}}>{l.startTime}</span>
                     </Space>
-                    {l.errorMessage && (
-                      <div style={{color: token.colorError, marginTop: 2}}>{l.errorMessage}</div>
-                    )}
-                  </div>
-                ))}
+                    ),
+                    children: (
+                      <Descriptions column={1} size="small" labelStyle={{width: 90}}>
+                        <Descriptions.Item label="Job ID">{l.jobId}</Descriptions.Item>
+                        <Descriptions.Item label="Trigger ID">{l.triggerId}</Descriptions.Item>
+                        {l.endTime && (
+                          <Descriptions.Item label={t('trace.endTime', '结束时间')}>{l.endTime}</Descriptions.Item>
+                        )}
+                        {l.errorMessage && (
+                          <Descriptions.Item label={t('trace.errorMessage', '错误信息')}>
+                            <span style={{color: token.colorError}}>{l.errorMessage}</span>
+                          </Descriptions.Item>
+                        )}
+                        <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
+                      </Descriptions>
+                    ),
+                  }))}
+                />
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
@@ -278,12 +348,16 @@ const TraceDetailPage: React.FC = () => {
             key: 'nodeInstanceLogs',
             label: `${t('observability.node_instance_logs')} (${detail?.nodeInstanceLogs?.length ?? 0})`,
             children: detail?.nodeInstanceLogs?.length ? (
-              <div style={{fontFamily: 'monospace', fontSize: 12}}>
-                {detail.nodeInstanceLogs.map(l => {
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.nodeInstanceLogs.map(l => {
                   const statusInfo = nodeLogStatusInfo(l.status);
-                  return (
-                    <div key={l.id}
-                         style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+                    return {
+                      key: String(l.id),
+                      label: (
                       <Space>
                         <Tag color={statusInfo.color}>{statusInfo.text}</Tag>
                         <span style={{fontWeight: 600}}>{l.nodeKey}</span>
@@ -292,9 +366,26 @@ const TraceDetailPage: React.FC = () => {
                           <span style={{color: token.colorTextTertiary}}>{l.createdAt}</span>
                         )}
                       </Space>
-                    </div>
-                  );
+                      ),
+                      children: (
+                        <Descriptions column={1} size="small" labelStyle={{width: 110}}>
+                          <Descriptions.Item label={t('trace.nodeInstanceId', '节点实例 ID')}>
+                            {l.nodeInstanceId}
+                          </Descriptions.Item>
+                          <Descriptions.Item label={t('trace.flowInstanceId', '流程实例 ID')}>
+                            {l.flowInstanceId}
+                          </Descriptions.Item>
+                          {l.instanceDataId && (
+                            <Descriptions.Item label={t('trace.instanceDataId', '数据实例 ID')}>
+                              {l.instanceDataId}
+                            </Descriptions.Item>
+                          )}
+                          <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
+                        </Descriptions>
+                      ),
+                    };
                 })}
+                />
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
@@ -302,15 +393,19 @@ const TraceDetailPage: React.FC = () => {
             key: 'auditLogs',
             label: `${t('observability.audit_logs')} (${detail?.auditLogs?.length ?? 0})`,
             children: detail?.auditLogs?.length ? (
-              <div style={{fontFamily: 'monospace', fontSize: 12}}>
-                {detail.auditLogs.map(l => {
+              <div style={listScrollStyle}>
+                <Collapse
+                  defaultActiveKey={[]}
+                  ghost
+                  size="small"
+                  items={detail.auditLogs.map(l => {
                   const color =
                     l.action === 'INSERTED' ? 'green' :
                       l.action === 'UPDATED' ? 'blue' :
                         l.action === 'DELETED' ? 'red' : 'default';
-                  return (
-                    <div key={l.id}
-                         style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+                    return {
+                      key: l.id,
+                      label: (
                       <Space>
                         <Tag color={color}>{l.action}</Tag>
                         <span style={{fontWeight: 600}}>{l.resourceName || l.resourceId}</span>
@@ -322,9 +417,26 @@ const TraceDetailPage: React.FC = () => {
                           <span style={{color: token.colorTextTertiary}}>{l.createdAt}</span>
                         )}
                       </Space>
-                    </div>
-                  );
+                      ),
+                      children: (
+                        <Descriptions column={1} size="small" labelStyle={{width: 90}}>
+                          <Descriptions.Item label="Resource ID">{l.resourceId}</Descriptions.Item>
+                          <Descriptions.Item label={t('trace.success', '结果')}>
+                            <Tag color={l.success ? 'green' : 'red'}>
+                              {l.success ? t('trace.successLabel', '成功') : t('trace.failedLabel', '失败')}
+                            </Tag>
+                          </Descriptions.Item>
+                          {l.errorMessage && (
+                            <Descriptions.Item label={t('trace.errorMessage', '错误信息')}>
+                              <span style={{color: token.colorError}}>{l.errorMessage}</span>
+                            </Descriptions.Item>
+                          )}
+                          <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
+                        </Descriptions>
+                      ),
+                    };
                 })}
+                />
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
