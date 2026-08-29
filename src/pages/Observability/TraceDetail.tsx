@@ -141,7 +141,7 @@ const TraceDetailPage: React.FC = () => {
       series: [
         {
           type: 'custom',
-          renderItem: (params: any, api: any) => {
+          renderItem: (_params: any, api: any) => {
             const cat = api.value(0);
             const start = api.coord([api.value(1), cat]);
             const end = api.coord([api.value(2), cat]);
@@ -279,13 +279,12 @@ const TraceDetailPage: React.FC = () => {
                     label: (
                       <Space>
                         <Tag color={l.isSuccess ? 'green' : 'red'}>{l.statusCode}</Tag>
-                        <span>{l.httpMethod} {l.path}</span>
+                        <span>{l.path}</span>
                         <span style={{color: token.colorTextSecondary}}>{l.responseTime}ms</span>
                       </Space>
                     ),
                     children: (
                       <Descriptions column={1} size="small" labelStyle={{width: 100}}>
-                        <Descriptions.Item label={t('http_method')}>{l.httpMethod}</Descriptions.Item>
                         <Descriptions.Item label={t('path')}>{l.path}</Descriptions.Item>
                         {l.url && (
                           <Descriptions.Item label={t('url', 'URL')}>{l.url}</Descriptions.Item>
