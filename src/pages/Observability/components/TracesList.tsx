@@ -144,7 +144,7 @@ const TracesList: React.FC = () => {
   ];
 
   return (
-    <PageContainer title="链路追踪"
+    <PageContainer title={t('observability.traces')}
                    extra={<div style={{display: 'flex', justifyContent: 'flex-end', flexShrink: 0}}>
                      <Space>
                        <Input

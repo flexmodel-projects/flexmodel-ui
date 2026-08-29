@@ -285,32 +285,32 @@ const JobExecutionLogList: React.FC = () => {
           style={{flexDirection: 'column', alignItems: 'flex-end'}}
         >
           <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-            <Form.Item name="timeRange" label="时间范围" style={{marginBottom: 0}}>
+            <Form.Item name="timeRange" label={t('date_range')} style={{marginBottom: 0}}>
               <RangePicker
                 showTime
                 format="YYYY-MM-DD HH:mm:ss"
-                placeholder={['开始时间', '结束时间']}
+                placeholder={[t('start_time'), t('end_time')]}
               />
             </Form.Item>
-            <Form.Item name="isSuccess" label="执行状态" style={{marginBottom: 0}}>
-              <Select placeholder="选择状态" allowClear style={{width: 120}}>
-                <Select.Option value={true}>成功</Select.Option>
-                <Select.Option value={false}>失败</Select.Option>
+            <Form.Item name="isSuccess" label={t('execution_status')} style={{marginBottom: 0}}>
+              <Select placeholder={t('select_status')} allowClear style={{width: 120}}>
+                <Select.Option value={true}>{t('success')}</Select.Option>
+                <Select.Option value={false}>{t('fail')}</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item style={{marginBottom: 0}}>
               <Space>
                 <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
-                  搜索
+                  {t('search')}
                 </Button>
                 <Button onClick={handleReset}>
-                  重置
+                  {t('reset')}
                 </Button>
                 <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>
-                  刷新
+                  {t('refresh')}
                 </Button>
                 <Button type="link" onClick={() => setShowAdvanced(v => !v)}>
-                  {t('more_filters', '更多筛选')}
+                  {t('more_filters')}
                   {showAdvanced ? <UpOutlined/> : <DownOutlined/>}
                 </Button>
               </Space>
@@ -318,11 +318,11 @@ const JobExecutionLogList: React.FC = () => {
           </div>
           {showAdvanced && (
             <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
-              <Form.Item name="jobId" label="任务ID" style={{marginBottom: 0}}>
-                <Input placeholder="输入任务ID" style={{width: 150}}/>
+              <Form.Item name="jobId" label={t('job_id')} style={{marginBottom: 0}}>
+                <Input placeholder={t('input_job_id')} style={{width: 150}}/>
               </Form.Item>
-              <Form.Item name="triggerId" label="触发器ID" style={{marginBottom: 0}}>
-                <Input placeholder="输入触发器ID" style={{width: 150}}/>
+              <Form.Item name="triggerId" label={t('trigger_id')} style={{marginBottom: 0}}>
+                <Input placeholder={t('input_trigger_id')} style={{width: 150}}/>
               </Form.Item>
             </div>
           )}

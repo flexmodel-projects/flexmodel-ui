@@ -189,25 +189,25 @@ const AuditLogList: React.FC = () => {
         <Form form={form} layout="inline" onFinish={handleSearch}
               style={{flexDirection: 'column', alignItems: 'flex-end'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-            <Form.Item name="action" label="操作类型" style={{marginBottom: 0}}>
-              <Select placeholder="选择操作类型" allowClear style={{width: 140}}>
+            <Form.Item name="action" label={t('action_type')} style={{marginBottom: 0}}>
+              <Select placeholder={t('select_action_type')} allowClear style={{width: 140}}>
                 <Select.Option value="INSERTED">INSERTED</Select.Option>
                 <Select.Option value="UPDATED">UPDATED</Select.Option>
                 <Select.Option value="DELETED">DELETED</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item name="resourceType" label="资源类型" style={{marginBottom: 0}}>
-              <Input placeholder="输入资源类型" allowClear style={{width: 180}}/>
+            <Form.Item name="resourceType" label={t('resource_type')} style={{marginBottom: 0}}>
+              <Input placeholder={t('input_resource_type')} allowClear style={{width: 180}}/>
             </Form.Item>
             <Form.Item style={{marginBottom: 0}}>
               <Space>
                 <Button type="primary" htmlType="submit" icon={<SearchOutlined/>}>
-                  搜索
+                  {t('search')}
                 </Button>
-                <Button onClick={handleReset}>重置</Button>
-                <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>刷新</Button>
+                <Button onClick={handleReset}>{t('reset')}</Button>
+                <Button icon={<ReloadOutlined/>} onClick={() => loadLogs()}>{t('refresh')}</Button>
                 <Button type="link" onClick={() => setShowAdvanced(v => !v)}>
-                  {t('more_filters', '更多筛选')}
+                  {t('more_filters')}
                   {showAdvanced ? <UpOutlined/> : <DownOutlined/>}
                 </Button>
               </Space>
@@ -215,11 +215,11 @@ const AuditLogList: React.FC = () => {
           </div>
           {showAdvanced && (
             <div style={{display: 'flex', alignItems: 'center', gap: 8, marginTop: 8}}>
-              <Form.Item name="userId" label="操作人" style={{marginBottom: 0}}>
-                <Input placeholder="输入操作人ID" allowClear style={{width: 160}}/>
+              <Form.Item name="userId" label={t('operator')} style={{marginBottom: 0}}>
+                <Input placeholder={t('input_operator_id')} allowClear style={{width: 160}}/>
               </Form.Item>
               <Form.Item name="traceId" label={t('trace_id')} style={{marginBottom: 0}}>
-                <Input placeholder="输入 Trace ID" allowClear style={{width: 180}}/>
+                <Input placeholder={t('input_trace_id')} allowClear style={{width: 180}}/>
               </Form.Item>
             </div>
           )}
