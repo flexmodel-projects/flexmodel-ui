@@ -25,7 +25,13 @@ import {
   AppstoreOutlined,
   DashboardOutlined,
   KeyOutlined, FunctionOutlined,
+  MonitorOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
+import Observability from "./pages/Observability";
+import TracesList from "./pages/Observability/components/TracesList";
+import TraceDetailPage from "./pages/Observability/TraceDetail";
+import FunctionLogList from "./pages/Functions/components/FunctionLogList";
 import GraphQLAPI from "@/pages/GraphQLAPI";
 import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
@@ -204,6 +210,40 @@ export const projectRoutes: RouteConfig[] = [
     element: <Storage />,
     icon: CloudUploadOutlined,
     translationKey: "storage",
+  },
+  {
+    path: "/project/:projectId/observability",
+    element: <Observability/>,
+    icon: MonitorOutlined,
+    translationKey: "observability",
+    children: [
+      {
+        path: "/project/:projectId/observability/traces",
+        element: <TracesList/>,
+        icon: NodeIndexOutlined,
+        translationKey: "observability.traces",
+      },
+      {
+        path: "/project/:projectId/observability/function-logs",
+        element: <FunctionLogList/>,
+        icon: FileTextOutlined,
+        translationKey: "observability.function_logs",
+      },
+      {
+        path: "/project/:projectId/observability/api-logs",
+        element: <APILog/>,
+        icon: LineChartOutlined,
+        translationKey: "observability.api_logs",
+      },
+    ],
+  },
+  {
+    path: "/project/:projectId/observability/traces/:traceId",
+    element: <TraceDetailPage/>,
+    icon: NodeIndexOutlined,
+    translationKey: "observability.trace_detail",
+    hideInMenu: true,
+    hideLayout: true,
   },
   {
     path: "/project/:projectId/settings",

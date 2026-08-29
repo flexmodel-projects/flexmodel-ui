@@ -1,0 +1,21 @@
+import {api} from '@/utils/request'
+import type {PagedResult} from '@/types/record'
+import type {FunctionLog} from '@/types/observability'
+
+export interface FunctionLogQuery {
+  page?: number
+  size?: number
+  functionName?: string
+  level?: string
+  dateRange?: string
+  invokeId?: string
+  traceId?: string
+  keyword?: string
+}
+
+export const getFunctionLogs = (
+  projectId: string,
+  filter?: FunctionLogQuery,
+): Promise<PagedResult<FunctionLog>> => {
+  return api.get(`/projects/${projectId}/functions/logs`, filter)
+}
