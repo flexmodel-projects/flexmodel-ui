@@ -256,7 +256,7 @@ const ElementInstancesDrawer: React.FC<ElementInstancesDrawerProps> = ({
 
   // 渲染操作按钮
   const renderActionButtons = (element: NodeInstance) => {
-    const isUserTask = element.flowElementType === FlowElementType.USER_TASK;
+    const isUserTask = element.type === FlowElementType.USER_TASK;
     const canCommit = isUserTask
       && currentFlowInstance?.status === FlowInstanceStatus.RUNNING
       && element.status === NodeInstanceStatus.ACTIVE;

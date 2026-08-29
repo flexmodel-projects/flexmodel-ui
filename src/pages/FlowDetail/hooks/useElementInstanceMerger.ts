@@ -12,8 +12,8 @@ export const useElementInstanceMerger = ({setNodes, setEdges}: UseElementInstanc
   const mergeElementInstances = useCallback((instances: ElementInstance[]) => {
     if (!instances || instances.length === 0) return;
 
-    const nodeInstances = instances.filter(ins => ins.flowElementType !== FlowElementType.SEQUENCE_FLOW);
-    const edgeInstances = instances.filter(ins => ins.flowElementType === FlowElementType.SEQUENCE_FLOW);
+    const nodeInstances = instances.filter(ins => ins.type !== FlowElementType.SEQUENCE_FLOW);
+    const edgeInstances = instances.filter(ins => ins.type === FlowElementType.SEQUENCE_FLOW);
 
     const byKey = new Map<string, ElementInstance>();
     const byNodeKey = new Map<string, ElementInstance>();
