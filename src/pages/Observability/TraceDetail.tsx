@@ -36,6 +36,37 @@ const TraceDetailPage: React.FC = () => {
     return `${(ms / 1000).toFixed(2)}s`;
   };
 
+  const fmtMsTime = (ms: number) => {
+    if (ms == null) return '-';
+    return new Date(ms).toLocaleString();
+  };
+
+  const prettyJson = (raw: any) => {
+    if (raw == null || raw === '') return '-';
+    if (typeof raw === 'string') {
+      try {
+        return JSON.stringify(JSON.parse(raw), null, 2);
+      } catch {
+        return raw;
+      }
+    }
+    try {
+      return JSON.stringify(raw, null, 2);
+    } catch {
+      return String(raw);
+    }
+  };
+
+  const JsonBlock: React.FC<{ data: any }> = ({data}) => (
+    <pre style={{
+      margin: 0, maxHeight: 200, overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+      background: token.colorFillSecondary, borderRadius: token.borderRadius,
+      padding: 'var(--ant-padding-sm)', fontFamily: 'monospace', fontSize: 12,
+    }}>
+      {prettyJson(data)}
+    </pre>
+  );
+
   // 节点执行日志状态：1.处理成功 2.处理中 3.处理失败 4.处理已撤销
   const nodeLogStatusInfo = (status: number) => {
     switch (status) {
@@ -253,9 +284,41 @@ const TraceDetailPage: React.FC = () => {
                       </Space>
                     ),
                     children: (
-                      <Descriptions column={1} size="small" labelStyle={{width: 90}}>
+                      <Descriptions column={1} size="small" labelStyle={{width: 100}}>
+                        <Descriptions.Item label={t('http_method')}>{l.httpMethod}</Descriptions.Item>
+                        <Descriptions.Item label={t('path')}>{l.path}</Descriptions.Item>
+                        {l.url && (
+                          <Descriptions.Item label={t('url', 'URL')}>{l.url}</Descriptions.Item>
+                        )}
+                        <Descriptions.Item label={t('status_code')}>
+                          <Tag color={l.isSuccess ? 'green' : 'red'}>{l.statusCode}</Tag>
+                        </Descriptions.Item>
+                        <Descriptions.Item label={t('response_time')}>{l.responseTime}ms</Descriptions.Item>
+                        {l.clientIp && (
+                          <Descriptions.Item label={t('client_ip')}>{l.clientIp}</Descriptions.Item>
+                        )}
+                        <Descriptions.Item label={t('is_success')}>
+                          <Tag color={l.isSuccess ? 'green' : 'red'}>
+                            {l.isSuccess ? t('success') : t('fail')}
+                          </Tag>
+                        </Descriptions.Item>
+                        {l.errorMessage && (
+                          <Descriptions.Item label={t('error_message')}>
+                            <span style={{color: token.colorError}}>{l.errorMessage}</span>
+                          </Descriptions.Item>
+                        )}
+                        {l.requestBody && (
+                          <Descriptions.Item label={t('request_body')}>
+                            <JsonBlock data={l.requestBody}/>
+                          </Descriptions.Item>
+                        )}
+                        {l.requestHeaders && (
+                          <Descriptions.Item label={t('request_headers')}>
+                            <JsonBlock data={l.requestHeaders}/>
+                          </Descriptions.Item>
+                        )}
+                        <Descriptions.Item label={t('created_at')}>{l.createdAt}</Descriptions.Item>
                         <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
-                        <Descriptions.Item label={t('trace.createdAt', '时间')}>{l.createdAt}</Descriptions.Item>
                       </Descriptions>
                     ),
                   }))}
@@ -291,8 +354,8 @@ const TraceDetailPage: React.FC = () => {
                         padding: 'var(--ant-padding-sm)', fontFamily: 'monospace', fontSize: 12,
                         color: l.level === 'error' ? token.colorError : l.level === 'warn' ? token.colorWarning : token.colorText,
                       }}>
-                      {l.message}
-                    </pre>
+                     {l.message}
+                   </pre>
                     ),
                   }))}
                 />
@@ -325,18 +388,84 @@ const TraceDetailPage: React.FC = () => {
                     </Space>
                     ),
                     children: (
-                      <Descriptions column={1} size="small" labelStyle={{width: 90}}>
-                        <Descriptions.Item label="Job ID">{l.jobId}</Descriptions.Item>
-                        <Descriptions.Item label="Trigger ID">{l.triggerId}</Descriptions.Item>
+                      <Descriptions column={1} size="small" labelStyle={{width: 120}}>
+                        <Descriptions.Item label={t('job_name')}>{l.jobName}</Descriptions.Item>
+                        <Descriptions.Item label={t('job_id')}>{l.jobId}</Descriptions.Item>
+                        {l.jobGroup && (
+                          <Descriptions.Item label={t('job_group')}>{l.jobGroup}</Descriptions.Item>
+                        )}
+                        <Descriptions.Item label={t('job_type')}>{l.jobType}</Descriptions.Item>
+                        <Descriptions.Item label={t('trigger_id')}>{l.triggerId}</Descriptions.Item>
+                        <Descriptions.Item label={t('execution_status')}>
+                          <Tag
+                            color={l.executionStatus === 'SUCCESS' ? 'green' : l.executionStatus === 'FAILED' ? 'red' : 'blue'}>
+                            {l.executionStatus}
+                          </Tag>
+                        </Descriptions.Item>
+                        {l.executionDuration != null && (
+                          <Descriptions.Item label={t('execution_duration')}>{l.executionDuration}ms</Descriptions.Item>
+                        )}
+                        <Descriptions.Item label={t('start_time')}>{l.startTime}</Descriptions.Item>
                         {l.endTime && (
-                          <Descriptions.Item label={t('trace.endTime', '结束时间')}>{l.endTime}</Descriptions.Item>
+                          <Descriptions.Item label={t('end_time')}>{l.endTime}</Descriptions.Item>
+                        )}
+                        {l.retryCount != null && (
+                          <Descriptions.Item label={t('retry_count')}>{l.retryCount}</Descriptions.Item>
+                        )}
+                        {l.maxRetryCount != null && (
+                          <Descriptions.Item label={t('max_retry_count')}>{l.maxRetryCount}</Descriptions.Item>
+                        )}
+                        {l.schedulerName && (
+                          <Descriptions.Item label={t('scheduler_name')}>{l.schedulerName}</Descriptions.Item>
+                        )}
+                        {l.instanceName && (
+                          <Descriptions.Item label={t('instance_name')}>{l.instanceName}</Descriptions.Item>
+                        )}
+                        {l.firedTime != null && (
+                          <Descriptions.Item label={t('fired_time')}>{fmtMsTime(l.firedTime)}</Descriptions.Item>
+                        )}
+                        {l.scheduledTime != null && (
+                          <Descriptions.Item
+                            label={t('scheduled_time')}>{fmtMsTime(l.scheduledTime)}</Descriptions.Item>
                         )}
                         {l.errorMessage && (
-                          <Descriptions.Item label={t('trace.errorMessage', '错误信息')}>
+                          <Descriptions.Item label={t('error_message')}>
                             <span style={{color: token.colorError}}>{l.errorMessage}</span>
                           </Descriptions.Item>
                         )}
+                        {l.errorStackTrace && (
+                          <Descriptions.Item label={t('error_stack_trace')}>
+                            <pre style={{
+                              margin: 0,
+                              maxHeight: 200,
+                              overflow: 'auto',
+                              whiteSpace: 'pre-wrap',
+                              wordBreak: 'break-all',
+                              background: token.colorFillSecondary,
+                              borderRadius: token.borderRadius,
+                              padding: 'var(--ant-padding-sm)',
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                              color: token.colorError,
+                            }}>
+                              {l.errorStackTrace}
+                            </pre>
+                          </Descriptions.Item>
+                        )}
+                        {l.inputData && (
+                          <Descriptions.Item label={t('input_data')}>
+                            <JsonBlock data={l.inputData}/>
+                          </Descriptions.Item>
+                        )}
+                        {l.outputData && (
+                          <Descriptions.Item label={t('output_data')}>
+                            <JsonBlock data={l.outputData}/>
+                          </Descriptions.Item>
+                        )}
                         <Descriptions.Item label="Trace ID">{l.traceId || '-'}</Descriptions.Item>
+                        {l.createdAt && (
+                          <Descriptions.Item label={t('created_at')}>{l.createdAt}</Descriptions.Item>
+                        )}
                       </Descriptions>
                     ),
                   }))}

@@ -59,7 +59,12 @@ export interface ApiLogRef {
   httpMethod: string;
   statusCode: number;
   responseTime: number;
+  url?: string;
+  clientIp?: string;
   isSuccess: boolean;
+  errorMessage?: string;
+  requestBody?: any;
+  requestHeaders?: any;
   traceId?: string;
   createdAt: string;
 }
@@ -69,6 +74,7 @@ export interface JobExecutionLogRef {
   jobId: string;
   jobName: string;
   jobType: string;
+  jobGroup?: string;
   triggerId: string;
   executionStatus: string;
   startTime: string;
@@ -76,7 +82,17 @@ export interface JobExecutionLogRef {
   executionDuration?: number;
   isSuccess: boolean;
   errorMessage?: string;
+  errorStackTrace?: string;
+  inputData?: any;
+  outputData?: any;
+  retryCount?: number;
+  maxRetryCount?: number;
+  schedulerName?: string;
+  instanceName?: string;
+  firedTime?: number;
+  scheduledTime?: number;
   traceId?: string;
+  createdAt?: string;
 }
 
 export interface NodeInstanceLogRef {
@@ -90,6 +106,9 @@ export interface NodeInstanceLogRef {
   archive?: number;
   traceId?: string;
   createdAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -122,6 +141,8 @@ export interface AuditLogRef {
   userId?: string;
   success: boolean;
   errorMessage?: string;
+  oldData?: string;
+  newData?: string;
   traceId?: string;
   createdAt: string;
 }

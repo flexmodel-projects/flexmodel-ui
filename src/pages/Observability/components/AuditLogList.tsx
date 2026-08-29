@@ -76,7 +76,7 @@ const AuditLogList: React.FC = () => {
       setLogs(res.list);
       setTotal(res.total);
     } catch (error) {
-      message.error('加载审计日志失败');
+      message.error(t('load_audit_log_failed'));
       console.error('Failed to load audit logs:', error);
     } finally {
       setLoading(false);
@@ -115,21 +115,21 @@ const AuditLogList: React.FC = () => {
 
   const columns = [
     {
-      title: '操作类型',
+      title: t('action_type'),
       dataIndex: 'action',
       key: 'action',
       width: 110,
       render: (action: string) => actionTag(action),
     },
     {
-      title: '资源类型',
+      title: t('resource_type'),
       dataIndex: 'resourceType',
       key: 'resourceType',
       width: 180,
       ellipsis: true,
     },
     {
-      title: '资源名称',
+      title: t('resource_name'),
       dataIndex: 'resourceName',
       key: 'resourceName',
       width: 180,
@@ -137,14 +137,14 @@ const AuditLogList: React.FC = () => {
       render: (name?: string) => name || '-',
     },
     {
-      title: '资源ID',
+      title: t('resource_id'),
       dataIndex: 'resourceId',
       key: 'resourceId',
       width: 140,
       ellipsis: true,
     },
     {
-      title: '操作人',
+      title: t('operator'),
       dataIndex: 'userId',
       key: 'userId',
       width: 120,
@@ -152,7 +152,7 @@ const AuditLogList: React.FC = () => {
       render: (userId?: string) => userId || '-',
     },
     {
-      title: '操作时间',
+      title: t('operation_time'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 170,
@@ -171,12 +171,12 @@ const AuditLogList: React.FC = () => {
         ) : null,
     },
     {
-      title: '操作',
+      title: t('operation'),
       key: 'action_col',
       width: 90,
       render: (_: any, record: AuditLog) => (
         <Button type="link" icon={<EyeOutlined/>} onClick={() => handleViewDetail(record)}>
-          详情
+          {t('detail')}
         </Button>
       ),
     },
@@ -253,7 +253,7 @@ const AuditLogList: React.FC = () => {
       </div>
 
       <Modal
-        title="审计日志详情"
+        title={t('audit_log_detail')}
         open={detailVisible}
         onCancel={() => setDetailVisible(false)}
         footer={[
@@ -265,22 +265,22 @@ const AuditLogList: React.FC = () => {
       >
         {selectedLog && (
           <Descriptions column={2} bordered>
-            <Descriptions.Item label="操作类型" span={2}>
+            <Descriptions.Item label={t('action_type')} span={2}>
               {actionTag(selectedLog.action)}
             </Descriptions.Item>
-            <Descriptions.Item label="资源类型">
+            <Descriptions.Item label={t('resource_type')}>
               {selectedLog.resourceType}
             </Descriptions.Item>
-            <Descriptions.Item label="资源名称">
+            <Descriptions.Item label={t('resource_name')}>
               {selectedLog.resourceName || '-'}
             </Descriptions.Item>
-            <Descriptions.Item label="资源ID" span={2}>
+            <Descriptions.Item label={t('resource_id')} span={2}>
               {selectedLog.resourceId}
             </Descriptions.Item>
-            <Descriptions.Item label="操作人">
+            <Descriptions.Item label={t('operator')}>
               {selectedLog.userId || '-'}
             </Descriptions.Item>
-            <Descriptions.Item label="操作时间">
+            <Descriptions.Item label={t('operation_time')}>
               {selectedLog.createdAt}
             </Descriptions.Item>
             <Descriptions.Item label={t('trace_id')} span={2}>
@@ -291,17 +291,17 @@ const AuditLogList: React.FC = () => {
               ) : '-'}
             </Descriptions.Item>
             {selectedLog.errorMessage && (
-              <Descriptions.Item label="错误信息" span={2}>
+              <Descriptions.Item label={t('error_message')} span={2}>
                 <Text type="danger">{selectedLog.errorMessage}</Text>
               </Descriptions.Item>
             )}
             {selectedLog.oldData && (
-              <Descriptions.Item label="变更前数据" span={2}>
+              <Descriptions.Item label={t('before_change')} span={2}>
                 <TextArea value={prettyJson(selectedLog.oldData)} rows={6} readOnly/>
               </Descriptions.Item>
             )}
             {selectedLog.newData && (
-              <Descriptions.Item label="变更后数据" span={2}>
+              <Descriptions.Item label={t('after_change')} span={2}>
                 <TextArea value={prettyJson(selectedLog.newData)} rows={6} readOnly/>
               </Descriptions.Item>
             )}

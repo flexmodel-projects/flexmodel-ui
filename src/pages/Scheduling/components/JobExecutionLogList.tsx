@@ -116,7 +116,7 @@ const JobExecutionLogList: React.FC = () => {
       setLogs(response.list);
       setTotal(response.total);
     } catch (error) {
-      message.error('加载任务执行日志失败');
+      message.error(t('load_job_execution_log_failed'));
       console.error('Failed to load job execution logs:', error);
     } finally {
       setLoading(false);
@@ -179,13 +179,13 @@ const JobExecutionLogList: React.FC = () => {
 
   const getStatusTag = (executionStatus: string | undefined) => {
     if (executionStatus === 'SUCCESS') {
-      return <Tag color="success">成功</Tag>;
+      return <Tag color="success">{t('success')}</Tag>;
     } else if (executionStatus === 'RUNNING') {
-      return <Tag color="processing">运行中</Tag>;
+      return <Tag color="processing">{t('running')}</Tag>;
     } else if (executionStatus === 'FAILED') {
-      return <Tag color="error">失败</Tag>;
+      return <Tag color="error">{t('fail')}</Tag>;
     } else {
-      return <Tag color="default">未知</Tag>;
+      return <Tag color="default">{t('unknown')}</Tag>;
     }
   };
 
@@ -205,31 +205,31 @@ const JobExecutionLogList: React.FC = () => {
 
   const columns = [
     {
-      title: '任务名称',
+      title: t('job_name'),
       dataIndex: 'jobName',
       key: 'jobName',
       width: 200,
     },
     {
-      title: '任务ID',
+      title: t('job_id'),
       dataIndex: 'jobId',
       key: 'jobId',
       width: 120,
     },
     {
-      title: '触发器ID',
+      title: t('trigger_id'),
       dataIndex: 'triggerId',
       key: 'triggerId',
       width: 120,
     },
     {
-      title: '执行状态',
+      title: t('execution_status'),
       key: 'executionStatus',
       width: 100,
       render: (_: any, record: JobExecutionLog) => getStatusTag(record.executionStatus),
     },
     {
-      title: '开始时间',
+      title: t('start_time'),
       dataIndex: 'startTime',
       key: 'startTime',
       width: 180,
@@ -249,14 +249,14 @@ const JobExecutionLogList: React.FC = () => {
         ) : null,
     },
     {
-      title: '执行时长',
+      title: t('execution_duration'),
       dataIndex: 'executionDuration',
       key: 'executionDuration',
       width: 100,
       render: (duration: number) => formatDuration(duration),
     },
     {
-      title: '操作',
+      title: t('operation'),
       key: 'action',
       width: 100,
       render: (_: any, record: JobExecutionLog) => (
@@ -266,7 +266,7 @@ const JobExecutionLogList: React.FC = () => {
             icon={<EyeOutlined/>}
             onClick={() => handleViewDetail(record)}
           >
-            详情
+            {t('detail')}
           </Button>
         </Space>
       ),
@@ -369,58 +369,58 @@ const JobExecutionLogList: React.FC = () => {
       </div>
 
       <Modal
-        title="任务执行日志详情"
+        title={t('job_execution_log_detail')}
         open={detailModalVisible}
         onCancel={() => setDetailModalVisible(false)}
         footer={[
           <Button key="close" onClick={() => setDetailModalVisible(false)}>
-            关闭
+            {t('close')}
           </Button>
         ]}
         width={800}
       >
         {selectedLog && (
           <Descriptions column={2} bordered>
-            <Descriptions.Item label="任务名称" span={2}>
+            <Descriptions.Item label={t('job_name')} span={2}>
               {selectedLog.jobName}
             </Descriptions.Item>
-            <Descriptions.Item label="任务ID">
+            <Descriptions.Item label={t('job_id')}>
               {selectedLog.jobId}
             </Descriptions.Item>
-            <Descriptions.Item label="任务组">
+            <Descriptions.Item label={t('job_group')}>
               {selectedLog.jobGroup}
             </Descriptions.Item>
-            <Descriptions.Item label="任务类型">
+            <Descriptions.Item label={t('job_type')}>
               {selectedLog.jobType}
             </Descriptions.Item>
-            <Descriptions.Item label="触发器ID">
+            <Descriptions.Item label={t('trigger_id')}>
               {selectedLog.triggerId}
             </Descriptions.Item>
-            <Descriptions.Item label="执行状态">
+            <Descriptions.Item label={t('execution_status')}>
               {getStatusTag(selectedLog.executionStatus)}
             </Descriptions.Item>
-            <Descriptions.Item label="开始时间">
+            <Descriptions.Item label={t('start_time')}>
               {dayjs(selectedLog.startTime).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
-            <Descriptions.Item label="结束时间">
+            <Descriptions.Item label={t('end_time')}>
               {selectedLog.endTime ? dayjs(selectedLog.endTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
             </Descriptions.Item>
-            <Descriptions.Item label="执行时长">
+            <Descriptions.Item label={t('execution_duration')}>
               {formatDuration(selectedLog.executionDuration)}
             </Descriptions.Item>
-            <Descriptions.Item label="执行状态详情">
+            <Descriptions.Item label={t('execution_status_detail')}>
               {selectedLog.executionStatus}
             </Descriptions.Item>
             <Descriptions.Item label={t('trace_id')}>
               {selectedLog.traceId || '-'}
             </Descriptions.Item>
             {selectedLog.errorMessage && (
-              <Descriptions.Item label="错误信息" span={2}>
+              <Descriptions.Item label={t('error_message')} span={2}>
                 <Text type="danger">{selectedLog.errorMessage}</Text>
               </Descriptions.Item>
             )}
             {selectedLog.inputData && (
-              <Descriptions.Item label="输入数据" span={2}>
+              <Descriptions.Item label={t('input_data')} span={2}>
                 <TextArea
                   value={JSON.stringify(selectedLog.inputData, null, 2)}
                   rows={4}
@@ -429,7 +429,7 @@ const JobExecutionLogList: React.FC = () => {
               </Descriptions.Item>
             )}
             {selectedLog.outputData && (
-              <Descriptions.Item label="输出数据" span={2}>
+              <Descriptions.Item label={t('output_data')} span={2}>
                 <TextArea
                   value={JSON.stringify(selectedLog.outputData, null, 2)}
                   rows={4}
