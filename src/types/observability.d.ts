@@ -49,6 +49,7 @@ export interface TraceDetail {
   apiLogs: ApiLogRef[];
   functionLogs: FunctionLog[];
   jobExecutionLogs: JobExecutionLogRef[];
+  nodeInstanceLogs: NodeInstanceLogRef[];
 }
 
 export interface ApiLogRef {
@@ -75,4 +76,17 @@ export interface JobExecutionLogRef {
   isSuccess: boolean;
   errorMessage?: string;
   traceId?: string;
+}
+
+export interface NodeInstanceLogRef {
+  id: number;
+  nodeInstanceId: string;
+  flowInstanceId: string;
+  instanceDataId?: string;
+  nodeKey: string;
+  type: number;
+  status: number;
+  archive?: number;
+  traceId?: string;
+  createdAt?: string;
 }

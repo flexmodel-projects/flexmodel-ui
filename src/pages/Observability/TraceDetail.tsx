@@ -36,6 +36,36 @@ const TraceDetailPage: React.FC = () => {
     return `${(ms / 1000).toFixed(2)}s`;
   };
 
+  // 节点执行日志状态：1.处理成功 2.处理中 3.处理失败 4.处理已撤销
+  const nodeLogStatusInfo = (status: number) => {
+    switch (status) {
+      case 1:
+        return {text: t('trace.nodeStatus.success', '成功'), color: 'green'};
+      case 2:
+        return {text: t('trace.nodeStatus.running', '处理中'), color: 'blue'};
+      case 3:
+        return {text: t('trace.nodeStatus.failed', '失败'), color: 'red'};
+      case 4:
+        return {text: t('trace.nodeStatus.revoked', '已撤销'), color: 'default'};
+      default:
+        return {text: String(status ?? '-'), color: 'default'};
+    }
+  };
+
+  // 节点执行日志操作类型：1.系统执行 2.任务提交 3.任务撤销
+  const nodeLogTypeLabel = (type: number) => {
+    switch (type) {
+      case 1:
+        return t('trace.nodeType.execute', '系统执行');
+      case 2:
+        return t('trace.nodeType.commit', '任务提交');
+      case 3:
+        return t('trace.nodeType.rollback', '任务撤销');
+      default:
+        return String(type ?? '-');
+    }
+  };
+
   const buildWaterfallOption = (spans: Span[]) => {
     if (!spans || spans.length === 0) return {};
     const minStart = Math.min(...spans.map(s => s.startTime));
@@ -241,6 +271,30 @@ const TraceDetailPage: React.FC = () => {
                     )}
                   </div>
                 ))}
+              </div>
+            ) : <Typography.Text type="secondary">-</Typography.Text>,
+          },
+          {
+            key: 'nodeInstanceLogs',
+            label: `${t('observability.node_instance_logs')} (${detail?.nodeInstanceLogs?.length ?? 0})`,
+            children: detail?.nodeInstanceLogs?.length ? (
+              <div style={{fontFamily: 'monospace', fontSize: 12}}>
+                {detail.nodeInstanceLogs.map(l => {
+                  const statusInfo = nodeLogStatusInfo(l.status);
+                  return (
+                    <div key={l.id}
+                         style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+                      <Space>
+                        <Tag color={statusInfo.color}>{statusInfo.text}</Tag>
+                        <span style={{fontWeight: 600}}>{l.nodeKey}</span>
+                        <span style={{color: token.colorTextSecondary}}>{nodeLogTypeLabel(l.type)}</span>
+                        {l.createdAt && (
+                          <span style={{color: token.colorTextTertiary}}>{l.createdAt}</span>
+                        )}
+                      </Space>
+                    </div>
+                  );
+                })}
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
