@@ -34,7 +34,6 @@ const FunctionLogList: React.FC = () => {
       functionName: filter?.functionName,
       level: filter?.level,
       dateRange,
-      invokeId: filter?.invokeId,
       traceId: filter?.traceId,
       keyword: filter?.keyword,
     });
@@ -129,9 +128,6 @@ const FunctionLogList: React.FC = () => {
               </Col>
             </Row>
             <div style={{display: 'flex', gap: '8px', marginTop: 4}}>
-              <Form.Item name="invokeId" label="Invoke ID" style={{flex: 1, marginBottom: 0}}>
-                <Input allowClear placeholder="invokeId"/>
-              </Form.Item>
               <Form.Item name="traceId" label="Trace ID" style={{flex: 1, marginBottom: 0}}>
                 <Input allowClear placeholder="traceId"/>
               </Form.Item>
@@ -183,7 +179,6 @@ const FunctionLogList: React.FC = () => {
             <p><strong>ID:</strong> {log.id}</p>
             <p><strong>Function:</strong> {log.functionName}</p>
             <p><strong>Level:</strong> <span style={{color: levelColor(log.level)}}>{log.level.toUpperCase()}</span></p>
-            <p><strong>Invoke ID:</strong> {log.invokeId}</p>
             <p><strong>Trace ID:</strong> {log.traceId}</p>
             <p><strong>Time:</strong> {log.createdAt}</p>
             <p><strong>Message:</strong></p>

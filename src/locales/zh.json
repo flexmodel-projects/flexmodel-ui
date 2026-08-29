@@ -51,6 +51,7 @@
   "observability.traces": "链路追踪",
   "observability.function_logs": "函数日志",
   "observability.api_logs": "接口日志",
+  "observability.job_execution_log": "任务执行日志",
   "observability.trace_detail": "链路详情",
   "trace_id": "Trace ID",
   "trace.rootName": "根操作",

@@ -8,6 +8,7 @@ import {useTranslation} from "react-i18next";
 import type {ApiLog} from '@/types/api-log';
 import ApiLogChart from "./components/ApiLogChart";
 import {useProject} from "@/store/appStore";
+import {useNavigate} from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 
@@ -16,7 +17,8 @@ const LogViewer: React.FC = () => {
   const { t } = useTranslation();
   const { currentProject } = useProject();
   const projectId = currentProject?.id || '';
-  
+  const navigate = useNavigate();
+
   const [tableData, setTableData] = useState<{ list: ApiLog[]; total: number }>({ list: [], total: 0 });
   const [log, setLog] = useState<ApiLog | null>(null);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
@@ -149,6 +151,21 @@ const LogViewer: React.FC = () => {
       title: t("created_at"),
       dataIndex: "createdAt",
       width: 140,
+    },
+    {
+      title: t("trace_id"),
+      dataIndex: "traceId",
+      width: 140,
+      ellipsis: true,
+      render: (traceId: string) =>
+        traceId ? (
+          <a onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/project/${projectId}/observability/traces/${traceId}`);
+          }}>
+            {traceId.slice(0, 8)}…
+          </a>
+        ) : null,
     },
     {
       title: t("is_success"),
@@ -310,6 +327,7 @@ const LogViewer: React.FC = () => {
           <Descriptions.Item label="statusCode">{log?.statusCode}</Descriptions.Item>
           <Descriptions.Item label="responseTime">{log?.responseTime}ms</Descriptions.Item>
           <Descriptions.Item label="clientIp">{log?.clientIp}</Descriptions.Item>
+          <Descriptions.Item label={t("trace_id")}>{log?.traceId}</Descriptions.Item>
           <Descriptions.Item label="createdAt">{log?.createdAt}</Descriptions.Item>
           <Descriptions.Item label="isSuccess">{log?.isSuccess ? t("yes") : t("no")}</Descriptions.Item>
           <Descriptions.Item label="errorMessage">{log?.errorMessage}</Descriptions.Item>

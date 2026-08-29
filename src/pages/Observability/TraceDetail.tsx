@@ -217,6 +217,33 @@ const TraceDetailPage: React.FC = () => {
               </div>
             ) : <Typography.Text type="secondary">-</Typography.Text>,
           },
+          {
+            key: 'jobExecutionLogs',
+            label: `${t('observability.job_execution_log')} (${detail?.jobExecutionLogs?.length ?? 0})`,
+            children: detail?.jobExecutionLogs?.length ? (
+              <div style={{fontFamily: 'monospace', fontSize: 12}}>
+                {detail.jobExecutionLogs.map(l => (
+                  <div key={l.id} style={{padding: '4px 8px', borderBottom: `1px solid ${token.colorBorderSecondary}`}}>
+                    <Space>
+                      <Tag
+                        color={l.executionStatus === 'SUCCESS' ? 'green' : l.executionStatus === 'FAILED' ? 'red' : 'blue'}>
+                        {l.executionStatus}
+                      </Tag>
+                      <span style={{fontWeight: 600}}>{l.jobName}</span>
+                      <span style={{color: token.colorTextSecondary}}>{l.jobType}</span>
+                      {l.executionDuration != null && (
+                        <span style={{color: token.colorTextSecondary}}>{l.executionDuration}ms</span>
+                      )}
+                      <span style={{color: token.colorTextTertiary}}>{l.startTime}</span>
+                    </Space>
+                    {l.errorMessage && (
+                      <div style={{color: token.colorError, marginTop: 2}}>{l.errorMessage}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : <Typography.Text type="secondary">-</Typography.Text>,
+          },
         ]}
       />
     </PageContainer>

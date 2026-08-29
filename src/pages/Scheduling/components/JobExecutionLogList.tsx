@@ -19,6 +19,7 @@ import PageContainer from '@/components/common/PageContainer';
 import {getJobExecutionLogs, JobExecutionLog, JobExecutionLogParams} from '@/services/job';
 import dayjs from 'dayjs';
 import {useProject} from "@/store/appStore";
+import {useNavigate} from 'react-router-dom';
 
 const {RangePicker} = DatePicker;
 const {TextArea} = Input;
@@ -29,6 +30,7 @@ const JobExecutionLogList: React.FC = () => {
   const {currentProject} = useProject();
   const projectId = currentProject?.id || '';
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const [logs, setLogs] = useState<JobExecutionLog[]>([]);
   const [loading, setLoading] = useState(false);
@@ -233,6 +235,19 @@ const JobExecutionLogList: React.FC = () => {
       render: (time: string) => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
+      title: t('trace_id'),
+      dataIndex: 'traceId',
+      key: 'traceId',
+      width: 140,
+      ellipsis: true,
+      render: (traceId: string) =>
+        traceId ? (
+          <a onClick={() => navigate(`/project/${projectId}/observability/traces/${traceId}`)}>
+            {traceId.slice(0, 8)}…
+          </a>
+        ) : null,
+    },
+    {
       title: '执行时长',
       dataIndex: 'executionDuration',
       key: 'executionDuration',
@@ -392,6 +407,9 @@ const JobExecutionLogList: React.FC = () => {
             </Descriptions.Item>
             <Descriptions.Item label="执行状态详情">
               {selectedLog.executionStatus}
+            </Descriptions.Item>
+            <Descriptions.Item label={t('trace_id')}>
+              {selectedLog.traceId || '-'}
             </Descriptions.Item>
             {selectedLog.errorMessage && (
               <Descriptions.Item label="错误信息" span={2}>

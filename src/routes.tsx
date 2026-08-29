@@ -175,12 +175,6 @@ export const projectRoutes: RouteConfig[] = [
         icon: ThunderboltOutlined,
         translationKey: "trigger.title",
       },
-      {
-        path: "/project/:projectId/scheduling/job-execution-log",
-        element: <JobExecutionLogList />,
-        icon: PlayCircleOutlined,
-        translationKey: "job_execution_log",
-      },
     ]
   },
   {
@@ -234,6 +228,12 @@ export const projectRoutes: RouteConfig[] = [
         element: <APILog/>,
         icon: LineChartOutlined,
         translationKey: "observability.api_logs",
+      },
+      {
+        path: "/project/:projectId/observability/job-execution-log",
+        element: <JobExecutionLogList/>,
+        icon: PlayCircleOutlined,
+        translationKey: "observability.job_execution_log",
       },
     ],
   },

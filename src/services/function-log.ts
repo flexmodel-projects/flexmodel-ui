@@ -8,7 +8,6 @@ export interface FunctionLogQuery {
   functionName?: string
   level?: string
   dateRange?: string
-  invokeId?: string
   traceId?: string
   keyword?: string
 }

@@ -3,7 +3,6 @@
  */
 export interface FunctionLog {
   id: string;
-  invokeId: string;
   functionName: string;
   level: string;
   message: string;
@@ -49,6 +48,7 @@ export interface TraceDetail {
   spans: Span[];
   apiLogs: ApiLogRef[];
   functionLogs: FunctionLog[];
+  jobExecutionLogs: JobExecutionLogRef[];
 }
 
 export interface ApiLogRef {
@@ -60,4 +60,19 @@ export interface ApiLogRef {
   isSuccess: boolean;
   traceId?: string;
   createdAt: string;
+}
+
+export interface JobExecutionLogRef {
+  id: string;
+  jobId: string;
+  jobName: string;
+  jobType: string;
+  triggerId: string;
+  executionStatus: string;
+  startTime: string;
+  endTime?: string;
+  executionDuration?: number;
+  isSuccess: boolean;
+  errorMessage?: string;
+  traceId?: string;
 }
