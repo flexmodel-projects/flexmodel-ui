@@ -16,6 +16,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import FlowNode from './components/FlowNode';
+import NodeDetailDrawer from './components/NodeDetailDrawer';
 import {useFlowParser} from './hooks/useFlowParser';
 import {useElementInstanceMerger} from './hooks/useElementInstanceMerger';
 import {useProject} from "@/store/appStore";
@@ -39,21 +40,14 @@ const FlowDetail: React.FC = () => {
   const [elementInstances, setElementInstances] = useState<NodeInstance[] | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
-  useEffect(() => {
-    if (selectedNode) {
-      const { nodeInstanceId } = selectedNode.data;
-      if (nodeInstanceId) {
-        message.info(`节点实例ID: ${nodeInstanceId}`);
-      }
-    }
-  }, [selectedNode]);
+  // 节点详情通过 NodeDetailDrawer 展示，点击节点时打开
 
-  // 使用提取的 hooks
+  // 浣跨敤鎻愬彇鐨?hooks
   const { parseFlowModel } = useFlowParser({ setNodes, setEdges });
-  const { mergeElementInstances } = useElementInstanceMerger({ setNodes });
+const { mergeElementInstances } = useElementInstanceMerger({ setNodes, setEdges });
 
   const loadData = useCallback(async () => {
-    if (!flowInstanceId) return;
+    if (!flowInstanceId || !projectId) return;
     setLoading(true);
     try {
       const instance = await getFlowInstance(projectId, flowInstanceId);
@@ -65,8 +59,8 @@ const FlowDetail: React.FC = () => {
       const instances = await getElementInstances(projectId, flowInstanceId);
       setElementInstances(instances || []);
     } catch (e) {
-      console.error('加载流程实例详情失败', e);
-      message.error('加载流程实例详情失败');
+      console.error('鍔犺浇娴佺▼瀹炰緥璇︽儏澶辫触', e);
+      message.error('鍔犺浇娴佺▼瀹炰緥璇︽儏澶辫触');
     } finally {
       setLoading(false);
     }
@@ -76,7 +70,7 @@ const FlowDetail: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  // 在定义图渲染完成后再叠加状态，避免竞态
+  // 鍦ㄥ畾涔夊浘娓叉煋瀹屾垚鍚庡啀鍙犲姞鐘舵€侊紝閬垮厤绔炴€?
   useEffect(() => {
     if (elementInstances && nodes.length > 0) {
       mergeElementInstances(elementInstances);
@@ -104,12 +98,12 @@ const FlowDetail: React.FC = () => {
               onEdgesChange={onEdgesChange}
               onPaneClick={() => {
                 setSelectedNode(null);
-                // 同步清除节点的选中态
+                // 鍚屾娓呴櫎鑺傜偣鐨勯€変腑鎬?
                 setNodes((prev) => prev.map((n) => ({ ...n, data: { ...n.data, __selected: false } })) as any);
               }}
               onNodeClick={(_, node) => {
                 setSelectedNode(node);
-                // 同步更新节点的选中态（仅单选）
+                // 鍚屾鏇存柊鑺傜偣鐨勯€変腑鎬侊紙浠呭崟閫夛級
                 setNodes((prev) => prev.map((n) => ({ ...n, data: { ...n.data, __selected: n.id === node.id } })) as any);
               }}
               onConnect={() => {
@@ -129,6 +123,7 @@ const FlowDetail: React.FC = () => {
               <Background/>
             </ReactFlow>
       </ReactFlowProvider>
+      <NodeDetailDrawer node={selectedNode} onClose={() => setSelectedNode(null)} />
     </PageContainer>
   );
 };

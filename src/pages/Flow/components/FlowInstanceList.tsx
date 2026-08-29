@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Input, message, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
-import {EyeOutlined, HistoryOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
+import {EyeOutlined, HistoryOutlined, NodeIndexOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
 import UserTasksDrawer from './UserTasksDrawer.tsx';
+import ElementInstancesDrawer from './ElementInstancesDrawer.tsx';
 import {useNavigate} from 'react-router-dom';
 import {
   FlowInstance,
@@ -10,6 +11,7 @@ import {
   getFlowInstance,
   getFlowInstanceList,
   getFlowUserTasks,
+  getElementInstances,
   NodeInstance,
   terminateFlowInstance
 } from '@/services/flow';
@@ -38,6 +40,11 @@ const FlowInstanceList: React.FC = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [currentFlowInstance, setCurrentFlowInstance] = useState<FlowInstance | null>(null);
   const [userTasks, setUserTasks] = useState<NodeInstance[]>([]);
+
+  // 历史元素相关状态
+  const [elementsDrawerVisible, setElementsDrawerVisible] = useState(false);
+  const [elementsLoading, setElementsLoading] = useState(false);
+  const [elementInstances, setElementInstances] = useState<NodeInstance[]>([]);
 
   // 获取流程实例列表
   const fetchFlowInstanceList = useCallback(async () => {
@@ -111,6 +118,22 @@ const FlowInstanceList: React.FC = () => {
       message.error('获取用户任务失败');
     } finally {
       setHistoryLoading(false);
+    }
+  };
+
+  // 获取历史元素列表
+  const handleShowElements = async (record: FlowInstance) => {
+    setCurrentFlowInstance(record);
+    setElementsDrawerVisible(true);
+    setElementsLoading(true);
+    try {
+      const instances = await getElementInstances(projectId, record.flowInstanceId);
+      setElementInstances(instances || []);
+    } catch (error) {
+      console.error('获取历史元素列表失败:', error);
+      message.error('获取历史元素列表失败');
+    } finally {
+      setElementsLoading(false);
     }
   };
 
@@ -228,6 +251,14 @@ const FlowInstanceList: React.FC = () => {
               onClick={() => handleShowHistory(record)}
             />
           </Tooltip>
+          <Tooltip title="历史元素列表">
+            <Button
+              type="link"
+              icon={<NodeIndexOutlined/>}
+              size="small"
+              onClick={() => handleShowElements(record)}
+            />
+          </Tooltip>
           {record.status === 2 && (
             <Tooltip title="终止">
               <Popconfirm
@@ -339,6 +370,27 @@ const FlowInstanceList: React.FC = () => {
           }
           // 刷新实例列表
           fetchFlowInstanceList();
+        }}
+      />
+      {/* 历史元素 Drawer */}
+      <ElementInstancesDrawer
+        visible={elementsDrawerVisible}
+        loading={elementsLoading}
+        currentFlowInstance={currentFlowInstance}
+        elementInstances={elementInstances}
+        projectId={projectId}
+        onClose={() => setElementsDrawerVisible(false)}
+        onCommitted={async () => {
+          if (!currentFlowInstance) return;
+          setElementsLoading(true);
+          try {
+            const instances = await getElementInstances(projectId, currentFlowInstance.flowInstanceId);
+            setElementInstances(instances || []);
+          } catch (error) {
+            console.error('刷新历史元素列表失败:', error);
+          } finally {
+            setElementsLoading(false);
+          }
         }}
       />
     </PageContainer>
