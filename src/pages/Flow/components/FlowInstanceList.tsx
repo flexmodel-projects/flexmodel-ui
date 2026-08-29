@@ -1,9 +1,17 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Button, Input, message, Popconfirm, Select, Space, Table, Tag, Tooltip} from 'antd';
-import {EyeOutlined, HistoryOutlined, NodeIndexOutlined, SearchOutlined, StopOutlined} from '@ant-design/icons';
+import {
+  EyeOutlined,
+  HistoryOutlined,
+  NodeIndexOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  StopOutlined
+} from '@ant-design/icons';
 import PageContainer from '@/components/common/PageContainer';
 import UserTasksDrawer from './UserTasksDrawer.tsx';
 import ElementInstancesDrawer from './ElementInstancesDrawer.tsx';
+import StartFlowModal from './StartFlowModal.tsx';
 import {useNavigate} from 'react-router-dom';
 import {
   FlowInstance,
@@ -45,6 +53,9 @@ const FlowInstanceList: React.FC = () => {
   const [elementsDrawerVisible, setElementsDrawerVisible] = useState(false);
   const [elementsLoading, setElementsLoading] = useState(false);
   const [elementInstances, setElementInstances] = useState<NodeInstance[]>([]);
+
+  // 发起流程相关状态
+  const [startFlowModalVisible, setStartFlowModalVisible] = useState(false);
 
   // 获取流程实例列表
   const fetchFlowInstanceList = useCallback(async () => {
@@ -207,12 +218,6 @@ const FlowInstanceList: React.FC = () => {
       width: 120,
     },
     {
-      title: '创建人',
-      dataIndex: 'createdBy',
-      key: 'createdBy',
-      width: 120,
-    },
-    {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -316,6 +321,7 @@ const FlowInstanceList: React.FC = () => {
             <Select.Option value={3}>已终止</Select.Option>
             <Select.Option value={4}>已结束</Select.Option>
           </Select>
+          <Button type="primary" icon={<PlusOutlined/>} onClick={() => setStartFlowModalVisible(true)}>发起流程</Button>
         </Space>
       ]}
     >
@@ -392,6 +398,13 @@ const FlowInstanceList: React.FC = () => {
             setElementsLoading(false);
           }
         }}
+      />
+      {/* 发起流程 Modal */}
+      <StartFlowModal
+        visible={startFlowModalVisible}
+        projectId={projectId}
+        onClose={() => setStartFlowModalVisible(false)}
+        onStarted={() => fetchFlowInstanceList()}
       />
     </PageContainer>
   );
