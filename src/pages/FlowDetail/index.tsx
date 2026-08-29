@@ -16,7 +16,6 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import FlowNode from './components/FlowNode';
-import NodeDetailDrawer from './components/NodeDetailDrawer';
 import {useFlowParser} from './hooks/useFlowParser';
 import {useElementInstanceMerger} from './hooks/useElementInstanceMerger';
 import {useProject} from "@/store/appStore";
@@ -40,11 +39,18 @@ const FlowDetail: React.FC = () => {
   const [elementInstances, setElementInstances] = useState<NodeInstance[] | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
-  // 节点详情通过 NodeDetailDrawer 展示，点击节点时打开
+  useEffect(() => {
+    if (selectedNode) {
+      const {nodeInstanceId} = selectedNode.data;
+      if (nodeInstanceId) {
+        message.info(`鑺傜偣瀹炰緥ID: ${nodeInstanceId}`);
+      }
+    }
+  }, [selectedNode]);
 
   // 浣跨敤鎻愬彇鐨?hooks
   const { parseFlowModel } = useFlowParser({ setNodes, setEdges });
-const { mergeElementInstances } = useElementInstanceMerger({ setNodes, setEdges });
+  const {mergeElementInstances} = useElementInstanceMerger({setNodes, setEdges});
 
   const loadData = useCallback(async () => {
     if (!flowInstanceId || !projectId) return;
@@ -123,7 +129,6 @@ const { mergeElementInstances } = useElementInstanceMerger({ setNodes, setEdges 
               <Background/>
             </ReactFlow>
       </ReactFlowProvider>
-      <NodeDetailDrawer node={selectedNode} onClose={() => setSelectedNode(null)} />
     </PageContainer>
   );
 };
