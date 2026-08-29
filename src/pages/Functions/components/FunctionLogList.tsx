@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, DatePicker, Drawer, Form, Input, Select, Space, Table, theme} from 'antd';
 import PageContainer from '@/components/common/PageContainer';
+import {useTableScrollHeight} from '@/hooks/useTableScrollHeight';
 import {DownOutlined, SearchOutlined, UpOutlined} from '@ant-design/icons';
 import {getFunctionLogs} from '@/services/function-log';
 import {useTranslation} from 'react-i18next';
@@ -23,6 +24,7 @@ const FunctionLogList: React.FC = () => {
   const [query, setQuery] = useState({page: 1, size: 50});
   const [form] = Form.useForm();
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const {containerRef, scrollY} = useTableScrollHeight();
 
   const fetchData = useCallback(async () => {
     if (!projectId) return;
@@ -147,11 +149,10 @@ const FunctionLogList: React.FC = () => {
       }
     >
       <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <div style={{flex: 1, overflow: 'hidden'}}>
+        <div ref={containerRef} style={{flex: 1, minHeight: 0, overflow: 'hidden'}}>
           <Table
             bordered={false}
-            virtual
-            scroll={{y: 500}}
+            scroll={{y: scrollY}}
             columns={columns}
             dataSource={tableData.list}
             rowKey="id"
@@ -166,6 +167,9 @@ const FunctionLogList: React.FC = () => {
               current: query.page,
               pageSize: query.size,
               total: tableData.total,
+              showSizeChanger: true,
+              showTotal: (total: number, range: [number, number]) =>
+                t('pagination_total_text', {start: range[0], end: range[1], total}),
               onChange: (page, size) => setQuery({page, size}),
             }}
           />

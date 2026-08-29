@@ -251,6 +251,7 @@
   "normal": "Normal",
   "job_execution_log_detail": "Job Execution Log Detail",
   "audit_log_detail": "Audit Log Detail",
+  "change_diff": "Change Diff",
   "load_job_execution_log_failed": "Failed to load job execution logs",
   "load_audit_log_failed": "Failed to load audit logs",
   "collapse": "Collapse",

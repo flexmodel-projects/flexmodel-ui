@@ -20,8 +20,10 @@ import {getAuditLogs, AuditLogParams} from '@/services/audit-log';
 import type {AuditLog} from '@/types/observability';
 import {useProject} from '@/store/appStore';
 import {useNavigate} from 'react-router-dom';
+import {DiffEditor} from '@monaco-editor/react';
+import {getDarkModeFromStorage} from '@/utils/darkMode';
+import {useTableScrollHeight} from '@/hooks/useTableScrollHeight';
 
-const {TextArea} = Input;
 const {Text} = Typography;
 
 // 操作类型 -> 标签颜色
@@ -63,6 +65,7 @@ const AuditLogList: React.FC = () => {
   const [detailVisible, setDetailVisible] = useState(false);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const {containerRef, scrollY} = useTableScrollHeight();
 
   const loadLogs = async (params?: AuditLogParams) => {
     if (!projectId) return;
@@ -227,14 +230,15 @@ const AuditLogList: React.FC = () => {
       }
     >
       <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <Table
-          columns={columns}
-          dataSource={logs}
-          loading={loading}
-          rowKey="id"
-          size="small"
-          scroll={{y: 500}}
-          style={{flex: 1, minHeight: 0}}
+        <div ref={containerRef} style={{flex: 1, minHeight: 0, overflow: 'hidden'}}>
+          <Table
+            columns={columns}
+            dataSource={logs}
+            loading={loading}
+            rowKey="id"
+            size="small"
+            scroll={{y: scrollY}}
+            style={{flex: 1, minHeight: 0}}
           pagination={{
             current: currentPage,
             pageSize: pageSize,
@@ -249,7 +253,8 @@ const AuditLogList: React.FC = () => {
               setPageSize(size);
             },
           }}
-        />
+          />
+        </div>
       </div>
 
       <Modal
@@ -295,14 +300,22 @@ const AuditLogList: React.FC = () => {
                 <Text type="danger">{selectedLog.errorMessage}</Text>
               </Descriptions.Item>
             )}
-            {selectedLog.oldData && (
-              <Descriptions.Item label={t('before_change')} span={2}>
-                <TextArea value={prettyJson(selectedLog.oldData)} rows={6} readOnly/>
-              </Descriptions.Item>
-            )}
-            {selectedLog.newData && (
-              <Descriptions.Item label={t('after_change')} span={2}>
-                <TextArea value={prettyJson(selectedLog.newData)} rows={6} readOnly/>
+            {(selectedLog.oldData || selectedLog.newData) && (
+              <Descriptions.Item label={t('change_diff')} span={2}>
+                <div style={{height: 400}}>
+                  <DiffEditor
+                    language="json"
+                    theme={getDarkModeFromStorage() ? 'vs-dark' : 'light'}
+                    original={prettyJson(selectedLog.oldData)}
+                    modified={prettyJson(selectedLog.newData)}
+                    options={{
+                      readOnly: true,
+                      renderSideBySide: true,
+                      minimap: {enabled: false},
+                      scrollBeyondLastLine: false,
+                    }}
+                  />
+                </div>
               </Descriptions.Item>
             )}
           </Descriptions>

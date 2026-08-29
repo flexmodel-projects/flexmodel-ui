@@ -16,7 +16,6 @@ const TracesList: React.FC = () => {
   const projectId = currentProject?.id || '';
 
   const [data, setData] = useState<{ list: TraceListItem[]; total: number }>({list: [], total: 0});
-  const [data, setData] = useState<{ list: TraceListItem[]; total: number }>({list: [], total: 0});
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(20);
   const [traceId, setTraceId] = useState<string | undefined>(undefined);
