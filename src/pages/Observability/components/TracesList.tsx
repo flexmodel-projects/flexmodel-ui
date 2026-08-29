@@ -16,32 +16,35 @@ const TracesList: React.FC = () => {
   const projectId = currentProject?.id || '';
 
   const [data, setData] = useState<{ list: TraceListItem[]; total: number }>({list: [], total: 0});
-  const [query, setQuery] = useState<{ page: number; size: number; traceId?: string }>({page: 1, size: 20});
+  const [data, setData] = useState<{ list: TraceListItem[]; total: number }>({list: [], total: 0});
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(20);
+  const [traceId, setTraceId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [searchTraceId, setSearchTraceId] = useState('');
 
   const tableContainerRef = useRef<HTMLDivElement | null>(null);
   const [tableScrollY, setTableScrollY] = useState<number>(300);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!projectId) return;
     setLoading(true);
     try {
-      const res = await getTraces(projectId, query);
+      const res = await getTraces(projectId, {traceId});
       setData({list: res.list, total: res.total});
+      setPage(1);
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId, traceId, setData]);
 
   const search = () => {
-    setQuery({page: 1, size: 20, traceId: searchTraceId || undefined});
+    setTraceId(searchTraceId || undefined);
   };
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, projectId]);
+  }, [fetchData]);
 
   const updateTableHeight = useCallback(() => {
     const wrapper = tableContainerRef.current;
@@ -186,13 +189,16 @@ const TracesList: React.FC = () => {
               onClick: () => navigate(`/project/${projectId}/observability/traces/${record.traceId}`),
             })}
             pagination={{
-              current: query.page,
-              pageSize: query.size,
+              current: page,
+              pageSize: size,
               total: data.total,
               showSizeChanger: true,
               showTotal: (total: number, range: [number, number]) =>
                 t('pagination_total_text', {start: range[0], end: range[1], total}),
-              onChange: (page: number, size: number) => setQuery({page, size}),
+              onChange: (p: number, s: number) => {
+                setPage(p);
+                setSize(s);
+              },
             }}
           />
         </div>

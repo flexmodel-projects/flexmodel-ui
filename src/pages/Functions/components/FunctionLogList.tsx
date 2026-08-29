@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, DatePicker, Drawer, Form, Input, Select, Space, Table, theme} from 'antd';
 import PageContainer from '@/components/common/PageContainer';
 import {DownOutlined, SearchOutlined, UpOutlined} from '@ant-design/icons';
@@ -24,7 +24,7 @@ const FunctionLogList: React.FC = () => {
   const [form] = Form.useForm();
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!projectId) return;
     const filter = form.getFieldsValue();
     const dateRange = filter?.dateRange
@@ -39,11 +39,11 @@ const FunctionLogList: React.FC = () => {
       keyword: filter?.keyword,
     });
     setTableData({list: res.list, total: res.total});
-  };
+  }, [projectId, query, form]);
 
   useEffect(() => {
     fetchData();
-  }, [query]);
+  }, [fetchData]);
 
   const search = () => {
     setQuery({page: 1, size: 50});

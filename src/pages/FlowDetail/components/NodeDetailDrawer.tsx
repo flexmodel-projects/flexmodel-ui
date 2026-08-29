@@ -56,7 +56,7 @@ const NodeDetailDrawer: React.FC<NodeDetailDrawerProps> = ({
 
   // 选中节点变化时加载节点变量
   useEffect(() => {
-    if (!node || !instanceDataId || !projectId || !flowInstanceId) {
+    if (!instanceDataId || !projectId || !flowInstanceId) {
       setVariablesText('{}');
       return;
     }
