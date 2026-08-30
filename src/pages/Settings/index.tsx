@@ -36,8 +36,6 @@ const Settings: React.FC = () => {
         return <Base settings={settings} onChange={onChange}/>;
       case "proxy":
         return <Proxy settings={settings} onChange={onChange}/>;
-      case "observability":
-        return <Observability settings={settings} onChange={onChange}/>;
       /*case 'variables':
         return <Variables/>;*/
       case "about":
