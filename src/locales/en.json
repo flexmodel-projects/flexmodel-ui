@@ -1182,5 +1182,13 @@
   "pages.setProductionFailed": "Failed to switch deployment",
   "pages.preview": "Preview",
   "pages.refreshPreview": "Refresh",
-  "pages.openInNewTab": "Open in new tab"
+  "pages.openInNewTab": "Open in new tab",
+  "project_observability": "Observability",
+  "project_observability_log_retention_days": "Log retention days",
+  "project_observability_log_retention_days_desc": "API logs older than this will be purged automatically",
+  "project_observability_audit_resources": "Audit resources",
+  "project_observability_audit_resources_desc": "Audit logs are recorded only for inserts/updates/deletes on these configuration tables. Type a table name and press Enter to add",
+  "project_observability_audit_resources_placeholder": "Enter resource table name, e.g. f_trigger",
+  "project_observability_audit_resources_required": "Audit resources cannot be empty",
+  "project_observability_hint": "When audit resources are empty, the default whitelist is used: f_trigger, f_em_flow_definition, f_em_flow_deployment, f_function, f_bucket, f_auth_provider_config"
 }
