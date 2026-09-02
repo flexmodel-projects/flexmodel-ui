@@ -25,10 +25,8 @@ import {
   AppstoreOutlined,
   DashboardOutlined,
   KeyOutlined, FunctionOutlined,
-  FileTextOutlined,
   AuditOutlined,
 } from "@ant-design/icons";
-import FunctionLogList from "./pages/Functions/components/FunctionLogList";
 import GraphQLAPI from "@/pages/GraphQLAPI";
 import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
@@ -123,12 +121,6 @@ export const projectRoutes: RouteConfig[] = [
         icon: ContainerOutlined,
         translationKey: "data_modeling",
       },
-      {
-        path: "/project/:projectId/data/audit-logs",
-        element: <AuditLogList/>,
-        icon: AuditOutlined,
-        translationKey: "log.audit_logs",
-      },
     ],
   },
   {
@@ -194,12 +186,6 @@ export const projectRoutes: RouteConfig[] = [
     translationKey: "function.title",
   },
   {
-    path: "/project/:projectId/functions/logs",
-    element: <FunctionLogList/>,
-    icon: FileTextOutlined,
-    translationKey: "log.function_logs",
-  },
-  {
     path: "/project/:projectId/functions/editor",
     element: <FunctionEditor/>,
     icon: CodeOutlined,
@@ -220,6 +206,12 @@ export const projectRoutes: RouteConfig[] = [
     element: <Storage/>,
     icon: CloudUploadOutlined,
     translationKey: "storage",
+  },
+  {
+    path: "/project/:projectId/audit-logs",
+    element: <AuditLogList/>,
+    icon: AuditOutlined,
+    translationKey: "log.audit_logs",
   },
   {
     path: "/project/:projectId/settings",
