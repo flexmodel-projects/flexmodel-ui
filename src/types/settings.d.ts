@@ -67,10 +67,3 @@ export interface Route {
   path: string;
   to: string;
 }
-
-/**
- * 可观测性接口
- */
-export interface Observability {
-  auditResources: string[];
-}

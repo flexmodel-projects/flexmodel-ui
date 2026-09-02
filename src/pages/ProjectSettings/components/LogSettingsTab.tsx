@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import {Button, Form, InputNumber, message, Select, Spin, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {getProject, patchProject} from '@/services/project';
@@ -15,7 +15,7 @@ const DEFAULT_AUDIT_RESOURCES = [
 ];
 const DEFAULT_LOG_RETENTION_DAYS = 7;
 
-interface ObservabilityTabProps {
+interface LogSettingsTabProps {
   projectId: string;
   disabled?: boolean;
 }
@@ -25,7 +25,7 @@ interface FormValues {
   auditResources: string[];
 }
 
-const ObservabilityTab: React.FC<ObservabilityTabProps> = ({projectId, disabled}) => {
+const LogSettingsTab: React.FC<LogSettingsTabProps> = ({projectId, disabled}) => {
   const {t} = useTranslation();
   const [form] = Form.useForm<FormValues>();
   const [loading, setLoading] = useState(false);
@@ -36,17 +36,17 @@ const ObservabilityTab: React.FC<ObservabilityTabProps> = ({projectId, disabled}
   useEffect(() => {
     if (!projectId) return;
     setLoading(true);
-    // 同时加载项目设置（含 observability）与模型列表，审计资源从实体表中选取
+    // 同时加载项目设置与模型列表，审计资源从实体表中选取
     Promise.all([
       getProject(projectId),
       getModelList(projectId),
     ])
       .then(([project, models]) => {
-        const obs = (project.metadata?.observability ?? {}) as Record<string, any>;
+        const settings = (project.metadata?.logSettings ?? {}) as Record<string, any>;
         setMetadata(project.metadata ?? {});
         form.setFieldsValue({
-          logRetentionDays: obs.logRetentionDays ?? DEFAULT_LOG_RETENTION_DAYS,
-          auditResources: obs.auditResources ?? [...DEFAULT_AUDIT_RESOURCES],
+          logRetentionDays: settings.logRetentionDays ?? DEFAULT_LOG_RETENTION_DAYS,
+          auditResources: settings.auditResources ?? [...DEFAULT_AUDIT_RESOURCES],
         });
         // 仅实体（表）可选为审计资源，枚举/本地查询不参与审计
         setModelOptions(
@@ -66,7 +66,7 @@ const ObservabilityTab: React.FC<ObservabilityTabProps> = ({projectId, disabled}
       const updated = await patchProject(projectId, {
         metadata: {
           ...metadata,
-          observability: {
+          logSettings: {
             logRetentionDays: values.logRetentionDays,
             auditResources: values.auditResources,
           },
@@ -84,22 +84,22 @@ const ObservabilityTab: React.FC<ObservabilityTabProps> = ({projectId, disabled}
       <Form form={form} layout="vertical" style={{maxWidth: 800}} disabled={disabled}>
         <Form.Item
           name="logRetentionDays"
-          label={t('project_observability_log_retention_days')}
-          extra={t('project_observability_log_retention_days_desc')}
+          label={t('project_log_settings_log_retention_days')}
+          extra={t('project_log_settings_log_retention_days_desc')}
         >
           <InputNumber min={1} max={365} style={{width: 160}}/>
         </Form.Item>
         <Form.Item
           name="auditResources"
-          label={t('project_observability_audit_resources')}
-          extra={t('project_observability_audit_resources_desc')}
-          rules={[{required: true, message: t('project_observability_audit_resources_required')}]}
+          label={t('project_log_settings_audit_resources')}
+          extra={t('project_log_settings_audit_resources_desc')}
+          rules={[{required: true, message: t('project_log_settings_audit_resources_required')}]}
         >
           <Select
             mode="multiple"
             showSearch
             optionFilterProp="label"
-            placeholder={t('project_observability_audit_resources_placeholder')}
+            placeholder={t('project_log_settings_audit_resources_placeholder')}
             options={modelOptions}
           />
         </Form.Item>
@@ -109,11 +109,11 @@ const ObservabilityTab: React.FC<ObservabilityTabProps> = ({projectId, disabled}
           </Button>
         </Form.Item>
         <Typography.Text type="secondary">
-          {t('project_observability_hint')}
+          {t('project_log_settings_hint')}
         </Typography.Text>
       </Form>
     </Spin>
   );
 };
 
-export default ObservabilityTab;
+export default LogSettingsTab;

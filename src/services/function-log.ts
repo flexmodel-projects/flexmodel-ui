@@ -1,6 +1,6 @@
 import {api} from '@/utils/request'
 import type {PagedResult} from '@/types/record'
-import type {FunctionLog} from '@/types/observability'
+import type {FunctionLog} from '@/types/log'
 
 export interface FunctionLogQuery {
   page?: number

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 项目接口
  */
 import type {Branch} from "./branch";
@@ -17,7 +17,7 @@ export interface Project {
   branches?: Branch[];
   metadata?: {
     showSystemModels?: boolean;
-    observability?: {
+    logSettings?: {
       logRetentionDays?: number;
       auditResources?: string[];
     };

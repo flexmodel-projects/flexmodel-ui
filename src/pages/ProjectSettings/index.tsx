@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import {Button, Divider, Form, Input, Menu, message, Switch, theme, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {useParams, useSearchParams} from 'react-router-dom';
@@ -7,12 +7,12 @@ import {useProject} from '@/store/appStore';
 import {PageContainer} from '@/components/common';
 import ProvidersTab from '@/pages/Authentication/components/ProvidersTab';
 import PagesTab from '@/pages/Pages';
-import ObservabilityTab from '@/pages/ProjectSettings/components/ObservabilityTab';
+import LogSettingsTab from '@/pages/ProjectSettings/components/LogSettingsTab';
 import {spacing} from '@/theme/designTokens';
 
 const {Title, Text} = Typography;
 
-type ProjectSettingsTabKey = 'base' | 'auth' | 'observability' | 'pages';
+type ProjectSettingsTabKey = 'base' | 'auth' | 'logs' | 'pages';
 
 const ProjectSettings: React.FC = () => {
   const {t} = useTranslation();
@@ -30,7 +30,7 @@ const ProjectSettings: React.FC = () => {
   const menuMap: Record<ProjectSettingsTabKey, string> = {
     base: t('settings_basic_settings'),
     auth: t('authentication'),
-    observability: t('project_observability'),
+    logs: t('project_log_settings'),
     pages: t('pages.title'),
   };
 
@@ -141,8 +141,8 @@ const ProjectSettings: React.FC = () => {
         );
       case 'auth':
         return <ProvidersTab/>;
-      case 'observability':
-        return projectId ? <ObservabilityTab projectId={projectId} disabled={isDefaultProject}/> : null;
+      case 'logs':
+        return projectId ? <LogSettingsTab projectId={projectId} disabled={isDefaultProject}/> : null;
       case 'pages':
         return projectId ? <PagesTab projectId={projectId}/> : null;
       default:

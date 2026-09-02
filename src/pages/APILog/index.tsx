@@ -159,12 +159,9 @@ const LogViewer: React.FC = () => {
       ellipsis: true,
       render: (traceId: string) =>
         traceId ? (
-          <a onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/project/${projectId}/observability/traces/${traceId}`);
-          }}>
+          <span onClick={(e) => e.stopPropagation()}>
             {traceId.slice(0, 8)}…
-          </a>
+          </span>
         ) : null,
     },
     {
@@ -184,7 +181,7 @@ const LogViewer: React.FC = () => {
 
   return (
     <PageContainer
-      title={t('observability.api_logs', 'API 日志')}
+      title={t('log.api_logs', 'API 日志')}
       extra={
         <Form form={form} layout="inline" style={{flexDirection: 'column', alignItems: 'flex-end'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: 8}}>

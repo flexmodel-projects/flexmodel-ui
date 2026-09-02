@@ -243,9 +243,9 @@ const JobExecutionLogList: React.FC = () => {
       ellipsis: true,
       render: (traceId: string) =>
         traceId ? (
-          <a onClick={() => navigate(`/project/${projectId}/observability/traces/${traceId}`)}>
+          <span>
             {traceId.slice(0, 8)}…
-          </a>
+          </span>
         ) : null,
     },
     {

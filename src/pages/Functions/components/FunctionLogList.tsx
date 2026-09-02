@@ -5,7 +5,7 @@ import {useTableScrollHeight} from '@/hooks/useTableScrollHeight';
 import {DownOutlined, SearchOutlined, UpOutlined} from '@ant-design/icons';
 import {getFunctionLogs} from '@/services/function-log';
 import {useTranslation} from 'react-i18next';
-import type {FunctionLog} from '@/types/observability';
+import type {FunctionLog} from '@/types/log';
 import {useProject} from '@/store/appStore';
 import {useNavigate} from 'react-router-dom';
 
@@ -92,9 +92,9 @@ const FunctionLogList: React.FC = () => {
       ellipsis: true,
       render: (traceId: string) =>
         traceId ? (
-          <a onClick={() => navigate(`/project/${projectId}/observability/traces/${traceId}`)}>
+          <span>
             {traceId.slice(0, 8)}…
-          </a>
+          </span>
         ) : null,
     },
     {

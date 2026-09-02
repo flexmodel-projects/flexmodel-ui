@@ -25,15 +25,10 @@ import {
   AppstoreOutlined,
   DashboardOutlined,
   KeyOutlined, FunctionOutlined,
-  MonitorOutlined,
   FileTextOutlined,
   AuditOutlined,
 } from "@ant-design/icons";
-import Observability from "./pages/Observability";
-import TracesList from "./pages/Observability/components/TracesList";
-import TraceDetailPage from "./pages/Observability/TraceDetail";
 import FunctionLogList from "./pages/Functions/components/FunctionLogList";
-import AuditLogList from "./pages/Observability/components/AuditLogList";
 import GraphQLAPI from "@/pages/GraphQLAPI";
 import Flow from "@/pages/Flow";
 import FlowList from "@/pages/Flow/components/FlowList.tsx";
@@ -48,6 +43,7 @@ import ApiKeys from "./pages/ApiKeys";
 import Functions from "./pages/Functions";
 import FunctionEditor from "./pages/Functions/FunctionEditor";
 import ProjectSettings from "./pages/ProjectSettings";
+import AuditLogList from "@/pages/AuditLog/components/AuditLogList.tsx";
 
 export interface RouteConfig {
   path: string;
@@ -106,6 +102,12 @@ export const projectRoutes: RouteConfig[] = [
         icon: DeploymentUnitOutlined,
         translationKey: "graphql_api",
       },
+      {
+        path: "/project/:projectId/api/logs",
+        element: <APILog/>,
+        icon: LineChartOutlined,
+        translationKey: "log.api_logs",
+      },
     ],
   },
   {
@@ -120,6 +122,12 @@ export const projectRoutes: RouteConfig[] = [
         element: <DataModeling/>,
         icon: ContainerOutlined,
         translationKey: "data_modeling",
+      },
+      {
+        path: "/project/:projectId/data/audit-logs",
+        element: <AuditLogList/>,
+        icon: AuditOutlined,
+        translationKey: "log.audit_logs",
       },
     ],
   },
@@ -171,6 +179,12 @@ export const projectRoutes: RouteConfig[] = [
         icon: ThunderboltOutlined,
         translationKey: "trigger.title",
       },
+      {
+        path: "/project/:projectId/scheduling/job-execution-logs",
+        element: <JobExecutionLogList/>,
+        icon: PlayCircleOutlined,
+        translationKey: "log.job_execution_log",
+      },
     ]
   },
   {
@@ -178,6 +192,12 @@ export const projectRoutes: RouteConfig[] = [
     element: <Functions/>,
     icon: FunctionOutlined,
     translationKey: "function.title",
+  },
+  {
+    path: "/project/:projectId/functions/logs",
+    element: <FunctionLogList/>,
+    icon: FileTextOutlined,
+    translationKey: "log.function_logs",
   },
   {
     path: "/project/:projectId/functions/editor",
@@ -200,52 +220,6 @@ export const projectRoutes: RouteConfig[] = [
     element: <Storage/>,
     icon: CloudUploadOutlined,
     translationKey: "storage",
-  },
-  {
-    path: "/project/:projectId/observability",
-    element: <Observability/>,
-    icon: MonitorOutlined,
-    translationKey: "observability",
-    children: [
-      {
-        path: "/project/:projectId/observability/traces",
-        element: <TracesList/>,
-        icon: NodeIndexOutlined,
-        translationKey: "observability.traces",
-      },
-      {
-        path: "/project/:projectId/observability/function-logs",
-        element: <FunctionLogList/>,
-        icon: FileTextOutlined,
-        translationKey: "observability.function_logs",
-      },
-      {
-        path: "/project/:projectId/observability/api-logs",
-        element: <APILog/>,
-        icon: LineChartOutlined,
-        translationKey: "observability.api_logs",
-      },
-      {
-        path: "/project/:projectId/observability/job-execution-log",
-        element: <JobExecutionLogList/>,
-        icon: PlayCircleOutlined,
-        translationKey: "observability.job_execution_log",
-      },
-      {
-        path: "/project/:projectId/observability/audit-logs",
-        element: <AuditLogList/>,
-        icon: AuditOutlined,
-        translationKey: "observability.audit_logs",
-      },
-    ],
-  },
-  {
-    path: "/project/:projectId/observability/traces/:traceId",
-    element: <TraceDetailPage/>,
-    icon: NodeIndexOutlined,
-    translationKey: "observability.trace_detail",
-    hideInMenu: true,
-    hideLayout: true,
   },
   {
     path: "/project/:projectId/settings",

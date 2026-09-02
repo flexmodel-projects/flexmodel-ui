@@ -1,6 +1,6 @@
 import {api} from '@/utils/request'
 import type {PagedResult} from '@/types/record'
-import type {AuditLog} from '@/types/observability'
+import type {AuditLog} from '@/types/log'
 
 export interface AuditLogParams {
   action?: string
