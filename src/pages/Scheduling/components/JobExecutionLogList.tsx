@@ -19,7 +19,6 @@ import PageContainer from '@/components/common/PageContainer';
 import {getJobExecutionLogs, JobExecutionLog, JobExecutionLogParams} from '@/services/job';
 import dayjs from 'dayjs';
 import {useProject} from "@/store/appStore";
-import {useNavigate} from 'react-router-dom';
 
 const {RangePicker} = DatePicker;
 const {TextArea} = Input;
@@ -30,7 +29,6 @@ const JobExecutionLogList: React.FC = () => {
   const {currentProject} = useProject();
   const projectId = currentProject?.id || '';
   const [form] = Form.useForm();
-  const navigate = useNavigate();
 
   const [logs, setLogs] = useState<JobExecutionLog[]>([]);
   const [loading, setLoading] = useState(false);

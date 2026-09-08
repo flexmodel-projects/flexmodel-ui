@@ -19,7 +19,6 @@ import PageContainer from '@/components/common/PageContainer';
 import {getAuditLogs, AuditLogParams} from '@/services/audit-log';
 import type {AuditLog} from '@/types/log';
 import {useProject} from '@/store/appStore';
-import {useNavigate} from 'react-router-dom';
 import {DiffEditor} from '@monaco-editor/react';
 import {getDarkModeFromStorage} from '@/utils/darkMode';
 import {useTableScrollHeight} from '@/hooks/useTableScrollHeight';
@@ -54,7 +53,6 @@ const AuditLogList: React.FC = () => {
   const {t} = useTranslation();
   const {currentProject} = useProject();
   const projectId = currentProject?.id || '';
-  const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const [logs, setLogs] = useState<AuditLog[]>([]);
